@@ -428,8 +428,18 @@ const AuthenticatedHeader = () => {
               </Button>
 
               {showNotifDropdown && (
-                <div className="absolute top-full right-0 mt-2 w-[22rem] bg-white dark:bg-zinc-900/95 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg dark:shadow-2xl dark:shadow-black/30 z-50 overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div className="
+                  max-sm:fixed max-sm:inset-x-3 max-sm:top-[4.25rem]
+                  sm:absolute sm:top-full sm:right-0 sm:mt-2 sm:w-[22rem]
+                  bg-white dark:bg-zinc-900/95
+                  border border-zinc-200 dark:border-zinc-800
+                  rounded-xl shadow-lg dark:shadow-2xl dark:shadow-black/30
+                  z-[9999] overflow-hidden
+                  flex flex-col
+                  max-sm:max-h-[calc(100svh-5.5rem)]
+                  sm:max-h-[min(32rem,calc(100vh-5rem))]
+                ">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
                     <h3 className="font-semibold text-sm">Notifications</h3>
                     {notifications.some((n) => !n.read) && (
                       <button
@@ -451,7 +461,7 @@ const AuthenticatedHeader = () => {
                     </div>
                   ) : notifications.length > 0 ? (
                     <>
-                      <div className="max-h-[28rem] overflow-y-auto divide-y divide-border/40">
+                      <div className="overflow-y-auto divide-y divide-border/40 flex-1 min-h-0">
                         {notifications.slice(0, 10).map((notif) => (
                           <NotifItem
                             key={notif.id}
@@ -462,7 +472,7 @@ const AuthenticatedHeader = () => {
                         ))}
                       </div>
                       {notifications.length > 10 && (
-                        <div className="border-t border-border px-4 py-2.5 text-center">
+                        <div className="border-t border-border px-4 py-2.5 text-center shrink-0">
                           <span className="text-xs text-muted-foreground">
                             Showing 10 of {notifications.length} notifications
                           </span>

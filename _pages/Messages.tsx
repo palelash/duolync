@@ -20,7 +20,6 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
-import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import MainLayout from "@/app/_components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { validateMessageContent } from "@/lib/validation";
@@ -150,7 +149,7 @@ const ConversationRow = ({
   <button
     onClick={onClick}
     className={cn(
-      "w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-left transition-all duration-150",
+      "w-full flex items-center gap-3 px-3 py-3.5 rounded-xl text-left transition-all duration-150 overflow-hidden",
       isSelected
         ? "bg-primary/10 border border-primary/20"
         : unread
@@ -168,7 +167,7 @@ const ConversationRow = ({
       <div className="flex items-center justify-between gap-2 mb-0.5">
         <span
           className={cn(
-            "text-[13px] truncate",
+            "text-[13px] truncate min-w-0",
             unread ? "font-bold text-zinc-900 dark:text-zinc-50" : "font-semibold text-zinc-900 dark:text-zinc-50",
           )}
         >
@@ -211,7 +210,7 @@ const UserSearchRow = ({
   <button
     onClick={onClick}
     className={cn(
-      "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-150",
+      "w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-150 overflow-hidden",
       isSelected
         ? "bg-primary/10 border border-primary/20"
         : "hover:bg-zinc-100 dark:hover:bg-neutral-800/60 border border-transparent",
@@ -482,7 +481,7 @@ const Messages = () => {
 
   return (
     <MainLayout showGroupsPanel={false}>
-      <div className="h-[calc(100vh-8rem)] lg:h-[calc(100vh-4rem)] flex bg-zinc-50 dark:bg-[#09090b]">
+      <div className="h-[calc(100dvh-8rem)] lg:h-[calc(100dvh-4rem)] flex bg-zinc-50 dark:bg-[#09090b]">
 
         {/* ── Left: Sidebar ────────────────────────────────────── */}
         <div
@@ -492,7 +491,7 @@ const Messages = () => {
           )}
         >
           {/* Header */}
-          <div className="px-4 pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="px-3 pt-4 pb-3 sm:px-4 sm:pt-5 sm:pb-4 border-b border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-2 mb-4">
               {/* ── Back button ── */}
               <button
@@ -537,7 +536,7 @@ const Messages = () => {
           </div>
 
           {/* List */}
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
             <div className="p-2 space-y-1">
               {isSearchMode ? (
                 /* ── Search Results Mode ── */
@@ -594,7 +593,7 @@ const Messages = () => {
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
         </div>
 
         {/* ── Right: Chat Area ─────────────────────────────────── */}
@@ -604,7 +603,7 @@ const Messages = () => {
           {activeConvMeta ? (
             <>
               {/* Chat Header */}
-              <div className="flex items-center gap-3 px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0">
+              <div className="flex items-center gap-3 px-3 py-2.5 sm:px-5 sm:py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0">
                 <button
                   className="md:hidden text-zinc-500 dark:text-muted-foreground hover:text-zinc-900 dark:hover:text-foreground mr-1"
                   onClick={() => setShowMobileList(true)}
@@ -639,7 +638,7 @@ const Messages = () => {
 
               {/* Messages — Messenger-style: content anchors to bottom */}
               <div className="flex-1 overflow-y-auto chat-scroll">
-                <div className="flex flex-col justify-end min-h-full px-5 py-4">
+                <div className="flex flex-col justify-end min-h-full px-3 py-3 sm:px-5 sm:py-4">
                 <div className="space-y-3 max-w-3xl mx-auto w-full">
                   {msgsLoading ? (
                     <div className="space-y-4 py-6 max-w-3xl mx-auto">
@@ -688,7 +687,7 @@ const Messages = () => {
                           {/* Wrapper owns max-width; bubble owns colour only */}
                           <div
                             className={cn(
-                              "flex flex-col gap-0.5 min-w-0 max-w-[70%]",
+                              "flex flex-col gap-0.5 min-w-0 max-w-[82%] sm:max-w-[70%]",
                               isOwn ? "items-end" : "items-start",
                             )}
                           >
@@ -713,20 +712,20 @@ const Messages = () => {
               </div>
 
               {/* Input */}
-              <div className="px-5 py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0">
-                <div className="flex gap-3 max-w-3xl mx-auto">
+              <div className="px-3 py-2.5 sm:px-5 sm:py-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0">
+                <div className="flex gap-2 sm:gap-3 max-w-3xl mx-auto">
                   <Input
                     placeholder={`Message ${activeConvMeta.otherUserName}…`}
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 h-11 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-purple-500 focus:border-purple-500 text-sm"
+                    className="flex-1 h-10 sm:h-11 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800 focus-visible:ring-1 focus-visible:ring-purple-500 focus:border-purple-500 text-sm"
                     autoFocus
                     disabled={sending}
                   />
                   <Button
                     className={cn(
-                      "h-11 px-5 rounded-xl font-semibold gap-2 shrink-0 transition-all",
+                      "h-10 sm:h-11 w-10 sm:w-auto px-0 sm:px-5 rounded-xl font-semibold gap-2 shrink-0 transition-all",
                       profile?.user_type === "brand"
                         ? "bg-teal-600 hover:bg-teal-500 text-white shadow-[0_4px_20px_rgba(20,184,166,0.35)]"
                         : "btn-gradient",
@@ -739,10 +738,10 @@ const Messages = () => {
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
-                    Send
+                    <span className="hidden sm:inline">Send</span>
                   </Button>
                 </div>
-                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 text-center mt-2 max-w-3xl mx-auto">
+                <p className="hidden sm:block text-[10px] text-zinc-400 dark:text-zinc-500 text-center mt-2 max-w-3xl mx-auto">
                   Press{" "}
                   <kbd className="px-1 py-0.5 rounded bg-zinc-100 dark:bg-neutral-800 border border-zinc-200 dark:border-neutral-700 text-[10px] font-mono text-zinc-600 dark:text-zinc-400">
                     Enter

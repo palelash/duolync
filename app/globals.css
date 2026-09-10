@@ -257,6 +257,11 @@
     background-color: #07080f;
   }
 
+  /* Light mode: replace the near-black with the page surface colour */
+  html:not(.dark) .gradient-hero {
+    background-color: var(--bg-page); /* #f8fafc */
+  }
+
   /* Left-panel rich violet-to-purple gradient */
   .gradient-primary {
     background: linear-gradient(

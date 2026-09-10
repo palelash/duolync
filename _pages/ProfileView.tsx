@@ -839,12 +839,12 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
           <div className="h-4 w-12 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
 
           {/* Profile card skeleton */}
-          <div className="bg-white dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl shadow-sm">
             {/* Cover */}
-            <div className="h-36 bg-zinc-200 dark:bg-zinc-700 animate-pulse" />
+            <div className="h-36 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded-t-2xl" />
             <div className="px-6 pb-6">
               {/* Avatar row */}
-              <div className="flex items-end justify-between -mt-12 mb-4">
+              <div className="flex items-end justify-between -mt-12 mb-4 relative z-10">
                 <div className="w-24 h-24 rounded-xl bg-zinc-300 dark:bg-zinc-600 ring-4 ring-white dark:ring-zinc-900 animate-pulse" />
                 <div className="flex gap-2 pb-1">
                   <div className="h-8 w-24 bg-zinc-100 dark:bg-zinc-800 rounded-lg animate-pulse" />
@@ -928,11 +928,11 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
         </button>
 
         {/* ── Profile card (LinkedIn-style) ── */}
-        <div className="bg-white dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl shadow-sm">
           {/* Cover */}
           <div
             className={cn(
-              "h-36 w-full relative overflow-hidden",
+              "h-36 w-full relative overflow-hidden rounded-t-2xl",
               isCreator
                 ? "bg-gradient-to-br from-violet-700 via-purple-600 to-fuchsia-600"
                 : "bg-gradient-to-br from-teal-700 via-cyan-600 to-sky-500",
@@ -944,7 +944,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
 
           <div className="px-6 pb-6">
             {/* Avatar row */}
-            <div className="flex items-end justify-between -mt-12 mb-4">
+            <div className="flex items-end justify-between -mt-12 mb-4 relative z-10">
               <div className="w-24 h-24 rounded-2xl ring-4 ring-white dark:ring-zinc-900 overflow-hidden bg-zinc-100 dark:bg-zinc-800 shadow-lg shrink-0">
                 {profileData.avatar_url ? (
                   <img src={profileData.avatar_url} alt={profileData.full_name ?? ""} className="w-full h-full object-cover" />
@@ -988,7 +988,17 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                       <ConnectButton
                         status={connStatus}
                         connectionId={connId}
-                        onStatusChange={(s, cid) => { setConnStatus(s); setConnId(cid); }}
+                        onStatusChange={(s, cid) => {
+                          const prev = connStatus;
+                          setConnStatus(s);
+                          setConnId(cid);
+                          // Refresh profile whenever the accepted-connection count changes:
+                          // • new status is "accepted"  → a request was just accepted (+1)
+                          // • prev status was "accepted" → a connection was just removed (-1)
+                          if (id && (s === "accepted" || prev === "accepted")) {
+                            getProfileAction(id).then((d) => { if (d) setProfileData(d); });
+                          }
+                        }}
                       />
                     )}
                     <Button size="sm" variant="outline" className="gap-2" onClick={handleMessage}>

@@ -217,7 +217,7 @@ const Auth = () => {
           </div>
 
           {/* Tab switcher */}
-          <div className="flex bg-white/[0.04] border border-white/[0.08] rounded-xl p-1 mb-7 backdrop-blur-sm">
+          <div className="flex bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] rounded-xl p-1 mb-7 backdrop-blur-sm">
             {(["signup", "login"] as const).map((t) => (
               <button
                 key={t}
@@ -334,15 +334,12 @@ const Auth = () => {
           </form>
 
           {/* Divider */}
-          <div className="relative my-5">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-white/[0.08]" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-transparent px-3 text-muted-foreground tracking-widest">
-                or
-              </span>
-            </div>
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-black/[0.10] to-black/[0.10] dark:via-white/[0.08] dark:to-white/[0.08]" />
+            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60 px-2.5 py-1 rounded-full border border-black/[0.08] dark:border-white/[0.07] bg-black/[0.03] dark:bg-white/[0.03]">
+              or
+            </span>
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent via-black/[0.10] to-black/[0.10] dark:via-white/[0.08] dark:to-white/[0.08]" />
           </div>
 
           {/* Social buttons */}
@@ -350,7 +347,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 gap-2.5 border-white/[0.10] hover:border-white/[0.20] bg-white/[0.03] hover:bg-white/[0.06] transition-all backdrop-blur-sm"
+              className="w-full h-11 gap-2.5 border-black/[0.12] hover:border-black/[0.22] bg-black/[0.03] hover:bg-black/[0.06] dark:border-white/[0.10] dark:hover:border-white/[0.20] dark:bg-white/[0.03] dark:hover:bg-white/[0.06] transition-all backdrop-blur-sm"
               onClick={() => handleSocialAuth("google")}
               disabled={isLoading}
             >
