@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Role } from "@/lib/generated/prisma";
+import { ConnectionStatus, Role } from "@/lib/generated/prisma";
 import { fromPrismaRole } from "@/lib/roles";
 import { headers } from "next/headers";
 
@@ -285,7 +285,7 @@ export async function getProfileAction(
     db.connection.count({
       where: {
         OR: [{ senderId: targetUserId }, { receiverId: targetUserId }],
-        status: "ACCEPTED",
+        status: ConnectionStatus.ACCEPTED,
       },
     }),
   ]);

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Search, SlidersHorizontal, Heart, MessageSquare, X,
   MapPin, BadgeCheck, Users, TrendingUp, ChevronDown,
@@ -185,8 +186,25 @@ const BrandCard = ({
 
       <div className="p-5 flex flex-col flex-1">
         <div className="flex items-start gap-3 mb-4 pr-8">
-          <div className={cn("w-14 h-14 rounded-2xl shrink-0 bg-gradient-to-br flex items-center justify-center text-white font-display font-bold text-lg ring-2 ring-zinc-200/80 dark:ring-zinc-700/50", gradient)}>
-            {initials}
+          <div className={cn("w-14 h-14 rounded-2xl shrink-0 overflow-hidden ring-2 ring-zinc-200/80 dark:ring-zinc-700/50", !brand.avatar_url && cn("bg-gradient-to-br flex items-center justify-center text-white font-display font-bold text-lg", gradient))}>
+            {brand.avatar_url ? (
+              <img
+                src={brand.avatar_url}
+                alt={brand.company_name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // On load error, hide the img and show initials fallback
+                  const parent = (e.target as HTMLImageElement).parentElement;
+                  if (parent) {
+                    (e.target as HTMLImageElement).style.display = "none";
+                    parent.classList.add(...("bg-gradient-to-br flex items-center justify-center text-white font-display font-bold text-lg " + gradient).split(" "));
+                    parent.textContent = initials;
+                  }
+                }}
+              />
+            ) : (
+              initials
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="font-display font-bold text-[15px] truncate mb-0.5 text-zinc-900 dark:text-zinc-50">{brand.company_name}</div>
@@ -210,7 +228,9 @@ const BrandCard = ({
           <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mt-auto mb-4"><Globe className="w-3 h-3 shrink-0" /><span className="truncate">{brand.website}</span></div>
         )}
         <div className="flex gap-2">
-          <Button size="sm" className="flex-1 h-8 text-xs btn-gradient rounded-xl font-semibold">View Brand</Button>
+          <Button size="sm" className="flex-1 h-8 text-xs btn-gradient rounded-xl font-semibold p-0" asChild>
+            <Link href={`/profile/${brand.id}`}>View Brand</Link>
+          </Button>
           {isRealProfile(brand.id) && <ConnectBtn targetId={brand.id} connectionInfo={connectionInfo} onConnectionChange={onConnectionChange} />}
           <Button
             variant="ghost" size="sm"

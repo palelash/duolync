@@ -24,7 +24,8 @@ export async function getCreatorsAction(): Promise<Creator[]> {
   const users = await db.user.findMany({
     where: {
       role: Role.CREATOR,
-      hasCompletedOnboarding: true,
+      // Do NOT filter by hasCompletedOnboarding — brand users should see all
+      // creators that have set up a profile, regardless of onboarding status.
       creatorProfile: { isNot: null },
     },
     select: {
@@ -55,7 +56,7 @@ export async function getCreatorsAction(): Promise<Creator[]> {
       },
     },
     orderBy: { createdAt: "desc" },
-    take: 50,
+    take: 100,
   });
 
   return users.map((u) => {
@@ -87,8 +88,8 @@ export async function getCreatorsAction(): Promise<Creator[]> {
       }
     }
 
-    const totalFollowers = profile.followerCount ?? profile.totalFollowers;
-    const avgEngagement = profile.averageEngagement ?? profile.avgEngagementRate;
+    const totalFollowers = profile.followerCount ?? profile.totalFollowers ?? 0;
+    const avgEngagement = profile.averageEngagement ?? profile.avgEngagementRate ?? 0;
 
     return {
       id: u.id,

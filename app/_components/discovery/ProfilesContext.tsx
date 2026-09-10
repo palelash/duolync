@@ -230,11 +230,14 @@ export function ProfilesProvider({ children }: { children: ReactNode }) {
 
   // Hydrate from DB once signed in. The directory actions are session-gated, so
   // fetching while anonymous would only ever return empty.
+  // Use user.id as the dependency (stable primitive) instead of the user object
+  // reference so we only fetch once per session, not on every re-render.
+  const userId = user?.id ?? null;
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
     fetchFromDB();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [userId]);
 
   const addCreator = (p: Creator) => {
     setCreators((prev) => (prev.some((c) => c.id === p.id) ? prev : [p, ...prev]));
