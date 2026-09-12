@@ -15,7 +15,7 @@ export interface LyncMessage {
 
 export async function lyncChatAction(
   messages: LyncMessage[],
-  context: { userType: "brand" | "creator" | null; userName: string | null }
+  context: { userType: "brand" | "creator" | "admin" | null; userName: string | null }
 ): Promise<{ reply: string | null; error: string | null }> {
   if (!process.env.OPENAI_API_KEY) {
     return { reply: null, error: "AI service not configured. Add OPENAI_API_KEY to your environment." };

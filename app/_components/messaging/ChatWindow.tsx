@@ -29,7 +29,7 @@ function formatTime(dateStr: string): string {
  * max-width is intentionally applied on the WRAPPER, not here, to prevent
  * the CSS engine from ever doing a mid-word break inside the bubble.
  */
-function getBubbleColor(senderRole: "brand" | "creator", isOwn: boolean): string {
+function getBubbleColor(senderRole: "brand" | "creator" | "admin", isOwn: boolean): string {
   if (!isOwn) return "bg-zinc-200/90 dark:bg-neutral-800 text-zinc-800 dark:text-neutral-100 rounded-bl-sm";
   return senderRole === "brand"
     ? "bg-teal-600 text-white rounded-br-sm"
@@ -45,7 +45,7 @@ function MiniAvatar({
 }: {
   name: string;
   avatarUrl: string | null;
-  type: "brand" | "creator";
+  type: "brand" | "creator" | "admin";
 }) {
   const initials = name
     .split(" ")

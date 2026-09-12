@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 export interface FullProfile {
   id: string;
   user_id: string;
-  user_type: "brand" | "creator";
+  user_type: "brand" | "creator" | "admin";
   email: string;
   full_name: string | null;
   avatar_url: string | null;
@@ -145,7 +145,7 @@ export interface SocialLink {
 export interface PublicProfile {
   id: string;
   userId: string;
-  user_type: "brand" | "creator";
+  user_type: "brand" | "creator" | "admin";
   full_name: string | null;
   avatar_url: string | null;
   bio: string | null;

@@ -10,7 +10,7 @@ export interface ConversationSummary {
   otherUserId: string;
   otherUserName: string;
   otherUserAvatarUrl: string | null;
-  otherUserType: "brand" | "creator";
+  otherUserType: "brand" | "creator" | "admin";
   lastMessage: string | null;
   lastMessageAt: string;
   /** senderId of the most-recent message — used by the client to detect unread threads. */
@@ -23,7 +23,7 @@ export interface DBMessage {
   senderId: string;
   receiverId: string;
   createdAt: string;
-  senderRole: "brand" | "creator";
+  senderRole: "brand" | "creator" | "admin";
   senderName: string;
   senderAvatarUrl: string | null;
 }
@@ -134,7 +134,7 @@ export interface UserPreview {
   id: string;
   name: string;
   avatarUrl: string | null;
-  userType: "brand" | "creator";
+  userType: "brand" | "creator" | "admin";
 }
 
 export async function searchUsersAction(query: string): Promise<UserPreview[]> {

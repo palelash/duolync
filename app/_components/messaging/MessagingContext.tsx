@@ -25,14 +25,14 @@ export interface ConversationRecipient {
   id: string;
   full_name: string | null;
   avatar_url: string | null;
-  user_type: "brand" | "creator";
+  user_type: "brand" | "creator" | "admin";
 }
 
 export interface ChatWindowState {
   userId: string;
   userName: string;
   avatarUrl: string | null;
-  userType: "brand" | "creator";
+  userType: "brand" | "creator" | "admin";
   minimized: boolean;
 }
 
