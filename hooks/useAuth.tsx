@@ -25,7 +25,7 @@ export type { FullProfile };
 export interface Profile {
   id: string;
   user_id: string;
-  user_type: "brand" | "creator";
+  user_type: "brand" | "creator" | "admin";
   email: string;
   full_name: string | null;
   avatar_url: string | null;
@@ -106,8 +106,11 @@ function toProfile(fp: FullProfile): Profile {
   };
 }
 
-function userTypeFromRole(role: unknown): "brand" | "creator" {
-  return String(role ?? "").toLowerCase() === "brand" ? "brand" : "creator";
+function userTypeFromRole(role: unknown): "brand" | "creator" | "admin" {
+  const r = String(role ?? "").toLowerCase();
+  if (r === "brand") return "brand";
+  if (r === "admin") return "admin";
+  return "creator";
 }
 
 /** Minimal profile from the Better Auth session so the app can render if the DB profile action 500s. */

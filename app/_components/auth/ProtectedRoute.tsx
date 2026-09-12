@@ -30,17 +30,19 @@ const ProtectedRoute = ({ children, requiredType }: ProtectedRouteProps) => {
 
   const userType = profile?.user_type;
 
-  // Role-based route guard: wrong type → send to own dashboard
+  // Role-based route guard: wrong type → send to own dashboard.
+  // Admin users are redirected to /admin to break the self-referential loop that
+  // would otherwise occur: ProtectedRoute on /creator/dashboard would redirect
+  // "admin" userType back to /creator/dashboard (since it isn't "brand" either),
+  // creating an infinite redirect cycle.
   if (requiredType && userType && userType !== requiredType) {
-    return (
-      <RedirectTo
-        path={
-          userType === "brand"
-            ? "/brand/dashboard"
-            : "/creator/dashboard"
-        }
-      />
-    );
+    const destination =
+      userType === "admin"
+        ? "/admin"
+        : userType === "brand"
+        ? "/brand/dashboard"
+        : "/creator/dashboard";
+    return <RedirectTo path={destination} />;
   }
 
   return <>{children}</>;

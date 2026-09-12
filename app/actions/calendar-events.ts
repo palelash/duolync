@@ -19,7 +19,7 @@ export interface CalendarPartnerData {
   userId: string;
   name: string;
   image: string | null;
-  role: "BRAND" | "CREATOR";
+  role: "BRAND" | "CREATOR" | "ADMIN";
   companyName?: string | null;
   niche?: string | null;
   totalFollowers?: number | null;

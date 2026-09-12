@@ -145,7 +145,8 @@ export type RateLimitEvent = $Result.DefaultSelection<Prisma.$RateLimitEventPayl
 export namespace $Enums {
   export const Role: {
   BRAND: 'BRAND',
-  CREATOR: 'CREATOR'
+  CREATOR: 'CREATOR',
+  ADMIN: 'ADMIN'
 };
 
 export type Role = (typeof Role)[keyof typeof Role]
@@ -3678,6 +3679,8 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     hasCompletedOnboarding: boolean | null
+    banned: boolean | null
+    banReason: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -3690,6 +3693,8 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     hasCompletedOnboarding: boolean | null
+    banned: boolean | null
+    banReason: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -3702,6 +3707,8 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     hasCompletedOnboarding: number
+    banned: number
+    banReason: number
     _all: number
   }
 
@@ -3716,6 +3723,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     hasCompletedOnboarding?: true
+    banned?: true
+    banReason?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -3728,6 +3737,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     hasCompletedOnboarding?: true
+    banned?: true
+    banReason?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -3740,6 +3751,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     hasCompletedOnboarding?: true
+    banned?: true
+    banReason?: true
     _all?: true
   }
 
@@ -3825,6 +3838,8 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     hasCompletedOnboarding: boolean
+    banned: boolean
+    banReason: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -3854,6 +3869,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     brandProfile?: boolean | User$brandProfileArgs<ExtArgs>
     receivedConnections?: boolean | User$receivedConnectionsArgs<ExtArgs>
@@ -3883,6 +3900,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3895,6 +3914,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -3907,9 +3928,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "role" | "createdAt" | "updatedAt" | "hasCompletedOnboarding", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "role" | "createdAt" | "updatedAt" | "hasCompletedOnboarding" | "banned" | "banReason", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     brandProfile?: boolean | User$brandProfileArgs<ExtArgs>
@@ -3962,6 +3985,8 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       hasCompletedOnboarding: boolean
+      banned: boolean
+      banReason: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4410,6 +4435,8 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly hasCompletedOnboarding: FieldRef<"User", 'Boolean'>
+    readonly banned: FieldRef<"User", 'Boolean'>
+    readonly banReason: FieldRef<"User", 'String'>
   }
     
 
@@ -32622,7 +32649,9 @@ export namespace Prisma {
     role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    hasCompletedOnboarding: 'hasCompletedOnboarding'
+    hasCompletedOnboarding: 'hasCompletedOnboarding',
+    banned: 'banned',
+    banReason: 'banReason'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -33271,6 +33300,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     hasCompletedOnboarding?: BoolFilter<"User"> | boolean
+    banned?: BoolFilter<"User"> | boolean
+    banReason?: StringNullableFilter<"User"> | string | null
     accounts?: AccountListRelationFilter
     brandProfile?: XOR<BrandProfileNullableScalarRelationFilter, BrandProfileWhereInput> | null
     receivedConnections?: ConnectionListRelationFilter
@@ -33299,6 +33330,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     hasCompletedOnboarding?: SortOrder
+    banned?: SortOrder
+    banReason?: SortOrderInput | SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     brandProfile?: BrandProfileOrderByWithRelationInput
     receivedConnections?: ConnectionOrderByRelationAggregateInput
@@ -33330,6 +33363,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     hasCompletedOnboarding?: BoolFilter<"User"> | boolean
+    banned?: BoolFilter<"User"> | boolean
+    banReason?: StringNullableFilter<"User"> | string | null
     accounts?: AccountListRelationFilter
     brandProfile?: XOR<BrandProfileNullableScalarRelationFilter, BrandProfileWhereInput> | null
     receivedConnections?: ConnectionListRelationFilter
@@ -33358,6 +33393,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     hasCompletedOnboarding?: SortOrder
+    banned?: SortOrder
+    banReason?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -33376,6 +33413,8 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     hasCompletedOnboarding?: BoolWithAggregatesFilter<"User"> | boolean
+    banned?: BoolWithAggregatesFilter<"User"> | boolean
+    banReason?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type BrandProfileWhereInput = {
@@ -35241,6 +35280,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -35269,6 +35310,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -35297,6 +35340,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -35325,6 +35370,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -35353,6 +35400,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -35365,6 +35414,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -35377,6 +35428,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BrandProfileCreateInput = {
@@ -37548,6 +37601,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     hasCompletedOnboarding?: SortOrder
+    banned?: SortOrder
+    banReason?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -37560,6 +37615,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     hasCompletedOnboarding?: SortOrder
+    banned?: SortOrder
+    banReason?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -37572,6 +37629,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     hasCompletedOnboarding?: SortOrder
+    banned?: SortOrder
+    banReason?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -42501,6 +42560,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
@@ -42528,6 +42589,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
@@ -42747,6 +42810,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
@@ -42774,6 +42839,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
@@ -43088,6 +43155,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43115,6 +43184,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -43258,6 +43329,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -43285,6 +43358,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -43412,6 +43487,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
@@ -43439,6 +43516,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
@@ -43482,6 +43561,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
@@ -43509,6 +43590,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
@@ -43536,6 +43619,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43563,6 +43648,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -43606,6 +43693,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -43633,6 +43722,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -43660,6 +43751,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43687,6 +43780,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -43730,6 +43825,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -43757,6 +43854,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -43784,6 +43883,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43811,6 +43912,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -43854,6 +43957,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -43881,6 +43986,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -43908,6 +44015,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43935,6 +44044,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -43967,6 +44078,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -43994,6 +44107,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -44037,6 +44152,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -44064,6 +44181,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -44102,6 +44221,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -44129,6 +44250,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -44538,6 +44661,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -44565,6 +44690,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -44754,6 +44881,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -44781,6 +44910,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -44857,6 +44988,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -44884,6 +45017,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -44916,6 +45051,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -44943,6 +45080,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -45025,6 +45164,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -45052,6 +45193,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -45090,6 +45233,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -45117,6 +45262,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -45743,6 +45890,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
@@ -45770,6 +45919,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
@@ -45802,6 +45953,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -45829,6 +45982,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -45872,6 +46027,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
@@ -45899,6 +46056,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
@@ -45937,6 +46096,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -45964,6 +46125,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -46128,6 +46291,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -46155,6 +46320,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -46223,6 +46390,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -46250,6 +46419,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -46277,6 +46448,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -46304,6 +46477,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -46347,6 +46522,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -46374,6 +46551,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
@@ -46697,6 +46876,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
@@ -46724,6 +46905,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
@@ -46867,6 +47050,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
@@ -46894,6 +47079,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput

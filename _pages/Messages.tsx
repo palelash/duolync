@@ -76,7 +76,7 @@ function formatTime(dateStr: string): string {
  * has to break characters in the middle of a word.
  */
 function getBubbleClasses(
-  senderRole: "brand" | "creator",
+  senderRole: "brand" | "creator" | "admin",
   isOwn: boolean,
 ): string {
   const base =
@@ -97,7 +97,7 @@ const Avatar = ({
 }: {
   name: string;
   avatarUrl: string | null;
-  type: "brand" | "creator";
+  type: "brand" | "creator" | "admin";
   size?: "sm" | "md" | "lg";
 }) => {
   const sizeClass =

@@ -17,6 +17,8 @@ model User {
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @updatedAt
   hasCompletedOnboarding Boolean               @default(false) @map("onboardingCompleted")
+  banned                 Boolean               @default(false)
+  banReason              String?
   accounts               Account[]
   brandProfile           BrandProfile?
   receivedConnections    Connection[]          @relation("ReceivedConnections")
@@ -392,6 +394,7 @@ model Application {
 enum Role {
   BRAND
   CREATOR
+  ADMIN
 }
 
 enum ContractStatus {

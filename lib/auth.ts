@@ -27,13 +27,27 @@ export const auth = betterAuth({
       role: {
         type: "string" as const,
         required: false,
-        defaultValue: "creator",
+        // Must be an exact PostgreSQL enum value (case-sensitive).
+        // Lowercase "creator" would be rejected by the DB if it ever bypasses toPrismaRole.
+        defaultValue: "CREATOR",
         input: false,
       },
       hasCompletedOnboarding: {
         type: "boolean" as const,
         required: false,
         defaultValue: false,
+        input: false,
+      },
+      banned: {
+        type: "boolean" as const,
+        required: false,
+        defaultValue: false,
+        input: false,
+      },
+      banReason: {
+        type: "string" as const,
+        required: false,
+        defaultValue: "",
         input: false,
       },
     },
