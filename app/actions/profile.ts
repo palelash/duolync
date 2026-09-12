@@ -157,6 +157,8 @@ export interface PublicProfile {
   primary_platform: string | null;
   total_followers: number;
   avg_engagement_rate: number;
+  /** True when the creator's moderationStatus === "APPROVED" */
+  verified: boolean;
   // Apify analytics fields
   followerCount: number | null;
   averageEngagement: number | null;
@@ -263,6 +265,7 @@ export async function getProfileAction(
             topNiches: true,
             lastSyncedAt: true,
             connectedPlatforms: true,
+            moderationStatus: true,
             socialPosts: {
               orderBy: { fetchedAt: "desc" },
               take: 9,
@@ -313,6 +316,7 @@ export async function getProfileAction(
     primary_platform: (creator?.primaryPlatform ?? null) as string | null,
     total_followers: creator?.totalFollowers ?? 0,
     avg_engagement_rate: creator?.avgEngagementRate ?? 0,
+    verified: creator?.moderationStatus === "APPROVED",
     followerCount: creator?.followerCount ?? null,
     averageEngagement: creator?.averageEngagement ?? null,
     topNiches: creator?.topNiches ?? [],

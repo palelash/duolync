@@ -266,6 +266,15 @@ export const InvitationStatus: {
 
 export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
 
+
+export const ModerationStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type ModerationStatus = (typeof ModerationStatus)[keyof typeof ModerationStatus]
+
 }
 
 export type Role = $Enums.Role
@@ -315,6 +324,10 @@ export const NotificationType: typeof $Enums.NotificationType
 export type InvitationStatus = $Enums.InvitationStatus
 
 export const InvitationStatus: typeof $Enums.InvitationStatus
+
+export type ModerationStatus = $Enums.ModerationStatus
+
+export const ModerationStatus: typeof $Enums.ModerationStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -6514,6 +6527,9 @@ export namespace Prisma {
     followerCount: number | null
     averageEngagement: number | null
     lastSyncedAt: Date | null
+    moderationStatus: $Enums.ModerationStatus | null
+    moderationNote: string | null
+    moderatedAt: Date | null
   }
 
   export type CreatorProfileMaxAggregateOutputType = {
@@ -6529,6 +6545,9 @@ export namespace Prisma {
     followerCount: number | null
     averageEngagement: number | null
     lastSyncedAt: Date | null
+    moderationStatus: $Enums.ModerationStatus | null
+    moderationNote: string | null
+    moderatedAt: Date | null
   }
 
   export type CreatorProfileCountAggregateOutputType = {
@@ -6547,6 +6566,9 @@ export namespace Prisma {
     topNiches: number
     lastSyncedAt: number
     connectedPlatforms: number
+    moderationStatus: number
+    moderationNote: number
+    moderatedAt: number
     _all: number
   }
 
@@ -6578,6 +6600,9 @@ export namespace Prisma {
     followerCount?: true
     averageEngagement?: true
     lastSyncedAt?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
   }
 
   export type CreatorProfileMaxAggregateInputType = {
@@ -6593,6 +6618,9 @@ export namespace Prisma {
     followerCount?: true
     averageEngagement?: true
     lastSyncedAt?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
   }
 
   export type CreatorProfileCountAggregateInputType = {
@@ -6611,6 +6639,9 @@ export namespace Prisma {
     topNiches?: true
     lastSyncedAt?: true
     connectedPlatforms?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
     _all?: true
   }
 
@@ -6716,6 +6747,9 @@ export namespace Prisma {
     topNiches: string[]
     lastSyncedAt: Date | null
     connectedPlatforms: string[]
+    moderationStatus: $Enums.ModerationStatus
+    moderationNote: string | null
+    moderatedAt: Date | null
     _count: CreatorProfileCountAggregateOutputType | null
     _avg: CreatorProfileAvgAggregateOutputType | null
     _sum: CreatorProfileSumAggregateOutputType | null
@@ -6753,6 +6787,9 @@ export namespace Prisma {
     topNiches?: boolean
     lastSyncedAt?: boolean
     connectedPlatforms?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     applications?: boolean | CreatorProfile$applicationsArgs<ExtArgs>
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
@@ -6777,6 +6814,9 @@ export namespace Prisma {
     topNiches?: boolean
     lastSyncedAt?: boolean
     connectedPlatforms?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
@@ -6796,6 +6836,9 @@ export namespace Prisma {
     topNiches?: boolean
     lastSyncedAt?: boolean
     connectedPlatforms?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
@@ -6815,9 +6858,12 @@ export namespace Prisma {
     topNiches?: boolean
     lastSyncedAt?: boolean
     connectedPlatforms?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "niche" | "primaryPlatform" | "location" | "totalFollowers" | "avgEngagementRate" | "lastStatsUpdate" | "socialLinks" | "followerCount" | "averageEngagement" | "topNiches" | "lastSyncedAt" | "connectedPlatforms", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "niche" | "primaryPlatform" | "location" | "totalFollowers" | "avgEngagementRate" | "lastStatsUpdate" | "socialLinks" | "followerCount" | "averageEngagement" | "topNiches" | "lastSyncedAt" | "connectedPlatforms" | "moderationStatus" | "moderationNote" | "moderatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | CreatorProfile$applicationsArgs<ExtArgs>
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
@@ -6858,6 +6904,9 @@ export namespace Prisma {
       topNiches: string[]
       lastSyncedAt: Date | null
       connectedPlatforms: string[]
+      moderationStatus: $Enums.ModerationStatus
+      moderationNote: string | null
+      moderatedAt: Date | null
     }, ExtArgs["result"]["creatorProfile"]>
     composites: {}
   }
@@ -7301,6 +7350,9 @@ export namespace Prisma {
     readonly topNiches: FieldRef<"CreatorProfile", 'String[]'>
     readonly lastSyncedAt: FieldRef<"CreatorProfile", 'DateTime'>
     readonly connectedPlatforms: FieldRef<"CreatorProfile", 'String[]'>
+    readonly moderationStatus: FieldRef<"CreatorProfile", 'ModerationStatus'>
+    readonly moderationNote: FieldRef<"CreatorProfile", 'String'>
+    readonly moderatedAt: FieldRef<"CreatorProfile", 'DateTime'>
   }
     
 
@@ -16690,6 +16742,9 @@ export namespace Prisma {
     goal: string | null
     dosAndDonts: string | null
     minFollowers: number | null
+    moderationStatus: $Enums.ModerationStatus | null
+    moderationNote: string | null
+    moderatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -16708,6 +16763,9 @@ export namespace Prisma {
     goal: string | null
     dosAndDonts: string | null
     minFollowers: number | null
+    moderationStatus: $Enums.ModerationStatus | null
+    moderationNote: string | null
+    moderatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -16728,6 +16786,9 @@ export namespace Prisma {
     platforms: number
     contentFormats: number
     minFollowers: number
+    moderationStatus: number
+    moderationNote: number
+    moderatedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -16758,6 +16819,9 @@ export namespace Prisma {
     goal?: true
     dosAndDonts?: true
     minFollowers?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -16776,6 +16840,9 @@ export namespace Prisma {
     goal?: true
     dosAndDonts?: true
     minFollowers?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -16796,6 +16863,9 @@ export namespace Prisma {
     platforms?: true
     contentFormats?: true
     minFollowers?: true
+    moderationStatus?: true
+    moderationNote?: true
+    moderatedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -16903,6 +16973,9 @@ export namespace Prisma {
     platforms: string[]
     contentFormats: string[]
     minFollowers: number | null
+    moderationStatus: $Enums.ModerationStatus
+    moderationNote: string | null
+    moderatedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: CampaignCountAggregateOutputType | null
@@ -16942,6 +17015,9 @@ export namespace Prisma {
     platforms?: boolean
     contentFormats?: boolean
     minFollowers?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     applications?: boolean | Campaign$applicationsArgs<ExtArgs>
@@ -16968,6 +17044,9 @@ export namespace Prisma {
     platforms?: boolean
     contentFormats?: boolean
     minFollowers?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     brand?: boolean | BrandProfileDefaultArgs<ExtArgs>
@@ -16989,6 +17068,9 @@ export namespace Prisma {
     platforms?: boolean
     contentFormats?: boolean
     minFollowers?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     brand?: boolean | BrandProfileDefaultArgs<ExtArgs>
@@ -17010,11 +17092,14 @@ export namespace Prisma {
     platforms?: boolean
     contentFormats?: boolean
     minFollowers?: boolean
+    moderationStatus?: boolean
+    moderationNote?: boolean
+    moderatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CampaignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "brandProfileId" | "title" | "description" | "budget" | "status" | "imageUrl" | "deadline" | "requirements" | "briefDescription" | "goal" | "dosAndDonts" | "platforms" | "contentFormats" | "minFollowers" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
+  export type CampaignOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "brandProfileId" | "title" | "description" | "budget" | "status" | "imageUrl" | "deadline" | "requirements" | "briefDescription" | "goal" | "dosAndDonts" | "platforms" | "contentFormats" | "minFollowers" | "moderationStatus" | "moderationNote" | "moderatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["campaign"]>
   export type CampaignInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | Campaign$applicationsArgs<ExtArgs>
     brand?: boolean | BrandProfileDefaultArgs<ExtArgs>
@@ -17055,6 +17140,9 @@ export namespace Prisma {
       platforms: string[]
       contentFormats: string[]
       minFollowers: number | null
+      moderationStatus: $Enums.ModerationStatus
+      moderationNote: string | null
+      moderatedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["campaign"]>
@@ -17500,6 +17588,9 @@ export namespace Prisma {
     readonly platforms: FieldRef<"Campaign", 'String[]'>
     readonly contentFormats: FieldRef<"Campaign", 'String[]'>
     readonly minFollowers: FieldRef<"Campaign", 'Int'>
+    readonly moderationStatus: FieldRef<"Campaign", 'ModerationStatus'>
+    readonly moderationNote: FieldRef<"Campaign", 'String'>
+    readonly moderatedAt: FieldRef<"Campaign", 'DateTime'>
     readonly createdAt: FieldRef<"Campaign", 'DateTime'>
     readonly updatedAt: FieldRef<"Campaign", 'DateTime'>
   }
@@ -32687,7 +32778,10 @@ export namespace Prisma {
     averageEngagement: 'averageEngagement',
     topNiches: 'topNiches',
     lastSyncedAt: 'lastSyncedAt',
-    connectedPlatforms: 'connectedPlatforms'
+    connectedPlatforms: 'connectedPlatforms',
+    moderationStatus: 'moderationStatus',
+    moderationNote: 'moderationNote',
+    moderatedAt: 'moderatedAt'
   };
 
   export type CreatorProfileScalarFieldEnum = (typeof CreatorProfileScalarFieldEnum)[keyof typeof CreatorProfileScalarFieldEnum]
@@ -32825,6 +32919,9 @@ export namespace Prisma {
     platforms: 'platforms',
     contentFormats: 'contentFormats',
     minFollowers: 'minFollowers',
+    moderationStatus: 'moderationStatus',
+    moderationNote: 'moderationNote',
+    moderatedAt: 'moderatedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -33141,6 +33238,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ModerationStatus'
+   */
+  export type EnumModerationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ModerationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ModerationStatus[]'
+   */
+  export type ListEnumModerationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ModerationStatus[]'>
     
 
 
@@ -33526,6 +33637,9 @@ export namespace Prisma {
     topNiches?: StringNullableListFilter<"CreatorProfile">
     lastSyncedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     connectedPlatforms?: StringNullableListFilter<"CreatorProfile">
+    moderationStatus?: EnumModerationStatusFilter<"CreatorProfile"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"CreatorProfile"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     applications?: ApplicationListRelationFilter
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
@@ -33549,6 +33663,9 @@ export namespace Prisma {
     topNiches?: SortOrder
     lastSyncedAt?: SortOrderInput | SortOrder
     connectedPlatforms?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrderInput | SortOrder
+    moderatedAt?: SortOrderInput | SortOrder
     applications?: ApplicationOrderByRelationAggregateInput
     contracts?: ContractOrderByRelationAggregateInput
     campaignEvents?: CampaignEventOrderByRelationAggregateInput
@@ -33575,6 +33692,9 @@ export namespace Prisma {
     topNiches?: StringNullableListFilter<"CreatorProfile">
     lastSyncedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     connectedPlatforms?: StringNullableListFilter<"CreatorProfile">
+    moderationStatus?: EnumModerationStatusFilter<"CreatorProfile"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"CreatorProfile"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
     applications?: ApplicationListRelationFilter
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
@@ -33598,6 +33718,9 @@ export namespace Prisma {
     topNiches?: SortOrder
     lastSyncedAt?: SortOrderInput | SortOrder
     connectedPlatforms?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrderInput | SortOrder
+    moderatedAt?: SortOrderInput | SortOrder
     _count?: CreatorProfileCountOrderByAggregateInput
     _avg?: CreatorProfileAvgOrderByAggregateInput
     _max?: CreatorProfileMaxOrderByAggregateInput
@@ -33624,6 +33747,9 @@ export namespace Prisma {
     topNiches?: StringNullableListFilter<"CreatorProfile">
     lastSyncedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
     connectedPlatforms?: StringNullableListFilter<"CreatorProfile">
+    moderationStatus?: EnumModerationStatusWithAggregatesFilter<"CreatorProfile"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    moderatedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
   }
 
   export type SocialPostWhereInput = {
@@ -34229,6 +34355,9 @@ export namespace Prisma {
     platforms?: StringNullableListFilter<"Campaign">
     contentFormats?: StringNullableListFilter<"Campaign">
     minFollowers?: IntNullableFilter<"Campaign"> | number | null
+    moderationStatus?: EnumModerationStatusFilter<"Campaign"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"Campaign"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
     createdAt?: DateTimeFilter<"Campaign"> | Date | string
     updatedAt?: DateTimeFilter<"Campaign"> | Date | string
     applications?: ApplicationListRelationFilter
@@ -34254,6 +34383,9 @@ export namespace Prisma {
     platforms?: SortOrder
     contentFormats?: SortOrder
     minFollowers?: SortOrderInput | SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrderInput | SortOrder
+    moderatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     applications?: ApplicationOrderByRelationAggregateInput
@@ -34282,6 +34414,9 @@ export namespace Prisma {
     platforms?: StringNullableListFilter<"Campaign">
     contentFormats?: StringNullableListFilter<"Campaign">
     minFollowers?: IntNullableFilter<"Campaign"> | number | null
+    moderationStatus?: EnumModerationStatusFilter<"Campaign"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"Campaign"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
     createdAt?: DateTimeFilter<"Campaign"> | Date | string
     updatedAt?: DateTimeFilter<"Campaign"> | Date | string
     applications?: ApplicationListRelationFilter
@@ -34307,6 +34442,9 @@ export namespace Prisma {
     platforms?: SortOrder
     contentFormats?: SortOrder
     minFollowers?: SortOrderInput | SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrderInput | SortOrder
+    moderatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CampaignCountOrderByAggregateInput
@@ -34335,6 +34473,9 @@ export namespace Prisma {
     platforms?: StringNullableListFilter<"Campaign">
     contentFormats?: StringNullableListFilter<"Campaign">
     minFollowers?: IntNullableWithAggregatesFilter<"Campaign"> | number | null
+    moderationStatus?: EnumModerationStatusWithAggregatesFilter<"Campaign"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableWithAggregatesFilter<"Campaign"> | string | null
+    moderatedAt?: DateTimeNullableWithAggregatesFilter<"Campaign"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Campaign"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Campaign"> | Date | string
   }
@@ -35550,6 +35691,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
@@ -35573,6 +35717,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -35594,6 +35741,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
@@ -35617,6 +35767,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
@@ -35639,6 +35792,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
   }
 
   export type CreatorProfileUpdateManyMutationInput = {
@@ -35656,6 +35812,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type CreatorProfileUncheckedUpdateManyInput = {
@@ -35674,6 +35833,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SocialPostCreateInput = {
@@ -36328,6 +36490,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCampaignInput
@@ -36353,6 +36518,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
@@ -36376,6 +36544,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCampaignNestedInput
@@ -36401,6 +36572,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
@@ -36425,6 +36599,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36444,6 +36621,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36464,6 +36644,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37892,6 +38075,13 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type EnumModerationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ModerationStatus | EnumModerationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumModerationStatusFilter<$PrismaModel> | $Enums.ModerationStatus
+  }
+
   export type ApplicationListRelationFilter = {
     every?: ApplicationWhereInput
     some?: ApplicationWhereInput
@@ -37928,6 +38118,9 @@ export namespace Prisma {
     topNiches?: SortOrder
     lastSyncedAt?: SortOrder
     connectedPlatforms?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
   }
 
   export type CreatorProfileAvgOrderByAggregateInput = {
@@ -37950,6 +38143,9 @@ export namespace Prisma {
     followerCount?: SortOrder
     averageEngagement?: SortOrder
     lastSyncedAt?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
   }
 
   export type CreatorProfileMinOrderByAggregateInput = {
@@ -37965,6 +38161,9 @@ export namespace Prisma {
     followerCount?: SortOrder
     averageEngagement?: SortOrder
     lastSyncedAt?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
   }
 
   export type CreatorProfileSumOrderByAggregateInput = {
@@ -38050,6 +38249,16 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type EnumModerationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ModerationStatus | EnumModerationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumModerationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ModerationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumModerationStatusFilter<$PrismaModel>
+    _max?: NestedEnumModerationStatusFilter<$PrismaModel>
   }
 
   export type CreatorProfileScalarRelationFilter = {
@@ -38402,6 +38611,9 @@ export namespace Prisma {
     platforms?: SortOrder
     contentFormats?: SortOrder
     minFollowers?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -38425,6 +38637,9 @@ export namespace Prisma {
     goal?: SortOrder
     dosAndDonts?: SortOrder
     minFollowers?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -38443,6 +38658,9 @@ export namespace Prisma {
     goal?: SortOrder
     dosAndDonts?: SortOrder
     minFollowers?: SortOrder
+    moderationStatus?: SortOrder
+    moderationNote?: SortOrder
+    moderatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40147,6 +40365,10 @@ export namespace Prisma {
     push?: string | string[]
   }
 
+  export type EnumModerationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ModerationStatus
+  }
+
   export type ApplicationUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<ApplicationCreateWithoutCreatorInput, ApplicationUncheckedCreateWithoutCreatorInput> | ApplicationCreateWithoutCreatorInput[] | ApplicationUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutCreatorInput | ApplicationCreateOrConnectWithoutCreatorInput[]
@@ -41305,6 +41527,13 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumModerationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ModerationStatus | EnumModerationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumModerationStatusFilter<$PrismaModel> | $Enums.ModerationStatus
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -41381,6 +41610,16 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumModerationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ModerationStatus | EnumModerationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ModerationStatus[] | ListEnumModerationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumModerationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ModerationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumModerationStatusFilter<$PrismaModel>
+    _max?: NestedEnumModerationStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumCampaignStatusFilter<$PrismaModel = never> = {
@@ -41697,6 +41936,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
@@ -41718,6 +41960,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -42217,6 +42462,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
@@ -42238,6 +42486,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
@@ -42660,6 +42911,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCampaignInput
@@ -42683,6 +42937,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
@@ -42924,6 +43181,9 @@ export namespace Prisma {
     platforms?: StringNullableListFilter<"Campaign">
     contentFormats?: StringNullableListFilter<"Campaign">
     minFollowers?: IntNullableFilter<"Campaign"> | number | null
+    moderationStatus?: EnumModerationStatusFilter<"Campaign"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"Campaign"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"Campaign"> | Date | string | null
     createdAt?: DateTimeFilter<"Campaign"> | Date | string
     updatedAt?: DateTimeFilter<"Campaign"> | Date | string
   }
@@ -43392,6 +43652,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
@@ -43414,6 +43677,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -43450,6 +43716,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
@@ -43472,6 +43741,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
@@ -44568,6 +44840,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCampaignInput
@@ -44592,6 +44867,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
@@ -44619,6 +44897,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
@@ -44641,6 +44922,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -44776,6 +45060,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCampaignNestedInput
@@ -44800,6 +45087,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
@@ -44833,6 +45123,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
@@ -44855,6 +45148,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -45296,6 +45592,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCampaignInput
@@ -45320,6 +45619,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
@@ -45347,6 +45649,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
@@ -45369,6 +45674,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -45496,6 +45804,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCampaignNestedInput
@@ -45520,6 +45831,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
@@ -45553,6 +45867,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
@@ -45575,6 +45892,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -46585,6 +46905,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     brand: BrandProfileCreateNestedOneWithoutCampaignsInput
@@ -46609,6 +46932,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
@@ -46636,6 +46962,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
@@ -46658,6 +46987,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileCreatetopNichesInput | string[]
     lastSyncedAt?: Date | string | null
     connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -46694,6 +47026,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     brand?: BrandProfileUpdateOneRequiredWithoutCampaignsNestedInput
@@ -46718,6 +47053,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
@@ -46751,6 +47089,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
@@ -46773,6 +47114,9 @@ export namespace Prisma {
     topNiches?: CreatorProfileUpdatetopNichesInput | string[]
     lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -46793,6 +47137,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationCreateNestedManyWithoutCampaignInput
@@ -46817,6 +47164,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
@@ -46955,6 +47305,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCampaignNestedInput
@@ -46979,6 +47332,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
@@ -47706,6 +48062,9 @@ export namespace Prisma {
     platforms?: CampaignCreateplatformsInput | string[]
     contentFormats?: CampaignCreatecontentFormatsInput | string[]
     minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -47784,6 +48143,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUpdateManyWithoutCampaignNestedInput
@@ -47807,6 +48169,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
@@ -47830,6 +48195,9 @@ export namespace Prisma {
     platforms?: CampaignUpdateplatformsInput | string[]
     contentFormats?: CampaignUpdatecontentFormatsInput | string[]
     minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

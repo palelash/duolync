@@ -6,6 +6,22 @@ import { isAdmin } from "@/lib/roles";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
+// ── Notification helper ───────────────────────────────────────────────────────
+
+async function notify(
+  userId: string,
+  type: string,
+  title: string,
+  body: string,
+  link = "/dashboard",
+) {
+  try {
+    await db.notification.create({ data: { userId, type, title, body, link } });
+  } catch {
+    // Notification failure must never break the main moderation action
+  }
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type ActionResult<T = null> =
@@ -201,6 +217,196 @@ export async function unbanUser(userId: string): Promise<ActionResult> {
       success: false,
       data: null,
       error: err instanceof Error ? err.message : "Failed to unban user",
+    };
+  }
+}
+
+// ── Content & Profile Moderation ──────────────────────────────────────────────
+
+export async function approveCreator(
+  creatorProfileId: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const profile = await db.creatorProfile.update({
+      where: { id: creatorProfileId },
+      data: { moderationStatus: "APPROVED", moderationNote: null, moderatedAt: new Date() },
+      select: { userId: true },
+    });
+
+    await notify(
+      profile.userId,
+      "SYSTEM",
+      "🎉 Profile approved!",
+      "Your creator profile has been approved. You're now visible on the Discover page.",
+      "/dashboard",
+    );
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[approveCreator]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to approve creator",
+    };
+  }
+}
+
+export async function rejectCreator(
+  creatorProfileId: string,
+  reason?: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const profile = await db.creatorProfile.update({
+      where: { id: creatorProfileId },
+      data: {
+        moderationStatus: "REJECTED",
+        moderationNote: reason ?? null,
+        moderatedAt: new Date(),
+      },
+      select: { userId: true },
+    });
+
+    await notify(
+      profile.userId,
+      "SYSTEM",
+      "Profile review update",
+      reason
+        ? `Your creator profile was not approved: ${reason}`
+        : "Your creator profile was not approved at this time. Please update your profile and it will be re-reviewed.",
+      "/dashboard",
+    );
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[rejectCreator]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to reject creator",
+    };
+  }
+}
+
+export async function setPendingCreator(
+  creatorProfileId: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    await db.creatorProfile.update({
+      where: { id: creatorProfileId },
+      data: { moderationStatus: "PENDING", moderationNote: null, moderatedAt: null },
+    });
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[setPendingCreator]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to reset creator status",
+    };
+  }
+}
+
+export async function approveCampaign(
+  campaignId: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const campaign = await db.campaign.update({
+      where: { id: campaignId },
+      data: { moderationStatus: "APPROVED", moderationNote: null, moderatedAt: new Date() },
+      select: { title: true, brand: { select: { userId: true } } },
+    });
+
+    await notify(
+      campaign.brand.userId,
+      "CAMPAIGN_UPDATE",
+      "🎉 Campaign approved!",
+      `Your campaign "${campaign.title}" has been approved and is now visible to creators.`,
+      "/brand/campaigns",
+    );
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[approveCampaign]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to approve campaign",
+    };
+  }
+}
+
+export async function rejectCampaign(
+  campaignId: string,
+  reason?: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const campaign = await db.campaign.update({
+      where: { id: campaignId },
+      data: {
+        moderationStatus: "REJECTED",
+        moderationNote: reason ?? null,
+        moderatedAt: new Date(),
+      },
+      select: { title: true, brand: { select: { userId: true } } },
+    });
+
+    await notify(
+      campaign.brand.userId,
+      "CAMPAIGN_UPDATE",
+      "Campaign review update",
+      reason
+        ? `Your campaign "${campaign.title}" was not approved: ${reason}`
+        : `Your campaign "${campaign.title}" was not approved at this time. Please review your campaign details.`,
+      "/brand/campaigns",
+    );
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[rejectCampaign]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to reject campaign",
+    };
+  }
+}
+
+export async function setPendingCampaign(
+  campaignId: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    await db.campaign.update({
+      where: { id: campaignId },
+      data: { moderationStatus: "PENDING", moderationNote: null, moderatedAt: null },
+    });
+
+    revalidatePath("/admin/moderation");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[setPendingCampaign]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to reset campaign status",
     };
   }
 }

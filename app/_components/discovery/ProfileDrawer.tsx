@@ -5,7 +5,6 @@ import {
   X,
   Maximize2,
   Minimize2,
-  BadgeCheck,
   MapPin,
   TrendingUp,
   Users,
@@ -39,6 +38,7 @@ import {
 } from "@/app/actions/campaigns";
 import { sendBrandInvitationAction } from "@/app/actions/invitations";
 import { useToast } from "@/hooks/use-toast";
+import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
 import { cn } from "@/lib/utils";
 import {
   AreaChart,
@@ -559,9 +559,7 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                 <span className="font-semibold text-[13px] truncate leading-tight text-zinc-900 dark:text-zinc-50">
                   {creator.full_name}
                 </span>
-                {creator.verified && (
-                  <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0" />
-                )}
+                <VerifiedBadge show={creator.verified} size="xs" />
               </div>
               {creator.location && (
                 <div className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
@@ -635,7 +633,7 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                   </div>
                   {creator.verified && (
                     <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-neutral-800 flex items-center justify-center">
-                      <BadgeCheck className="w-4 h-4 text-primary" />
+                      <VerifiedBadge show size="sm" />
                     </div>
                   )}
                 </div>

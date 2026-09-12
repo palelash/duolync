@@ -92,7 +92,7 @@ export async function getPublicCampaignsAction(): Promise<{
 
   const [campaigns, myApplications] = await Promise.all([
     db.campaign.findMany({
-      where: { status: "ACTIVE" },
+      where: { status: "ACTIVE", moderationStatus: "APPROVED" },
       include: {
         brand: {
           include: {

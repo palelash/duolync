@@ -3,9 +3,10 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Search, SlidersHorizontal, Heart, MessageSquare, X,
-  MapPin, BadgeCheck, Users, TrendingUp, ChevronDown,
+  MapPin, Users, TrendingUp, ChevronDown,
   Briefcase, Globe, Sparkles, UserPlus, UserCheck, Clock,
 } from "lucide-react";
+import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
 import { RichEmptyState } from "@/app/_components/shared/RichEmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -286,7 +287,7 @@ const CreatorCard = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className="font-display font-bold text-[15px] truncate text-zinc-900 dark:text-zinc-50">{creator.full_name}</span>
-              {creator.verified && <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0" />}
+              <VerifiedBadge show={creator.verified} />
             </div>
             {creator.location && <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400"><MapPin className="w-3 h-3 shrink-0" /><span className="truncate">{creator.location}</span></div>}
           </div>
