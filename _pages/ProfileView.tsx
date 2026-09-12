@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
 import { useMessaging } from "@/components/messaging/MessagingContext";
 import MainLayout from "@/components/layout/MainLayout";
 import {
@@ -1018,6 +1019,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
             <div className="mb-3">
               <div className="flex items-center gap-2 flex-wrap mb-1.5">
                 <h1 className="font-display text-2xl font-bold">{profileData.full_name ?? "User"}</h1>
+                {isCreator && <VerifiedBadge show={profileData.verified} size="md" />}
                 <Badge variant={isCreator ? "default" : "secondary"} className="capitalize text-xs">
                   {profileData.user_type}
                 </Badge>

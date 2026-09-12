@@ -56,26 +56,29 @@ model BrandProfile {
 }
 
 model CreatorProfile {
-  id                 String          @id @default(cuid())
-  userId             String          @unique
+  id                 String           @id @default(cuid())
+  userId             String           @unique
   bio                String?
   niche              String?
   primaryPlatform    String?
   location           String?
-  totalFollowers     Int             @default(0)
-  avgEngagementRate  Float           @default(0)
+  totalFollowers     Int              @default(0)
+  avgEngagementRate  Float            @default(0)
   lastStatsUpdate    DateTime?
   socialLinks        Json?
   followerCount      Int?
   averageEngagement  Float?
-  topNiches          String[]        @default([])
+  topNiches          String[]         @default([])
   lastSyncedAt       DateTime?
-  connectedPlatforms String[]        @default([])
+  connectedPlatforms String[]         @default([])
+  moderationStatus   ModerationStatus @default(PENDING)
+  moderationNote     String?
+  moderatedAt        DateTime?
   applications       Application[]
   contracts          Contract[]
   campaignEvents     CampaignEvent[]
   socialPosts        SocialPost[]
-  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SocialPost {
@@ -193,31 +196,35 @@ model Message {
 }
 
 model Campaign {
-  id               String          @id @default(cuid())
+  id               String           @id @default(cuid())
   brandProfileId   String
   title            String
   description      String
   budget           Float
-  status           CampaignStatus  @default(DRAFT)
+  status           CampaignStatus   @default(DRAFT)
   imageUrl         String?
   deadline         DateTime?
   requirements     String?
   briefDescription String?
   goal             String?
   dosAndDonts      String?
-  platforms        String[]        @default([])
-  contentFormats   String[]        @default([])
+  platforms        String[]         @default([])
+  contentFormats   String[]         @default([])
   minFollowers     Int?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  moderationStatus ModerationStatus @default(PENDING)
+  moderationNote   String?
+  moderatedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   applications     Application[]
-  brand            BrandProfile    @relation(fields: [brandProfileId], references: [id], onDelete: Cascade)
+  brand            BrandProfile     @relation(fields: [brandProfileId], references: [id], onDelete: Cascade)
   contracts        Contract[]
   events           CampaignEvent[]
   invitations      Invitation[]
 
   @@index([brandProfileId])
   @@index([status])
+  @@index([moderationStatus])
 }
 
 model CampaignEvent {
@@ -496,6 +503,12 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   DECLINED
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
