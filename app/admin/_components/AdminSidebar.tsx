@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Scale,
   LogOut,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/lib/auth-client";
@@ -40,6 +41,11 @@ const navItems = [
     label: "Disputes",
     href: "/admin/disputes",
     icon: Scale,
+  },
+  {
+    label: "Finance",
+    href: "/admin/finance",
+    icon: DollarSign,
   },
 ] as const;
 
