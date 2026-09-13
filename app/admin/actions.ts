@@ -410,3 +410,200 @@ export async function setPendingCampaign(
     };
   }
 }
+
+// ── Dispute Resolution ────────────────────────────────────────────────────────
+
+export type DisputeStatusValue = "OPEN" | "IN_REVIEW" | "RESOLVED" | "CLOSED";
+
+export async function updateDisputeStatus(
+  disputeId: string,
+  status: DisputeStatusValue,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const dispute = await db.dispute.update({
+      where: { id: disputeId },
+      data: { status },
+      select: { brandId: true, creatorId: true, reporterId: true, targetUserId: true, status: true },
+    });
+
+    if (status === "RESOLVED" || status === "CLOSED") {
+      const label = status === "RESOLVED" ? "resolved" : "closed";
+      const partyIds = [
+        dispute.brandId,
+        dispute.creatorId,
+        dispute.reporterId,
+        dispute.targetUserId,
+      ].filter((id): id is string => id !== null);
+      const uniqueIds = [...new Set(partyIds)];
+      for (const userId of uniqueIds) {
+        await notify(
+          userId,
+          "SYSTEM",
+          `Dispute ${label}`,
+          `An admin has marked your dispute as ${label}.`,
+          "/dashboard",
+        );
+      }
+    }
+
+    revalidatePath("/admin/disputes");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[updateDisputeStatus]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to update dispute status",
+    };
+  }
+}
+
+export async function addDisputeResolutionNotes(
+  disputeId: string,
+  notes: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    await db.dispute.update({
+      where: { id: disputeId },
+      data: { resolutionNotes: notes },
+    });
+
+    revalidatePath("/admin/disputes");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[addDisputeResolutionNotes]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to save resolution notes",
+    };
+  }
+}
+
+export async function resolveDispute(
+  disputeId: string,
+  notes?: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const dispute = await db.dispute.update({
+      where: { id: disputeId },
+      data: { status: "RESOLVED", resolutionNotes: notes ?? null },
+      select: { brandId: true, creatorId: true, reporterId: true, targetUserId: true },
+    });
+
+    const resolveIds = [
+      dispute.brandId, dispute.creatorId, dispute.reporterId, dispute.targetUserId,
+    ].filter((id): id is string => id !== null);
+    for (const userId of [...new Set(resolveIds)]) {
+      await notify(
+        userId,
+        "SYSTEM",
+        "Dispute resolved",
+        notes
+          ? `Your dispute has been resolved by an admin: ${notes}`
+          : "Your dispute has been resolved by an admin.",
+        "/dashboard",
+      );
+    }
+
+    revalidatePath("/admin/disputes");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[resolveDispute]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to resolve dispute",
+    };
+  }
+}
+
+export async function closeDispute(
+  disputeId: string,
+  notes?: string,
+): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const dispute = await db.dispute.update({
+      where: { id: disputeId },
+      data: { status: "CLOSED", resolutionNotes: notes ?? null },
+      select: { brandId: true, creatorId: true, reporterId: true, targetUserId: true },
+    });
+
+    const closeIds = [
+      dispute.brandId, dispute.creatorId, dispute.reporterId, dispute.targetUserId,
+    ].filter((id): id is string => id !== null);
+    for (const userId of [...new Set(closeIds)]) {
+      await notify(
+        userId,
+        "SYSTEM",
+        "Dispute closed",
+        "Your dispute has been closed by an admin.",
+        "/dashboard",
+      );
+    }
+
+    revalidatePath("/admin/disputes");
+    return { success: true, data: null, error: null };
+  } catch (err) {
+    console.error("[closeDispute]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to close dispute",
+    };
+  }
+}
+
+/** Fetch messages exchanged between the brand user and creator user for communication audit. */
+export async function getDisputeMessages(
+  brandUserId: string,
+  creatorUserId: string,
+): Promise<
+  ActionResult<
+    {
+      id: string;
+      text: string;
+      createdAt: Date;
+      senderId: string;
+      sender: { name: string | null; image: string | null };
+    }[]
+  >
+> {
+  try {
+    await requireAdmin();
+
+    const messages = await db.message.findMany({
+      where: {
+        OR: [
+          { senderId: brandUserId, receiverId: creatorUserId },
+          { senderId: creatorUserId, receiverId: brandUserId },
+        ],
+      },
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        text: true,
+        createdAt: true,
+        senderId: true,
+        sender: { select: { name: true, image: true } },
+      },
+    });
+
+    return { success: true, data: messages, error: null };
+  } catch (err) {
+    console.error("[getDisputeMessages]", err);
+    return {
+      success: false,
+      data: null,
+      error: err instanceof Error ? err.message : "Failed to fetch messages",
+    };
+  }
+}

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { db } from "@/lib/db";
 import { CampaignStatus } from "@/lib/generated/prisma";
 import { Megaphone } from "lucide-react";

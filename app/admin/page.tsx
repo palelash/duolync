@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { db } from "@/lib/db";
 import { Role, CampaignStatus } from "@/lib/generated/prisma";
 import { Users, Briefcase, Megaphone, TrendingUp } from "lucide-react";

@@ -35,6 +35,10 @@ model User {
   requestedEventUpdates  CampaignEventUpdate[] @relation("EventUpdateRequestedBy")
   reviewedEventUpdates   CampaignEventUpdate[] @relation("EventUpdateReviewedBy")
   receivedInvitations    Invitation[]          @relation("ReceivedInvitations")
+  brandDisputes          Dispute[]             @relation("BrandDisputes")
+  creatorDisputes        Dispute[]             @relation("CreatorDisputes")
+  reporterDisputes       Dispute[]             @relation("ReporterDisputes")
+  targetedDisputes       Dispute[]             @relation("TargetedDisputes")
 }
 
 model BrandProfile {
@@ -221,6 +225,7 @@ model Campaign {
   contracts        Contract[]
   events           CampaignEvent[]
   invitations      Invitation[]
+  disputes         Dispute[]
 
   @@index([brandProfileId])
   @@index([status])
@@ -509,6 +514,54 @@ enum ModerationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ── Dispute Resolution ────────────────────────────────────────────────────────
+
+model Dispute {
+  id              String        @id @default(cuid())
+  // User-submitted report fields
+  reporterId      String?
+  targetUserId    String?
+  // Legacy admin-assigned fields (kept for backward compat)
+  brandId         String?
+  creatorId       String?
+  // Common fields
+  campaignId      String?
+  status          DisputeStatus @default(OPEN)
+  reason          ReportReason  @default(OTHER)
+  description     String
+  resolutionNotes String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  // Relations
+  reporter        User?         @relation("ReporterDisputes", fields: [reporterId], references: [id], onDelete: SetNull)
+  targetUser      User?         @relation("TargetedDisputes", fields: [targetUserId], references: [id], onDelete: SetNull)
+  brand           User?         @relation("BrandDisputes", fields: [brandId], references: [id], onDelete: SetNull)
+  creator         User?         @relation("CreatorDisputes", fields: [creatorId], references: [id], onDelete: SetNull)
+  campaign        Campaign?     @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([reporterId])
+  @@index([targetUserId])
+  @@index([brandId])
+  @@index([creatorId])
+  @@index([campaignId])
+}
+
+enum DisputeStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum ReportReason {
+  SCAM_FRAUD
+  INAPPROPRIATE_CONTENT
+  UNPROFESSIONAL_BEHAVIOR
+  SPAM
+  OTHER
 }
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────

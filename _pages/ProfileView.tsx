@@ -8,6 +8,7 @@ import {
   Users, Send, Edit2, Plus, Trash2, Check, X, UserPlus,
   UserCheck, Clock, Briefcase, BarChart3, Link2, RefreshCw, Radio,
 } from "lucide-react";
+import { ReportButton } from "@/app/_components/report/ReportModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -1010,6 +1011,15 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                         <Send className="w-3.5 h-3.5" /> Proposal
                       </Button>
                     )}
+                    <ReportButton
+                      targetUser={{
+                        id: profileData.userId,
+                        name: profileData.full_name,
+                        type: profileData.user_type,
+                      }}
+                      variant="icon"
+                      className="h-8 w-8 border border-zinc-200 dark:border-zinc-700"
+                    />
                   </>
                 ) : null}
               </div>

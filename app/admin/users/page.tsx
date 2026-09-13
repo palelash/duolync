@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { db } from "@/lib/db";
 import { Users } from "lucide-react";
 import { UsersClient, type AdminUser } from "./UsersClient";
