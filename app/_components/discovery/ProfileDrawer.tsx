@@ -22,6 +22,7 @@ import {
   Loader2,
   Megaphone,
 } from "lucide-react";
+import { ReportButton } from "@/app/_components/report/ReportModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -1075,7 +1076,7 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
         </div>
 
         {/* ── Footer CTA ───────────────────────────────────────── */}
-        <div className="px-5 py-4 border-t border-zinc-200 dark:border-zinc-800 shrink-0 flex gap-3">
+        <div className="px-5 py-4 border-t border-zinc-200 dark:border-zinc-800 shrink-0 flex gap-2">
           <Button
             className="flex-1 h-10 btn-gradient rounded-xl font-semibold gap-2"
             onClick={() => setShowProposal(true)}
@@ -1105,6 +1106,14 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
             <MessageSquare className="w-3.5 h-3.5" />
             Message
           </Button>
+          {/* Report creator */}
+          {creator && (
+            <ReportButton
+              targetUser={{ id: creator.id, name: creator.full_name, type: "creator" }}
+              variant="icon"
+              className="h-10 w-10 rounded-xl border border-zinc-200 dark:border-zinc-700"
+            />
+          )}
         </div>
       </div>
 

@@ -8,6 +8,7 @@ import {
   Megaphone,
   ShieldCheck,
   AlertCircle,
+  Scale,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,11 @@ const navItems = [
     label: "Moderation",
     href: "/admin/moderation",
     icon: AlertCircle,
+  },
+  {
+    label: "Disputes",
+    href: "/admin/disputes",
+    icon: Scale,
   },
 ] as const;
 

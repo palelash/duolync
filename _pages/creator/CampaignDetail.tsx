@@ -9,6 +9,7 @@ import {
   SlidersHorizontal, FileText, Users, ExternalLink,
   Star, Megaphone, AlertTriangle, XCircle,
 } from "lucide-react";
+import { ReportButton } from "@/app/_components/report/ReportModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MainLayout from "@/components/layout/MainLayout";
@@ -783,6 +784,13 @@ const CreatorCampaignDetail = () => {
               <MessageSquare className="w-3.5 h-3.5" />
               Message Brand
             </Button>
+            {campaign && (
+              <ReportButton
+                targetCampaign={{ id: campaign.id, title: campaign.title }}
+                variant="icon"
+                className="ml-1 h-8 w-8 rounded-lg border-zinc-200 dark:border-zinc-700"
+              />
+            )}
           </div>
 
           {/* Quick stats */}
@@ -936,6 +944,7 @@ const CreatorCampaignDetail = () => {
           />
         </section>
       </div>
+
     </MainLayout>
   );
 };

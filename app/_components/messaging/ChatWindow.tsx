@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Minus, X, Send, Loader2, Maximize2 } from "lucide-react";
+import { ReportButton } from "@/app/_components/report/ReportModal";
 import { cn } from "@/lib/utils";
 import {
   getConversationAction,
@@ -224,6 +225,15 @@ export default function ChatWindow({
           </p>
         </div>
 
+        {/* Report user */}
+        <div onClick={(e) => e.stopPropagation()}>
+          <ReportButton
+            targetUser={{ id: w.userId, name: w.userName, type: w.userType }}
+            variant="icon"
+            className="!w-7 !h-7 !p-0 rounded-full text-white/60 hover:text-red-400 hover:!bg-red-500/20 hover:!border-transparent"
+          />
+        </div>
+
         {/* Maximize → full messages page */}
         <button
           onClick={(e) => { e.stopPropagation(); handleMaximize(); }}
@@ -360,6 +370,7 @@ export default function ChatWindow({
           </div>
         </>
       )}
+
     </div>
   );
 }

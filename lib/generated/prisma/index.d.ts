@@ -134,6 +134,11 @@ export type Application = $Result.DefaultSelection<Prisma.$ApplicationPayload>
  */
 export type Invitation = $Result.DefaultSelection<Prisma.$InvitationPayload>
 /**
+ * Model Dispute
+ * 
+ */
+export type Dispute = $Result.DefaultSelection<Prisma.$DisputePayload>
+/**
  * Model RateLimitEvent
  * 
  */
@@ -275,6 +280,27 @@ export const ModerationStatus: {
 
 export type ModerationStatus = (typeof ModerationStatus)[keyof typeof ModerationStatus]
 
+
+export const DisputeStatus: {
+  OPEN: 'OPEN',
+  IN_REVIEW: 'IN_REVIEW',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+export type DisputeStatus = (typeof DisputeStatus)[keyof typeof DisputeStatus]
+
+
+export const ReportReason: {
+  SCAM_FRAUD: 'SCAM_FRAUD',
+  INAPPROPRIATE_CONTENT: 'INAPPROPRIATE_CONTENT',
+  UNPROFESSIONAL_BEHAVIOR: 'UNPROFESSIONAL_BEHAVIOR',
+  SPAM: 'SPAM',
+  OTHER: 'OTHER'
+};
+
+export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
+
 }
 
 export type Role = $Enums.Role
@@ -328,6 +354,14 @@ export const InvitationStatus: typeof $Enums.InvitationStatus
 export type ModerationStatus = $Enums.ModerationStatus
 
 export const ModerationStatus: typeof $Enums.ModerationStatus
+
+export type DisputeStatus = $Enums.DisputeStatus
+
+export const DisputeStatus: typeof $Enums.DisputeStatus
+
+export type ReportReason = $Enums.ReportReason
+
+export const ReportReason: typeof $Enums.ReportReason
 
 /**
  * ##  Prisma Client ʲˢ
@@ -689,6 +723,16 @@ export class PrismaClient<
     * ```
     */
   get invitation(): Prisma.InvitationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.dispute`: Exposes CRUD operations for the **Dispute** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Disputes
+    * const disputes = await prisma.dispute.findMany()
+    * ```
+    */
+  get dispute(): Prisma.DisputeDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.rateLimitEvent`: Exposes CRUD operations for the **RateLimitEvent** model.
@@ -1157,6 +1201,7 @@ export namespace Prisma {
     Notification: 'Notification',
     Application: 'Application',
     Invitation: 'Invitation',
+    Dispute: 'Dispute',
     RateLimitEvent: 'RateLimitEvent'
   };
 
@@ -1173,7 +1218,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "rateLimitEvent"
+      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "rateLimitEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2953,6 +2998,80 @@ export namespace Prisma {
           }
         }
       }
+      Dispute: {
+        payload: Prisma.$DisputePayload<ExtArgs>
+        fields: Prisma.DisputeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DisputeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DisputeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          findFirst: {
+            args: Prisma.DisputeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DisputeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          findMany: {
+            args: Prisma.DisputeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>[]
+          }
+          create: {
+            args: Prisma.DisputeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          createMany: {
+            args: Prisma.DisputeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DisputeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>[]
+          }
+          delete: {
+            args: Prisma.DisputeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          update: {
+            args: Prisma.DisputeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          deleteMany: {
+            args: Prisma.DisputeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DisputeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DisputeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>[]
+          }
+          upsert: {
+            args: Prisma.DisputeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DisputePayload>
+          }
+          aggregate: {
+            args: Prisma.DisputeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDispute>
+          }
+          groupBy: {
+            args: Prisma.DisputeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DisputeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DisputeCountArgs<ExtArgs>
+            result: $Utils.Optional<DisputeCountAggregateOutputType> | number
+          }
+        }
+      }
       RateLimitEvent: {
         payload: Prisma.$RateLimitEventPayload<ExtArgs>
         fields: Prisma.RateLimitEventFieldRefs
@@ -3159,6 +3278,7 @@ export namespace Prisma {
     notification?: NotificationOmit
     application?: ApplicationOmit
     invitation?: InvitationOmit
+    dispute?: DisputeOmit
     rateLimitEvent?: RateLimitEventOmit
   }
 
@@ -3254,6 +3374,10 @@ export namespace Prisma {
     requestedEventUpdates: number
     reviewedEventUpdates: number
     receivedInvitations: number
+    brandDisputes: number
+    creatorDisputes: number
+    reporterDisputes: number
+    targetedDisputes: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3271,6 +3395,10 @@ export namespace Prisma {
     requestedEventUpdates?: boolean | UserCountOutputTypeCountRequestedEventUpdatesArgs
     reviewedEventUpdates?: boolean | UserCountOutputTypeCountReviewedEventUpdatesArgs
     receivedInvitations?: boolean | UserCountOutputTypeCountReceivedInvitationsArgs
+    brandDisputes?: boolean | UserCountOutputTypeCountBrandDisputesArgs
+    creatorDisputes?: boolean | UserCountOutputTypeCountCreatorDisputesArgs
+    reporterDisputes?: boolean | UserCountOutputTypeCountReporterDisputesArgs
+    targetedDisputes?: boolean | UserCountOutputTypeCountTargetedDisputesArgs
   }
 
   // Custom InputTypes
@@ -3380,6 +3508,34 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountReceivedInvitationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InvitationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBrandDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatorDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReporterDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTargetedDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
   }
 
 
@@ -3517,6 +3673,7 @@ export namespace Prisma {
     contracts: number
     events: number
     invitations: number
+    disputes: number
   }
 
   export type CampaignCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3524,6 +3681,7 @@ export namespace Prisma {
     contracts?: boolean | CampaignCountOutputTypeCountContractsArgs
     events?: boolean | CampaignCountOutputTypeCountEventsArgs
     invitations?: boolean | CampaignCountOutputTypeCountInvitationsArgs
+    disputes?: boolean | CampaignCountOutputTypeCountDisputesArgs
   }
 
   // Custom InputTypes
@@ -3563,6 +3721,13 @@ export namespace Prisma {
    */
   export type CampaignCountOutputTypeCountInvitationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: InvitationWhereInput
+  }
+
+  /**
+   * CampaignCountOutputType without action
+   */
+  export type CampaignCountOutputTypeCountDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
   }
 
 
@@ -3900,6 +4065,10 @@ export namespace Prisma {
     requestedEventUpdates?: boolean | User$requestedEventUpdatesArgs<ExtArgs>
     reviewedEventUpdates?: boolean | User$reviewedEventUpdatesArgs<ExtArgs>
     receivedInvitations?: boolean | User$receivedInvitationsArgs<ExtArgs>
+    brandDisputes?: boolean | User$brandDisputesArgs<ExtArgs>
+    creatorDisputes?: boolean | User$creatorDisputesArgs<ExtArgs>
+    reporterDisputes?: boolean | User$reporterDisputesArgs<ExtArgs>
+    targetedDisputes?: boolean | User$targetedDisputesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3963,6 +4132,10 @@ export namespace Prisma {
     requestedEventUpdates?: boolean | User$requestedEventUpdatesArgs<ExtArgs>
     reviewedEventUpdates?: boolean | User$reviewedEventUpdatesArgs<ExtArgs>
     receivedInvitations?: boolean | User$receivedInvitationsArgs<ExtArgs>
+    brandDisputes?: boolean | User$brandDisputesArgs<ExtArgs>
+    creatorDisputes?: boolean | User$creatorDisputesArgs<ExtArgs>
+    reporterDisputes?: boolean | User$reporterDisputesArgs<ExtArgs>
+    targetedDisputes?: boolean | User$targetedDisputesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3987,6 +4160,10 @@ export namespace Prisma {
       requestedEventUpdates: Prisma.$CampaignEventUpdatePayload<ExtArgs>[]
       reviewedEventUpdates: Prisma.$CampaignEventUpdatePayload<ExtArgs>[]
       receivedInvitations: Prisma.$InvitationPayload<ExtArgs>[]
+      brandDisputes: Prisma.$DisputePayload<ExtArgs>[]
+      creatorDisputes: Prisma.$DisputePayload<ExtArgs>[]
+      reporterDisputes: Prisma.$DisputePayload<ExtArgs>[]
+      targetedDisputes: Prisma.$DisputePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4410,6 +4587,10 @@ export namespace Prisma {
     requestedEventUpdates<T extends User$requestedEventUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$requestedEventUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviewedEventUpdates<T extends User$reviewedEventUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewedEventUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receivedInvitations<T extends User$receivedInvitationsArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    brandDisputes<T extends User$brandDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$brandDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    creatorDisputes<T extends User$creatorDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$creatorDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reporterDisputes<T extends User$reporterDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$reporterDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    targetedDisputes<T extends User$targetedDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$targetedDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5214,6 +5395,102 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InvitationScalarFieldEnum | InvitationScalarFieldEnum[]
+  }
+
+  /**
+   * User.brandDisputes
+   */
+  export type User$brandDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * User.creatorDisputes
+   */
+  export type User$creatorDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * User.reporterDisputes
+   */
+  export type User$reporterDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * User.targetedDisputes
+   */
+  export type User$targetedDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
   }
 
   /**
@@ -17025,6 +17302,7 @@ export namespace Prisma {
     contracts?: boolean | Campaign$contractsArgs<ExtArgs>
     events?: boolean | Campaign$eventsArgs<ExtArgs>
     invitations?: boolean | Campaign$invitationsArgs<ExtArgs>
+    disputes?: boolean | Campaign$disputesArgs<ExtArgs>
     _count?: boolean | CampaignCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["campaign"]>
 
@@ -17106,6 +17384,7 @@ export namespace Prisma {
     contracts?: boolean | Campaign$contractsArgs<ExtArgs>
     events?: boolean | Campaign$eventsArgs<ExtArgs>
     invitations?: boolean | Campaign$invitationsArgs<ExtArgs>
+    disputes?: boolean | Campaign$disputesArgs<ExtArgs>
     _count?: boolean | CampaignCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CampaignIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17123,6 +17402,7 @@ export namespace Prisma {
       contracts: Prisma.$ContractPayload<ExtArgs>[]
       events: Prisma.$CampaignEventPayload<ExtArgs>[]
       invitations: Prisma.$InvitationPayload<ExtArgs>[]
+      disputes: Prisma.$DisputePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17544,6 +17824,7 @@ export namespace Prisma {
     contracts<T extends Campaign$contractsArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     events<T extends Campaign$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitations<T extends Campaign$invitationsArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    disputes<T extends Campaign$disputesArgs<ExtArgs> = {}>(args?: Subset<T, Campaign$disputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18087,6 +18368,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InvitationScalarFieldEnum | InvitationScalarFieldEnum[]
+  }
+
+  /**
+   * Campaign.disputes
+   */
+  export type Campaign$disputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
   }
 
   /**
@@ -31744,6 +32049,1287 @@ export namespace Prisma {
 
 
   /**
+   * Model Dispute
+   */
+
+  export type AggregateDispute = {
+    _count: DisputeCountAggregateOutputType | null
+    _min: DisputeMinAggregateOutputType | null
+    _max: DisputeMaxAggregateOutputType | null
+  }
+
+  export type DisputeMinAggregateOutputType = {
+    id: string | null
+    reporterId: string | null
+    targetUserId: string | null
+    brandId: string | null
+    creatorId: string | null
+    campaignId: string | null
+    status: $Enums.DisputeStatus | null
+    reason: $Enums.ReportReason | null
+    description: string | null
+    resolutionNotes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DisputeMaxAggregateOutputType = {
+    id: string | null
+    reporterId: string | null
+    targetUserId: string | null
+    brandId: string | null
+    creatorId: string | null
+    campaignId: string | null
+    status: $Enums.DisputeStatus | null
+    reason: $Enums.ReportReason | null
+    description: string | null
+    resolutionNotes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DisputeCountAggregateOutputType = {
+    id: number
+    reporterId: number
+    targetUserId: number
+    brandId: number
+    creatorId: number
+    campaignId: number
+    status: number
+    reason: number
+    description: number
+    resolutionNotes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DisputeMinAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetUserId?: true
+    brandId?: true
+    creatorId?: true
+    campaignId?: true
+    status?: true
+    reason?: true
+    description?: true
+    resolutionNotes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DisputeMaxAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetUserId?: true
+    brandId?: true
+    creatorId?: true
+    campaignId?: true
+    status?: true
+    reason?: true
+    description?: true
+    resolutionNotes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DisputeCountAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetUserId?: true
+    brandId?: true
+    creatorId?: true
+    campaignId?: true
+    status?: true
+    reason?: true
+    description?: true
+    resolutionNotes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DisputeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Dispute to aggregate.
+     */
+    where?: DisputeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Disputes to fetch.
+     */
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DisputeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Disputes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Disputes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Disputes
+    **/
+    _count?: true | DisputeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DisputeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DisputeMaxAggregateInputType
+  }
+
+  export type GetDisputeAggregateType<T extends DisputeAggregateArgs> = {
+        [P in keyof T & keyof AggregateDispute]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDispute[P]>
+      : GetScalarType<T[P], AggregateDispute[P]>
+  }
+
+
+
+
+  export type DisputeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithAggregationInput | DisputeOrderByWithAggregationInput[]
+    by: DisputeScalarFieldEnum[] | DisputeScalarFieldEnum
+    having?: DisputeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DisputeCountAggregateInputType | true
+    _min?: DisputeMinAggregateInputType
+    _max?: DisputeMaxAggregateInputType
+  }
+
+  export type DisputeGroupByOutputType = {
+    id: string
+    reporterId: string | null
+    targetUserId: string | null
+    brandId: string | null
+    creatorId: string | null
+    campaignId: string | null
+    status: $Enums.DisputeStatus
+    reason: $Enums.ReportReason
+    description: string
+    resolutionNotes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: DisputeCountAggregateOutputType | null
+    _min: DisputeMinAggregateOutputType | null
+    _max: DisputeMaxAggregateOutputType | null
+  }
+
+  type GetDisputeGroupByPayload<T extends DisputeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DisputeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DisputeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DisputeGroupByOutputType[P]>
+            : GetScalarType<T[P], DisputeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DisputeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetUserId?: boolean
+    brandId?: boolean
+    creatorId?: boolean
+    campaignId?: boolean
+    status?: boolean
+    reason?: boolean
+    description?: boolean
+    resolutionNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }, ExtArgs["result"]["dispute"]>
+
+  export type DisputeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetUserId?: boolean
+    brandId?: boolean
+    creatorId?: boolean
+    campaignId?: boolean
+    status?: boolean
+    reason?: boolean
+    description?: boolean
+    resolutionNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }, ExtArgs["result"]["dispute"]>
+
+  export type DisputeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetUserId?: boolean
+    brandId?: boolean
+    creatorId?: boolean
+    campaignId?: boolean
+    status?: boolean
+    reason?: boolean
+    description?: boolean
+    resolutionNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }, ExtArgs["result"]["dispute"]>
+
+  export type DisputeSelectScalar = {
+    id?: boolean
+    reporterId?: boolean
+    targetUserId?: boolean
+    brandId?: boolean
+    creatorId?: boolean
+    campaignId?: boolean
+    status?: boolean
+    reason?: boolean
+    description?: boolean
+    resolutionNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DisputeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reporterId" | "targetUserId" | "brandId" | "creatorId" | "campaignId" | "status" | "reason" | "description" | "resolutionNotes" | "createdAt" | "updatedAt", ExtArgs["result"]["dispute"]>
+  export type DisputeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }
+  export type DisputeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }
+  export type DisputeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | Dispute$reporterArgs<ExtArgs>
+    targetUser?: boolean | Dispute$targetUserArgs<ExtArgs>
+    brand?: boolean | Dispute$brandArgs<ExtArgs>
+    creator?: boolean | Dispute$creatorArgs<ExtArgs>
+    campaign?: boolean | Dispute$campaignArgs<ExtArgs>
+  }
+
+  export type $DisputePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Dispute"
+    objects: {
+      reporter: Prisma.$UserPayload<ExtArgs> | null
+      targetUser: Prisma.$UserPayload<ExtArgs> | null
+      brand: Prisma.$UserPayload<ExtArgs> | null
+      creator: Prisma.$UserPayload<ExtArgs> | null
+      campaign: Prisma.$CampaignPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      reporterId: string | null
+      targetUserId: string | null
+      brandId: string | null
+      creatorId: string | null
+      campaignId: string | null
+      status: $Enums.DisputeStatus
+      reason: $Enums.ReportReason
+      description: string
+      resolutionNotes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["dispute"]>
+    composites: {}
+  }
+
+  type DisputeGetPayload<S extends boolean | null | undefined | DisputeDefaultArgs> = $Result.GetResult<Prisma.$DisputePayload, S>
+
+  type DisputeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DisputeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DisputeCountAggregateInputType | true
+    }
+
+  export interface DisputeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Dispute'], meta: { name: 'Dispute' } }
+    /**
+     * Find zero or one Dispute that matches the filter.
+     * @param {DisputeFindUniqueArgs} args - Arguments to find a Dispute
+     * @example
+     * // Get one Dispute
+     * const dispute = await prisma.dispute.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DisputeFindUniqueArgs>(args: SelectSubset<T, DisputeFindUniqueArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Dispute that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DisputeFindUniqueOrThrowArgs} args - Arguments to find a Dispute
+     * @example
+     * // Get one Dispute
+     * const dispute = await prisma.dispute.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DisputeFindUniqueOrThrowArgs>(args: SelectSubset<T, DisputeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Dispute that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeFindFirstArgs} args - Arguments to find a Dispute
+     * @example
+     * // Get one Dispute
+     * const dispute = await prisma.dispute.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DisputeFindFirstArgs>(args?: SelectSubset<T, DisputeFindFirstArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Dispute that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeFindFirstOrThrowArgs} args - Arguments to find a Dispute
+     * @example
+     * // Get one Dispute
+     * const dispute = await prisma.dispute.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DisputeFindFirstOrThrowArgs>(args?: SelectSubset<T, DisputeFindFirstOrThrowArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Disputes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Disputes
+     * const disputes = await prisma.dispute.findMany()
+     * 
+     * // Get first 10 Disputes
+     * const disputes = await prisma.dispute.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const disputeWithIdOnly = await prisma.dispute.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DisputeFindManyArgs>(args?: SelectSubset<T, DisputeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Dispute.
+     * @param {DisputeCreateArgs} args - Arguments to create a Dispute.
+     * @example
+     * // Create one Dispute
+     * const Dispute = await prisma.dispute.create({
+     *   data: {
+     *     // ... data to create a Dispute
+     *   }
+     * })
+     * 
+     */
+    create<T extends DisputeCreateArgs>(args: SelectSubset<T, DisputeCreateArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Disputes.
+     * @param {DisputeCreateManyArgs} args - Arguments to create many Disputes.
+     * @example
+     * // Create many Disputes
+     * const dispute = await prisma.dispute.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DisputeCreateManyArgs>(args?: SelectSubset<T, DisputeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Disputes and returns the data saved in the database.
+     * @param {DisputeCreateManyAndReturnArgs} args - Arguments to create many Disputes.
+     * @example
+     * // Create many Disputes
+     * const dispute = await prisma.dispute.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Disputes and only return the `id`
+     * const disputeWithIdOnly = await prisma.dispute.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DisputeCreateManyAndReturnArgs>(args?: SelectSubset<T, DisputeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Dispute.
+     * @param {DisputeDeleteArgs} args - Arguments to delete one Dispute.
+     * @example
+     * // Delete one Dispute
+     * const Dispute = await prisma.dispute.delete({
+     *   where: {
+     *     // ... filter to delete one Dispute
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DisputeDeleteArgs>(args: SelectSubset<T, DisputeDeleteArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Dispute.
+     * @param {DisputeUpdateArgs} args - Arguments to update one Dispute.
+     * @example
+     * // Update one Dispute
+     * const dispute = await prisma.dispute.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DisputeUpdateArgs>(args: SelectSubset<T, DisputeUpdateArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Disputes.
+     * @param {DisputeDeleteManyArgs} args - Arguments to filter Disputes to delete.
+     * @example
+     * // Delete a few Disputes
+     * const { count } = await prisma.dispute.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DisputeDeleteManyArgs>(args?: SelectSubset<T, DisputeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Disputes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Disputes
+     * const dispute = await prisma.dispute.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DisputeUpdateManyArgs>(args: SelectSubset<T, DisputeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Disputes and returns the data updated in the database.
+     * @param {DisputeUpdateManyAndReturnArgs} args - Arguments to update many Disputes.
+     * @example
+     * // Update many Disputes
+     * const dispute = await prisma.dispute.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Disputes and only return the `id`
+     * const disputeWithIdOnly = await prisma.dispute.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DisputeUpdateManyAndReturnArgs>(args: SelectSubset<T, DisputeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Dispute.
+     * @param {DisputeUpsertArgs} args - Arguments to update or create a Dispute.
+     * @example
+     * // Update or create a Dispute
+     * const dispute = await prisma.dispute.upsert({
+     *   create: {
+     *     // ... data to create a Dispute
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Dispute we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DisputeUpsertArgs>(args: SelectSubset<T, DisputeUpsertArgs<ExtArgs>>): Prisma__DisputeClient<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Disputes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeCountArgs} args - Arguments to filter Disputes to count.
+     * @example
+     * // Count the number of Disputes
+     * const count = await prisma.dispute.count({
+     *   where: {
+     *     // ... the filter for the Disputes we want to count
+     *   }
+     * })
+    **/
+    count<T extends DisputeCountArgs>(
+      args?: Subset<T, DisputeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DisputeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Dispute.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DisputeAggregateArgs>(args: Subset<T, DisputeAggregateArgs>): Prisma.PrismaPromise<GetDisputeAggregateType<T>>
+
+    /**
+     * Group by Dispute.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DisputeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DisputeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DisputeGroupByArgs['orderBy'] }
+        : { orderBy?: DisputeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DisputeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDisputeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Dispute model
+   */
+  readonly fields: DisputeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Dispute.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DisputeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    reporter<T extends Dispute$reporterArgs<ExtArgs> = {}>(args?: Subset<T, Dispute$reporterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    targetUser<T extends Dispute$targetUserArgs<ExtArgs> = {}>(args?: Subset<T, Dispute$targetUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    brand<T extends Dispute$brandArgs<ExtArgs> = {}>(args?: Subset<T, Dispute$brandArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    creator<T extends Dispute$creatorArgs<ExtArgs> = {}>(args?: Subset<T, Dispute$creatorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    campaign<T extends Dispute$campaignArgs<ExtArgs> = {}>(args?: Subset<T, Dispute$campaignArgs<ExtArgs>>): Prisma__CampaignClient<$Result.GetResult<Prisma.$CampaignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Dispute model
+   */
+  interface DisputeFieldRefs {
+    readonly id: FieldRef<"Dispute", 'String'>
+    readonly reporterId: FieldRef<"Dispute", 'String'>
+    readonly targetUserId: FieldRef<"Dispute", 'String'>
+    readonly brandId: FieldRef<"Dispute", 'String'>
+    readonly creatorId: FieldRef<"Dispute", 'String'>
+    readonly campaignId: FieldRef<"Dispute", 'String'>
+    readonly status: FieldRef<"Dispute", 'DisputeStatus'>
+    readonly reason: FieldRef<"Dispute", 'ReportReason'>
+    readonly description: FieldRef<"Dispute", 'String'>
+    readonly resolutionNotes: FieldRef<"Dispute", 'String'>
+    readonly createdAt: FieldRef<"Dispute", 'DateTime'>
+    readonly updatedAt: FieldRef<"Dispute", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Dispute findUnique
+   */
+  export type DisputeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter, which Dispute to fetch.
+     */
+    where: DisputeWhereUniqueInput
+  }
+
+  /**
+   * Dispute findUniqueOrThrow
+   */
+  export type DisputeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter, which Dispute to fetch.
+     */
+    where: DisputeWhereUniqueInput
+  }
+
+  /**
+   * Dispute findFirst
+   */
+  export type DisputeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter, which Dispute to fetch.
+     */
+    where?: DisputeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Disputes to fetch.
+     */
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Disputes.
+     */
+    cursor?: DisputeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Disputes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Disputes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Disputes.
+     */
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * Dispute findFirstOrThrow
+   */
+  export type DisputeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter, which Dispute to fetch.
+     */
+    where?: DisputeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Disputes to fetch.
+     */
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Disputes.
+     */
+    cursor?: DisputeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Disputes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Disputes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Disputes.
+     */
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * Dispute findMany
+   */
+  export type DisputeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter, which Disputes to fetch.
+     */
+    where?: DisputeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Disputes to fetch.
+     */
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Disputes.
+     */
+    cursor?: DisputeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Disputes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Disputes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Disputes.
+     */
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * Dispute create
+   */
+  export type DisputeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Dispute.
+     */
+    data: XOR<DisputeCreateInput, DisputeUncheckedCreateInput>
+  }
+
+  /**
+   * Dispute createMany
+   */
+  export type DisputeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Disputes.
+     */
+    data: DisputeCreateManyInput | DisputeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Dispute createManyAndReturn
+   */
+  export type DisputeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * The data used to create many Disputes.
+     */
+    data: DisputeCreateManyInput | DisputeCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Dispute update
+   */
+  export type DisputeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Dispute.
+     */
+    data: XOR<DisputeUpdateInput, DisputeUncheckedUpdateInput>
+    /**
+     * Choose, which Dispute to update.
+     */
+    where: DisputeWhereUniqueInput
+  }
+
+  /**
+   * Dispute updateMany
+   */
+  export type DisputeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Disputes.
+     */
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyInput>
+    /**
+     * Filter which Disputes to update
+     */
+    where?: DisputeWhereInput
+    /**
+     * Limit how many Disputes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Dispute updateManyAndReturn
+   */
+  export type DisputeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * The data used to update Disputes.
+     */
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyInput>
+    /**
+     * Filter which Disputes to update
+     */
+    where?: DisputeWhereInput
+    /**
+     * Limit how many Disputes to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Dispute upsert
+   */
+  export type DisputeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Dispute to update in case it exists.
+     */
+    where: DisputeWhereUniqueInput
+    /**
+     * In case the Dispute found by the `where` argument doesn't exist, create a new Dispute with this data.
+     */
+    create: XOR<DisputeCreateInput, DisputeUncheckedCreateInput>
+    /**
+     * In case the Dispute was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DisputeUpdateInput, DisputeUncheckedUpdateInput>
+  }
+
+  /**
+   * Dispute delete
+   */
+  export type DisputeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+    /**
+     * Filter which Dispute to delete.
+     */
+    where: DisputeWhereUniqueInput
+  }
+
+  /**
+   * Dispute deleteMany
+   */
+  export type DisputeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Disputes to delete
+     */
+    where?: DisputeWhereInput
+    /**
+     * Limit how many Disputes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Dispute.reporter
+   */
+  export type Dispute$reporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Dispute.targetUser
+   */
+  export type Dispute$targetUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Dispute.brand
+   */
+  export type Dispute$brandArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Dispute.creator
+   */
+  export type Dispute$creatorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Dispute.campaign
+   */
+  export type Dispute$campaignArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Campaign
+     */
+    select?: CampaignSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Campaign
+     */
+    omit?: CampaignOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CampaignInclude<ExtArgs> | null
+    where?: CampaignWhereInput
+  }
+
+  /**
+   * Dispute without action
+   */
+  export type DisputeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Dispute
+     */
+    select?: DisputeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Dispute
+     */
+    omit?: DisputeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DisputeInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model RateLimitEvent
    */
 
@@ -33095,6 +34681,24 @@ export namespace Prisma {
   export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
 
 
+  export const DisputeScalarFieldEnum: {
+    id: 'id',
+    reporterId: 'reporterId',
+    targetUserId: 'targetUserId',
+    brandId: 'brandId',
+    creatorId: 'creatorId',
+    campaignId: 'campaignId',
+    status: 'status',
+    reason: 'reason',
+    description: 'description',
+    resolutionNotes: 'resolutionNotes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DisputeScalarFieldEnum = (typeof DisputeScalarFieldEnum)[keyof typeof DisputeScalarFieldEnum]
+
+
   export const RateLimitEventScalarFieldEnum: {
     id: 'id',
     identifier: 'identifier',
@@ -33393,6 +34997,34 @@ export namespace Prisma {
    */
   export type ListEnumInvitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InvitationStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'DisputeStatus'
+   */
+  export type EnumDisputeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisputeStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'DisputeStatus[]'
+   */
+  export type ListEnumDisputeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisputeStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportReason'
+   */
+  export type EnumReportReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportReason[]'
+   */
+  export type ListEnumReportReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportReason[]'>
+    
   /**
    * Deep Input Types
    */
@@ -33429,6 +35061,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateListRelationFilter
     reviewedEventUpdates?: CampaignEventUpdateListRelationFilter
     receivedInvitations?: InvitationListRelationFilter
+    brandDisputes?: DisputeListRelationFilter
+    creatorDisputes?: DisputeListRelationFilter
+    reporterDisputes?: DisputeListRelationFilter
+    targetedDisputes?: DisputeListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -33459,6 +35095,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateOrderByRelationAggregateInput
     reviewedEventUpdates?: CampaignEventUpdateOrderByRelationAggregateInput
     receivedInvitations?: InvitationOrderByRelationAggregateInput
+    brandDisputes?: DisputeOrderByRelationAggregateInput
+    creatorDisputes?: DisputeOrderByRelationAggregateInput
+    reporterDisputes?: DisputeOrderByRelationAggregateInput
+    targetedDisputes?: DisputeOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -33492,6 +35132,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateListRelationFilter
     reviewedEventUpdates?: CampaignEventUpdateListRelationFilter
     receivedInvitations?: InvitationListRelationFilter
+    brandDisputes?: DisputeListRelationFilter
+    creatorDisputes?: DisputeListRelationFilter
+    reporterDisputes?: DisputeListRelationFilter
+    targetedDisputes?: DisputeListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -34365,6 +36009,7 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     events?: CampaignEventListRelationFilter
     invitations?: InvitationListRelationFilter
+    disputes?: DisputeListRelationFilter
   }
 
   export type CampaignOrderByWithRelationInput = {
@@ -34393,6 +36038,7 @@ export namespace Prisma {
     contracts?: ContractOrderByRelationAggregateInput
     events?: CampaignEventOrderByRelationAggregateInput
     invitations?: InvitationOrderByRelationAggregateInput
+    disputes?: DisputeOrderByRelationAggregateInput
   }
 
   export type CampaignWhereUniqueInput = Prisma.AtLeast<{
@@ -34424,6 +36070,7 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     events?: CampaignEventListRelationFilter
     invitations?: InvitationListRelationFilter
+    disputes?: DisputeListRelationFilter
   }, "id">
 
   export type CampaignOrderByWithAggregationInput = {
@@ -35369,6 +37016,108 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Invitation"> | Date | string
   }
 
+  export type DisputeWhereInput = {
+    AND?: DisputeWhereInput | DisputeWhereInput[]
+    OR?: DisputeWhereInput[]
+    NOT?: DisputeWhereInput | DisputeWhereInput[]
+    id?: StringFilter<"Dispute"> | string
+    reporterId?: StringNullableFilter<"Dispute"> | string | null
+    targetUserId?: StringNullableFilter<"Dispute"> | string | null
+    brandId?: StringNullableFilter<"Dispute"> | string | null
+    creatorId?: StringNullableFilter<"Dispute"> | string | null
+    campaignId?: StringNullableFilter<"Dispute"> | string | null
+    status?: EnumDisputeStatusFilter<"Dispute"> | $Enums.DisputeStatus
+    reason?: EnumReportReasonFilter<"Dispute"> | $Enums.ReportReason
+    description?: StringFilter<"Dispute"> | string
+    resolutionNotes?: StringNullableFilter<"Dispute"> | string | null
+    createdAt?: DateTimeFilter<"Dispute"> | Date | string
+    updatedAt?: DateTimeFilter<"Dispute"> | Date | string
+    reporter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    targetUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    brand?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    creator?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    campaign?: XOR<CampaignNullableScalarRelationFilter, CampaignWhereInput> | null
+  }
+
+  export type DisputeOrderByWithRelationInput = {
+    id?: SortOrder
+    reporterId?: SortOrderInput | SortOrder
+    targetUserId?: SortOrderInput | SortOrder
+    brandId?: SortOrderInput | SortOrder
+    creatorId?: SortOrderInput | SortOrder
+    campaignId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reason?: SortOrder
+    description?: SortOrder
+    resolutionNotes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reporter?: UserOrderByWithRelationInput
+    targetUser?: UserOrderByWithRelationInput
+    brand?: UserOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
+    campaign?: CampaignOrderByWithRelationInput
+  }
+
+  export type DisputeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DisputeWhereInput | DisputeWhereInput[]
+    OR?: DisputeWhereInput[]
+    NOT?: DisputeWhereInput | DisputeWhereInput[]
+    reporterId?: StringNullableFilter<"Dispute"> | string | null
+    targetUserId?: StringNullableFilter<"Dispute"> | string | null
+    brandId?: StringNullableFilter<"Dispute"> | string | null
+    creatorId?: StringNullableFilter<"Dispute"> | string | null
+    campaignId?: StringNullableFilter<"Dispute"> | string | null
+    status?: EnumDisputeStatusFilter<"Dispute"> | $Enums.DisputeStatus
+    reason?: EnumReportReasonFilter<"Dispute"> | $Enums.ReportReason
+    description?: StringFilter<"Dispute"> | string
+    resolutionNotes?: StringNullableFilter<"Dispute"> | string | null
+    createdAt?: DateTimeFilter<"Dispute"> | Date | string
+    updatedAt?: DateTimeFilter<"Dispute"> | Date | string
+    reporter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    targetUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    brand?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    creator?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    campaign?: XOR<CampaignNullableScalarRelationFilter, CampaignWhereInput> | null
+  }, "id">
+
+  export type DisputeOrderByWithAggregationInput = {
+    id?: SortOrder
+    reporterId?: SortOrderInput | SortOrder
+    targetUserId?: SortOrderInput | SortOrder
+    brandId?: SortOrderInput | SortOrder
+    creatorId?: SortOrderInput | SortOrder
+    campaignId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    reason?: SortOrder
+    description?: SortOrder
+    resolutionNotes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DisputeCountOrderByAggregateInput
+    _max?: DisputeMaxOrderByAggregateInput
+    _min?: DisputeMinOrderByAggregateInput
+  }
+
+  export type DisputeScalarWhereWithAggregatesInput = {
+    AND?: DisputeScalarWhereWithAggregatesInput | DisputeScalarWhereWithAggregatesInput[]
+    OR?: DisputeScalarWhereWithAggregatesInput[]
+    NOT?: DisputeScalarWhereWithAggregatesInput | DisputeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Dispute"> | string
+    reporterId?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    targetUserId?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    brandId?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    creatorId?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    campaignId?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    status?: EnumDisputeStatusWithAggregatesFilter<"Dispute"> | $Enums.DisputeStatus
+    reason?: EnumReportReasonWithAggregatesFilter<"Dispute"> | $Enums.ReportReason
+    description?: StringWithAggregatesFilter<"Dispute"> | string
+    resolutionNotes?: StringNullableWithAggregatesFilter<"Dispute"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Dispute"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Dispute"> | Date | string
+  }
+
   export type RateLimitEventWhereInput = {
     AND?: RateLimitEventWhereInput | RateLimitEventWhereInput[]
     OR?: RateLimitEventWhereInput[]
@@ -35439,6 +37188,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -35469,6 +37222,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUpdateInput = {
@@ -35499,6 +37256,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -35529,6 +37290,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -36500,6 +38265,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCampaignInput
     events?: CampaignEventCreateNestedManyWithoutCampaignInput
     invitations?: InvitationCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateInput = {
@@ -36527,6 +38293,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
     events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUpdateInput = {
@@ -36554,6 +38321,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateInput = {
@@ -36581,6 +38349,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignCreateManyInput = {
@@ -37554,6 +39323,106 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DisputeCreateInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporter?: UserCreateNestedOneWithoutReporterDisputesInput
+    targetUser?: UserCreateNestedOneWithoutTargetedDisputesInput
+    brand?: UserCreateNestedOneWithoutBrandDisputesInput
+    creator?: UserCreateNestedOneWithoutCreatorDisputesInput
+    campaign?: CampaignCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporter?: UserUpdateOneWithoutReporterDisputesNestedInput
+    targetUser?: UserUpdateOneWithoutTargetedDisputesNestedInput
+    brand?: UserUpdateOneWithoutBrandDisputesNestedInput
+    creator?: UserUpdateOneWithoutCreatorDisputesNestedInput
+    campaign?: CampaignUpdateOneWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeCreateManyInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RateLimitEventCreateInput = {
     id?: string
     identifier: string
@@ -37725,6 +39594,12 @@ export namespace Prisma {
     none?: InvitationWhereInput
   }
 
+  export type DisputeListRelationFilter = {
+    every?: DisputeWhereInput
+    some?: DisputeWhereInput
+    none?: DisputeWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -37771,6 +39646,10 @@ export namespace Prisma {
   }
 
   export type InvitationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DisputeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -39335,6 +41214,90 @@ export namespace Prisma {
     _max?: NestedEnumInvitationStatusFilter<$PrismaModel>
   }
 
+  export type EnumDisputeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisputeStatus | EnumDisputeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisputeStatusFilter<$PrismaModel> | $Enums.DisputeStatus
+  }
+
+  export type EnumReportReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonFilter<$PrismaModel> | $Enums.ReportReason
+  }
+
+  export type CampaignNullableScalarRelationFilter = {
+    is?: CampaignWhereInput | null
+    isNot?: CampaignWhereInput | null
+  }
+
+  export type DisputeCountOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetUserId?: SortOrder
+    brandId?: SortOrder
+    creatorId?: SortOrder
+    campaignId?: SortOrder
+    status?: SortOrder
+    reason?: SortOrder
+    description?: SortOrder
+    resolutionNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DisputeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetUserId?: SortOrder
+    brandId?: SortOrder
+    creatorId?: SortOrder
+    campaignId?: SortOrder
+    status?: SortOrder
+    reason?: SortOrder
+    description?: SortOrder
+    resolutionNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DisputeMinOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetUserId?: SortOrder
+    brandId?: SortOrder
+    creatorId?: SortOrder
+    campaignId?: SortOrder
+    status?: SortOrder
+    reason?: SortOrder
+    description?: SortOrder
+    resolutionNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumDisputeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisputeStatus | EnumDisputeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisputeStatusWithAggregatesFilter<$PrismaModel> | $Enums.DisputeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDisputeStatusFilter<$PrismaModel>
+    _max?: NestedEnumDisputeStatusFilter<$PrismaModel>
+  }
+
+  export type EnumReportReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonWithAggregatesFilter<$PrismaModel> | $Enums.ReportReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportReasonFilter<$PrismaModel>
+    _max?: NestedEnumReportReasonFilter<$PrismaModel>
+  }
+
   export type RateLimitEventCountOrderByAggregateInput = {
     id?: SortOrder
     identifier?: SortOrder
@@ -39463,6 +41426,34 @@ export namespace Prisma {
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
   }
 
+  export type DisputeCreateNestedManyWithoutBrandInput = {
+    create?: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput> | DisputeCreateWithoutBrandInput[] | DisputeUncheckedCreateWithoutBrandInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutBrandInput | DisputeCreateOrConnectWithoutBrandInput[]
+    createMany?: DisputeCreateManyBrandInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput> | DisputeCreateWithoutCreatorInput[] | DisputeUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCreatorInput | DisputeCreateOrConnectWithoutCreatorInput[]
+    createMany?: DisputeCreateManyCreatorInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeCreateNestedManyWithoutReporterInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeCreateNestedManyWithoutTargetUserInput = {
+    create?: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput> | DisputeCreateWithoutTargetUserInput[] | DisputeUncheckedCreateWithoutTargetUserInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutTargetUserInput | DisputeCreateOrConnectWithoutTargetUserInput[]
+    createMany?: DisputeCreateManyTargetUserInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -39571,6 +41562,34 @@ export namespace Prisma {
     connectOrCreate?: InvitationCreateOrConnectWithoutCreatorInput | InvitationCreateOrConnectWithoutCreatorInput[]
     createMany?: InvitationCreateManyCreatorInputEnvelope
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+  }
+
+  export type DisputeUncheckedCreateNestedManyWithoutBrandInput = {
+    create?: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput> | DisputeCreateWithoutBrandInput[] | DisputeUncheckedCreateWithoutBrandInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutBrandInput | DisputeCreateOrConnectWithoutBrandInput[]
+    createMany?: DisputeCreateManyBrandInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput> | DisputeCreateWithoutCreatorInput[] | DisputeUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCreatorInput | DisputeCreateOrConnectWithoutCreatorInput[]
+    createMany?: DisputeCreateManyCreatorInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeUncheckedCreateNestedManyWithoutReporterInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type DisputeUncheckedCreateNestedManyWithoutTargetUserInput = {
+    create?: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput> | DisputeCreateWithoutTargetUserInput[] | DisputeUncheckedCreateWithoutTargetUserInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutTargetUserInput | DisputeCreateOrConnectWithoutTargetUserInput[]
+    createMany?: DisputeCreateManyTargetUserInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -39809,6 +41828,62 @@ export namespace Prisma {
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
   }
 
+  export type DisputeUpdateManyWithoutBrandNestedInput = {
+    create?: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput> | DisputeCreateWithoutBrandInput[] | DisputeUncheckedCreateWithoutBrandInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutBrandInput | DisputeCreateOrConnectWithoutBrandInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutBrandInput | DisputeUpsertWithWhereUniqueWithoutBrandInput[]
+    createMany?: DisputeCreateManyBrandInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutBrandInput | DisputeUpdateWithWhereUniqueWithoutBrandInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutBrandInput | DisputeUpdateManyWithWhereWithoutBrandInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput> | DisputeCreateWithoutCreatorInput[] | DisputeUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCreatorInput | DisputeCreateOrConnectWithoutCreatorInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutCreatorInput | DisputeUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: DisputeCreateManyCreatorInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutCreatorInput | DisputeUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutCreatorInput | DisputeUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUpdateManyWithoutTargetUserNestedInput = {
+    create?: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput> | DisputeCreateWithoutTargetUserInput[] | DisputeUncheckedCreateWithoutTargetUserInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutTargetUserInput | DisputeCreateOrConnectWithoutTargetUserInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutTargetUserInput | DisputeUpsertWithWhereUniqueWithoutTargetUserInput[]
+    createMany?: DisputeCreateManyTargetUserInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutTargetUserInput | DisputeUpdateWithWhereUniqueWithoutTargetUserInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutTargetUserInput | DisputeUpdateManyWithWhereWithoutTargetUserInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -40023,6 +42098,62 @@ export namespace Prisma {
     update?: InvitationUpdateWithWhereUniqueWithoutCreatorInput | InvitationUpdateWithWhereUniqueWithoutCreatorInput[]
     updateMany?: InvitationUpdateManyWithWhereWithoutCreatorInput | InvitationUpdateManyWithWhereWithoutCreatorInput[]
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutBrandNestedInput = {
+    create?: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput> | DisputeCreateWithoutBrandInput[] | DisputeUncheckedCreateWithoutBrandInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutBrandInput | DisputeCreateOrConnectWithoutBrandInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutBrandInput | DisputeUpsertWithWhereUniqueWithoutBrandInput[]
+    createMany?: DisputeCreateManyBrandInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutBrandInput | DisputeUpdateWithWhereUniqueWithoutBrandInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutBrandInput | DisputeUpdateManyWithWhereWithoutBrandInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput> | DisputeCreateWithoutCreatorInput[] | DisputeUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCreatorInput | DisputeCreateOrConnectWithoutCreatorInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutCreatorInput | DisputeUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: DisputeCreateManyCreatorInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutCreatorInput | DisputeUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutCreatorInput | DisputeUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutTargetUserNestedInput = {
+    create?: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput> | DisputeCreateWithoutTargetUserInput[] | DisputeUncheckedCreateWithoutTargetUserInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutTargetUserInput | DisputeCreateOrConnectWithoutTargetUserInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutTargetUserInput | DisputeUpsertWithWhereUniqueWithoutTargetUserInput[]
+    createMany?: DisputeCreateManyTargetUserInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutTargetUserInput | DisputeUpdateWithWhereUniqueWithoutTargetUserInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutTargetUserInput | DisputeUpdateManyWithWhereWithoutTargetUserInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutBrandProfileInput = {
@@ -40629,6 +42760,13 @@ export namespace Prisma {
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
   }
 
+  export type DisputeCreateNestedManyWithoutCampaignInput = {
+    create?: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput> | DisputeCreateWithoutCampaignInput[] | DisputeUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCampaignInput | DisputeCreateOrConnectWithoutCampaignInput[]
+    createMany?: DisputeCreateManyCampaignInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
   export type ApplicationUncheckedCreateNestedManyWithoutCampaignInput = {
     create?: XOR<ApplicationCreateWithoutCampaignInput, ApplicationUncheckedCreateWithoutCampaignInput> | ApplicationCreateWithoutCampaignInput[] | ApplicationUncheckedCreateWithoutCampaignInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutCampaignInput | ApplicationCreateOrConnectWithoutCampaignInput[]
@@ -40655,6 +42793,13 @@ export namespace Prisma {
     connectOrCreate?: InvitationCreateOrConnectWithoutCampaignInput | InvitationCreateOrConnectWithoutCampaignInput[]
     createMany?: InvitationCreateManyCampaignInputEnvelope
     connect?: InvitationWhereUniqueInput | InvitationWhereUniqueInput[]
+  }
+
+  export type DisputeUncheckedCreateNestedManyWithoutCampaignInput = {
+    create?: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput> | DisputeCreateWithoutCampaignInput[] | DisputeUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCampaignInput | DisputeCreateOrConnectWithoutCampaignInput[]
+    createMany?: DisputeCreateManyCampaignInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
   export type EnumCampaignStatusFieldUpdateOperationsInput = {
@@ -40735,6 +42880,20 @@ export namespace Prisma {
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
   }
 
+  export type DisputeUpdateManyWithoutCampaignNestedInput = {
+    create?: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput> | DisputeCreateWithoutCampaignInput[] | DisputeUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCampaignInput | DisputeCreateOrConnectWithoutCampaignInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutCampaignInput | DisputeUpsertWithWhereUniqueWithoutCampaignInput[]
+    createMany?: DisputeCreateManyCampaignInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutCampaignInput | DisputeUpdateWithWhereUniqueWithoutCampaignInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutCampaignInput | DisputeUpdateManyWithWhereWithoutCampaignInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
   export type ApplicationUncheckedUpdateManyWithoutCampaignNestedInput = {
     create?: XOR<ApplicationCreateWithoutCampaignInput, ApplicationUncheckedCreateWithoutCampaignInput> | ApplicationCreateWithoutCampaignInput[] | ApplicationUncheckedCreateWithoutCampaignInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutCampaignInput | ApplicationCreateOrConnectWithoutCampaignInput[]
@@ -40789,6 +42948,20 @@ export namespace Prisma {
     update?: InvitationUpdateWithWhereUniqueWithoutCampaignInput | InvitationUpdateWithWhereUniqueWithoutCampaignInput[]
     updateMany?: InvitationUpdateManyWithWhereWithoutCampaignInput | InvitationUpdateManyWithWhereWithoutCampaignInput[]
     deleteMany?: InvitationScalarWhereInput | InvitationScalarWhereInput[]
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutCampaignNestedInput = {
+    create?: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput> | DisputeCreateWithoutCampaignInput[] | DisputeUncheckedCreateWithoutCampaignInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutCampaignInput | DisputeCreateOrConnectWithoutCampaignInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutCampaignInput | DisputeUpsertWithWhereUniqueWithoutCampaignInput[]
+    createMany?: DisputeCreateManyCampaignInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutCampaignInput | DisputeUpdateWithWhereUniqueWithoutCampaignInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutCampaignInput | DisputeUpdateManyWithWhereWithoutCampaignInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
   export type CampaignCreateNestedOneWithoutEventsInput = {
@@ -41332,6 +43505,94 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReceivedInvitationsInput, UserUpdateWithoutReceivedInvitationsInput>, UserUncheckedUpdateWithoutReceivedInvitationsInput>
   }
 
+  export type UserCreateNestedOneWithoutReporterDisputesInput = {
+    create?: XOR<UserCreateWithoutReporterDisputesInput, UserUncheckedCreateWithoutReporterDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReporterDisputesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTargetedDisputesInput = {
+    create?: XOR<UserCreateWithoutTargetedDisputesInput, UserUncheckedCreateWithoutTargetedDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTargetedDisputesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutBrandDisputesInput = {
+    create?: XOR<UserCreateWithoutBrandDisputesInput, UserUncheckedCreateWithoutBrandDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBrandDisputesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCreatorDisputesInput = {
+    create?: XOR<UserCreateWithoutCreatorDisputesInput, UserUncheckedCreateWithoutCreatorDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatorDisputesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CampaignCreateNestedOneWithoutDisputesInput = {
+    create?: XOR<CampaignCreateWithoutDisputesInput, CampaignUncheckedCreateWithoutDisputesInput>
+    connectOrCreate?: CampaignCreateOrConnectWithoutDisputesInput
+    connect?: CampaignWhereUniqueInput
+  }
+
+  export type EnumDisputeStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DisputeStatus
+  }
+
+  export type EnumReportReasonFieldUpdateOperationsInput = {
+    set?: $Enums.ReportReason
+  }
+
+  export type UserUpdateOneWithoutReporterDisputesNestedInput = {
+    create?: XOR<UserCreateWithoutReporterDisputesInput, UserUncheckedCreateWithoutReporterDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReporterDisputesInput
+    upsert?: UserUpsertWithoutReporterDisputesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReporterDisputesInput, UserUpdateWithoutReporterDisputesInput>, UserUncheckedUpdateWithoutReporterDisputesInput>
+  }
+
+  export type UserUpdateOneWithoutTargetedDisputesNestedInput = {
+    create?: XOR<UserCreateWithoutTargetedDisputesInput, UserUncheckedCreateWithoutTargetedDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTargetedDisputesInput
+    upsert?: UserUpsertWithoutTargetedDisputesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTargetedDisputesInput, UserUpdateWithoutTargetedDisputesInput>, UserUncheckedUpdateWithoutTargetedDisputesInput>
+  }
+
+  export type UserUpdateOneWithoutBrandDisputesNestedInput = {
+    create?: XOR<UserCreateWithoutBrandDisputesInput, UserUncheckedCreateWithoutBrandDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBrandDisputesInput
+    upsert?: UserUpsertWithoutBrandDisputesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBrandDisputesInput, UserUpdateWithoutBrandDisputesInput>, UserUncheckedUpdateWithoutBrandDisputesInput>
+  }
+
+  export type UserUpdateOneWithoutCreatorDisputesNestedInput = {
+    create?: XOR<UserCreateWithoutCreatorDisputesInput, UserUncheckedCreateWithoutCreatorDisputesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatorDisputesInput
+    upsert?: UserUpsertWithoutCreatorDisputesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatorDisputesInput, UserUpdateWithoutCreatorDisputesInput>, UserUncheckedUpdateWithoutCreatorDisputesInput>
+  }
+
+  export type CampaignUpdateOneWithoutDisputesNestedInput = {
+    create?: XOR<CampaignCreateWithoutDisputesInput, CampaignUncheckedCreateWithoutDisputesInput>
+    connectOrCreate?: CampaignCreateOrConnectWithoutDisputesInput
+    upsert?: CampaignUpsertWithoutDisputesInput
+    disconnect?: CampaignWhereInput | boolean
+    delete?: CampaignWhereInput | boolean
+    connect?: CampaignWhereUniqueInput
+    update?: XOR<XOR<CampaignUpdateToOneWithWhereWithoutDisputesInput, CampaignUpdateWithoutDisputesInput>, CampaignUncheckedUpdateWithoutDisputesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -41790,6 +44051,40 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumInvitationStatusFilter<$PrismaModel>
     _max?: NestedEnumInvitationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDisputeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisputeStatus | EnumDisputeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisputeStatusFilter<$PrismaModel> | $Enums.DisputeStatus
+  }
+
+  export type NestedEnumReportReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonFilter<$PrismaModel> | $Enums.ReportReason
+  }
+
+  export type NestedEnumDisputeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DisputeStatus | EnumDisputeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DisputeStatus[] | ListEnumDisputeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDisputeStatusWithAggregatesFilter<$PrismaModel> | $Enums.DisputeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDisputeStatusFilter<$PrismaModel>
+    _max?: NestedEnumDisputeStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReportReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonWithAggregatesFilter<$PrismaModel> | $Enums.ReportReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportReasonFilter<$PrismaModel>
+    _max?: NestedEnumReportReasonFilter<$PrismaModel>
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -42314,6 +44609,158 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DisputeCreateWithoutBrandInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporter?: UserCreateNestedOneWithoutReporterDisputesInput
+    targetUser?: UserCreateNestedOneWithoutTargetedDisputesInput
+    creator?: UserCreateNestedOneWithoutCreatorDisputesInput
+    campaign?: CampaignCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutBrandInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutBrandInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput>
+  }
+
+  export type DisputeCreateManyBrandInputEnvelope = {
+    data: DisputeCreateManyBrandInput | DisputeCreateManyBrandInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DisputeCreateWithoutCreatorInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporter?: UserCreateNestedOneWithoutReporterDisputesInput
+    targetUser?: UserCreateNestedOneWithoutTargetedDisputesInput
+    brand?: UserCreateNestedOneWithoutBrandDisputesInput
+    campaign?: CampaignCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutCreatorInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type DisputeCreateManyCreatorInputEnvelope = {
+    data: DisputeCreateManyCreatorInput | DisputeCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DisputeCreateWithoutReporterInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    targetUser?: UserCreateNestedOneWithoutTargetedDisputesInput
+    brand?: UserCreateNestedOneWithoutBrandDisputesInput
+    creator?: UserCreateNestedOneWithoutCreatorDisputesInput
+    campaign?: CampaignCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutReporterInput = {
+    id?: string
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
+  }
+
+  export type DisputeCreateManyReporterInputEnvelope = {
+    data: DisputeCreateManyReporterInput | DisputeCreateManyReporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DisputeCreateWithoutTargetUserInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporter?: UserCreateNestedOneWithoutReporterDisputesInput
+    brand?: UserCreateNestedOneWithoutBrandDisputesInput
+    creator?: UserCreateNestedOneWithoutCreatorDisputesInput
+    campaign?: CampaignCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutTargetUserInput = {
+    id?: string
+    reporterId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutTargetUserInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput>
+  }
+
+  export type DisputeCreateManyTargetUserInputEnvelope = {
+    data: DisputeCreateManyTargetUserInput | DisputeCreateManyTargetUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -42801,6 +45248,88 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Invitation"> | Date | string
   }
 
+  export type DisputeUpsertWithWhereUniqueWithoutBrandInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutBrandInput, DisputeUncheckedUpdateWithoutBrandInput>
+    create: XOR<DisputeCreateWithoutBrandInput, DisputeUncheckedCreateWithoutBrandInput>
+  }
+
+  export type DisputeUpdateWithWhereUniqueWithoutBrandInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutBrandInput, DisputeUncheckedUpdateWithoutBrandInput>
+  }
+
+  export type DisputeUpdateManyWithWhereWithoutBrandInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutBrandInput>
+  }
+
+  export type DisputeScalarWhereInput = {
+    AND?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+    OR?: DisputeScalarWhereInput[]
+    NOT?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+    id?: StringFilter<"Dispute"> | string
+    reporterId?: StringNullableFilter<"Dispute"> | string | null
+    targetUserId?: StringNullableFilter<"Dispute"> | string | null
+    brandId?: StringNullableFilter<"Dispute"> | string | null
+    creatorId?: StringNullableFilter<"Dispute"> | string | null
+    campaignId?: StringNullableFilter<"Dispute"> | string | null
+    status?: EnumDisputeStatusFilter<"Dispute"> | $Enums.DisputeStatus
+    reason?: EnumReportReasonFilter<"Dispute"> | $Enums.ReportReason
+    description?: StringFilter<"Dispute"> | string
+    resolutionNotes?: StringNullableFilter<"Dispute"> | string | null
+    createdAt?: DateTimeFilter<"Dispute"> | Date | string
+    updatedAt?: DateTimeFilter<"Dispute"> | Date | string
+  }
+
+  export type DisputeUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutCreatorInput, DisputeUncheckedUpdateWithoutCreatorInput>
+    create: XOR<DisputeCreateWithoutCreatorInput, DisputeUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type DisputeUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutCreatorInput, DisputeUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type DisputeUpdateManyWithWhereWithoutCreatorInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type DisputeUpsertWithWhereUniqueWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
+    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
+  }
+
+  export type DisputeUpdateWithWhereUniqueWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
+  }
+
+  export type DisputeUpdateManyWithWhereWithoutReporterInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutReporterInput>
+  }
+
+  export type DisputeUpsertWithWhereUniqueWithoutTargetUserInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutTargetUserInput, DisputeUncheckedUpdateWithoutTargetUserInput>
+    create: XOR<DisputeCreateWithoutTargetUserInput, DisputeUncheckedCreateWithoutTargetUserInput>
+  }
+
+  export type DisputeUpdateWithWhereUniqueWithoutTargetUserInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutTargetUserInput, DisputeUncheckedUpdateWithoutTargetUserInput>
+  }
+
+  export type DisputeUpdateManyWithWhereWithoutTargetUserInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutTargetUserInput>
+  }
+
   export type UserCreateWithoutBrandProfileInput = {
     id?: string
     email: string
@@ -42828,6 +45357,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutBrandProfileInput = {
@@ -42857,6 +45390,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutBrandProfileInput = {
@@ -42920,6 +45457,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCampaignInput
     events?: CampaignEventCreateNestedManyWithoutCampaignInput
     invitations?: InvitationCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateWithoutBrandInput = {
@@ -42946,6 +45484,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
     events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignCreateOrConnectWithoutBrandInput = {
@@ -43084,6 +45623,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBrandProfileInput = {
@@ -43113,6 +45656,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type CRMLeadUpsertWithWhereUniqueWithoutBrandInput = {
@@ -43432,6 +45979,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatorProfileInput = {
@@ -43461,6 +46012,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatorProfileInput = {
@@ -43606,6 +46161,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatorProfileInput = {
@@ -43635,6 +46194,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type CreatorProfileCreateWithoutSocialPostsInput = {
@@ -43776,6 +46339,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -43805,6 +46372,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -43850,6 +46421,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -43879,6 +46454,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -43908,6 +46487,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -43937,6 +46520,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -43982,6 +46569,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -44011,6 +46602,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateWithoutPlatformTokensInput = {
@@ -44040,6 +46635,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutPlatformTokensInput = {
@@ -44069,6 +46668,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutPlatformTokensInput = {
@@ -44114,6 +46717,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPlatformTokensInput = {
@@ -44143,6 +46750,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateWithoutPlatformStatsInput = {
@@ -44172,6 +46783,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutPlatformStatsInput = {
@@ -44201,6 +46816,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutPlatformStatsInput = {
@@ -44246,6 +46865,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPlatformStatsInput = {
@@ -44275,6 +46898,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateWithoutReceivedMessagesInput = {
@@ -44304,6 +46931,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutReceivedMessagesInput = {
@@ -44333,6 +46964,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutReceivedMessagesInput = {
@@ -44367,6 +47002,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutSentMessagesInput = {
@@ -44396,6 +47035,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutSentMessagesInput = {
@@ -44441,6 +47084,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedMessagesInput = {
@@ -44470,6 +47117,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUpsertWithoutSentMessagesInput = {
@@ -44510,6 +47161,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentMessagesInput = {
@@ -44539,6 +47194,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type ApplicationCreateWithoutCampaignInput = {
@@ -44718,6 +47377,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DisputeCreateWithoutCampaignInput = {
+    id?: string
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporter?: UserCreateNestedOneWithoutReporterDisputesInput
+    targetUser?: UserCreateNestedOneWithoutTargetedDisputesInput
+    brand?: UserCreateNestedOneWithoutBrandDisputesInput
+    creator?: UserCreateNestedOneWithoutCreatorDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutCampaignInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutCampaignInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput>
+  }
+
+  export type DisputeCreateManyCampaignInputEnvelope = {
+    data: DisputeCreateManyCampaignInput | DisputeCreateManyCampaignInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ApplicationUpsertWithWhereUniqueWithoutCampaignInput = {
     where: ApplicationWhereUniqueInput
     update: XOR<ApplicationUpdateWithoutCampaignInput, ApplicationUncheckedUpdateWithoutCampaignInput>
@@ -44825,6 +47522,22 @@ export namespace Prisma {
     data: XOR<InvitationUpdateManyMutationInput, InvitationUncheckedUpdateManyWithoutCampaignInput>
   }
 
+  export type DisputeUpsertWithWhereUniqueWithoutCampaignInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutCampaignInput, DisputeUncheckedUpdateWithoutCampaignInput>
+    create: XOR<DisputeCreateWithoutCampaignInput, DisputeUncheckedCreateWithoutCampaignInput>
+  }
+
+  export type DisputeUpdateWithWhereUniqueWithoutCampaignInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutCampaignInput, DisputeUncheckedUpdateWithoutCampaignInput>
+  }
+
+  export type DisputeUpdateManyWithWhereWithoutCampaignInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutCampaignInput>
+  }
+
   export type CampaignCreateWithoutEventsInput = {
     id?: string
     title: string
@@ -44849,6 +47562,7 @@ export namespace Prisma {
     brand: BrandProfileCreateNestedOneWithoutCampaignsInput
     contracts?: ContractCreateNestedManyWithoutCampaignInput
     invitations?: InvitationCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateWithoutEventsInput = {
@@ -44875,6 +47589,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignCreateOrConnectWithoutEventsInput = {
@@ -44962,6 +47677,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedCampaignEventsInput = {
@@ -44991,6 +47710,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedCampaignEventsInput = {
@@ -45069,6 +47792,7 @@ export namespace Prisma {
     brand?: BrandProfileUpdateOneRequiredWithoutCampaignsNestedInput
     contracts?: ContractUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateWithoutEventsInput = {
@@ -45095,6 +47819,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type CreatorProfileUpsertWithoutCampaignEventsInput = {
@@ -45194,6 +47919,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedCampaignEventsInput = {
@@ -45223,6 +47952,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type CampaignEventUpdateUpsertWithWhereUniqueWithoutEventInput = {
@@ -45301,6 +48034,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutRequestedEventUpdatesInput = {
@@ -45330,6 +48067,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutRequestedEventUpdatesInput = {
@@ -45364,6 +48105,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutReviewedEventUpdatesInput = {
@@ -45393,6 +48138,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutReviewedEventUpdatesInput = {
@@ -45477,6 +48226,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRequestedEventUpdatesInput = {
@@ -45506,6 +48259,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUpsertWithoutReviewedEventUpdatesInput = {
@@ -45546,6 +48303,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewedEventUpdatesInput = {
@@ -45575,6 +48336,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type CampaignCreateWithoutContractsInput = {
@@ -45601,6 +48366,7 @@ export namespace Prisma {
     brand: BrandProfileCreateNestedOneWithoutCampaignsInput
     events?: CampaignEventCreateNestedManyWithoutCampaignInput
     invitations?: InvitationCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateWithoutContractsInput = {
@@ -45627,6 +48393,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
     events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignCreateOrConnectWithoutContractsInput = {
@@ -45813,6 +48580,7 @@ export namespace Prisma {
     brand?: BrandProfileUpdateOneRequiredWithoutCampaignsNestedInput
     events?: CampaignEventUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateWithoutContractsInput = {
@@ -45839,6 +48607,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type CreatorProfileUpsertWithoutContractsInput = {
@@ -46227,6 +48996,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutReceivedConnectionsInput = {
@@ -46256,6 +49029,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutReceivedConnectionsInput = {
@@ -46290,6 +49067,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutSentConnectionsInput = {
@@ -46319,6 +49100,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutSentConnectionsInput = {
@@ -46364,6 +49149,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedConnectionsInput = {
@@ -46393,6 +49182,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUpsertWithoutSentConnectionsInput = {
@@ -46433,6 +49226,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentConnectionsInput = {
@@ -46462,6 +49259,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type BrandProfileCreateWithoutCommunityListsInput = {
@@ -46628,6 +49429,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutCommunityMembershipsInput = {
@@ -46657,6 +49462,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutCommunityMembershipsInput = {
@@ -46727,6 +49536,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommunityMembershipsInput = {
@@ -46756,6 +49569,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -46785,6 +49602,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -46814,6 +49635,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -46859,6 +49684,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -46888,6 +49717,10 @@ export namespace Prisma {
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
   }
 
   export type CampaignCreateWithoutApplicationsInput = {
@@ -46914,6 +49747,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCampaignInput
     events?: CampaignEventCreateNestedManyWithoutCampaignInput
     invitations?: InvitationCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateWithoutApplicationsInput = {
@@ -46940,6 +49774,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
     events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
     invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignCreateOrConnectWithoutApplicationsInput = {
@@ -47035,6 +49870,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateWithoutApplicationsInput = {
@@ -47061,6 +49897,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type CreatorProfileUpsertWithoutApplicationsInput = {
@@ -47146,6 +49983,7 @@ export namespace Prisma {
     brand: BrandProfileCreateNestedOneWithoutCampaignsInput
     contracts?: ContractCreateNestedManyWithoutCampaignInput
     events?: CampaignEventCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignUncheckedCreateWithoutInvitationsInput = {
@@ -47172,6 +50010,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
     events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutCampaignInput
   }
 
   export type CampaignCreateOrConnectWithoutInvitationsInput = {
@@ -47243,6 +50082,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserUncheckedCreateWithoutReceivedInvitationsInput = {
@@ -47272,6 +50115,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
   }
 
   export type UserCreateOrConnectWithoutReceivedInvitationsInput = {
@@ -47314,6 +50161,7 @@ export namespace Prisma {
     brand?: BrandProfileUpdateOneRequiredWithoutCampaignsNestedInput
     contracts?: ContractUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateWithoutInvitationsInput = {
@@ -47340,6 +50188,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type BrandProfileUpsertWithoutInvitationsInput = {
@@ -47423,6 +50272,10 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedInvitationsInput = {
@@ -47452,6 +50305,726 @@ export namespace Prisma {
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserCreateWithoutReporterDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserUncheckedCreateWithoutReporterDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserCreateOrConnectWithoutReporterDisputesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReporterDisputesInput, UserUncheckedCreateWithoutReporterDisputesInput>
+  }
+
+  export type UserCreateWithoutTargetedDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+  }
+
+  export type UserUncheckedCreateWithoutTargetedDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+  }
+
+  export type UserCreateOrConnectWithoutTargetedDisputesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTargetedDisputesInput, UserUncheckedCreateWithoutTargetedDisputesInput>
+  }
+
+  export type UserCreateWithoutBrandDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBrandDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBrandDisputesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBrandDisputesInput, UserUncheckedCreateWithoutBrandDisputesInput>
+  }
+
+  export type UserCreateWithoutCreatorDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatorDisputesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatorDisputesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatorDisputesInput, UserUncheckedCreateWithoutCreatorDisputesInput>
+  }
+
+  export type CampaignCreateWithoutDisputesInput = {
+    id?: string
+    title: string
+    description: string
+    budget: number
+    status?: $Enums.CampaignStatus
+    imageUrl?: string | null
+    deadline?: Date | string | null
+    requirements?: string | null
+    briefDescription?: string | null
+    goal?: string | null
+    dosAndDonts?: string | null
+    platforms?: CampaignCreateplatformsInput | string[]
+    contentFormats?: CampaignCreatecontentFormatsInput | string[]
+    minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications?: ApplicationCreateNestedManyWithoutCampaignInput
+    brand: BrandProfileCreateNestedOneWithoutCampaignsInput
+    contracts?: ContractCreateNestedManyWithoutCampaignInput
+    events?: CampaignEventCreateNestedManyWithoutCampaignInput
+    invitations?: InvitationCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignUncheckedCreateWithoutDisputesInput = {
+    id?: string
+    brandProfileId: string
+    title: string
+    description: string
+    budget: number
+    status?: $Enums.CampaignStatus
+    imageUrl?: string | null
+    deadline?: Date | string | null
+    requirements?: string | null
+    briefDescription?: string | null
+    goal?: string | null
+    dosAndDonts?: string | null
+    platforms?: CampaignCreateplatformsInput | string[]
+    contentFormats?: CampaignCreatecontentFormatsInput | string[]
+    minFollowers?: number | null
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    applications?: ApplicationUncheckedCreateNestedManyWithoutCampaignInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutCampaignInput
+    events?: CampaignEventUncheckedCreateNestedManyWithoutCampaignInput
+    invitations?: InvitationUncheckedCreateNestedManyWithoutCampaignInput
+  }
+
+  export type CampaignCreateOrConnectWithoutDisputesInput = {
+    where: CampaignWhereUniqueInput
+    create: XOR<CampaignCreateWithoutDisputesInput, CampaignUncheckedCreateWithoutDisputesInput>
+  }
+
+  export type UserUpsertWithoutReporterDisputesInput = {
+    update: XOR<UserUpdateWithoutReporterDisputesInput, UserUncheckedUpdateWithoutReporterDisputesInput>
+    create: XOR<UserCreateWithoutReporterDisputesInput, UserUncheckedCreateWithoutReporterDisputesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReporterDisputesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReporterDisputesInput, UserUncheckedUpdateWithoutReporterDisputesInput>
+  }
+
+  export type UserUpdateWithoutReporterDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReporterDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUpsertWithoutTargetedDisputesInput = {
+    update: XOR<UserUpdateWithoutTargetedDisputesInput, UserUncheckedUpdateWithoutTargetedDisputesInput>
+    create: XOR<UserCreateWithoutTargetedDisputesInput, UserUncheckedCreateWithoutTargetedDisputesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTargetedDisputesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTargetedDisputesInput, UserUncheckedUpdateWithoutTargetedDisputesInput>
+  }
+
+  export type UserUpdateWithoutTargetedDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTargetedDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+  }
+
+  export type UserUpsertWithoutBrandDisputesInput = {
+    update: XOR<UserUpdateWithoutBrandDisputesInput, UserUncheckedUpdateWithoutBrandDisputesInput>
+    create: XOR<UserCreateWithoutBrandDisputesInput, UserUncheckedCreateWithoutBrandDisputesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBrandDisputesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBrandDisputesInput, UserUncheckedUpdateWithoutBrandDisputesInput>
+  }
+
+  export type UserUpdateWithoutBrandDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBrandDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUpsertWithoutCreatorDisputesInput = {
+    update: XOR<UserUpdateWithoutCreatorDisputesInput, UserUncheckedUpdateWithoutCreatorDisputesInput>
+    create: XOR<UserCreateWithoutCreatorDisputesInput, UserUncheckedCreateWithoutCreatorDisputesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatorDisputesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatorDisputesInput, UserUncheckedUpdateWithoutCreatorDisputesInput>
+  }
+
+  export type UserUpdateWithoutCreatorDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatorDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type CampaignUpsertWithoutDisputesInput = {
+    update: XOR<CampaignUpdateWithoutDisputesInput, CampaignUncheckedUpdateWithoutDisputesInput>
+    create: XOR<CampaignCreateWithoutDisputesInput, CampaignUncheckedCreateWithoutDisputesInput>
+    where?: CampaignWhereInput
+  }
+
+  export type CampaignUpdateToOneWithWhereWithoutDisputesInput = {
+    where?: CampaignWhereInput
+    data: XOR<CampaignUpdateWithoutDisputesInput, CampaignUncheckedUpdateWithoutDisputesInput>
+  }
+
+  export type CampaignUpdateWithoutDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    budget?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    deadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    briefDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    goal?: NullableStringFieldUpdateOperationsInput | string | null
+    dosAndDonts?: NullableStringFieldUpdateOperationsInput | string | null
+    platforms?: CampaignUpdateplatformsInput | string[]
+    contentFormats?: CampaignUpdatecontentFormatsInput | string[]
+    minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUpdateManyWithoutCampaignNestedInput
+    brand?: BrandProfileUpdateOneRequiredWithoutCampaignsNestedInput
+    contracts?: ContractUpdateManyWithoutCampaignNestedInput
+    events?: CampaignEventUpdateManyWithoutCampaignNestedInput
+    invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CampaignUncheckedUpdateWithoutDisputesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    brandProfileId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    budget?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCampaignStatusFieldUpdateOperationsInput | $Enums.CampaignStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    deadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    briefDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    goal?: NullableStringFieldUpdateOperationsInput | string | null
+    dosAndDonts?: NullableStringFieldUpdateOperationsInput | string | null
+    platforms?: CampaignUpdateplatformsInput | string[]
+    contentFormats?: CampaignUpdatecontentFormatsInput | string[]
+    minFollowers?: NullableIntFieldUpdateOperationsInput | number | null
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    applications?: ApplicationUncheckedUpdateManyWithoutCampaignNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
+    events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
+    invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -47595,6 +51168,62 @@ export namespace Prisma {
     message?: string | null
     proposedBudget?: number | null
     status?: $Enums.InvitationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateManyBrandInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateManyCreatorInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateManyReporterInput = {
+    id?: string
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DisputeCreateManyTargetUserInput = {
+    id?: string
+    reporterId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    campaignId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -48036,6 +51665,174 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DisputeUpdateWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporter?: UserUpdateOneWithoutReporterDisputesNestedInput
+    targetUser?: UserUpdateOneWithoutTargetedDisputesNestedInput
+    creator?: UserUpdateOneWithoutCreatorDisputesNestedInput
+    campaign?: CampaignUpdateOneWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutBrandInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporter?: UserUpdateOneWithoutReporterDisputesNestedInput
+    targetUser?: UserUpdateOneWithoutTargetedDisputesNestedInput
+    brand?: UserUpdateOneWithoutBrandDisputesNestedInput
+    campaign?: CampaignUpdateOneWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    targetUser?: UserUpdateOneWithoutTargetedDisputesNestedInput
+    brand?: UserUpdateOneWithoutBrandDisputesNestedInput
+    creator?: UserUpdateOneWithoutCreatorDisputesNestedInput
+    campaign?: CampaignUpdateOneWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUpdateWithoutTargetUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporter?: UserUpdateOneWithoutReporterDisputesNestedInput
+    brand?: UserUpdateOneWithoutBrandDisputesNestedInput
+    creator?: UserUpdateOneWithoutCreatorDisputesNestedInput
+    campaign?: CampaignUpdateOneWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutTargetUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutTargetUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CRMLeadCreateManyBrandInput = {
     id?: string
     handle: string
@@ -48152,6 +51949,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateWithoutBrandInput = {
@@ -48178,6 +51976,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutCampaignNestedInput
   }
 
   export type CampaignUncheckedUpdateManyWithoutBrandInput = {
@@ -48539,6 +52338,20 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DisputeCreateManyCampaignInput = {
+    id?: string
+    reporterId?: string | null
+    targetUserId?: string | null
+    brandId?: string | null
+    creatorId?: string | null
+    status?: $Enums.DisputeStatus
+    reason?: $Enums.ReportReason
+    description: string
+    resolutionNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ApplicationUpdateWithoutCampaignInput = {
     id?: StringFieldUpdateOperationsInput | string
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48682,6 +52495,48 @@ export namespace Prisma {
     message?: NullableStringFieldUpdateOperationsInput | string | null
     proposedBudget?: NullableFloatFieldUpdateOperationsInput | number | null
     status?: EnumInvitationStatusFieldUpdateOperationsInput | $Enums.InvitationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUpdateWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporter?: UserUpdateOneWithoutReporterDisputesNestedInput
+    targetUser?: UserUpdateOneWithoutTargetedDisputesNestedInput
+    brand?: UserUpdateOneWithoutBrandDisputesNestedInput
+    creator?: UserUpdateOneWithoutCreatorDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutCampaignInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    targetUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    brandId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    description?: StringFieldUpdateOperationsInput | string
+    resolutionNotes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
