@@ -71,13 +71,10 @@ export async function getCreatorsAction(): Promise<Creator[]> {
         seenPlatforms.add(stat.platform);
       }
     }
-    // Fall back to primary platform if platformStats is empty
-    if (Object.keys(platforms).length === 0 && profile.primaryPlatform) {
-      const count = profile.followerCount ?? profile.totalFollowers;
-      platforms[profile.primaryPlatform] = count > 0 ? fmtFollowers(count) : "0";
-    }
-
-    // Convert SocialLink[] JSON (stored as {platform, url}[]) to Record<string, string>
+    // Convert socialLinks JSON to Record<string, string>.
+    // Two storage formats exist:
+    //   - Legacy:  [{platform, url}, ...]  (array)
+    //   - Import:  { instagram: "url", tiktok: "url", ... }  (object)
     const rawLinks = profile.socialLinks;
     const social_links: Record<string, string> = {};
     if (Array.isArray(rawLinks)) {
@@ -86,10 +83,35 @@ export async function getCreatorsAction(): Promise<Creator[]> {
           social_links[link.platform.toLowerCase()] = link.url;
         }
       }
+    } else if (rawLinks && typeof rawLinks === "object") {
+      for (const [platform, url] of Object.entries(rawLinks as Record<string, unknown>)) {
+        if (typeof url === "string" && url) {
+          social_links[platform.toLowerCase()] = url;
+        }
+      }
     }
 
     const totalFollowers = profile.followerCount ?? profile.totalFollowers ?? 0;
     const avgEngagement = profile.averageEngagement ?? profile.avgEngagementRate ?? 0;
+
+    // Build per-platform follower counts from social_links when platformStats
+    // is missing (e.g. creators imported via CSV who haven't connected OAuth).
+    // Distribute total followers: primary ~65 %, secondary ~25 %, rest ~10 %.
+    if (Object.keys(platforms).length === 0 && Object.keys(social_links).length > 0) {
+      const primaryPlatform = profile.primaryPlatform ?? "";
+      const linkedPlatforms = Object.keys(social_links);
+      // Put primary first so it always gets the dominant share
+      const ordered = primaryPlatform && linkedPlatforms.includes(primaryPlatform)
+        ? [primaryPlatform, ...linkedPlatforms.filter((p) => p !== primaryPlatform)]
+        : linkedPlatforms;
+      const shares = [0.65, 0.25, 0.1];
+      ordered.slice(0, 3).forEach((p, i) => {
+        platforms[p] = fmtFollowers(Math.round(totalFollowers * (shares[i] ?? 0.05)));
+      });
+    } else if (Object.keys(platforms).length === 0 && profile.primaryPlatform) {
+      // Final fallback: primary platform with full count
+      platforms[profile.primaryPlatform] = fmtFollowers(totalFollowers);
+    }
 
     return {
       id: u.id,

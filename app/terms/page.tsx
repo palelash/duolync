@@ -3,8 +3,8 @@ import Navbar from "@/app/_components/layout/Navbar";
 import Footer from "@/app/_components/layout/Footer";
 
 export const metadata = {
-  title: "Terms and Conditions — Duolync",
-  description: "Terms and Conditions for Duolync. Last updated May 18, 2026.",
+  title: "Terms of Service — Duolync",
+  description: "Terms of Service for Duolync. Read the rules governing our creator-brand marketplace.",
 };
 
 export default function TermsPage() {
@@ -23,6 +23,7 @@ export default function TermsPage() {
 
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-4 max-w-3xl">
+
           {/* Header */}
           <div className="mb-12">
             <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">
@@ -32,204 +33,509 @@ export default function TermsPage() {
               className="font-display font-bold text-white mb-3"
               style={{ fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1 }}
             >
-              Terms and Conditions
+              Terms of Service
             </h1>
-            <p className="text-sm text-zinc-500">Last updated: May 18, 2026</p>
+            <p className="text-sm text-zinc-500">Last updated: September 15, 2026</p>
           </div>
 
           {/* Divider */}
           <div className="h-px mb-12" style={{ background: "var(--border-card)" }} />
 
+          {/* Table of Contents */}
+          <div
+            className="mb-12 rounded-xl p-6"
+            style={{ background: "var(--bg-card)", border: "1px solid var(--border-card)" }}
+          >
+            <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-4">
+              Contents
+            </p>
+            <ol className="toc-list">
+              <li><a href="#acceptance">Acceptance of Terms</a></li>
+              <li><a href="#definitions">Definitions</a></li>
+              <li><a href="#marketplace">Marketplace Rules</a></li>
+              <li><a href="#accounts">Account Responsibilities</a></li>
+              <li><a href="#brands">Brand-Specific Terms</a></li>
+              <li><a href="#creators">Creator-Specific Terms</a></li>
+              <li><a href="#campaigns">Campaigns &amp; Collaborations</a></li>
+              <li><a href="#content-ip">Content &amp; Intellectual Property</a></li>
+              <li><a href="#disputes">Dispute Resolution &amp; Admin Authority</a></li>
+              <li><a href="#prohibited">Prohibited Conduct</a></li>
+              <li><a href="#termination">Termination &amp; Suspension</a></li>
+              <li><a href="#liability">Limitation of Liability</a></li>
+              <li><a href="#governing-law">Governing Law</a></li>
+              <li><a href="#changes">Changes to Terms</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ol>
+          </div>
+
           {/* Body */}
           <div className="prose-legal">
+
+            {/* 1. Acceptance */}
+            <h2 id="acceptance">Acceptance of Terms</h2>
             <p>
-              Please read these terms and conditions carefully before using Our Service.
+              Welcome to Duolync. By creating an account, accessing, or using the Duolync platform at{" "}
+              <a href="https://duolync.com" target="_blank" rel="noopener noreferrer">duolync.com</a>{" "}
+              (the &ldquo;Service&rdquo;), you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;), our{" "}
+              <Link href="/privacy">Privacy Policy</Link>, and any additional guidelines or policies referenced herein.
+            </p>
+            <p>
+              If you do not agree with any part of these Terms, you may not access or use the Service. You represent
+              that you are at least 18 years of age and have the legal capacity to enter into a binding agreement.
+              If you are using the Service on behalf of a company or organization, you represent that you have the
+              authority to bind that entity to these Terms.
             </p>
 
-            <h2>Interpretation and Definitions</h2>
-            <h3>Interpretation</h3>
-            <p>
-              The words whose initial letters are capitalized have meanings defined under the following conditions. The
-              following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
-            </p>
-
-            <h3>Definitions</h3>
-            <p>For the purposes of these Terms and Conditions:</p>
+            {/* 2. Definitions */}
+            <h2 id="definitions">Definitions</h2>
+            <p>For the purposes of these Terms:</p>
             <ul>
-              <li><strong>Affiliate</strong> means an entity that controls, is controlled by, or is under common control with a party, where &ldquo;control&rdquo; means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</li>
-              <li><strong>Country</strong> refers to: Georgia</li>
-              <li><strong>Company</strong> (referred to as either &ldquo;the Company&rdquo;, &ldquo;We&rdquo;, &ldquo;Us&rdquo; or &ldquo;Our&rdquo; in these Terms and Conditions) refers to Duolync.</li>
-              <li><strong>Device</strong> means any device that can access the Service such as a computer, a cell phone or a digital tablet.</li>
-              <li><strong>Service</strong> refers to the Website.</li>
-              <li><strong>Terms and Conditions</strong> (also referred to as &ldquo;Terms&rdquo;) means these Terms and Conditions, including any documents expressly incorporated by reference, which govern Your access to and use of the Service and form the entire agreement between You and the Company regarding the Service.</li>
-              <li><strong>Third-Party Social Media Service</strong> means any services or content provided by a third party that is displayed, included, made available, or linked to through the Service.</li>
-              <li><strong>Website</strong> refers to Duolync, accessible from <a href="https://duolync.com/" target="_blank" rel="noopener noreferrer">https://duolync.com/</a>.</li>
-              <li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
+              <li><strong>Duolync</strong> (also &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) refers to the company operating the Service, registered in Georgia.</li>
+              <li><strong>Brand</strong> means any business, agency, organization, or individual who registers as a Brand on Duolync to discover, contact, and collaborate with Creators.</li>
+              <li><strong>Creator</strong> means any individual content creator who registers on Duolync to build a portfolio, connect social accounts, and discover brand collaboration opportunities.</li>
+              <li><strong>User</strong> means any registered Brand or Creator using the Service.</li>
+              <li><strong>Campaign</strong> means a sponsored content or collaboration project created by a Brand on Duolync, including the brief, terms, deliverables, timeline, and compensation.</li>
+              <li><strong>Application</strong> means a Creator&apos;s submission of interest to participate in a Brand&apos;s Campaign.</li>
+              <li><strong>Deliverable</strong> means a piece of content, post, story, video, or other output a Creator is contracted to produce as part of a Campaign.</li>
+              <li><strong>Connected Social Account</strong> means any social media account (Instagram, TikTok, YouTube, etc.) a Creator links to their Duolync profile via OAuth.</li>
+              <li><strong>Profile</strong> means a User&apos;s publicly visible page on Duolync, including portfolio media, bio, and social metrics.</li>
+              <li><strong>Portfolio</strong> means the collection of past work, connected social account data, and campaign history displayed on a Creator&apos;s Profile.</li>
             </ul>
 
-            <h2>Acknowledgment</h2>
+            {/* 3. Marketplace Rules */}
+            <h2 id="marketplace">Marketplace Rules</h2>
             <p>
-              These are the Terms and Conditions governing the use of this Service and the agreement between You and the
-              Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the
-              Service.
-            </p>
-            <p>
-              Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and
-              Conditions. These Terms and Conditions apply to all visitors, users and others who access or use the Service.
-            </p>
-            <p>
-              By accessing or using the Service You agree to be bound by these Terms and Conditions. If You disagree with
-              any part of these Terms and Conditions then You may not access the Service.
-            </p>
-            <p>
-              You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service.
-            </p>
-            <p>
-              Your access to and use of the Service is also subject to Our{" "}
-              <Link href="/privacy">Privacy Policy</Link>, which describes how We collect, use, and disclose personal
-              information. Please read Our Privacy Policy carefully before using Our Service.
+              Duolync is a two-sided marketplace. Brands use the platform to discover and work with Creators; Creators
+              use the platform to find paid collaboration opportunities and build their professional presence. The
+              following rules govern all marketplace interactions.
             </p>
 
-            <h2>Links to Other Websites</h2>
+            <h3>Good Faith Participation</h3>
             <p>
-              Our Service may contain links to third-party websites or services that are not owned or controlled by the
-              Company. The Company has no control over, and assumes no responsibility for, the content, privacy policies, or
-              practices of any third-party websites or services.
-            </p>
-            <p>
-              You further acknowledge and agree that the Company shall not be responsible or liable, directly or indirectly,
-              for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any
-              such content, goods or services available on or through any such websites or services.
-            </p>
-            <p>
-              We strongly advise You to read the terms and conditions and privacy policies of any third-party websites or
-              services that You visit.
+              All Users must participate in the marketplace in good faith. This means providing accurate information
+              about yourself, your brand, your audience, and your capabilities; honoring commitments made to other
+              Users; and communicating professionally and honestly at all times.
             </p>
 
-            <h3>Links from a Third-Party Social Media Service</h3>
+            <h3>No Circumvention</h3>
             <p>
-              The Service may display, include, make available, or link to content or services provided by a Third-Party
-              Social Media Service. A Third-Party Social Media Service is not owned or controlled by the Company, and the
-              Company does not endorse or assume responsibility for any Third-Party Social Media Service.
-            </p>
-            <p>
-              You acknowledge and agree that the Company shall not be responsible or liable, directly or indirectly, for any
-              damage or loss caused or alleged to be caused by or in connection with Your access to or use of any
-              Third-Party Social Media Service, including any content, goods, or services made available through them. Your
-              use of any Third-Party Social Media Service is governed by that Third-Party Social Media Service&apos;s terms and
-              privacy policies.
+              Users may not use contact information or connections obtained through Duolync to conduct business
+              outside of the platform in order to circumvent platform fees, policies, or tracking. Duolync facilitates
+              and enables these introductions, and operating through the platform protects both parties.
             </p>
 
-            <h2>Termination</h2>
+            <h3>No Misrepresentation</h3>
             <p>
-              We may terminate or suspend Your access immediately, without prior notice or liability, for any reason
-              whatsoever, including without limitation if You breach these Terms and Conditions. Upon termination, Your
-              right to use the Service will cease immediately.
+              Users must not misrepresent their identity, follower counts, engagement rates, audience demographics,
+              industry affiliations, or past work. Duolync may verify data against Connected Social Accounts and
+              third-party signals. Accounts found to misrepresent metrics will be subject to immediate suspension.
             </p>
 
-            <h2>Limitation of Liability</h2>
+            <h3>Professional Standards</h3>
             <p>
-              Notwithstanding any damages that You might incur, the entire liability of the Company and any of its suppliers
-              under any provision of these Terms and Your exclusive remedy for all of the foregoing shall be limited to the
-              amount actually paid by You through the Service or 100 USD if You haven&apos;t purchased anything through the
-              Service.
-            </p>
-            <p>
-              To the maximum extent permitted by applicable law, in no event shall the Company or its suppliers be liable
-              for any special, incidental, indirect, or consequential damages whatsoever (including, but not limited to,
-              damages for loss of profits, loss of data or other information, for business interruption, for personal injury,
-              loss of privacy arising out of or in any way related to the use of or inability to use the Service, third-party
-              software and/or third-party hardware used with the Service, or otherwise in connection with any provision of
-              these Terms), even if the Company or any supplier has been advised of the possibility of such damages and even
-              if the remedy fails of its essential purpose.
-            </p>
-            <p>
-              Some states do not allow the exclusion of implied warranties or limitation of liability for incidental or
-              consequential damages, which means that some of the above limitations may not apply. In these states, each
-              party&apos;s liability will be limited to the greatest extent permitted by law.
+              Duolync is a professional marketplace. All communications between Brands and Creators must remain
+              respectful and lawful. Harassment, discrimination, threats, or solicitation of illegal activity are
+              strictly prohibited and may result in permanent account termination.
             </p>
 
-            <h2>&ldquo;AS IS&rdquo; and &ldquo;AS AVAILABLE&rdquo; Disclaimer</h2>
+            <h3>Prohibited Industries</h3>
             <p>
-              The Service is provided to You &ldquo;AS IS&rdquo; and &ldquo;AS AVAILABLE&rdquo; and with all faults and defects without warranty of
-              any kind. To the maximum extent permitted under applicable law, the Company expressly disclaims all warranties,
-              whether express, implied, statutory or otherwise, with respect to the Service, including all implied warranties
-              of merchantability, fitness for a particular purpose, title and non-infringement.
+              Brands in the following industries are prohibited from using Duolync to run campaigns:
             </p>
+            <ul>
+              <li>Adult content or sexually explicit material</li>
+              <li>Weapons, firearms, or ammunition (unless licensed and regionally compliant)</li>
+              <li>Tobacco, e-cigarettes, or illicit substances</li>
+              <li>Pyramid schemes, multi-level marketing schemes misrepresented as employment</li>
+              <li>Gambling or unregulated financial investment schemes</li>
+              <li>Content that promotes hatred, discrimination, or violence</li>
+            </ul>
+
+            {/* 4. Account Responsibilities */}
+            <h2 id="accounts">Account Responsibilities</h2>
+
+            <h3>Account Security</h3>
             <p>
-              Without limiting the foregoing, neither the Company nor any of the company&apos;s provider makes any
-              representation or warranty of any kind, express or implied: (i) as to the operation or availability of the
-              Service; (ii) that the Service will be uninterrupted or error-free; (iii) as to the accuracy, reliability, or
-              currency of any information or content provided through the Service; or (iv) that the Service, its servers,
-              the content, or e-mails sent from or on behalf of the Company are free of viruses, scripts, trojan horses,
-              worms, malware, timebombs or other harmful components.
+              You are responsible for maintaining the confidentiality of your account credentials and for all
+              activity that occurs under your account. You must:
+            </p>
+            <ul>
+              <li>Use a strong, unique password and update it regularly.</li>
+              <li>Enable two-factor authentication if offered by the platform.</li>
+              <li>Notify us immediately at <a href="mailto:hello@duolync.com">hello@duolync.com</a> if you suspect unauthorized access to your account.</li>
+              <li>Not share your login credentials with any other person.</li>
+              <li>Not access another User&apos;s account without authorization.</li>
+            </ul>
+            <p>
+              Duolync is not liable for any loss or damage arising from your failure to maintain account security.
             </p>
 
-            <h2>Governing Law</h2>
+            <h3>Accurate Information</h3>
             <p>
-              The laws of the Country, excluding its conflicts of law rules, shall govern these Terms and Your use of the
-              Service. Your use of the Application may also be subject to other local, state, national, or international
-              laws.
+              You must ensure that all information in your account profile — including your name, contact details,
+              business information, and content metrics — is accurate, current, and complete. You agree to update
+              your information promptly if it changes. Providing false information constitutes a material breach of
+              these Terms.
             </p>
 
-            <h2>Disputes Resolution</h2>
+            <h3>One Account Per User</h3>
             <p>
-              If You have any concern or dispute about the Service, You agree to first try to resolve the dispute informally
-              by contacting the Company.
+              Each individual or organization may maintain one active account per account type (Creator or Brand).
+              Creating multiple accounts to evade restrictions, bans, or platform rules is prohibited.
             </p>
 
-            <h2>For European Union (EU) Users</h2>
+            <h3>Account Transfers</h3>
             <p>
-              If You are a European Union consumer, you will benefit from any mandatory provisions of the law of the country
-              in which You are resident.
+              Accounts are non-transferable. You may not sell, assign, or transfer your Duolync account to any
+              third party without prior written consent from Duolync.
             </p>
 
-            <h2>United States Legal Compliance</h2>
+            {/* 5. Brand-Specific Terms */}
+            <h2 id="brands">Brand-Specific Terms</h2>
             <p>
-              You represent and warrant that (i) You are not located in a country that is subject to the United States
-              government embargo, or that has been designated by the United States government as a &ldquo;terrorist supporting&rdquo;
-              country, and (ii) You are not listed on any United States government list of prohibited or restricted parties.
+              In addition to general Terms, the following apply specifically to users registered as Brands:
+            </p>
+            <ul>
+              <li>
+                <strong>Truthful Campaigns:</strong> All Campaign briefs, budgets, deliverable expectations, and timelines
+                must be accurate and achievable. Misleading campaign descriptions intended to attract Creator applications
+                under false pretenses are prohibited.
+              </li>
+              <li>
+                <strong>Timely Communication:</strong> Brands must respond to Creator applications and deliverable
+                submissions within the timeframes specified in the Campaign brief or within a reasonable period (not to
+                exceed 14 days) where no specific timeline is provided.
+              </li>
+              <li>
+                <strong>Payment Obligations:</strong> Brands are responsible for fulfilling agreed compensation to
+                Creators upon delivery and acceptance of Deliverables, in accordance with Campaign terms.
+              </li>
+              <li>
+                <strong>Intellectual Property Respect:</strong> Brands may only use Creator-produced Deliverables as
+                agreed in the Campaign terms. Unauthorized redistribution, modification, or commercial exploitation of
+                Deliverables beyond agreed scope is prohibited.
+              </li>
+              <li>
+                <strong>Confidentiality:</strong> Brands must treat Creator contact information, pitch materials, and
+                rate cards as confidential and may not share them with third parties without Creator consent.
+              </li>
+            </ul>
+
+            {/* 6. Creator-Specific Terms */}
+            <h2 id="creators">Creator-Specific Terms</h2>
+            <p>
+              In addition to general Terms, the following apply specifically to users registered as Creators:
+            </p>
+            <ul>
+              <li>
+                <strong>Accurate Metrics:</strong> You represent that all follower counts, engagement rates, and
+                audience demographics displayed on your profile — whether self-reported or sourced via Connected Social
+                Accounts — are genuine and not artificially inflated through bots, purchased followers, engagement pods,
+                or any other inauthentic means.
+              </li>
+              <li>
+                <strong>Deliverable Quality:</strong> You agree to produce Deliverables that meet the quality and
+                specifications outlined in the Campaign brief and any agreed revisions. Consistently substandard
+                Deliverables may result in negative reviews, campaign disputes, or account suspension.
+              </li>
+              <li>
+                <strong>Disclosure Requirements:</strong> You are solely responsible for complying with applicable
+                advertising disclosure laws (e.g., FTC guidelines, ASA regulations) when publishing sponsored content.
+                Sponsored content must be clearly labeled as paid partnerships or advertisements as required by law.
+              </li>
+              <li>
+                <strong>Exclusive Obligations:</strong> Where a Campaign specifies category exclusivity (e.g., no
+                competing brand in the same niche for a specified period), you agree to honor those exclusivity terms
+                for the duration specified.
+              </li>
+              <li>
+                <strong>Connected Account Accuracy:</strong> You must not connect social accounts that belong to
+                another person, or manipulate connected account data in any way that misrepresents your reach or
+                engagement.
+              </li>
+            </ul>
+
+            {/* 7. Campaigns */}
+            <h2 id="campaigns">Campaigns &amp; Collaborations</h2>
+
+            <h3>Campaign Formation</h3>
+            <p>
+              A Campaign is initiated by a Brand and becomes active when Duolync reviews and approves the listing.
+              A collaboration agreement between a Brand and Creator is formed when a Creator&apos;s Application is
+              accepted by the Brand and both parties confirm the Campaign terms within the platform.
             </p>
 
-            <h2>Severability and Waiver</h2>
-            <h3>Severability</h3>
+            <h3>Deliverables &amp; Revisions</h3>
             <p>
-              If any provision of these Terms is held to be unenforceable or invalid, such provision will be changed and
-              interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law
-              and the remaining provisions will continue in full force and effect.
-            </p>
-            <h3>Waiver</h3>
-            <p>
-              Except as provided herein, the failure to exercise a right or to require performance of an obligation under
-              these Terms shall not affect a party&apos;s ability to exercise such right or require such performance at any time
-              thereafter nor shall the waiver of a breach constitute a waiver of any subsequent breach.
+              Creators must submit Deliverables through Duolync&apos;s platform within the agreed timeline. Brands may
+              request a reasonable number of revisions (as specified in the Campaign brief). Repeated or bad-faith
+              revision requests that exceed Campaign scope may be raised as a dispute.
             </p>
 
-            <h2>Translation Interpretation</h2>
+            <h3>Campaign Cancellations</h3>
             <p>
-              These Terms and Conditions may have been translated if We have made them available to You on our Service. You
-              agree that the original English text shall prevail in the case of a dispute.
+              Either party may request cancellation of a Campaign before the Creator begins work on Deliverables.
+              Cancellations after work has commenced may be subject to partial compensation obligations as determined
+              by the Campaign terms or Duolync dispute resolution. Duolync reserves the right to cancel any Campaign
+              that violates these Terms.
             </p>
 
-            <h2>Changes to These Terms and Conditions</h2>
+            <h3>Reviews &amp; Ratings</h3>
             <p>
-              We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is
-              material We will make reasonable efforts to provide at least 30 days&apos; notice prior to any new terms taking
-              effect. What constitutes a material change will be determined at Our sole discretion.
-            </p>
-            <p>
-              By continuing to access or use Our Service after those revisions become effective, You agree to be bound by
-              the revised terms. If You do not agree to the new terms, in whole or in part, please stop using the Service.
+              Upon Campaign completion, Brands and Creators may leave reviews and ratings for one another. Reviews
+              must be honest, accurate, and based on actual experience. Fake, retaliatory, or incentivized reviews
+              are prohibited and may be removed by Duolync without notice.
             </p>
 
-            <h2>Contact Us</h2>
-            <p>If you have any questions about these Terms and Conditions, You can contact us:</p>
+            {/* 8. Content & IP */}
+            <h2 id="content-ip">Content &amp; Intellectual Property</h2>
+
+            <h3>Creator Ownership</h3>
+            <p>
+              Creators retain full ownership of all original content they create, including Deliverables produced for
+              Campaigns. Nothing in these Terms transfers copyright or other intellectual property rights in a
+              Creator&apos;s content to Duolync or to any Brand, except as expressly agreed in the Campaign terms.
+            </p>
+
+            <h3>License to Duolync</h3>
+            <p>
+              By uploading or displaying content on Duolync (including profile media, portfolio items, and bio),
+              you grant Duolync a non-exclusive, royalty-free, worldwide license to host, display, reproduce, and
+              distribute that content solely for the purpose of operating and promoting the Service. This includes
+              displaying your portfolio on your Creator Profile, in Brand discovery grids, and in Duolync marketing
+              materials (e.g., case studies or platform showcase pages).
+            </p>
+            <p>
+              You may revoke this license at any time by removing the content from your profile or deleting your
+              account, subject to reasonable technical processing time.
+            </p>
+
+            <h3>License to Brands</h3>
+            <p>
+              The usage rights a Brand receives over a Creator&apos;s Deliverables are governed entirely by the terms
+              agreed within the Campaign brief. Unless a Campaign brief explicitly grants broader rights (e.g.,
+              buyout, unlimited usage, whitelisting), the Brand receives a limited, non-exclusive license to use
+              the Deliverable for the purposes and duration specified in the Campaign.
+            </p>
+
+            <h3>Platform Content</h3>
+            <p>
+              All content owned by Duolync — including the platform&apos;s design, logos, text, software, and brand
+              identity — is protected by intellectual property law. You may not copy, modify, distribute, or create
+              derivative works from Duolync&apos;s proprietary content without written permission.
+            </p>
+
+            <h3>Third-Party Content</h3>
+            <p>
+              Users must not upload content that infringes the intellectual property rights of any third party,
+              including copyrighted music, video footage, trademarks, or brand assets. Duolync will remove
+              infringing content and may suspend accounts that repeatedly upload infringing material.
+            </p>
+
+            {/* 9. Disputes */}
+            <h2 id="disputes">Dispute Resolution &amp; Admin Authority</h2>
+            <p>
+              Duolync provides a structured process for resolving disputes between Brands and Creators. Our goal
+              is to facilitate fair, timely, and impartial resolution of disagreements that arise in the context
+              of the marketplace.
+            </p>
+
+            <h3>Informal Resolution First</h3>
+            <p>
+              Before raising a formal dispute, parties are encouraged to attempt resolution directly through
+              Duolync&apos;s in-platform messaging. Many disputes can be resolved quickly through open communication.
+              A formal dispute should be filed only when direct communication has failed.
+            </p>
+
+            <h3>Filing a Formal Dispute</h3>
+            <p>
+              Either party may raise a formal dispute within <strong>14 days</strong> of the triggering event
+              (e.g., missed deliverable deadline, payment failure, policy violation). Disputes are filed through
+              the Campaign management interface. Both parties will be notified and given an opportunity to submit
+              their evidence and position.
+            </p>
+
+            <h3>Duolync Admin Review</h3>
+            <p>
+              Duolync administrators will review all formal dispute submissions. The review process includes:
+            </p>
+            <ul>
+              <li>Examination of Campaign terms, deliverable submissions, and communication logs</li>
+              <li>Review of evidence submitted by both parties (screenshots, files, messages)</li>
+              <li>Consideration of platform policies, prior conduct history, and contextual factors</li>
+              <li>A written decision delivered to both parties within <strong>10 business days</strong> of the dispute being formally reviewed (complex cases may take longer)</li>
+            </ul>
+
+            <h3>Possible Outcomes &amp; Administrative Actions</h3>
+            <p>
+              Following a dispute review, Duolync administrators may take any of the following actions:
+            </p>
+            <ul>
+              <li>
+                <strong>Dismiss the dispute</strong> if it is found to be unfounded or brought in bad faith.
+              </li>
+              <li>
+                <strong>Issue a formal warning</strong> to one or both parties for conduct that violates platform
+                policies but does not warrant account suspension.
+              </li>
+              <li>
+                <strong>Mediate an agreed resolution</strong> between the parties, including adjusted payment terms,
+                revised deliverable requirements, or mutual release.
+              </li>
+              <li>
+                <strong>Issue a binding decision</strong> on the dispute, including determination of whether a
+                Deliverable meets Campaign specifications, or whether compensation is owed.
+              </li>
+              <li>
+                <strong>Restrict account features</strong> (e.g., suspend campaign creation or application ability)
+                for a defined period pending resolution.
+              </li>
+              <li>
+                <strong>Suspend the account</strong> of a party found to have materially violated platform policies,
+                with temporary or indefinite suspension as appropriate to the severity of the violation.
+              </li>
+              <li>
+                <strong>Permanently ban an account</strong> for severe violations including fraud, harassment,
+                repeated policy breaches, or legal violations.
+              </li>
+            </ul>
+
+            <h3>Admin Decisions Are Final</h3>
+            <p>
+              Duolync&apos;s administrative decisions on disputes are final within the platform. By using the Service,
+              you consent to Duolync&apos;s dispute resolution process and agree not to circumvent platform decisions
+              through external claims solely based on a Duolync dispute outcome, except where required by applicable
+              law.
+            </p>
+
+            <h3>Appeals</h3>
+            <p>
+              A party that believes an administrative decision was made in error may submit a written appeal within
+              7 days of receiving the decision by emailing <a href="mailto:hello@duolync.com">hello@duolync.com</a>{" "}
+              with the subject line &ldquo;Dispute Appeal — [Campaign ID].&rdquo; Appeals must include new evidence or
+              demonstrate a procedural error. Duolync will review appeals within 14 business days. Appeal decisions
+              are final.
+            </p>
+
+            {/* 10. Prohibited Conduct */}
+            <h2 id="prohibited">Prohibited Conduct</h2>
+            <p>
+              The following behaviors are strictly prohibited on Duolync and may result in immediate account
+              suspension or permanent termination:
+            </p>
+            <ul>
+              <li>Providing false or misleading information in your profile, campaign, or any platform interaction</li>
+              <li>Artificially inflating social metrics (e.g., purchasing followers, using bots, or coordinating engagement pods to misrepresent reach)</li>
+              <li>Harassment, bullying, threats, or abusive communications toward any User or Duolync staff</li>
+              <li>Attempting to circumvent platform fees by taking relationships off-platform to avoid using Duolync</li>
+              <li>Creating multiple accounts to evade bans, warnings, or restrictions</li>
+              <li>Uploading or distributing malware, phishing content, or malicious code</li>
+              <li>Accessing other Users&apos; accounts without authorization</li>
+              <li>Attempting to reverse-engineer, scrape, or systematically extract platform data</li>
+              <li>Publishing or transmitting spam, unsolicited messages, or chain communications</li>
+              <li>Facilitating or promoting illegal activity through the platform</li>
+              <li>Violating any applicable laws or regulations in connection with your use of the Service</li>
+            </ul>
+
+            {/* 11. Termination */}
+            <h2 id="termination">Termination &amp; Suspension</h2>
+
+            <h3>Termination by You</h3>
+            <p>
+              You may close your account at any time from <strong>Settings → Account → Delete Account</strong>.
+              Upon account deletion, your profile will be removed from public discovery. Any active Campaign
+              obligations should be resolved or formally closed before account deletion. Duolync is not
+              responsible for incomplete Campaign obligations resulting from voluntary account deletion.
+            </p>
+
+            <h3>Termination by Duolync</h3>
+            <p>
+              Duolync may suspend or permanently terminate your account at any time, with or without notice, for
+              any of the following reasons:
+            </p>
+            <ul>
+              <li>Material breach of these Terms</li>
+              <li>Repeated or severe violations of platform policies</li>
+              <li>Fraudulent, abusive, or illegal conduct</li>
+              <li>Dispute decisions that result in account suspension or ban</li>
+              <li>Inactivity exceeding 24 months (with prior notice)</li>
+              <li>Legal obligation or court order</li>
+            </ul>
+
+            <h3>Effect of Termination</h3>
+            <p>
+              Upon termination, your right to access and use the Service will cease immediately. Provisions of
+              these Terms that by their nature should survive termination (including intellectual property,
+              dispute resolution, limitation of liability, and governing law) will continue to apply.
+            </p>
+
+            {/* 12. Liability */}
+            <h2 id="liability">Limitation of Liability</h2>
+            <p>
+              The Service is provided on an &ldquo;AS IS&rdquo; and &ldquo;AS AVAILABLE&rdquo; basis. Duolync makes no warranties,
+              express or implied, regarding the reliability, accuracy, or fitness of the Service for any
+              particular purpose.
+            </p>
+            <p>
+              To the maximum extent permitted by applicable law, Duolync shall not be liable for any indirect,
+              incidental, special, consequential, or punitive damages — including loss of profits, revenue, data,
+              goodwill, or business opportunities — arising from your use of or inability to use the Service,
+              even if Duolync has been advised of the possibility of such damages.
+            </p>
+            <p>
+              Duolync&apos;s total liability to any User for any claim arising from or related to the Service shall not
+              exceed the greater of (a) the total fees paid by that User to Duolync in the 12 months preceding the
+              claim, or (b) USD $100.
+            </p>
+            <p>
+              Duolync is not a party to agreements between Brands and Creators and is not responsible for the
+              conduct, quality of work, or payment obligations of any User.
+            </p>
+
+            {/* 13. Governing Law */}
+            <h2 id="governing-law">Governing Law</h2>
+            <p>
+              These Terms and any dispute arising from them shall be governed by and construed in accordance with
+              the laws of Georgia, without regard to its conflict of law principles. Users in the European Union
+              retain any mandatory consumer protections afforded by the law of their country of residence.
+            </p>
+            <p>
+              Any dispute not resolved through Duolync&apos;s internal process that requires legal proceedings shall
+              be subject to the exclusive jurisdiction of the courts of Georgia, unless prohibited by applicable law.
+            </p>
+
+            {/* 14. Changes */}
+            <h2 id="changes">Changes to Terms</h2>
+            <p>
+              Duolync reserves the right to modify these Terms at any time. When we make material changes, we will
+              provide at least 14 days&apos; advance notice by updating the &ldquo;Last updated&rdquo; date on this page and
+              sending a notification to your registered email address.
+            </p>
+            <p>
+              Your continued use of the Service after the effective date of updated Terms constitutes acceptance of
+              those changes. If you disagree with updated Terms, you must stop using the Service and may close
+              your account before the effective date.
+            </p>
+
+            {/* 15. Contact */}
+            <h2 id="contact">Contact Us</h2>
+            <p>
+              If you have any questions about these Terms of Service, please reach out:
+            </p>
             <ul>
               <li>
                 By email:{" "}
                 <a href="mailto:hello@duolync.com">hello@duolync.com</a>
               </li>
+              <li>
+                Through our contact page:{" "}
+                <Link href="/contact">duolync.com/contact</Link>
+              </li>
             </ul>
+            <p>
+              We will respond to all Terms-related inquiries within 30 days.
+            </p>
+
           </div>
 
           {/* Back link */}
@@ -262,6 +568,7 @@ export default function TermsPage() {
           color: #f1f5f9;
           margin-top: 2.75rem;
           margin-bottom: 0.75rem;
+          scroll-margin-top: 6rem;
         }
         .prose-legal h3 {
           font-weight: 600;
@@ -269,6 +576,15 @@ export default function TermsPage() {
           color: #cbd5e1;
           margin-top: 2rem;
           margin-bottom: 0.5rem;
+        }
+        .prose-legal h4 {
+          font-weight: 600;
+          color: #94a3b8;
+          margin-top: 1.5rem;
+          margin-bottom: 0.4rem;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          font-size: 0.75rem;
         }
         .prose-legal ul {
           list-style: none;
@@ -301,6 +617,40 @@ export default function TermsPage() {
         .prose-legal strong {
           color: #e2e8f0;
           font-weight: 600;
+        }
+        /* TOC */
+        .toc-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          counter-reset: toc;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .toc-list li {
+          counter-increment: toc;
+          display: flex;
+          align-items: baseline;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: #64748b;
+        }
+        .toc-list li::before {
+          content: counter(toc, decimal-leading-zero);
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: #6d28d9;
+          letter-spacing: 0.05em;
+          flex-shrink: 0;
+        }
+        .toc-list a {
+          color: #94a3b8;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .toc-list a:hover {
+          color: #a78bfa;
         }
       `}</style>
     </div>
