@@ -4,7 +4,7 @@ import Footer from "@/app/_components/layout/Footer";
 
 export const metadata = {
   title: "Privacy Policy — Duolync",
-  description: "Privacy Policy for Duolync. Last updated May 18, 2026.",
+  description: "Privacy Policy for Duolync. Learn how we collect, use, and protect your data on the creator-brand marketplace.",
 };
 
 export default function PrivacyPage() {
@@ -23,6 +23,7 @@ export default function PrivacyPage() {
 
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-4 max-w-3xl">
+
           {/* Header */}
           <div className="mb-12">
             <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">
@@ -34,236 +35,460 @@ export default function PrivacyPage() {
             >
               Privacy Policy
             </h1>
-            <p className="text-sm text-zinc-500">Last updated: May 18, 2026</p>
+            <p className="text-sm text-zinc-500">Last updated: September 15, 2026</p>
           </div>
 
           {/* Divider */}
           <div className="h-px mb-12" style={{ background: "var(--border-card)" }} />
 
+          {/* Table of Contents */}
+          <div
+            className="mb-12 rounded-xl p-6"
+            style={{ background: "var(--bg-card)", border: "1px solid var(--border-card)" }}
+          >
+            <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-4">
+              Contents
+            </p>
+            <ol className="toc-list">
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#definitions">Definitions</a></li>
+              <li><a href="#data-collected">Data We Collect</a></li>
+              <li><a href="#social-oauth">Third-Party Social Media Data (OAuth)</a></li>
+              <li><a href="#data-usage">How We Use Your Data</a></li>
+              <li><a href="#moderation">Moderation &amp; Dispute Processing</a></li>
+              <li><a href="#data-sharing">Data Sharing</a></li>
+              <li><a href="#retention">Data Retention</a></li>
+              <li><a href="#security">Security</a></li>
+              <li><a href="#user-rights">Your Rights &amp; Data Deletion</a></li>
+              <li><a href="#cookies">Cookies &amp; Tracking</a></li>
+              <li><a href="#children">Children&apos;s Privacy</a></li>
+              <li><a href="#changes">Policy Changes</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ol>
+          </div>
+
           {/* Body */}
           <div className="prose-legal">
+
+            {/* 1. Overview */}
+            <h2 id="overview">Overview</h2>
             <p>
-              This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your
-              information when You use the Service and tells You about Your privacy rights and how the law protects You.
+              Duolync (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) operates a two-sided marketplace that connects content creators
+              (&ldquo;Creators&rdquo;) with brands and businesses (&ldquo;Brands&rdquo;) for collaboration and campaign management. This Privacy
+              Policy describes how we collect, use, store, and protect information when you use our platform at{" "}
+              <a href="https://duolync.com" target="_blank" rel="noopener noreferrer">duolync.com</a>.
             </p>
             <p>
-              We use Your Personal Data to provide and improve the Service. By using the Service, You agree to the
-              collection and use of information in accordance with this Privacy Policy.
+              By creating an account or using the Service, you acknowledge that you have read and understood this
+              Privacy Policy. If you do not agree with our data practices, please do not use the Service.
             </p>
 
-            <h2>Interpretation and Definitions</h2>
-            <h3>Interpretation</h3>
-            <p>
-              The words whose initial letters are capitalized have meanings defined under the following conditions. The
-              following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
-            </p>
-
-            <h3>Definitions</h3>
+            {/* 2. Definitions */}
+            <h2 id="definitions">Definitions</h2>
             <p>For the purposes of this Privacy Policy:</p>
             <ul>
-              <li><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</li>
-              <li><strong>Affiliate</strong> means an entity that controls, is controlled by, or is under common control with a party, where &ldquo;control&rdquo; means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.</li>
-              <li><strong>Company</strong> (referred to as either &ldquo;the Company&rdquo;, &ldquo;We&rdquo;, &ldquo;Us&rdquo; or &ldquo;Our&rdquo; in this Privacy Policy) refers to Duolync.</li>
-              <li><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</li>
-              <li><strong>Country</strong> refers to: Georgia</li>
-              <li><strong>Device</strong> means any device that can access the Service such as a computer, a cell phone or a digital tablet.</li>
-              <li><strong>Personal Data</strong> (or &ldquo;Personal Information&rdquo;) is any information that relates to an identified or identifiable individual. We use &ldquo;Personal Data&rdquo; and &ldquo;Personal Information&rdquo; interchangeably unless a law uses a specific term.</li>
-              <li><strong>Service</strong> refers to the Website.</li>
-              <li><strong>Service Provider</strong> means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.</li>
-              <li><strong>Usage Data</strong> refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).</li>
-              <li><strong>Website</strong> refers to Duolync, accessible from <a href="https://duolync.com/" target="_blank" rel="noopener noreferrer">https://duolync.com/</a>.</li>
-              <li><strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
+              <li><strong>Account</strong> means a unique account created for You to access our Service as either a Creator or a Brand.</li>
+              <li><strong>Brand</strong> means a business, agency, or individual who uses Duolync to discover creators and manage sponsorship campaigns.</li>
+              <li><strong>Creator</strong> means an individual content creator who uses Duolync to build a portfolio, connect social accounts, and find brand collaboration opportunities.</li>
+              <li><strong>Campaign</strong> means a brand-initiated collaboration project managed on Duolync, including briefs, applications, deliverables, and payments.</li>
+              <li><strong>Connected Social Account</strong> means any third-party social media account (Instagram, TikTok, YouTube, or other) that a Creator voluntarily links to their Duolync profile via OAuth.</li>
+              <li><strong>OAuth</strong> means the open authorization protocol used to grant Duolync limited, scoped access to your social media account data without exposing your credentials.</li>
+              <li><strong>Personal Data</strong> means any information that relates to an identified or identifiable natural person.</li>
+              <li><strong>Usage Data</strong> means data collected automatically by the platform, such as page visits, session duration, and feature interactions.</li>
+              <li><strong>Company</strong> (referred to as &ldquo;Duolync,&rdquo; &ldquo;We,&rdquo; &ldquo;Us,&rdquo; or &ldquo;Our&rdquo;) refers to Duolync, registered in Georgia.</li>
             </ul>
 
-            <h2>Collecting and Using Your Personal Data</h2>
-            <h3>Types of Data Collected</h3>
+            {/* 3. Data We Collect */}
+            <h2 id="data-collected">Data We Collect</h2>
 
-            <h4>Personal Data</h4>
+            <h3>Account Information</h3>
+            <p>When you register on Duolync, we collect:</p>
+            <ul>
+              <li>Full name and display name</li>
+              <li>Email address and hashed password</li>
+              <li>Account type (Creator or Brand)</li>
+              <li>Profile photo or brand logo</li>
+              <li>Country / region</li>
+              <li>Bio, niche categories, and self-reported audience demographics (Creators)</li>
+              <li>Company name, industry, and website (Brands)</li>
+            </ul>
+
+            <h3>Profile & Portfolio Data</h3>
+            <p>Creators may voluntarily provide additional profile information including:</p>
+            <ul>
+              <li>Content niche and specializations</li>
+              <li>Rate cards and collaboration preferences</li>
+              <li>Past brand partnerships and portfolio links</li>
+              <li>Media kit content</li>
+            </ul>
+
+            <h3>Usage Data</h3>
             <p>
-              While using Our Service, We may ask You to provide Us with certain personally identifiable information that
-              can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
+              We automatically collect data about how you interact with the platform, including IP addresses,
+              browser type, device identifiers, pages visited, features used, time spent, and click patterns.
+              This data helps us improve the Service and personalize your experience.
+            </p>
+
+            {/* 4. Social OAuth */}
+            <h2 id="social-oauth">Third-Party Social Media Data (OAuth)</h2>
+            <p>
+              A core feature of Duolync is the ability for Creators to connect their social media accounts —
+              currently Instagram, TikTok, and YouTube — via OAuth authorization. This integration enables
+              Creators to build verified, data-driven portfolios visible to Brands on the platform.
+            </p>
+            <p>
+              <strong>When you connect a social account via OAuth, you explicitly authorize Duolync to access the
+              following categories of data from that platform:</strong>
+            </p>
+
+            <h4>Instagram (via Meta Graph API)</h4>
+            <ul>
+              <li>Public profile information: username, display name, profile picture, and biography</li>
+              <li>Follower count and following count</li>
+              <li>Media posts: thumbnails, captions, media types, and post timestamps</li>
+              <li>Engagement metrics: likes, comments, shares, and saves per post</li>
+              <li>Reach and impressions data (where authorized by your Instagram account type)</li>
+              <li>Story and Reel performance metrics (Insights API, business/creator accounts only)</li>
+            </ul>
+
+            <h4>TikTok (via TikTok for Developers API)</h4>
+            <ul>
+              <li>Public profile information: username, display name, avatar, and bio</li>
+              <li>Follower count and following count</li>
+              <li>Video posts: cover images, captions, durations, and publish dates</li>
+              <li>Engagement metrics: likes, comments, shares, plays, and saves per video</li>
+              <li>Profile-level view count and engagement rate calculations</li>
+            </ul>
+
+            <h4>YouTube (via YouTube Data API v3)</h4>
+            <ul>
+              <li>Channel public profile: channel name, handle, description, and avatar</li>
+              <li>Subscriber count and total view count</li>
+              <li>Public video library: titles, thumbnails, descriptions, and publish dates</li>
+              <li>Video-level engagement: views, likes, comments, and estimated watch time</li>
+              <li>Channel analytics summaries (requires YouTube Analytics scope authorization)</li>
+            </ul>
+
+            <h3>How Social Data Is Used on Duolync</h3>
+            <ul>
+              <li>
+                <strong>Portfolio Display:</strong> Connected account data — including follower counts, engagement rates,
+                and recent media posts — is displayed on your public Creator profile and portfolio grid, making it
+                visible to Brands using the discovery and smart-match tools.
+              </li>
+              <li>
+                <strong>Analytics Calculations:</strong> We calculate derived metrics such as average engagement rate,
+                reach-to-follower ratio, and content frequency from the raw data provided by each social platform.
+              </li>
+              <li>
+                <strong>Verification:</strong> Connected accounts are marked as &ldquo;verified&rdquo; on your profile, signaling
+                to Brands that your metrics are sourced directly from the platform rather than self-reported.
+              </li>
+              <li>
+                <strong>Smart Match:</strong> Social metrics are used by Duolync&apos;s algorithm to surface relevant
+                Creator profiles to Brands based on niche, audience size, engagement, and campaign compatibility.
+              </li>
+            </ul>
+
+            <h3>OAuth Scope Limitations</h3>
+            <p>
+              We request only the minimum OAuth scopes necessary to display the data listed above. We do not access,
+              read, or store your private direct messages, drafts, payment information, or any content that is not
+              publicly visible on your social profile. You may revoke Duolync&apos;s access to any connected social account
+              at any time from your Duolync account settings or directly from the respective social platform&apos;s
+              security settings.
+            </p>
+
+            <h3>Data Refresh</h3>
+            <p>
+              Social account data is periodically refreshed (typically every 24–72 hours) for as long as the OAuth
+              connection remains active. Refreshing ensures your portfolio metrics stay current. If you disconnect a
+              social account, we will stop collecting new data from that platform. Cached data (follower counts,
+              post thumbnails) may be retained for up to 30 days before being removed from your profile.
+            </p>
+
+            {/* 5. Data Usage */}
+            <h2 id="data-usage">How We Use Your Data</h2>
+            <p>Duolync uses collected data for the following purposes:</p>
+            <ul>
+              <li>
+                <strong>Marketplace Matching:</strong> To surface Creator profiles to Brands through discovery, search,
+                and Smart Match based on audience size, niche, engagement, and campaign parameters.
+              </li>
+              <li>
+                <strong>Campaign Management:</strong> To facilitate the full lifecycle of brand-creator collaborations —
+                including campaign briefs, creator applications, proposal reviews, deliverable submissions, and
+                status tracking.
+              </li>
+              <li>
+                <strong>Analytics &amp; Reporting:</strong> To calculate platform-wide and per-campaign analytics,
+                including reach, engagement benchmarks, and performance comparisons, for both Creators and Brands.
+              </li>
+              <li>
+                <strong>Account Management:</strong> To authenticate you, maintain your session, and allow you to
+                manage your profile, portfolio, settings, and preferences.
+              </li>
+              <li>
+                <strong>Communications:</strong> To send transactional emails (campaign invitations, application updates,
+                dispute notifications, account alerts) and, where you have opted in, platform news or product updates.
+              </li>
+              <li>
+                <strong>Platform Safety:</strong> To detect, investigate, and act on policy violations, fraudulent
+                activity, spam, and abusive behavior that violates our Terms of Service.
+              </li>
+              <li>
+                <strong>Service Improvement:</strong> To analyze usage patterns, run A/B tests, and improve platform
+                features, performance, and user experience.
+              </li>
+              <li>
+                <strong>Legal Compliance:</strong> To comply with applicable laws, regulations, and legitimate requests
+                from public authorities.
+              </li>
+            </ul>
+
+            {/* 6. Moderation & Disputes */}
+            <h2 id="moderation">Moderation &amp; Dispute Processing</h2>
+            <p>
+              Duolync operates an internal moderation system to maintain a safe, professional, and trustworthy
+              marketplace. To support this, we collect and process specific data categories related to reports,
+              disputes, and communications.
+            </p>
+
+            <h3>User Reports</h3>
+            <p>
+              When a user submits a report against another user or a piece of content, we collect:
             </p>
             <ul>
-              <li>Email address</li>
+              <li>The identity of the reporting user and the reported subject</li>
+              <li>The category and description of the report</li>
+              <li>Relevant content or communication evidence attached to the report</li>
+              <li>Timestamps and platform context (e.g., campaign ID, message thread)</li>
             </ul>
-
-            <h4>Usage Data</h4>
-            <p>Usage Data is collected automatically when using the Service.</p>
             <p>
-              Usage Data may include information such as Your Device&apos;s Internet Protocol address (e.g. IP address), browser
-              type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time
-              spent on those pages, unique device identifiers and other diagnostic data.
-            </p>
-            <p>
-              When You access the Service by or through a mobile device, We may collect certain information automatically,
-              including, but not limited to, the type of mobile device You use, Your mobile device&apos;s unique ID, the IP
-              address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use,
-              unique device identifiers and other diagnostic data.
-            </p>
-            <p>
-              We may also collect information that Your browser sends whenever You visit Our Service or when You access the
-              Service by or through a mobile device.
+              This information is reviewed by Duolync&apos;s moderation team and may be retained in our moderation
+              logs for up to 36 months to identify patterns of abusive behavior and support appeals.
             </p>
 
-            <h4>Tracking Technologies and Cookies</h4>
+            <h3>Dispute Logs</h3>
             <p>
-              We use Cookies and similar tracking technologies to track the activity on Our Service and store certain
-              information. Tracking technologies We use include beacons, tags, and scripts to collect and track information
-              and to improve and analyze Our Service. The technologies We use may include:
+              When a formal dispute is raised between a Brand and a Creator (e.g., regarding deliverable quality,
+              payment, or campaign terms), we collect and maintain a dispute record containing:
+            </p>
+            <ul>
+              <li>All formal dispute submissions and responses from both parties</li>
+              <li>Relevant campaign data, deliverables, contracts, and payment records</li>
+              <li>Evidence submitted by either party (screenshots, files, messages)</li>
+              <li>Admin decisions, warnings issued, and resolution outcomes</li>
+            </ul>
+            <p>
+              Dispute records are processed by authorized Duolync administrators only, kept confidential between
+              the involved parties and our team, and retained for up to 48 months for legal and audit purposes.
+            </p>
+
+            <h3>In-Platform Communications</h3>
+            <p>
+              Messages exchanged through Duolync&apos;s messaging system are stored on our servers. Message data may
+              be accessed by Duolync administrators solely when:
+            </p>
+            <ul>
+              <li>A formal dispute references the message thread</li>
+              <li>A user report alleges abuse, harassment, or fraud within the conversation</li>
+              <li>Access is required by law or court order</li>
+            </ul>
+            <p>
+              We do not use message content for advertising purposes or sell message data to third parties.
+            </p>
+
+            <h3>Account Actions &amp; Audit Trail</h3>
+            <p>
+              Administrative actions (warnings issued, content removed, accounts suspended or banned) are logged
+              in an internal audit trail. These records are used for accountability, appeals processing, and to
+              enforce consistent moderation standards across the platform.
+            </p>
+
+            {/* 7. Data Sharing */}
+            <h2 id="data-sharing">Data Sharing</h2>
+            <p>
+              We do not sell your Personal Data. We may share data in the following limited circumstances:
             </p>
             <ul>
               <li>
-                <strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can instruct
-                Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept
-                Cookies, You may not be able to use some parts of our Service.
+                <strong>Between Marketplace Participants:</strong> Creator profile data (including social metrics, bio,
+                portfolio, and niche) is visible to Brands on the platform as part of the marketplace. Brands&apos; company
+                profiles and campaign details are visible to Creators browsing opportunities.
               </li>
               <li>
-                <strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small electronic files
-                known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit the
-                Company, for example, to count users who have visited those pages or opened an email and for other related
-                website statistics.
-              </li>
-            </ul>
-            <p>
-              Cookies can be &ldquo;Persistent&rdquo; or &ldquo;Session&rdquo; Cookies. Persistent Cookies remain on Your personal computer or
-              mobile device when You go offline, while Session Cookies are deleted as soon as You close Your web browser.
-            </p>
-            <p>
-              Where required by law, we use non-essential cookies only with Your consent. You can withdraw or change Your
-              consent at any time through Your browser/device settings. Withdrawing consent does not affect the lawfulness
-              of processing based on consent before its withdrawal.
-            </p>
-            <p>We use both Session and Persistent Cookies for the purposes set out below:</p>
-            <ul>
-              <li>
-                <strong>Necessary / Essential Cookies</strong> — Type: Session Cookies. These Cookies are essential to provide You
-                with services available through the Website and to enable You to use some of its features.
+                <strong>Service Providers:</strong> We work with trusted third-party providers for hosting, email
+                delivery, analytics, and payment processing. These providers are contractually bound to handle data
+                only as instructed by Duolync and in accordance with applicable law.
               </li>
               <li>
-                <strong>Cookies Policy / Notice Acceptance Cookies</strong> — Type: Persistent Cookies. These Cookies identify if
-                users have accepted the use of cookies on the Website.
+                <strong>Legal Requirements:</strong> We may disclose data to comply with a legal obligation, court order,
+                or governmental request, or to protect the rights and safety of our users and the public.
               </li>
               <li>
-                <strong>Functionality Cookies</strong> — Type: Persistent Cookies. These Cookies allow Us to remember choices You
-                make when You use the Website, such as remembering your login details or language preference.
+                <strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, user data
+                may be transferred as part of the transaction. We will notify affected users in advance.
+              </li>
+              <li>
+                <strong>With Your Consent:</strong> We may share data for any other purpose with your explicit prior
+                consent.
               </li>
             </ul>
 
-            <h3>Use of Your Personal Data</h3>
-            <p>The Company may use Personal Data for the following purposes:</p>
+            {/* 8. Retention */}
+            <h2 id="retention">Data Retention</h2>
+            <p>We retain different categories of data for different periods:</p>
             <ul>
-              <li><strong>To provide and maintain our Service</strong>, including to monitor the usage of our Service.</li>
-              <li><strong>To manage Your Account:</strong> to manage Your registration as a user of the Service.</li>
-              <li><strong>For the performance of a contract:</strong> the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.</li>
-              <li><strong>To contact You</strong> by email, telephone calls, SMS, or other equivalent forms of electronic communication regarding updates or informative communications related to the functionalities, products or contracted services.</li>
-              <li><strong>To provide You with news, special offers, and general information</strong> about other goods, services and events which We offer that are similar to those that you have already purchased or inquired about.</li>
-              <li><strong>To manage Your requests:</strong> To attend and manage Your requests to Us.</li>
-              <li><strong>For business transfers:</strong> We may use Your Personal Data to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets.</li>
-              <li><strong>For other purposes</strong> such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service.</li>
-            </ul>
-            <p>We may share Your Personal Data in the following situations:</p>
-            <ul>
-              <li><strong>With Service Providers</strong> to monitor and analyze the use of our Service, to contact You.</li>
-              <li><strong>For business transfers:</strong> We may share or transfer Your Personal Data in connection with any merger, sale of Company assets, financing, or acquisition.</li>
-              <li><strong>With Affiliates:</strong> We may share Your Personal Data with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy.</li>
-              <li><strong>With business partners</strong> to offer You certain products, services or promotions.</li>
-              <li><strong>With other users</strong> when You share Personal Data or otherwise interact in the public areas of the Service.</li>
-              <li><strong>With Your consent</strong> for any other purpose.</li>
-            </ul>
-
-            <h3>Retention of Your Personal Data</h3>
-            <p>
-              The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this
-              Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal
-              obligations, resolve disputes, and enforce our legal agreements and policies.
-            </p>
-            <p>We apply different retention periods to different categories of Personal Data:</p>
-            <ul>
-              <li><strong>Account Information</strong> — retained for the duration of your account relationship plus up to 24 months after account closure.</li>
-              <li><strong>Support tickets and correspondence</strong> — up to 24 months from the date of ticket closure.</li>
-              <li><strong>Chat transcripts</strong> — up to 24 months for quality assurance and staff training purposes.</li>
-              <li><strong>Website analytics data</strong> (cookies, IP addresses, device identifiers) — up to 24 months from the date of collection.</li>
-              <li><strong>Server logs</strong> (IP addresses, access times) — up to 24 months for security monitoring and troubleshooting.</li>
+              <li><strong>Account &amp; profile data</strong> — retained for the duration of your active account plus up to 24 months after deletion.</li>
+              <li><strong>Connected social account data</strong> — refreshed data is removed within 30 days of disconnecting a social account; cached metrics may be retained up to 30 days.</li>
+              <li><strong>Campaign &amp; collaboration records</strong> — retained for up to 48 months for financial, legal, and dispute resolution purposes.</li>
+              <li><strong>Dispute &amp; moderation logs</strong> — retained for up to 48 months to support appeals and enforcement consistency.</li>
+              <li><strong>In-platform messages</strong> — retained for up to 36 months, or longer if referenced in an active dispute.</li>
+              <li><strong>Usage &amp; analytics data</strong> — retained for up to 24 months in aggregated or anonymized form.</li>
+              <li><strong>Server logs</strong> (IP, access times) — retained for up to 12 months for security and troubleshooting.</li>
             </ul>
             <p>
-              We may retain Personal Data beyond the periods stated above where required by legal obligation, to establish or
-              defend legal claims, at Your explicit request, or due to technical limitations of backup systems.
+              We may retain data beyond these periods where required by law, to establish or defend legal claims,
+              or at your explicit request.
             </p>
 
-            <h3>Transfer of Your Personal Data</h3>
+            {/* 9. Security */}
+            <h2 id="security">Security</h2>
             <p>
-              Your information, including Personal Data, is processed at the Company&apos;s operating offices and in any other
-              places where the parties involved in the processing are located. The Company will take all steps reasonably
-              necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no
-              transfer of Your Personal Data will take place to an organization or a country unless there are adequate
-              controls in place.
+              We implement commercially reasonable technical and organizational measures to protect your Personal
+              Data, including encryption in transit (TLS), hashed password storage, access controls, and regular
+              security reviews. However, no method of data transmission or storage is 100% secure. We encourage
+              you to use a strong, unique password and to enable any available two-factor authentication.
+            </p>
+            <p>
+              In the event of a data breach that is likely to result in a high risk to your rights and freedoms,
+              we will notify you without undue delay as required by applicable law.
             </p>
 
-            <h3>Delete Your Personal Data</h3>
+            {/* 10. User Rights */}
+            <h2 id="user-rights">Your Rights &amp; Data Deletion</h2>
             <p>
-              You have the right to delete or request that We assist in deleting the Personal Data that We have collected
-              about You. You may update, amend, or delete Your information at any time by signing in to Your Account and
-              visiting the account settings section, or by contacting Us.
+              Depending on your jurisdiction, you may have some or all of the following rights regarding your
+              Personal Data:
             </p>
-
-            <h2>Disclosure of Your Personal Data</h2>
-            <h3>Business Transactions</h3>
-            <p>
-              If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We
-              will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.
-            </p>
-            <h3>Law Enforcement</h3>
-            <p>
-              Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so
-              by law or in response to valid requests by public authorities.
-            </p>
-            <h3>Other Legal Requirements</h3>
-            <p>The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:</p>
             <ul>
-              <li>Comply with a legal obligation</li>
-              <li>Protect and defend the rights or property of the Company</li>
-              <li>Prevent or investigate possible wrongdoing in connection with the Service</li>
-              <li>Protect the personal safety of Users of the Service or the public</li>
-              <li>Protect against legal liability</li>
+              <li>
+                <strong>Right of Access:</strong> Request a copy of the Personal Data we hold about you.
+              </li>
+              <li>
+                <strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete data.
+              </li>
+              <li>
+                <strong>Right to Erasure (&ldquo;Right to be Forgotten&rdquo;):</strong> Request deletion of your Personal Data,
+                subject to legal retention obligations.
+              </li>
+              <li>
+                <strong>Right to Restriction:</strong> Request that we limit processing of your data in certain
+                circumstances.
+              </li>
+              <li>
+                <strong>Right to Data Portability:</strong> Receive a structured, machine-readable copy of data you
+                have provided to us.
+              </li>
+              <li>
+                <strong>Right to Object:</strong> Object to processing of your data for direct marketing or based on
+                legitimate interests.
+              </li>
+              <li>
+                <strong>Right to Withdraw Consent:</strong> Where processing is based on consent, withdraw it at any
+                time without affecting the lawfulness of prior processing.
+              </li>
             </ul>
 
-            <h2>Security of Your Personal Data</h2>
+            <h3>How to Exercise Your Rights</h3>
+            <p>You can manage most of your data directly from your Duolync account:</p>
+            <ul>
+              <li>
+                <strong>Edit profile &amp; account info:</strong> Go to{" "}
+                <strong>Settings → Account</strong> to update your name, email, bio, and profile photo.
+              </li>
+              <li>
+                <strong>Disconnect social accounts:</strong> Go to{" "}
+                <strong>Settings → Connected Accounts</strong> to revoke Duolync&apos;s OAuth access to any social platform.
+              </li>
+              <li>
+                <strong>Delete your account:</strong> Go to{" "}
+                <strong>Settings → Account → Delete Account</strong>. Deleting your account initiates permanent removal
+                of your profile, social connections, and portfolio data. Active campaign obligations should be
+                resolved before deletion.
+              </li>
+              <li>
+                <strong>Data requests:</strong> For access, portability, or erasure requests that cannot be fulfilled
+                self-serve, email us at{" "}
+                <a href="mailto:hello@duolync.com">hello@duolync.com</a> with the subject line
+                &ldquo;Data Request.&rdquo; We will respond within 30 days.
+              </li>
+            </ul>
+
+            {/* 11. Cookies */}
+            <h2 id="cookies">Cookies &amp; Tracking</h2>
             <p>
-              The security of Your Personal Data is important to Us, but remember that no method of transmission over the
-              Internet, or method of electronic storage is 100% secure. While We strive to use commercially reasonable means
-              to protect Your Personal Data, We cannot guarantee its absolute security.
+              We use cookies and similar technologies to operate the Service and improve your experience:
+            </p>
+            <ul>
+              <li>
+                <strong>Essential Cookies</strong> — Required for authentication, session management, and platform
+                security. Cannot be disabled without breaking core functionality.
+              </li>
+              <li>
+                <strong>Preference Cookies</strong> — Remember your settings such as theme (dark/light mode) and
+                notification preferences.
+              </li>
+              <li>
+                <strong>Analytics Cookies</strong> — Help us understand how users interact with the platform (e.g.,
+                page views, feature usage). We use aggregated, anonymized data only. Where required by law, these
+                are only placed with your consent.
+              </li>
+            </ul>
+            <p>
+              You can control cookies through your browser settings. Disabling essential cookies may impair platform
+              functionality.
             </p>
 
-            <h2>Children&apos;s Privacy</h2>
+            {/* 12. Children */}
+            <h2 id="children">Children&apos;s Privacy</h2>
             <p>
-              Our Service does not address anyone under the age of 16. We do not knowingly collect personally identifiable
-              information from anyone under the age of 16. If You are a parent or guardian and You are aware that Your child
-              has provided Us with Personal Data, please contact Us.
+              The Service is intended for users aged 18 and over. We do not knowingly collect Personal Data from
+              anyone under 18. If we become aware that a user under 18 has provided Personal Data, we will promptly
+              delete that data and terminate the account. If you believe a minor has registered on our platform,
+              please contact us at <a href="mailto:hello@duolync.com">hello@duolync.com</a>.
             </p>
 
-            <h2>Links to Other Websites</h2>
+            {/* 13. Changes */}
+            <h2 id="changes">Policy Changes</h2>
             <p>
-              Our Service may contain links to other websites that are not operated by Us. If You click on a third party
-              link, You will be directed to that third party&apos;s site. We strongly advise You to review the Privacy Policy of
-              every site You visit. We have no control over and assume no responsibility for the content, privacy policies or
-              practices of any third party sites or services.
+              We may update this Privacy Policy as our platform evolves or as required by law. When we make material
+              changes, we will notify you by updating the &ldquo;Last updated&rdquo; date at the top of this page and, where
+              appropriate, by sending an email notification to your registered address. Your continued use of the
+              Service after changes take effect constitutes your acceptance of the revised Policy.
             </p>
 
-            <h2>Changes to this Privacy Policy</h2>
+            {/* 14. Contact */}
+            <h2 id="contact">Contact Us</h2>
             <p>
-              We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new
-              Privacy Policy on this page and updating the &ldquo;Last updated&rdquo; date at the top of this Privacy Policy. You are
-              advised to review this Privacy Policy periodically for any changes.
+              If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices,
+              please contact us:
             </p>
-
-            <h2>Contact Us</h2>
-            <p>If you have any questions about this Privacy Policy, You can contact us:</p>
             <ul>
               <li>
                 By email:{" "}
                 <a href="mailto:hello@duolync.com">hello@duolync.com</a>
               </li>
+              <li>
+                Through our contact page:{" "}
+                <Link href="/contact">duolync.com/contact</Link>
+              </li>
             </ul>
+            <p>
+              We will respond to all privacy-related inquiries within 30 days.
+            </p>
+
           </div>
 
           {/* Back link */}
@@ -296,6 +521,7 @@ export default function PrivacyPage() {
           color: #f1f5f9;
           margin-top: 2.75rem;
           margin-bottom: 0.75rem;
+          scroll-margin-top: 6rem;
         }
         .prose-legal h3 {
           font-weight: 600;
@@ -306,7 +532,6 @@ export default function PrivacyPage() {
         }
         .prose-legal h4 {
           font-weight: 600;
-          font-size: 0.9375rem;
           color: #94a3b8;
           margin-top: 1.5rem;
           margin-bottom: 0.4rem;
@@ -345,6 +570,40 @@ export default function PrivacyPage() {
         .prose-legal strong {
           color: #e2e8f0;
           font-weight: 600;
+        }
+        /* TOC */
+        .toc-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          counter-reset: toc;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .toc-list li {
+          counter-increment: toc;
+          display: flex;
+          align-items: baseline;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: #64748b;
+        }
+        .toc-list li::before {
+          content: counter(toc, decimal-leading-zero);
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: #6d28d9;
+          letter-spacing: 0.05em;
+          flex-shrink: 0;
+        }
+        .toc-list a {
+          color: #94a3b8;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .toc-list a:hover {
+          color: #a78bfa;
         }
       `}</style>
     </div>

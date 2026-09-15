@@ -275,6 +275,106 @@ const EngagementTrend = ({ data }: { data: number[] }) => {
   );
 };
 
+// ─── Mock Portfolio Images ────────────────────────────────────────────────────
+// Curated Unsplash content images for creators who haven't synced posts yet.
+
+const MOCK_POST_POOL = [
+  // Lifestyle / portrait
+  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=400&fit=crop&auto=format",
+  // Food
+  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop&auto=format",
+  // Fitness
+  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=400&fit=crop&auto=format",
+  // Beauty / aesthetic
+  "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=400&fit=crop&auto=format",
+  // Travel / outdoor
+  "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=400&h=400&fit=crop&auto=format",
+  // Tech / desk
+  "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=400&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop&auto=format",
+];
+
+/** Generate 6 deterministic mock posts seeded from creator id + platform. */
+/** Per-platform emoji + label shown in section headers. */
+const PLATFORM_DISPLAY: Record<string, { emoji: string; label: string }> = {
+  instagram: { emoji: "📷", label: "Instagram Posts" },
+  tiktok:    { emoji: "📱", label: "TikTok Videos"   },
+  youtube:   { emoji: "▶️",  label: "YouTube Videos"  },
+  twitch:    { emoji: "🎮", label: "Twitch Clips"    },
+  twitter:   { emoji: "𝕏",  label: "X / Twitter"     },
+  linkedin:  { emoji: "💼", label: "LinkedIn"         },
+};
+
+/**
+ * Determine which platforms a creator actually has active,
+ * in a stable priority order. Uses social_links as the authoritative source
+ * (populated from the DB) with a fallback to the platforms follower map.
+ */
+function getActivePlatforms(creator: Creator): string[] {
+  const SUPPORTED = ["instagram", "tiktok", "youtube", "twitch", "twitter", "linkedin"];
+
+  // social_links is the ground truth — it holds the actual profile URLs
+  const fromLinks = Object.keys(creator.social_links ?? {}).filter((p) =>
+    SUPPORTED.includes(p)
+  );
+  if (fromLinks.length > 0) return fromLinks;
+
+  // Fallback: platforms follower map (built from platformStats or distributed estimate)
+  const fromPlatforms = Object.keys(creator.platforms ?? {}).filter((p) =>
+    SUPPORTED.includes(p)
+  );
+  return fromPlatforms;
+}
+
+/**
+ * Generate exactly `postsPerPlatform` deterministic mock posts for each
+ * active platform. The same creatorId always produces the same thumbnails.
+ */
+function buildMockPosts(
+  creatorId: string,
+  platforms: string[],
+  postsPerPlatform = 3
+): SocialPostItem[] {
+  const hash = creatorId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const posts: SocialPostItem[] = [];
+
+  platforms.forEach((platform, pIdx) => {
+    const hasViews = platform === "tiktok" || platform === "youtube" || platform === "twitch";
+    for (let i = 0; i < postsPerPlatform; i++) {
+      // Offset per-platform so images don't repeat across sections
+      const imgIdx = (hash + pIdx * 11 + i * 7) % MOCK_POST_POOL.length;
+      const likeBase  = ((hash + pIdx * 13 + i * 5) % 12_000) + 800;
+      const commBase  = ((hash + pIdx *  3 + i * 2) %    400) + 50;
+      const viewBase  = ((hash + pIdx * 17 + i * 9) % 150_000) + 20_000;
+
+      posts.push({
+        id: `mock-${creatorId}-${platform}-${i}`,
+        platform,
+        postUrl:  null,
+        imageUrl: MOCK_POST_POOL[imgIdx],
+        caption:  null,
+        likes:    likeBase,
+        comments: commBase,
+        views:    hasViews ? viewBase : null,
+        postedAt: null,
+      });
+    }
+  });
+
+  return posts;
+}
+
 // ─── Portfolio Thumbnail ──────────────────────────────────────────────────────
 
 function fmt(n: number): string {
@@ -285,7 +385,7 @@ function fmt(n: number): string {
 
 function PortfolioPostThumbnail({ post }: { post: SocialPostItem }) {
   const [imgErr, setImgErr] = useState(false);
-  const emoji = post.platform === "instagram" ? "📷" : "📱";
+  const emoji = PLATFORM_DISPLAY[post.platform]?.emoji ?? "📱";
   const isClickable = Boolean(post.postUrl);
 
   const inner = (
@@ -755,31 +855,83 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                     ))}
                   </div>
                 ) : previewPosts.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-600">
-                    <Grid3X3 className="w-8 h-8 mb-2 opacity-40" />
-                    <p className="text-xs">No posts synced yet</p>
-                  </div>
-                ) : (
-                  <div className="space-y-5">
-                    {(["instagram", "tiktok"] as const).map((platform) => {
-                      const posts = previewPosts.filter((p) => p.platform === platform);
-                      if (posts.length === 0) return null;
-                      const emoji = platform === "instagram" ? "📷" : "📱";
-                      const label = platform === "instagram" ? "Instagram Posts" : "TikTok Posts";
+                  /* ── Mock portfolio: exactly 3 posts per active platform ── */
+                  (() => {
+                    const activePlatforms = getActivePlatforms(creator);
+
+                    if (activePlatforms.length === 0) {
                       return (
-                        <div key={platform}>
-                          <p className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 flex items-center gap-1.5">
-                            <span>{emoji}</span>{label}
-                          </p>
-                          <div className="grid grid-cols-3 gap-2">
-                            {posts.map((post) => (
-                              <PortfolioPostThumbnail key={post.id} post={post} />
-                            ))}
-                          </div>
+                        <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-600">
+                          <Grid3X3 className="w-8 h-8 mb-2 opacity-40" />
+                          <p className="text-xs">No platforms connected yet</p>
                         </div>
                       );
-                    })}
-                  </div>
+                    }
+
+                    const mockPosts = buildMockPosts(creator.id, activePlatforms, 3);
+
+                    return (
+                      <div>
+                        <p className="text-[10px] text-zinc-400 dark:text-zinc-600 mb-3 flex items-center gap-1.5">
+                          <Grid3X3 className="w-3 h-3" />
+                          Sample content — connect accounts to sync real posts
+                        </p>
+                        <div className="space-y-5">
+                          {activePlatforms.map((platform) => {
+                            const posts = mockPosts.filter((p) => p.platform === platform);
+                            if (posts.length === 0) return null;
+                            const { emoji, label } = PLATFORM_DISPLAY[platform] ??
+                              { emoji: "📱", label: `${platform} Posts` };
+                            return (
+                              <div key={platform}>
+                                <p className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 flex items-center gap-1.5">
+                                  <span>{emoji}</span>{label}
+                                </p>
+                                <div className="grid grid-cols-3 gap-2">
+                                  {posts.map((post) => (
+                                    <PortfolioPostThumbnail key={post.id} post={post} />
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  /* ── Real synced posts: group by platform dynamically ── */
+                  (() => {
+                    const activePlatforms = getActivePlatforms(creator);
+                    // Gather all distinct platforms present in fetched posts,
+                    // keeping the order from the creator's active platform list.
+                    const postPlatforms = activePlatforms.length > 0
+                      ? activePlatforms.filter((p) => previewPosts.some((post) => post.platform === p))
+                      : [...new Set(previewPosts.map((p) => p.platform))];
+
+                    return (
+                      <div className="space-y-5">
+                        {postPlatforms.map((platform) => {
+                          const posts = previewPosts.filter((p) => p.platform === platform);
+                          if (posts.length === 0) return null;
+                          const { emoji, label } = PLATFORM_DISPLAY[platform] ??
+                            { emoji: "📱", label: `${platform} Posts` };
+                          return (
+                            <div key={platform}>
+                              <p className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 flex items-center gap-1.5">
+                                <span>{emoji}</span>{label}
+                              </p>
+                              <div className="grid grid-cols-3 gap-2">
+                                {posts.map((post) => (
+                                  <PortfolioPostThumbnail key={post.id} post={post} />
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()
                 )}
               </div>
             </div>
@@ -1204,25 +1356,33 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
               </button>
             </div>
             <div className="p-5 space-y-6">
-              {(["instagram", "tiktok"] as const).map((platform) => {
-                const posts = allPosts.filter((p) => p.platform === platform);
-                if (posts.length === 0) return null;
-                const emoji = platform === "instagram" ? "📷" : "📱";
-                const label = platform === "instagram" ? "Instagram Posts" : "TikTok Posts";
-                return (
-                  <div key={platform}>
-                    <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-3 flex items-center gap-1.5">
-                      <span>{emoji}</span>{label}
-                      <span className="ml-1 text-zinc-400 dark:text-zinc-600">({posts.length})</span>
-                    </p>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                      {posts.map((post) => (
-                        <PortfolioPostThumbnail key={post.id} post={post} />
-                      ))}
+              {/* Render one section per platform actually present in allPosts,
+                  ordered by the creator's active platform list. */}
+              {(() => {
+                const activePlatforms = getActivePlatforms(creator);
+                const postPlatforms = activePlatforms.length > 0
+                  ? activePlatforms.filter((p) => allPosts.some((post) => post.platform === p))
+                  : [...new Set(allPosts.map((p) => p.platform))];
+                return postPlatforms.map((platform) => {
+                  const posts = allPosts.filter((p) => p.platform === platform);
+                  if (posts.length === 0) return null;
+                  const { emoji, label } = PLATFORM_DISPLAY[platform] ??
+                    { emoji: "📱", label: `${platform} Posts` };
+                  return (
+                    <div key={platform}>
+                      <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-3 flex items-center gap-1.5">
+                        <span>{emoji}</span>{label}
+                        <span className="ml-1 text-zinc-400 dark:text-zinc-600">({posts.length})</span>
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        {posts.map((post) => (
+                          <PortfolioPostThumbnail key={post.id} post={post} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                });
+              })()}
               {allPosts.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-zinc-400">
                   <Grid3X3 className="w-10 h-10 mb-3 opacity-30" />
