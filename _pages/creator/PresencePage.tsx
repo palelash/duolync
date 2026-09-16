@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Wifi, Zap, RefreshCw, TrendingUp, Users, BarChart3, Loader2,
   CheckCircle2, AlertCircle, Heart, MessageCircle, Eye, Pencil, Trash2,
@@ -35,7 +35,7 @@ import { removePlatformAction } from "@/app/actions/social-connections";
 // ─── Platform config ──────────────────────────────────────────────────────────
 
 type PlatformConfig = {
-  id: Platform | "youtube";
+  id: Platform | "youtube" | "facebook_page" | "threads";
   label: string;
   bg: string;
   emoji: string;
@@ -53,6 +53,16 @@ const PLATFORMS: PlatformConfig[] = [
     id: "tiktok", label: "TikTok", emoji: "📱",
     bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
     syncable: true, placeholder: "your_handle",
+  },
+  {
+    id: "facebook_page", label: "Facebook Page", emoji: "🔵",
+    bg: "bg-blue-500/10 border-blue-500/20",
+    syncable: true, placeholder: "",
+  },
+  {
+    id: "threads", label: "Threads", emoji: "🧵",
+    bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+    syncable: true, placeholder: "",
   },
   {
     id: "youtube", label: "YouTube", emoji: "▶️",
@@ -667,6 +677,98 @@ const PresencePage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Show feedback toasts after Meta OAuth callback ───────────────────────
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const checks: Array<{ connectedParam: string; errorParam: string; displayName: string }> = [
+      { connectedParam: "instagram_connected", errorParam: "instagram_error", displayName: "Instagram" },
+      { connectedParam: "facebook_connected",  errorParam: "facebook_error",  displayName: "Facebook Page" },
+      { connectedParam: "threads_connected",   errorParam: "threads_error",   displayName: "Threads" },
+      // Legacy all-in-one param (kept for old bookmarks/links)
+      { connectedParam: "meta_connected",      errorParam: "meta_error",      displayName: "Meta" },
+    ];
+
+    const errorMessages: Record<string, string> = {
+      missing_code:            "No authorisation code received from Meta.",
+      unauthenticated:         "Please sign in first.",
+      session_error:           "Could not verify your session. Please try again.",
+      server_misconfiguration: "Meta integration is not configured on this server.",
+      token_exchange_failed:   "Could not exchange the authorisation code.",
+      network_error:           "A network error occurred. Please try again.",
+      db_error:                "Could not save your tokens. Please try again.",
+      no_pages_found:          "No Facebook Pages were found on your account.",
+      no_threads_account:      "No Threads account was found for this profile.",
+    };
+
+    let reloadNeeded = false;
+    const clean = new URL(window.location.href);
+
+    for (const { connectedParam, errorParam, displayName } of checks) {
+      const connected = params.get(connectedParam);
+      const error = params.get(errorParam);
+
+      if (connected) {
+        const name = connected === "1" ? displayName : connected;
+        toast({ title: `${name} connected! 🎉` });
+        reloadNeeded = true;
+        clean.searchParams.delete(connectedParam);
+      } else if (error) {
+        toast({
+          title: `Could not connect ${displayName}`,
+          description: errorMessages[error] ?? decodeURIComponent(error).replace(/_/g, " "),
+          variant: "destructive",
+        });
+        clean.searchParams.delete(errorParam);
+      }
+    }
+
+    if (reloadNeeded) reload();
+    window.history.replaceState({}, "", clean.toString());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Per-platform Meta OAuth redirect ─────────────────────────────────────
+  const handleMetaOAuth = useCallback((platform: "instagram" | "facebook_page" | "threads") => {
+    const appId = process.env.NEXT_PUBLIC_META_APP_ID;
+    if (!appId) {
+      toast({ title: "Meta integration not configured", description: "NEXT_PUBLIC_META_APP_ID is missing.", variant: "destructive" });
+      return;
+    }
+
+    const appBase = process.env.NEXT_PUBLIC_APP_URL ?? `${window.location.protocol}//${window.location.host}`;
+
+    const configs = {
+      instagram:    { path: "/api/auth/callback/instagram", scope: "instagram_basic,instagram_manage_messages,pages_read_engagement,pages_show_list,business_management", dialog: "https://www.facebook.com/v18.0/dialog/oauth" },
+      facebook_page:{ path: "/api/auth/callback/facebook",  scope: "pages_show_list,pages_read_engagement,business_management", dialog: "https://www.facebook.com/v18.0/dialog/oauth" },
+      // Threads uses its own OAuth dialog, NOT the Facebook login dialog
+      threads:      { path: "/api/auth/callback/threads",   scope: "threads_basic", dialog: "https://threads.net/oauth/authorize" },
+    } as const;
+
+    const { path, scope, dialog } = configs[platform];
+    const redirectUri = `${appBase.replace(/\/$/, "")}${path}`;
+
+    // Threads requires its own OAuth dialog and rejects URLSearchParams-encoded
+    // redirect URIs — build its URL as an explicit template string.
+    if (platform === "threads") {
+      window.location.href =
+        `https://threads.net/oauth/authorize` +
+        `?client_id=${appId}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&scope=threads_basic` +
+        `&response_type=code`;
+      return;
+    }
+
+    const authUrl = new URL(dialog);
+    authUrl.searchParams.set("client_id", appId);
+    authUrl.searchParams.set("redirect_uri", redirectUri);
+    authUrl.searchParams.set("scope", scope);
+    authUrl.searchParams.set("response_type", "code");
+
+    window.location.href = authUrl.toString();
+  }, [toast]);
+
   // Per-platform stats lookup
   const getPerPlatformStats = (platformId: string) => {
     return fullProfile?.platformStats?.find((s) => s.platform === platformId) ?? null;
@@ -775,7 +877,13 @@ const PresencePage = () => {
                       isConnected={connectedPlatforms.includes(p.id)}
                       followers={perPlatform?.followerCount ?? null}
                       engagement={perPlatform?.engagementRate ?? null}
-                      onSync={() => p.syncable && setSyncTarget(p.id as Platform)}
+                      onSync={() => {
+                        if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
+                          handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
+                        } else if (p.syncable) {
+                          setSyncTarget(p.id as Platform);
+                        }
+                      }}
                       onRemove={() => setRemoveTarget(p.id)}
                     />
                   );
@@ -876,7 +984,11 @@ const PresencePage = () => {
                             userId={profile?.id ?? ""}
                             platform={key as Platform}
                             onSuccess={reload}
-                            onFallback={() => setSyncTarget(key as Platform)}
+                            onFallback={() =>
+                              key === "instagram" || key === "facebook_page" || key === "threads"
+                                ? handleMetaOAuth(key as "instagram" | "facebook_page" | "threads")
+                                : setSyncTarget(key as Platform)
+                            }
                           />
                         )}
                       </div>
@@ -898,8 +1010,8 @@ const PresencePage = () => {
         )}
       </div>
 
-      {/* Sync Modal — locked to the clicked platform */}
-      {syncTarget && (
+      {/* Sync Modal — locked to the clicked platform (not used for Instagram) */}
+      {syncTarget && syncTarget !== "instagram" && (
         <Dialog open onOpenChange={(open) => !open && setSyncTarget(null)}>
           <SyncModal
             userId={profile?.id ?? ""}
