@@ -1,420 +1,360 @@
-import { useState, useCallback } from "react";
-import { Plus, Link2, Trash2, Star, Zap, Loader2 } from "lucide-react";
+"use client";
+
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { Link2, Trash2, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import MainLayout from "@/components/layout/MainLayout";
-import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { socialAccountSchema } from "@/lib/validation";
+import ConnectMetaPlatformButton from "@/components/meta/ConnectMetaPlatformButton";
+import type { MetaPlatform } from "@/components/meta/ConnectMetaPlatformButton";
+import {
+  getConnectedAccountsAction,
+  removePlatformAction,
+  type ConnectedAccount,
+} from "@/app/actions/social-connections";
 
-interface SocialAccount {
-  id: string;
-  platform: string;
-  username: string;
-  profile_url: string | null;
-  followers: number;
-  total_views: number;
-  engagement_rate: number;
-  is_primary: boolean;
+// ─── Static platform display config ──────────────────────────────────────────
+
+const PLATFORM_DISPLAY: Record<string, {
+  label: string; emoji: string; bg: string; description: string;
+}> = {
+  instagram:    { label: "Instagram",    emoji: "📷", bg: "bg-pink-500/10 border-pink-500/20",   description: "Instagram Business account" },
+  facebook_page:{ label: "Facebook Page",emoji: "🔵", bg: "bg-blue-500/10 border-blue-500/20",   description: "Facebook Page you manage" },
+  threads:      { label: "Threads",      emoji: "🧵", bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700", description: "Threads profile" },
+  tiktok:       { label: "TikTok",       emoji: "📱", bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700", description: "" },
+  youtube:      { label: "YouTube",      emoji: "▶️", bg: "bg-red-500/10 border-red-500/20",     description: "" },
+  twitter:      { label: "Twitter / X",  emoji: "🐦", bg: "bg-sky-500/10 border-sky-500/20",     description: "" },
+};
+
+/** The three platforms that use Meta OAuth — shown as fixed cards regardless of connection state. */
+const META_PLATFORMS: MetaPlatform[] = ["instagram", "facebook_page", "threads"];
+
+function fmt(n: number | null | undefined): string {
+  if (n == null) return "—";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
 }
 
-const platforms = [
-  { value: "youtube", label: "YouTube", emoji: "▶️" },
-  { value: "tiktok", label: "TikTok", emoji: "📱" },
-  { value: "instagram", label: "Instagram", emoji: "📷" },
-  { value: "twitter", label: "Twitter", emoji: "🐦" },
-  { value: "twitch", label: "Twitch", emoji: "🎮" },
-  { value: "linkedin", label: "LinkedIn", emoji: "💼" },
-];
+// ─── Meta platform card (always visible, connect / connected state) ───────────
+
+function MetaPlatformCard({
+  platform,
+  account,
+  onRemove,
+  onConnected,
+}: {
+  platform: MetaPlatform;
+  account: ConnectedAccount | undefined;
+  onRemove: (platform: string) => void;
+  onConnected: () => void;
+}) {
+  const display = PLATFORM_DISPLAY[platform]!;
+  const isConnected = !!account;
+
+  const syncedAt = account?.lastSyncedAt
+    ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
+        month: "short", day: "numeric", year: "numeric",
+      })
+    : null;
+
+  return (
+    <div className={`rounded-2xl border p-5 flex items-center gap-4 transition-all ${
+      isConnected
+        ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
+        : "bg-zinc-50/80 dark:bg-zinc-900/40 border-zinc-200/60 dark:border-zinc-800/50"
+    }`}>
+      {/* Icon */}
+      <div className={`w-12 h-12 rounded-xl border flex items-center justify-center text-2xl shrink-0 ${display.bg}`}>
+        {display.emoji}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+          <p className="font-semibold text-sm">{display.label}</p>
+          {isConnected ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+              Connected
+            </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+              Not connected
+            </span>
+          )}
+        </div>
+
+        {isConnected && account?.username && (
+          <p className="text-xs text-muted-foreground">@{account.username}</p>
+        )}
+        {!isConnected && display.description && (
+          <p className="text-xs text-muted-foreground/60">{display.description}</p>
+        )}
+        {isConnected && syncedAt && (
+          <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
+            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+          </p>
+        )}
+      </div>
+
+      {/* Followers stat */}
+      {isConnected && (
+        <div className="hidden sm:block text-center shrink-0">
+          <p className="text-base font-bold font-display">{fmt(account?.followers)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</p>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Suspense fallback={null}>
+          <ConnectMetaPlatformButton
+            platform={platform}
+            isConnected={isConnected}
+            onConnected={onConnected}
+            className="h-8 text-xs"
+          />
+        </Suspense>
+        {isConnected && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+            title={`Disconnect ${display.label}`}
+            onClick={() => onRemove(platform)}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Other-platform row (Apify-connected, read-only disconnect) ───────────────
+
+function OtherPlatformRow({
+  account,
+  onRemove,
+}: {
+  account: ConnectedAccount;
+  onRemove: (platform: string) => void;
+}) {
+  const display = PLATFORM_DISPLAY[account.platform] ?? {
+    label: account.platform,
+    emoji: "📱",
+    bg: "bg-zinc-100 border-zinc-200",
+    description: "",
+  };
+
+  const syncedAt = account.lastSyncedAt
+    ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
+        month: "short", day: "numeric", year: "numeric",
+      })
+    : null;
+
+  return (
+    <div className="card-elevated p-4 flex items-center gap-3">
+      <div className={`w-10 h-10 rounded-xl border flex items-center justify-center text-xl shrink-0 ${display.bg}`}>
+        {display.emoji}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <p className="font-semibold text-sm">{display.label}</p>
+          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Connected
+          </span>
+        </div>
+        {account.username && <p className="text-xs text-muted-foreground">@{account.username}</p>}
+        {syncedAt && (
+          <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
+            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+          </p>
+        )}
+      </div>
+
+      <div className="hidden sm:block text-center shrink-0">
+        <p className="text-base font-bold font-display">{fmt(account.followers)}</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</p>
+      </div>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 shrink-0"
+        title={`Disconnect ${display.label}`}
+        onClick={() => onRemove(account.platform)}
+      >
+        <Trash2 className="w-3.5 h-3.5" />
+      </Button>
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 const SocialAccounts = () => {
-  const { profile, updateProfile } = useAuth();
   const { toast } = useToast();
-  const [accounts, setAccounts] = useState<SocialAccount[]>([]);
-  const [loading] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [phylloLoading, setPhylloLoading] = useState(false);
-  const [phylloSyncing, setPhylloSyncing] = useState(false);
-  const [confirmDeleteAccountId, setConfirmDeleteAccountId] = useState<string | null>(null);
+  const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [removing, setRemoving] = useState(false);
 
-  // New account form
-  const [newPlatform, setNewPlatform] = useState("");
-  const [newUsername, setNewUsername] = useState("");
-  const [newProfileUrl, setNewProfileUrl] = useState("");
-  const [newFollowers, setNewFollowers] = useState("");
-  const [newViews, setNewViews] = useState("");
-  const [newEngagement, setNewEngagement] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // ─── Phyllo Connect Flow ──────────────────────────────────────
-  const handlePhylloConnect = useCallback(() => {
-    toast({ title: "Auto-Connect coming soon", description: "Phyllo integration will be available after backend setup." });
+  // ── Load from DB ────────────────────────────────────────────────────────
+  const loadAccounts = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await getConnectedAccountsAction();
+    if (error) {
+      toast({ title: "Could not load accounts", description: error, variant: "destructive" });
+    } else {
+      setAccounts(data);
+    }
+    setLoading(false);
   }, [toast]);
 
-  // ─── Manual Add ──────────────────────────────────────────────
-  const handleAddAccount = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profile) return;
+  useEffect(() => {
+    loadAccounts();
+  }, [loadAccounts]);
 
-    const validation = socialAccountSchema.safeParse({
-      platform: newPlatform || undefined,
-      username: newUsername,
-      profile_url: newProfileUrl || undefined,
-      followers: newFollowers ? parseInt(newFollowers) : undefined,
-      total_views: newViews ? parseInt(newViews) : undefined,
-      engagement_rate: newEngagement ? parseFloat(newEngagement) : undefined,
-    });
-
-    if (!validation.success) {
-      const firstError = validation.error.errors[0];
-      toast({ title: "Validation Error", description: firstError?.message || "Please check your input", variant: "destructive" });
-      return;
+  // ── Disconnect ──────────────────────────────────────────────────────────
+  const handleRemoveConfirm = async () => {
+    if (!confirmRemove) return;
+    setRemoving(true);
+    const { error } = await removePlatformAction(confirmRemove);
+    setRemoving(false);
+    setConfirmRemove(null);
+    if (error) {
+      toast({ title: "Failed to disconnect", description: error, variant: "destructive" });
+    } else {
+      const label = PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove;
+      toast({ title: `${label} disconnected` });
+      loadAccounts();
     }
-
-    const data = validation.data;
-    setIsSubmitting(true);
-    const newAccount: SocialAccount = {
-      id: Date.now().toString(),
-      platform: data.platform,
-      username: data.username,
-      profile_url: data.profile_url || null,
-      followers: Number.isNaN(data.followers) ? 0 : (data.followers || 0),
-      total_views: Number.isNaN(data.total_views) ? 0 : (data.total_views || 0),
-      engagement_rate: Number.isNaN(data.engagement_rate) ? 0 : (data.engagement_rate || 0),
-      is_primary: accounts.length === 0,
-    };
-    setAccounts((prev) => [...prev, newAccount]);
-    toast({ title: "Account added successfully!" });
-    setDialogOpen(false);
-    resetForm();
-    setIsSubmitting(false);
   };
 
-  const handleSetPrimary = (accountId: string) => {
-    setAccounts((prev) => prev.map((a) => ({ ...a, is_primary: a.id === accountId })));
-    toast({ title: "Primary account updated" });
-  };
+  // Build a lookup map for fast access in cards
+  const accountByPlatform = new Map(accounts.map((a) => [a.platform, a]));
 
-  const handleDelete = (accountId: string) => {
-    setConfirmDeleteAccountId(accountId);
-  };
-
-  const confirmDeleteAccount = () => {
-    if (!confirmDeleteAccountId) return;
-    setAccounts((prev) => prev.filter((a) => a.id !== confirmDeleteAccountId));
-    toast({ title: "Account removed" });
-    setConfirmDeleteAccountId(null);
-  };
-
-  const resetForm = () => {
-    setNewPlatform("");
-    setNewUsername("");
-    setNewProfileUrl("");
-    setNewFollowers("");
-    setNewViews("");
-    setNewEngagement("");
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toString();
-  };
-
-  const getPlatformEmoji = (platform: string) => {
-    return platforms.find((p) => p.value === platform)?.emoji || "📱";
-  };
-
-  const connectedPlatforms = accounts.map((a) => a.platform);
-  const availablePlatforms = platforms.filter((p) => !connectedPlatforms.includes(p.value));
+  // Non-Meta platforms that came from Apify syncs
+  const otherAccounts = accounts.filter((a) => !META_PLATFORMS.includes(a.platform as MetaPlatform));
 
   return (
     <MainLayout>
-      <div className="max-w-3xl mx-auto p-6">
+      <div className="max-w-3xl mx-auto p-6 space-y-10">
+
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-3xl font-bold mb-2">Social Accounts</h1>
-            <p className="text-muted-foreground">
-              Connect your social media accounts to showcase your stats
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            {/* Phyllo Auto-Connect Button */}
-            <Button
-              onClick={handlePhylloConnect}
-              disabled={phylloLoading || phylloSyncing}
-              className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90"
-            >
-              {phylloLoading || phylloSyncing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Zap className="w-4 h-4" />
-              )}
-              {phylloSyncing ? "Syncing..." : phylloLoading ? "Connecting..." : "Auto-Connect"}
-            </Button>
-
-            {/* Manual Add */}
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2" disabled={availablePlatforms.length === 0}>
-                  <Plus className="w-4 h-4" />
-                  Add Manually
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add Social Account</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleAddAccount} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Platform *</Label>
-                    <Select value={newPlatform} onValueChange={setNewPlatform}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select platform" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availablePlatforms.map((p) => (
-                          <SelectItem key={p.value} value={p.value}>
-                            <span className="flex items-center gap-2">
-                              <span>{p.emoji}</span>
-                              <span>{p.label}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Username *</Label>
-                    <Input
-                      placeholder="@yourusername"
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Profile URL</Label>
-                    <Input
-                      type="url"
-                      placeholder="https://..."
-                      value={newProfileUrl}
-                      onChange={(e) => setNewProfileUrl(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Followers</Label>
-                      <Input
-                        type="number"
-                        placeholder="10000"
-                        value={newFollowers}
-                        onChange={(e) => setNewFollowers(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Total Views</Label>
-                      <Input
-                        type="number"
-                        placeholder="500000"
-                        value={newViews}
-                        onChange={(e) => setNewViews(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Eng. Rate %</Label>
-                      <Input
-                        type="number"
-                        step="0.1"
-                        placeholder="4.5"
-                        value={newEngagement}
-                        onChange={(e) => setNewEngagement(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting || !newPlatform || !newUsername}>
-                      {isSubmitting ? "Adding..." : "Add Account"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
+        <div>
+          <h1 className="font-display text-3xl font-bold mb-2">Social Accounts</h1>
+          <p className="text-muted-foreground">
+            Connect your social media accounts to showcase your stats to brands.
+          </p>
         </div>
 
-        {/* Auto-Connect Info Banner */}
-        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
-          <div className="flex items-start gap-3">
-            <Zap className="w-5 h-5 text-primary mt-0.5" />
-            <div>
-              <p className="font-semibold text-sm text-foreground">Auto-Connect with Phyllo</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Click "Auto-Connect" to securely link your social accounts and automatically import 
-                your real follower counts, views, and engagement rates. No manual entry needed!
-              </p>
-            </div>
+        {/* ── Meta Platforms ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+              Meta Platforms
+            </h2>
+            <span className="text-[10px] text-muted-foreground/60 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+              OAuth
+            </span>
           </div>
-        </div>
 
-        {/* Accounts List */}
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="card-elevated p-6 animate-pulse">
-                <div className="flex gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-secondary" />
+          {loading ? (
+            <div className="space-y-3">
+              {META_PLATFORMS.map((p) => (
+                <div key={p} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 animate-pulse flex gap-4 items-center">
+                  <div className="w-12 h-12 rounded-xl bg-secondary shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-5 bg-secondary rounded w-1/4" />
-                    <div className="h-4 bg-secondary rounded w-1/3" />
+                    <div className="h-4 bg-secondary rounded w-1/4" />
+                    <div className="h-3 bg-secondary rounded w-1/3" />
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : accounts.length > 0 ? (
-          <div className="space-y-4">
-            {accounts.map((account) => (
-              <div key={account.id} className="card-elevated p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-3xl shrink-0">
-                    {getPlatformEmoji(account.platform)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-display font-bold text-lg capitalize">
-                        {account.platform}
-                      </h3>
-                      {account.is_primary && (
-                        <span className="flex items-center gap-1 text-xs bg-accent/10 text-accent px-2 py-1 rounded-full">
-                          <Star className="w-3 h-3 fill-current" />
-                          Primary
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-muted-foreground">@{account.username}</p>
-                    {account.profile_url && (
-                      <a
-                        href={account.profile_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline"
-                      >
-                        View Profile →
-                      </a>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-6 text-center">
-                    <div>
-                      <div className="text-xl font-display font-bold">
-                        {formatNumber(account.followers)}
-                      </div>
-                      <div className="text-xs text-muted-foreground">Followers</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-display font-bold">
-                        {formatNumber(Number(account.total_views))}
-                      </div>
-                      <div className="text-xs text-muted-foreground">Views</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-display font-bold text-green-600">
-                        {account.engagement_rate}%
-                      </div>
-                      <div className="text-xs text-muted-foreground">Engagement</div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {!account.is_primary && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleSetPrimary(account.id)}
-                        title="Set as primary"
-                      >
-                        <Star className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(account.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="card-elevated p-12 text-center">
-            <Link2 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-display text-xl font-bold mb-2">No accounts connected</h3>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Connect your social media accounts to let brands see your stats and reach
-            </p>
-            <div className="flex justify-center gap-3">
-              <Button onClick={handlePhylloConnect} className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                <Zap className="w-4 h-4" />
-                Auto-Connect
-              </Button>
-              <Button variant="outline" onClick={() => setDialogOpen(true)} className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Manually
-              </Button>
+              ))}
             </div>
+          ) : (
+            <div className="space-y-3">
+              {META_PLATFORMS.map((p) => (
+                <MetaPlatformCard
+                  key={p}
+                  platform={p}
+                  account={accountByPlatform.get(p)}
+                  onRemove={(platform) => setConfirmRemove(platform)}
+                  onConnected={loadAccounts}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── Other Connected Platforms (Apify syncs) ── */}
+        {otherAccounts.length > 0 && (
+          <section>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">
+              Other Platforms
+            </h2>
+            <div className="space-y-3">
+              {otherAccounts.map((account) => (
+                <OtherPlatformRow
+                  key={account.id}
+                  account={account}
+                  onRemove={(platform) => setConfirmRemove(platform)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Empty-state when truly nothing is connected */}
+        {!loading && accounts.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 p-10 text-center">
+            <Link2 className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="font-semibold text-sm mb-1">No accounts connected yet</p>
+            <p className="text-xs text-muted-foreground">Use the Connect buttons above to link your Meta platforms.</p>
           </div>
         )}
 
-        {/* Tip Card */}
-        <div className="mt-8 p-6 rounded-2xl bg-secondary/50 border border-border">
-          <h4 className="font-semibold mb-2">💡 Tip</h4>
+        {/* Tip */}
+        <div className="p-5 rounded-2xl bg-secondary/50 border border-border">
+          <h4 className="font-semibold mb-1.5">💡 Tip</h4>
           <p className="text-sm text-muted-foreground">
-            Use Auto-Connect for accurate, verified stats that brands trust more. 
-            Manually added stats can be updated anytime but may carry less weight with brands.
+            Connect each Meta platform independently. Instagram pulls your follower count and recent
+            posts. Facebook Page shows your page fan count. Threads links your profile. All three
+            use OAuth — no manual entry, verified by Meta.
           </p>
         </div>
       </div>
 
-      {/* Delete account confirmation */}
-      <AlertDialog open={confirmDeleteAccountId !== null} onOpenChange={(open) => { if (!open) setConfirmDeleteAccountId(null); }}>
+      {/* Disconnect confirmation */}
+      <AlertDialog
+        open={confirmRemove !== null}
+        onOpenChange={(open) => { if (!open) setConfirmRemove(null); }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove social account?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Disconnect {confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove the account from your profile. You can add it again later.
+              This will remove all synced data for this account. You can reconnect at any time.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteAccount} className="bg-red-600 hover:bg-red-700 text-white">
-              Remove Account
+            <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemoveConfirm}
+              disabled={removing}
+              className="bg-red-600 hover:bg-red-700 text-white gap-2"
+            >
+              {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+              Disconnect
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
