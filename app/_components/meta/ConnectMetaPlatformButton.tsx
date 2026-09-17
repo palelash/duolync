@@ -125,6 +125,33 @@ export default function ConnectMetaPlatformButton({
 
   // ── Redirect to the correct OAuth dialog ─────────────────────────────────
   function handleClick() {
+    const appBase =
+      process.env.NEXT_PUBLIC_APP_URL ??
+      `${window.location.protocol}//${window.location.host}`;
+
+    const redirectUri = `${appBase.replace(/\/$/, "")}${cfg.callbackPath}`;
+
+    // Threads has its own OAuth dialog and its own App ID — do NOT use the
+    // Facebook login dialog or NEXT_PUBLIC_META_APP_ID for Threads.
+    if (platform === "threads") {
+      const threadsAppId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
+      if (!threadsAppId) {
+        toast({
+          title: "Threads integration not configured",
+          description: "NEXT_PUBLIC_THREADS_APP_ID is missing.",
+          variant: "destructive",
+        });
+        return;
+      }
+      window.location.href =
+        `https://threads.net/oauth/authorize` +
+        `?client_id=${threadsAppId}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&scope=threads_basic` +
+        `&response_type=code`;
+      return;
+    }
+
     const appId = process.env.NEXT_PUBLIC_META_APP_ID;
     if (!appId) {
       toast({
@@ -132,25 +159,6 @@ export default function ConnectMetaPlatformButton({
         description: "NEXT_PUBLIC_META_APP_ID is missing.",
         variant: "destructive",
       });
-      return;
-    }
-
-    const appBase =
-      process.env.NEXT_PUBLIC_APP_URL ??
-      `${window.location.protocol}//${window.location.host}`;
-
-    const redirectUri = `${appBase.replace(/\/$/, "")}${cfg.callbackPath}`;
-
-    // Threads has its own OAuth dialog — do NOT use the Facebook login dialog.
-    // Build the URL as an explicit template string; URLSearchParams double-encodes
-    // the redirect_uri in a way threads.net rejects, and loses client_id in some runtimes.
-    if (platform === "threads") {
-      window.location.href =
-        `https://threads.net/oauth/authorize` +
-        `?client_id=${appId}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&scope=threads_basic` +
-        `&response_type=code`;
       return;
     }
 
