@@ -730,12 +730,6 @@ const PresencePage = () => {
 
   // ── Per-platform Meta OAuth redirect ─────────────────────────────────────
   const handleMetaOAuth = useCallback((platform: "instagram" | "facebook_page" | "threads") => {
-    const appId = process.env.NEXT_PUBLIC_META_APP_ID;
-    if (!appId) {
-      toast({ title: "Meta integration not configured", description: "NEXT_PUBLIC_META_APP_ID is missing.", variant: "destructive" });
-      return;
-    }
-
     const appBase = process.env.NEXT_PUBLIC_APP_URL ?? `${window.location.protocol}//${window.location.host}`;
 
     const configs = {
@@ -748,15 +742,25 @@ const PresencePage = () => {
     const { path, scope, dialog } = configs[platform];
     const redirectUri = `${appBase.replace(/\/$/, "")}${path}`;
 
-    // Threads requires its own OAuth dialog and rejects URLSearchParams-encoded
-    // redirect URIs — build its URL as an explicit template string.
+    // Threads requires its own App ID — never use the Facebook/Meta App ID here.
     if (platform === "threads") {
+      const threadsAppId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
+      if (!threadsAppId) {
+        toast({ title: "Threads integration not configured", description: "NEXT_PUBLIC_THREADS_APP_ID is missing.", variant: "destructive" });
+        return;
+      }
       window.location.href =
         `https://threads.net/oauth/authorize` +
-        `?client_id=${appId}` +
+        `?client_id=${threadsAppId}` +
         `&redirect_uri=${encodeURIComponent(redirectUri)}` +
         `&scope=threads_basic` +
         `&response_type=code`;
+      return;
+    }
+
+    const appId = process.env.NEXT_PUBLIC_META_APP_ID;
+    if (!appId) {
+      toast({ title: "Meta integration not configured", description: "NEXT_PUBLIC_META_APP_ID is missing.", variant: "destructive" });
       return;
     }
 
