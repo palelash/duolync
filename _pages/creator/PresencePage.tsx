@@ -794,23 +794,28 @@ const PresencePage = () => {
       return;
     }
 
-    const appBase =
-      process.env.NEXT_PUBLIC_APP_URL ??
-      `${window.location.protocol}//${window.location.host}`;
-    const redirectUri = `${appBase.replace(/\/$/, "")}/api/auth/callback/tiktok`;
+    // Prefer the explicit public URL env-var; fall back to the browser's own origin
+    const origin =
+      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+      window.location.origin;
+
+    const redirectUri = `${origin}/api/auth/callback/tiktok`;
 
     // CSRF state stored in a short-lived cookie so the server callback can verify it
     const state = crypto.randomUUID();
     document.cookie = `__tiktok_state=${state}; path=/; max-age=300; SameSite=Lax`;
 
-    const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
-    authUrl.searchParams.set("client_key", clientKey);
-    authUrl.searchParams.set("redirect_uri", redirectUri);
-    authUrl.searchParams.set("scope", "user.info.basic,user.info.stats");
-    authUrl.searchParams.set("response_type", "code");
-    authUrl.searchParams.set("state", state);
+    // Build params with an explicit URLSearchParams object — no URL mutation
+    const params = new URLSearchParams({
+      client_key: clientKey,
+      redirect_uri: redirectUri,
+      scope: "user.info.basic,user.info.stats",
+      response_type: "code",
+      state,
+    });
 
-    window.location.href = authUrl.toString();
+    window.location.href =
+      `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
   }, [toast]);
 
   // ── YouTube OAuth redirect ────────────────────────────────────────────────
