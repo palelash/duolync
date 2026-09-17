@@ -50,9 +50,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return redir(req, "/auth", { threads_error: "session_error" });
   }
 
-  // Token exchange
-  const appId = process.env.NEXT_PUBLIC_META_APP_ID;
-  const appSecret = process.env.META_APP_SECRET;
+  // Token exchange — Threads has its own App ID/Secret, separate from Meta/Facebook
+  const appId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
+  const appSecret = process.env.THREADS_APP_SECRET;
   if (!appId || !appSecret) {
     return redir(req, "/creator/accounts", { threads_error: "server_misconfiguration" });
   }
