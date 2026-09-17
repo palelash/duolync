@@ -50,9 +50,9 @@ const PLATFORMS: PlatformConfig[] = [
     syncable: true, placeholder: "your_handle",
   },
   {
-    id: "tiktok", label: "TikTok", emoji: "📱",
+    id: "tiktok", label: "TikTok", emoji: "🎵",
     bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
-    syncable: true, placeholder: "your_handle",
+    syncable: true, placeholder: "",
   },
   {
     id: "facebook_page", label: "Facebook Page", emoji: "🔵",
@@ -685,20 +685,23 @@ const PresencePage = () => {
       { connectedParam: "instagram_connected", errorParam: "instagram_error", displayName: "Instagram" },
       { connectedParam: "facebook_connected",  errorParam: "facebook_error",  displayName: "Facebook Page" },
       { connectedParam: "threads_connected",   errorParam: "threads_error",   displayName: "Threads" },
+      { connectedParam: "tiktok_connected",    errorParam: "tiktok_error",    displayName: "TikTok" },
       // Legacy all-in-one param (kept for old bookmarks/links)
       { connectedParam: "meta_connected",      errorParam: "meta_error",      displayName: "Meta" },
     ];
 
     const errorMessages: Record<string, string> = {
-      missing_code:            "No authorisation code received from Meta.",
+      missing_code:            "No authorisation code received.",
+      invalid_state:           "Invalid OAuth state. Please try again.",
       unauthenticated:         "Please sign in first.",
       session_error:           "Could not verify your session. Please try again.",
-      server_misconfiguration: "Meta integration is not configured on this server.",
+      server_misconfiguration: "Integration is not configured on this server.",
       token_exchange_failed:   "Could not exchange the authorisation code.",
       network_error:           "A network error occurred. Please try again.",
       db_error:                "Could not save your tokens. Please try again.",
       no_pages_found:          "No Facebook Pages were found on your account.",
       no_threads_account:      "No Threads account was found for this profile.",
+      no_tiktok_account:       "No TikTok account was returned from the API.",
     };
 
     let reloadNeeded = false;
@@ -769,6 +772,37 @@ const PresencePage = () => {
     authUrl.searchParams.set("redirect_uri", redirectUri);
     authUrl.searchParams.set("scope", scope);
     authUrl.searchParams.set("response_type", "code");
+
+    window.location.href = authUrl.toString();
+  }, [toast]);
+
+  // ── TikTok OAuth redirect ─────────────────────────────────────────────────
+  const handleTikTokOAuth = useCallback(() => {
+    const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
+    if (!clientKey) {
+      toast({
+        title: "TikTok integration not configured",
+        description: "NEXT_PUBLIC_TIKTOK_CLIENT_KEY is missing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const appBase =
+      process.env.NEXT_PUBLIC_APP_URL ??
+      `${window.location.protocol}//${window.location.host}`;
+    const redirectUri = `${appBase.replace(/\/$/, "")}/api/auth/callback/tiktok`;
+
+    // CSRF state stored in a short-lived cookie so the server callback can verify it
+    const state = crypto.randomUUID();
+    document.cookie = `__tiktok_state=${state}; path=/; max-age=300; SameSite=Lax`;
+
+    const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
+    authUrl.searchParams.set("client_key", clientKey);
+    authUrl.searchParams.set("redirect_uri", redirectUri);
+    authUrl.searchParams.set("scope", "user.info.basic,user.info.stats,video.list");
+    authUrl.searchParams.set("response_type", "code");
+    authUrl.searchParams.set("state", state);
 
     window.location.href = authUrl.toString();
   }, [toast]);
@@ -884,6 +918,8 @@ const PresencePage = () => {
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
+                        } else if (p.id === "tiktok") {
+                          handleTikTokOAuth();
                         } else if (p.syncable) {
                           setSyncTarget(p.id as Platform);
                         }
@@ -991,6 +1027,8 @@ const PresencePage = () => {
                             onFallback={() =>
                               key === "instagram" || key === "facebook_page" || key === "threads"
                                 ? handleMetaOAuth(key as "instagram" | "facebook_page" | "threads")
+                                : key === "tiktok"
+                                ? handleTikTokOAuth()
                                 : setSyncTarget(key as Platform)
                             }
                           />
@@ -1014,8 +1052,8 @@ const PresencePage = () => {
         )}
       </div>
 
-      {/* Sync Modal — locked to the clicked platform (not used for Instagram) */}
-      {syncTarget && syncTarget !== "instagram" && (
+      {/* Sync Modal — locked to the clicked platform (not used for Instagram or TikTok, both use OAuth) */}
+      {syncTarget && syncTarget !== "instagram" && syncTarget !== "tiktok" && (
         <Dialog open onOpenChange={(open) => !open && setSyncTarget(null)}>
           <SyncModal
             userId={profile?.id ?? ""}
