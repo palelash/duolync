@@ -34,6 +34,10 @@ const corsHeaders = (origin: string) => [
 ];
 
 const nextConfig: NextConfig = {
+  // Ensure Prisma's generated client (WASM + supporting files) is included in the server build output
+  outputFileTracingIncludes: {
+    "**": ["./lib/generated/prisma/**"],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "4mb",
@@ -67,6 +71,13 @@ const nextConfig: NextConfig = {
     return [];
   },
   webpack(config) {
+    // Required for Prisma v7's WASM-based query compiler to work in Next.js
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
     // Allow mp4 and other media assets to be imported as URLs
     config.module?.rules?.push({
       test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
