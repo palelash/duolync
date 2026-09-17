@@ -67,7 +67,7 @@ const PLATFORMS: PlatformConfig[] = [
   {
     id: "youtube", label: "YouTube", emoji: "▶️",
     bg: "bg-red-500/10 border-red-500/20",
-    syncable: false, placeholder: "",
+    syncable: true, placeholder: "",
   },
 ];
 
@@ -588,7 +588,10 @@ function PostCard({
     }
   };
 
-  const emoji = post.platform === "instagram" ? "📷" : "📱";
+  const emoji =
+    post.platform === "instagram" ? "📷" :
+    post.platform === "youtube"   ? "▶️" :
+    "🎵";
 
   const inner = (
     <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 group cursor-pointer relative">
@@ -686,6 +689,7 @@ const PresencePage = () => {
       { connectedParam: "facebook_connected",  errorParam: "facebook_error",  displayName: "Facebook Page" },
       { connectedParam: "threads_connected",   errorParam: "threads_error",   displayName: "Threads" },
       { connectedParam: "tiktok_connected",    errorParam: "tiktok_error",    displayName: "TikTok" },
+      { connectedParam: "youtube_connected",   errorParam: "youtube_error",   displayName: "YouTube" },
       // Legacy all-in-one param (kept for old bookmarks/links)
       { connectedParam: "meta_connected",      errorParam: "meta_error",      displayName: "Meta" },
     ];
@@ -702,6 +706,8 @@ const PresencePage = () => {
       no_pages_found:          "No Facebook Pages were found on your account.",
       no_threads_account:      "No Threads account was found for this profile.",
       no_tiktok_account:       "No TikTok account was returned from the API.",
+      no_youtube_channel:      "No YouTube channel was found on this Google account.",
+      access_denied:           "Access was denied. Please grant the required permissions.",
     };
 
     let reloadNeeded = false;
@@ -800,9 +806,41 @@ const PresencePage = () => {
     const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
     authUrl.searchParams.set("client_key", clientKey);
     authUrl.searchParams.set("redirect_uri", redirectUri);
-    authUrl.searchParams.set("scope", "user.info.basic,user.info.stats,video.list");
+    authUrl.searchParams.set("scope", "user.info.basic,user.info.stats");
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("state", state);
+
+    window.location.href = authUrl.toString();
+  }, [toast]);
+
+  // ── YouTube OAuth redirect ────────────────────────────────────────────────
+  const handleYouTubeOAuth = useCallback(() => {
+    const clientId = process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID;
+    if (!clientId) {
+      toast({
+        title: "YouTube integration not configured",
+        description: "NEXT_PUBLIC_YOUTUBE_CLIENT_ID is missing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const appBase =
+      process.env.NEXT_PUBLIC_APP_URL ??
+      `${window.location.protocol}//${window.location.host}`;
+    const redirectUri = `${appBase.replace(/\/$/, "")}/api/auth/callback/youtube`;
+
+    const state = crypto.randomUUID();
+    document.cookie = `__youtube_state=${state}; path=/; max-age=300; SameSite=Lax`;
+
+    const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+    authUrl.searchParams.set("client_id", clientId);
+    authUrl.searchParams.set("redirect_uri", redirectUri);
+    authUrl.searchParams.set("scope", "https://www.googleapis.com/auth/youtube.readonly");
+    authUrl.searchParams.set("response_type", "code");
+    authUrl.searchParams.set("state", state);
+    authUrl.searchParams.set("access_type", "offline");
+    authUrl.searchParams.set("prompt", "consent");
 
     window.location.href = authUrl.toString();
   }, [toast]);
@@ -920,6 +958,8 @@ const PresencePage = () => {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
                         } else if (p.id === "tiktok") {
                           handleTikTokOAuth();
+                        } else if (p.id === "youtube") {
+                          handleYouTubeOAuth();
                         } else if (p.syncable) {
                           setSyncTarget(p.id as Platform);
                         }
@@ -998,7 +1038,8 @@ const PresencePage = () => {
             {(() => {
               const PLATFORM_LABELS: Record<string, { label: string; emoji: string }> = {
                 instagram: { label: "Instagram Posts", emoji: "📷" },
-                tiktok: { label: "TikTok Posts", emoji: "📱" },
+                tiktok: { label: "TikTok Videos", emoji: "🎵" },
+                youtube: { label: "YouTube Videos", emoji: "▶️" },
               };
               const groups = Object.entries(PLATFORM_LABELS).map(([key, meta]) => ({
                 key,
@@ -1029,6 +1070,8 @@ const PresencePage = () => {
                                 ? handleMetaOAuth(key as "instagram" | "facebook_page" | "threads")
                                 : key === "tiktok"
                                 ? handleTikTokOAuth()
+                                : key === "youtube"
+                                ? handleYouTubeOAuth()
                                 : setSyncTarget(key as Platform)
                             }
                           />
@@ -1052,8 +1095,8 @@ const PresencePage = () => {
         )}
       </div>
 
-      {/* Sync Modal — locked to the clicked platform (not used for Instagram or TikTok, both use OAuth) */}
-      {syncTarget && syncTarget !== "instagram" && syncTarget !== "tiktok" && (
+      {/* Sync Modal — not used for Instagram, TikTok, or YouTube (all use OAuth) */}
+      {syncTarget && syncTarget !== "instagram" && syncTarget !== "tiktok" && syncTarget !== "youtube" && (
         <Dialog open onOpenChange={(open) => !open && setSyncTarget(null)}>
           <SyncModal
             userId={profile?.id ?? ""}

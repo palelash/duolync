@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import ConnectMetaPlatformButton from "@/components/meta/ConnectMetaPlatformButton";
 import type { MetaPlatform } from "@/components/meta/ConnectMetaPlatformButton";
 import ConnectTikTokButton from "@/components/tiktok/ConnectTikTokButton";
+import ConnectYouTubeButton from "@/components/youtube/ConnectYouTubeButton";
 import {
   getConnectedAccountsAction,
   removePlatformAction,
@@ -27,7 +28,7 @@ const PLATFORM_DISPLAY: Record<string, {
   facebook_page:{ label: "Facebook Page",emoji: "🔵", bg: "bg-blue-500/10 border-blue-500/20",   description: "Facebook Page you manage" },
   threads:      { label: "Threads",      emoji: "🧵", bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700", description: "Threads profile" },
   tiktok:       { label: "TikTok",       emoji: "🎵", bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700", description: "TikTok creator account" },
-  youtube:      { label: "YouTube",      emoji: "▶️", bg: "bg-red-500/10 border-red-500/20",     description: "" },
+  youtube:      { label: "YouTube",      emoji: "▶️", bg: "bg-red-500/10 border-red-500/20",     description: "YouTube creator channel" },
   twitter:      { label: "Twitter / X",  emoji: "🐦", bg: "bg-sky-500/10 border-sky-500/20",     description: "" },
 };
 
@@ -230,6 +231,101 @@ function TikTokCard({
   );
 }
 
+// ─── YouTube platform card (always visible, connect / connected state) ───────
+
+function YouTubeCard({
+  account,
+  onRemove,
+  onConnected,
+}: {
+  account: ConnectedAccount | undefined;
+  onRemove: (platform: string) => void;
+  onConnected: () => void;
+}) {
+  const display = PLATFORM_DISPLAY["youtube"]!;
+  const isConnected = !!account;
+
+  const syncedAt = account?.lastSyncedAt
+    ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
+        month: "short", day: "numeric", year: "numeric",
+      })
+    : null;
+
+  return (
+    <div className={`rounded-2xl border p-5 flex items-center gap-4 transition-all ${
+      isConnected
+        ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
+        : "bg-zinc-50/80 dark:bg-zinc-900/40 border-zinc-200/60 dark:border-zinc-800/50"
+    }`}>
+      {/* Icon */}
+      <div className={`w-12 h-12 rounded-xl border flex items-center justify-center text-2xl shrink-0 ${display.bg}`}>
+        {display.emoji}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+          <p className="font-semibold text-sm">{display.label}</p>
+          {isConnected ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+              Connected
+            </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+              Not connected
+            </span>
+          )}
+        </div>
+
+        {isConnected && account?.username && (
+          <p className="text-xs text-muted-foreground">
+            {account.username.startsWith("@") ? account.username : `@${account.username}`}
+          </p>
+        )}
+        {!isConnected && display.description && (
+          <p className="text-xs text-muted-foreground/60">{display.description}</p>
+        )}
+        {isConnected && syncedAt && (
+          <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
+            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+          </p>
+        )}
+      </div>
+
+      {/* Subscribers stat */}
+      {isConnected && (
+        <div className="hidden sm:block text-center shrink-0">
+          <p className="text-base font-bold font-display">{fmt(account?.followers)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Subscribers</p>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Suspense fallback={null}>
+          <ConnectYouTubeButton
+            isConnected={isConnected}
+            onConnected={onConnected}
+            className="h-8 text-xs"
+          />
+        </Suspense>
+        {isConnected && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+            title="Disconnect YouTube"
+            onClick={() => onRemove("youtube")}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Other-platform row (Apify-connected, read-only disconnect) ───────────────
 
 function OtherPlatformRow({
@@ -335,9 +431,12 @@ const SocialAccounts = () => {
   // Build a lookup map for fast access in cards
   const accountByPlatform = new Map(accounts.map((a) => [a.platform, a]));
 
-  // Non-Meta, non-TikTok platforms (Apify syncs, etc.)
+  // Non-Meta, non-TikTok, non-YouTube platforms (Apify syncs, etc.)
   const otherAccounts = accounts.filter(
-    (a) => !META_PLATFORMS.includes(a.platform as MetaPlatform) && a.platform !== "tiktok",
+    (a) =>
+      !META_PLATFORMS.includes(a.platform as MetaPlatform) &&
+      a.platform !== "tiktok" &&
+      a.platform !== "youtube",
   );
 
   return (
@@ -412,6 +511,34 @@ const SocialAccounts = () => {
           ) : (
             <TikTokCard
               account={accountByPlatform.get("tiktok")}
+              onRemove={(platform) => setConfirmRemove(platform)}
+              onConnected={loadAccounts}
+            />
+          )}
+        </section>
+
+        {/* ── YouTube ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+              YouTube
+            </h2>
+            <span className="text-[10px] text-muted-foreground/60 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+              OAuth
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 animate-pulse flex gap-4 items-center">
+              <div className="w-12 h-12 rounded-xl bg-secondary shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-secondary rounded w-1/4" />
+                <div className="h-3 bg-secondary rounded w-1/3" />
+              </div>
+            </div>
+          ) : (
+            <YouTubeCard
+              account={accountByPlatform.get("youtube")}
               onRemove={(platform) => setConfirmRemove(platform)}
               onConnected={loadAccounts}
             />
