@@ -39,76 +39,123 @@ const socialLinks = [
   },
 ];
 
+const footerColumns = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Discovery",   href: "/discovery" },
+      { label: "Campaigns",   href: "/campaigns" },
+      { label: "Marketplace", href: "/marketplace" },
+      { label: "Analytics",   href: "/analytics" },
+    ],
+  },
+  {
+    heading: "Resources",
+    links: [
+      { label: "About Us",    href: "/about" },
+      { label: "Contact Us",  href: "/contact" },
+      { label: "Blog",        href: "/blog" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy Policy",    href: "/privacy" },
+      { label: "Terms of Service",  href: "/terms" },
+    ],
+  },
+];
+
 const Footer = () => {
   return (
-    <footer className="w-full px-6 md:px-12 py-8 bg-[#09090b] border-t border-zinc-800/50">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-8">
+    <footer className="w-full bg-[#09090b] border-t border-neutral-800/80">
+      {/* Main grid */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-14 pb-10">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.8fr_1fr_1fr_1fr]">
 
-        {/* Left — brand, description, socials */}
-        <div className="flex flex-col gap-4 max-w-md">
-          <Link href="/" className="inline-flex items-center min-h-11">
-            <span
-              className="font-display font-bold text-2xl tracking-tight"
-              style={{
-                background: "linear-gradient(135deg, #a78bfa, #ec4899)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              Duolync
-            </span>
-          </Link>
-
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            The AI-powered marketplace connecting brands with authentic content
-            creators for impactful, data-driven collaborations.
-          </p>
-
-          <div className="flex items-center gap-2">
-            {socialLinks.map((s) => (
-              <a
-                key={s.name}
-                href={s.href}
-                aria-label={s.name}
-                className="relative w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 bg-zinc-900 border border-zinc-800 transition-all duration-200 hover:text-white hover:border-zinc-600 hover:scale-[1.08] before:absolute before:-inset-1.5 before:content-['']"
-                target="_blank"
-                rel="noopener noreferrer"
+          {/* Brand column */}
+          <div className="flex flex-col gap-5 pr-4">
+            <Link href="/" className="inline-flex items-center w-fit">
+              <span
+                className="font-display font-bold text-2xl tracking-tight"
+                style={{
+                  background: "linear-gradient(135deg, #a78bfa, #ec4899)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
-                {s.icon}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Right — links + copyright */}
-        <div className="flex flex-col items-start md:items-end gap-3 text-sm text-zinc-400">
-          <div className="flex items-center gap-3 mb-1">
-            {[
-              { label: "About Us",   href: "/about",   color: "#ec4899" },
-              { label: "Contact Us", href: "/contact", color: "#ec4899" },
-              { label: "Privacy",    href: "/privacy", color: "#a78bfa" },
-              { label: "Terms",      href: "/terms",   color: "#a78bfa" },
-            ].map((link, i, arr) => (
-              <span key={link.href} className="flex items-center gap-3">
-                <Link
-                  href={link.href}
-                  className="inline-flex items-center min-h-11 transition-colors duration-200 hover:brightness-125"
-                  style={{ color: link.color }}
-                >
-                  {link.label}
-                </Link>
-                {i < arr.length - 1 && (
-                  <span className="text-zinc-400 select-none text-xl leading-none">•</span>
-                )}
+                Duolync
               </span>
-            ))}
+            </Link>
+
+            <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
+              The AI-powered marketplace connecting brands with authentic content
+              creators for impactful, data-driven collaborations.
+            </p>
+
+            {/* Social icons */}
+            <div className="flex items-center gap-2 mt-1">
+              {socialLinks.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  aria-label={s.name}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-500 bg-zinc-900 border border-zinc-800 transition-all duration-200 hover:text-white hover:border-zinc-600 hover:bg-zinc-800"
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
-          <p className="text-zinc-400 text-xs">
+
+          {/* Link columns */}
+          {footerColumns.map((col) => (
+            <div key={col.heading} className="flex flex-col gap-4">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+                {col.heading}
+              </h3>
+              <ul className="flex flex-col gap-3">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-zinc-500 transition-colors duration-200 hover:text-zinc-200"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="border-t border-neutral-800/60">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-zinc-600">
             © {new Date().getFullYear()} Duolync. All rights reserved.
           </p>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/privacy"
+              className="text-xs text-zinc-600 transition-colors duration-200 hover:text-zinc-400"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs text-zinc-600 transition-colors duration-200 hover:text-zinc-400"
+            >
+              Terms of Service
+            </Link>
+          </div>
         </div>
-
       </div>
     </footer>
   );
