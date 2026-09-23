@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
-import { ArrowRight, Globe, Building2, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Building2, Users, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const fadeUp: Variants = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } };
@@ -49,7 +49,7 @@ export function FinalCTASection() {
           </motion.h2>
 
           <motion.p variants={fadeUp} transition={{ duration: 0.6 }} className="text-slate-400 text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Start your journey with Duolync today. No credit card required. Cancel anytime. Just endless possibilities.
+            Start your journey with Duolync today. No credit card required. Cancel anytime. Just genuine brand-creator partnerships.
           </motion.p>
 
           {/* CTA buttons */}
@@ -84,16 +84,24 @@ export function FinalCTASection() {
             </div>
           </motion.div>
 
-          {/* Extension CTA */}
+          {/* Secondary links */}
           <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
-            <Link
-              href="/auth"
-              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl text-sm font-medium transition-all hover:scale-[1.02]"
-              style={{ background: "var(--bg-card-hover)", border: "1px solid var(--border-card-strong)", color: "var(--text-muted)" }}
-            >
-              <Globe size={15} />
-              Or download our free Chrome Extension
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/how-it-works"
+                className="inline-flex items-center gap-2 text-sm transition-all hover:underline"
+                style={{ color: "var(--text-muted)" }}
+              >
+                How it works →
+              </Link>
+              <Link
+                href="/privacy"
+                className="inline-flex items-center gap-2 text-sm transition-all hover:underline"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Privacy Policy →
+              </Link>
+            </div>
           </motion.div>
 
           {/* Trust row */}

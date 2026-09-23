@@ -64,8 +64,8 @@ const BottomTabBar = () => {
   }, [isBrand]);
 
   const tabs = isBrand ? BRAND_TABS : CREATOR_TABS;
-  const activeColor = isBrand ? "text-cyan-500" : "text-violet-500";
-  const activeBarColor = isBrand ? "bg-cyan-500" : "bg-violet-500";
+  const activeColor = isBrand ? "text-violet-500" : "text-violet-500";
+  const activeBarColor = isBrand ? "bg-violet-500" : "bg-violet-500";
 
   function getBadge(key: string): number {
     if (key === "messages") return unreadCount;
@@ -78,10 +78,9 @@ const BottomTabBar = () => {
       <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <nav
-        className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 dark:bg-zinc-950/95 backdrop-blur-sm"
+        className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-zinc-950/90 backdrop-blur-xl border-t border-white/[0.06]"
         style={{
           paddingBottom: "env(safe-area-inset-bottom)",
-          boxShadow: "0 -1px 0 0 rgba(113,113,122,0.18)",
         }}
         aria-label="Main navigation"
       >
@@ -100,7 +99,7 @@ const BottomTabBar = () => {
               "relative flex-1 flex flex-col items-center justify-center gap-[3px] transition-colors duration-150 select-none",
               isActive
                 ? activeColor
-                : "text-zinc-400 dark:text-zinc-500 active:text-zinc-600 dark:active:text-zinc-300",
+                : "text-zinc-500 active:text-zinc-300",
             );
 
             const inner = (
@@ -119,7 +118,7 @@ const BottomTabBar = () => {
                 <div className="relative mt-1">
                   <IconComp
                     className="w-[22px] h-[22px]"
-                    strokeWidth={isActive ? 2.3 : 1.8}
+                    strokeWidth={isActive ? 2 : 1.5}
                   />
                   {showBadge && (
                     <span className="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] bg-red-500 rounded-full text-[8px] font-bold text-white flex items-center justify-center px-0.5 leading-none">

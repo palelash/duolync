@@ -194,18 +194,24 @@ export function AIGrowthSection() {
         >
           {/* ── Left: content ────────────────────────────────────────────── */}
           <div>
-            <motion.div
-              variants={fadeUp}
-              transition={{ duration: 0.65 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
-              style={{
-                background: "rgba(52,211,153,0.12)",
-                border: "1px solid rgba(52,211,153,0.35)",
-                color: EMERALD_T,
-              }}
-            >
-              <Brain size={11} />
-              AI Growth Mentor
+            <motion.div variants={fadeUp} transition={{ duration: 0.65 }} className="flex items-center gap-2 mb-5">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: "rgba(52,211,153,0.12)",
+                  border: "1px solid rgba(52,211,153,0.35)",
+                  color: EMERALD_T,
+                }}
+              >
+                <Brain size={11} />
+                AI Growth Tools
+              </div>
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(52,211,153,0.1)", color: EMERALD_T, border: "1px solid rgba(52,211,153,0.3)" }}
+              >
+                Beta
+              </span>
             </motion.div>
 
             <motion.h2
@@ -213,7 +219,7 @@ export function AIGrowthSection() {
               transition={{ duration: 0.65 }}
               className="font-display font-bold text-white text-4xl md:text-5xl leading-tight mb-5"
             >
-              Your personal AI{" "}
+              AI insights for your{" "}
               <span
                 style={{
                   background: `linear-gradient(90deg, ${EMERALD}, ${CYAN})`,
@@ -222,7 +228,7 @@ export function AIGrowthSection() {
                   backgroundClip: "text",
                 }}
               >
-                growth coach.
+                content growth.
               </span>
             </motion.h2>
 
@@ -231,9 +237,9 @@ export function AIGrowthSection() {
               transition={{ duration: 0.65 }}
               className="text-slate-400 text-lg leading-relaxed mb-8"
             >
-              Whether you have 500 followers or 5 million — our AI studies your
-              content performance and gives you a personalized weekly action plan
-              to grow faster and land better deals.
+              Connect your social accounts and get data-driven insights into your
+              content performance — helping you understand what works, when to post,
+              and what kinds of brand deals to pursue. Currently in beta.
             </motion.p>
 
             {/* Category tabs */}
@@ -349,7 +355,7 @@ export function AIGrowthSection() {
                   <Brain size={14} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white">AI Growth Mentor</div>
+                  <div className="text-sm font-semibold text-white">AI Growth Tools <span className="text-[10px] font-normal text-emerald-400 ml-1">Beta</span></div>
                   <div
                     className="flex items-center gap-1.5 text-[10px]"
                     style={{ color: EMERALD_T }}

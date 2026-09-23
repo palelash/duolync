@@ -40,9 +40,9 @@ const AMBIENT = {
     bg: "bg-pink-50 dark:bg-pink-500/10",
   },
   cyan: {
-    glow: "rgba(6,182,212,0.12)",
-    ring: "border-cyan-200/70 dark:border-cyan-500/20",
-    bg: "bg-cyan-50 dark:bg-cyan-500/10",
+    glow: "rgba(139,92,246,0.14)",
+    ring: "border-violet-200/70 dark:border-violet-500/20",
+    bg: "bg-violet-50 dark:bg-violet-500/10",
   },
 };
 

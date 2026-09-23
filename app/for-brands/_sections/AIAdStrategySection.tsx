@@ -135,25 +135,32 @@ export function AIAdStrategySection() {
         >
           {/* ── Left: copy ── */}
           <div>
-            <motion.div
-              variants={fadeUp}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
-              style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.35)", color: "var(--accent-emerald-text)" }}
-            >
-              <Brain size={11} />
-              AI Ad Strategy Consultant
+            <motion.div variants={fadeUp} className="flex items-center gap-2 mb-5">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+                style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.35)", color: "var(--accent-emerald-text)" }}
+              >
+                <Brain size={11} />
+                AI Ad Strategy Advisor
+              </div>
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(52,211,153,0.1)", color: "var(--accent-emerald-text)", border: "1px solid rgba(52,211,153,0.3)" }}
+              >
+                Beta
+              </span>
             </motion.div>
 
             <motion.h2 variants={fadeUp} className="font-display font-bold text-white text-4xl md:text-5xl leading-tight mb-5">
-              Your always-on{" "}
+              AI-assisted{" "}
               <span style={{ background: "linear-gradient(90deg, #6ee7b7, #a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                strategy team.
+                campaign strategy.
               </span>
             </motion.h2>
 
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-8">
-              Describe your product and goals. Our AI consultant analyzes top-performing campaigns
-              across thousands of brands to deliver a custom ad strategy — in seconds.
+              Describe your product and goals. Our AI advisor suggests ad formats and creator types
+              based on your category, target audience, and campaign objective — in seconds.
             </motion.p>
 
             {/* Format cards */}
@@ -212,11 +219,11 @@ export function AIAdStrategySection() {
               {isRunning ? (
                 <>
                   <span className="w-3 h-3 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
-                  Consulting...
+                  Advising...
                 </>
               ) : (
                 <>
-                  Try the AI consultant
+                  Try the AI advisor
                   <ArrowRight size={15} />
                 </>
               )}
@@ -241,10 +248,10 @@ export function AIAdStrategySection() {
                   <Brain size={14} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white">AI Strategy Consultant</div>
+                  <div className="text-sm font-semibold text-white">AI Strategy Advisor <span className="text-[10px] font-normal text-emerald-400 ml-1">Beta</span></div>
                   <div className="flex items-center gap-1.5 text-[10px] text-emerald-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Online · Analyzing 50K+ campaigns
+                    Online · Ready to advise
                   </div>
                 </div>
               </div>
@@ -492,7 +499,7 @@ export function AIAdStrategySection() {
               </>
             ) : (
               <>
-                Try the AI consultant
+                Try the AI advisor
                 <ArrowRight size={15} />
               </>
             )}

@@ -160,19 +160,29 @@ export function CRMSection() {
         >
           {/* Left: content */}
           <div>
-            <motion.div
-              variants={fadeUp}
-              transition={{ duration: 0.65 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
-              style={{
-                background: "rgba(52,211,153,0.12)",
-                border: "1px solid rgba(52,211,153,0.35)",
-                color: EMERALD_T,
-              }}
-            >
-              <Database size={11} />
-              Campaign CRM
-            </motion.div>
+            <div className="flex items-center gap-2 mb-5">
+              <motion.div
+                variants={fadeUp}
+                transition={{ duration: 0.65 }}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: "rgba(52,211,153,0.12)",
+                  border: "1px solid rgba(52,211,153,0.35)",
+                  color: EMERALD_T,
+                }}
+              >
+                <Database size={11} />
+                Campaign Management
+              </motion.div>
+              <motion.span
+                variants={fadeUp}
+                transition={{ duration: 0.65 }}
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(52,211,153,0.15)", color: EMERALD_T, border: "1px solid rgba(52,211,153,0.35)" }}
+              >
+                Beta
+              </motion.span>
+            </div>
             <motion.h2
               variants={fadeUp}
               transition={{ duration: 0.65 }}
@@ -196,16 +206,16 @@ export function CRMSection() {
               className="text-slate-400 text-lg leading-relaxed mb-8"
             >
               Enhance your productivity with built-in campaign management. Track
-              every creator, deliverable, and payment — with data-driven
+              every creator, deliverable, and collaboration — with clear
               insights at every step.
             </motion.p>
 
             <motion.ul variants={stagger} className="space-y-4 mb-8">
               {[
-                { icon: Users,    text: "Centralized CRM for your entire creator community" },
+                { icon: Users,    text: "Centralized tracking for all your creator partnerships" },
                 { icon: FileText, text: "Full partnership history and campaign timeline in one place" },
-                { icon: BarChart3, text: "Live analytics: reach, engagement, ROI across all campaigns" },
-                { icon: Rocket,   text: "Save time on admin — focus on scaling your campaigns" },
+                { icon: BarChart3, text: "Campaign analytics: reach, engagement, and performance data" },
+                { icon: Rocket,   text: "Save time on admin — focus on growing your campaigns" },
               ].map((item, i) => (
                 <motion.li
                   key={i}
@@ -254,14 +264,14 @@ export function CRMSection() {
                 </>
               ) : (
                 <>
-                  Explore the CRM
+                  Explore Campaign Tools
                   <ArrowRight size={15} />
                 </>
               )}
             </motion.button>
           </div>
 
-          {/* Right: CRM Dashboard */}
+          {/* Right: Campaign Dashboard */}
           <motion.div variants={fadeUp} transition={{ duration: 0.65 }}>
             <div
               role="img"
@@ -435,7 +445,7 @@ export function CRMSection() {
               </>
             ) : (
               <>
-                Explore the CRM
+                Explore Campaign Tools
                 <ArrowRight size={15} />
               </>
             )}

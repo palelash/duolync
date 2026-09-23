@@ -5,6 +5,10 @@ import {
   Search, SlidersHorizontal, Heart, MessageSquare, X,
   MapPin, Users, TrendingUp, ChevronDown,
   Briefcase, Globe, Sparkles, UserPlus, UserCheck, Clock,
+  // Filter category icons
+  Cpu, Sun, Gamepad2, Flower2, Shirt, Dumbbell, UtensilsCrossed,
+  Plane, Laugh, GraduationCap, Music2, Leaf, LayoutGrid,
+  HeartPulse, ShoppingBag, DollarSign, Film,
 } from "lucide-react";
 import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
 import { RichEmptyState } from "@/app/_components/shared/RichEmptyState";
@@ -13,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import MainLayout from "@/components/layout/MainLayout";
 import ProfileDrawer, {
   type Creator, PlatformBadge, PLATFORM_META,
@@ -31,6 +36,7 @@ import {
 } from "@/app/actions/connections";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { SOCIAL_ICONS } from "@/app/_components/icons/SocialIcons";
 
 type DiscoveryTab = "brands" | "creators";
 
@@ -56,10 +62,52 @@ const REACH_RANGES = [
   { value: "mega",  label: "1M+" },
 ];
 
+// ─── Filter icon maps ─────────────────────────────────────────────────────────
+
+const NICHE_ICONS: Record<string, React.ElementType> = {
+  "All Niches":     LayoutGrid,
+  "Tech":           Cpu,
+  "Lifestyle":      Sun,
+  "Gaming":         Gamepad2,
+  "Beauty":         Flower2,
+  "Fashion":        Shirt,
+  "Fitness":        Dumbbell,
+  "Food":           UtensilsCrossed,
+  "Travel":         Plane,
+  "Comedy":         Laugh,
+  "Education":      GraduationCap,
+  "Music":          Music2,
+  "Sustainability": Leaf,
+};
+
+const INDUSTRY_ICONS: Record<string, React.ElementType> = {
+  "All Industries":        LayoutGrid,
+  "Beauty & Cosmetics":    Flower2,
+  "Health & Fitness":      HeartPulse,
+  "Technology / SaaS":     Cpu,
+  "Food & Beverage":       UtensilsCrossed,
+  "Fashion & Apparel":     ShoppingBag,
+  "Travel":                Plane,
+  "Finance":               DollarSign,
+  "Education":             GraduationCap,
+  "Entertainment":         Film,
+};
+
+const PLATFORM_FILTER_ICONS: Record<string, React.ElementType> = {
+  instagram:     SOCIAL_ICONS.instagram,
+  tiktok:        SOCIAL_ICONS.tiktok,
+  youtube:       SOCIAL_ICONS.youtube,
+  twitter:       SOCIAL_ICONS.twitter,
+  twitch:        SOCIAL_ICONS.twitch,
+  facebook:      SOCIAL_ICONS.facebook,
+  facebook_page: SOCIAL_ICONS.facebook_page,
+  threads:       SOCIAL_ICONS.threads,
+};
+
 const BRAND_GRADIENTS = [
   "from-violet-600 to-indigo-600", "from-rose-500 to-pink-600",
-  "from-emerald-500 to-teal-600",  "from-amber-500 to-orange-600",
-  "from-sky-500 to-blue-600",
+  "from-violet-500 to-purple-600",  "from-amber-500 to-orange-600",
+  "from-violet-600 to-pink-600",
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -209,7 +257,7 @@ const BrandCard = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="font-display font-bold text-[15px] truncate mb-0.5 text-zinc-900 dark:text-zinc-50">{brand.company_name}</div>
-            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-500/20 font-medium">
+            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/20 font-medium">
               <Briefcase className="w-2.5 h-2.5" />{brand.industry}
             </span>
           </div>
@@ -374,7 +422,7 @@ const EmptyState = ({ tab, isFiltered, onClear }: { tab: DiscoveryTab; isFiltere
           { icon: <Users className="w-3 h-3" />, label: "Remove platform filters" },
           { icon: <TrendingUp className="w-3 h-3" />, label: "Expand reach range" },
         ]}
-        ambient="cyan"
+        ambient="purple"
       />
     );
   }
@@ -383,7 +431,7 @@ const EmptyState = ({ tab, isFiltered, onClear }: { tab: DiscoveryTab; isFiltere
     return (
       <RichEmptyState
         className="col-span-full"
-        icon={<Briefcase className="w-8 h-8 text-cyan-500" />}
+        icon={<Briefcase className="w-8 h-8 text-violet-500" />}
         headline="No brands listed yet"
         sub="Brands are joining Duolync every day. Check back soon or update your profile so they can find you first."
         tips={[
@@ -391,7 +439,7 @@ const EmptyState = ({ tab, isFiltered, onClear }: { tab: DiscoveryTab; isFiltere
           { icon: <Sparkles className="w-3 h-3" />, label: "Complete your profile" },
           { icon: <Briefcase className="w-3 h-3" />, label: "Browse open campaigns" },
         ]}
-        ambient="cyan"
+        ambient="purple"
       />
     );
   }
@@ -445,14 +493,13 @@ const CreatorDiscover = () => {
   );
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const [industry, setIndustry] = useState("All Industries");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [niche, setNiche] = useState("All Niches");
   const [reachRange, setReachRange] = useState("all");
 
   const resetFilters = () => { setSearchQuery(""); setIndustry("All Industries"); setSelectedPlatforms([]); setNiche("All Niches"); setReachRange("all"); };
-  const handleTabChange = (tab: DiscoveryTab) => { setActiveTab(tab); resetFilters(); setShowFilters(false); };
+  const handleTabChange = (tab: DiscoveryTab) => { setActiveTab(tab); resetFilters(); };
 
   const handleMessageCreator = (creator: Creator) => {
     if (!profile) return;
@@ -532,77 +579,146 @@ const CreatorDiscover = () => {
               className="pl-10 h-11 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:border-primary/50"
             />
           </div>
-          <Button
-            variant="outline"
-            className={cn("h-11 gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-600 shrink-0 transition-colors", showFilters && "border-primary/60 text-primary bg-primary/5")}
-            onClick={() => setShowFilters((v) => !v)}
-          >
-            <SlidersHorizontal className="w-4 h-4" />Filters
-            {activeFilterCount > 0 && <span className="ml-0.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">{activeFilterCount}</span>}
-            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", showFilters && "rotate-180")} />
-          </Button>
-        </div>
-
-        {/* Filter panel */}
-        <div className={cn("overflow-hidden transition-all duration-300 ease-in-out", showFilters ? "max-h-96 opacity-100 mb-4" : "max-h-0 opacity-0")}>
-          <div className="bg-zinc-50 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 space-y-5">
-            {activeTab === "brands" ? (
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-muted-foreground mb-3">Industry</p>
-                <Select value={industry} onValueChange={setIndustry}>
-                  <SelectTrigger className="h-9 max-w-xs border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>{INDUSTRIES.map((ind) => <SelectItem key={ind} value={ind}>{ind}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Platform</p>
-                  <div className="flex flex-wrap gap-2">
-                    {FILTER_PLATFORMS.map((p) => {
-                      const active = selectedPlatforms.includes(p);
-                      return (
-                        <button key={p} onClick={() => togglePlatform(p)}
-                          className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150",
-                            active ? "border-primary bg-primary/10 text-primary" : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-500 dark:text-muted-foreground hover:border-zinc-300 dark:hover:border-neutral-600 hover:text-zinc-900 dark:hover:text-foreground"
-                          )}
-                        >
-                          <PlatformBadge platform={p} />{PLATFORM_META[p]?.label ?? p}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-5">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-11 gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-600 shrink-0 transition-colors cursor-pointer",
+                  activeFilterCount > 0 && "border-violet-500/40 text-violet-400 dark:text-violet-300 bg-violet-50 dark:bg-violet-500/[0.08]",
+                )}
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="ml-0.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+                <ChevronDown className="w-3.5 h-3.5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
+              sideOffset={8}
+              className="w-[min(500px,calc(100vw-24px))] p-0 bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden"
+            >
+              <div className="p-5 space-y-5">
+                {activeTab === "brands" ? (
+                  /* ── Brand filters: Industry ── */
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Niche / Category</p>
-                    <Select value={niche} onValueChange={setNiche}>
-                      <SelectTrigger className="h-9 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 text-sm"><SelectValue /></SelectTrigger>
-                      <SelectContent>{NICHES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}</SelectContent>
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Industry</p>
+                    <Select value={industry} onValueChange={setIndustry}>
+                      <SelectTrigger className="h-9 border-white/10 bg-zinc-800/60 text-zinc-100 text-sm focus:ring-violet-500/40 focus:border-violet-500/40 cursor-pointer">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl">
+                        {INDUSTRIES.map((ind) => {
+                          const IIcon = INDUSTRY_ICONS[ind];
+                          return (
+                            <SelectItem key={ind} value={ind} className="text-zinc-200 focus:bg-violet-500/15 focus:text-violet-200 cursor-pointer">
+                              <span className="flex items-center gap-2">
+                                {IIcon && <IIcon className="w-3.5 h-3.5 text-zinc-400 shrink-0" />}
+                                {ind}
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Audience Reach</p>
-                    <div className="flex flex-wrap gap-2">
-                      {REACH_RANGES.map((r) => (
-                        <button key={r.value} onClick={() => setReachRange(r.value)}
-                          className={cn("px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150",
-                            reachRange === r.value ? "border-primary bg-primary/10 text-primary" : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-zinc-500 dark:text-muted-foreground hover:border-zinc-300 dark:hover:border-neutral-600 hover:text-zinc-900 dark:hover:text-foreground"
-                          )}
-                        >{r.label}</button>
-                      ))}
+                ) : (
+                  /* ── Creator filters: Platform + Niche + Reach ── */
+                  <>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Platform</p>
+                      <div className="flex flex-wrap gap-2">
+                        {FILTER_PLATFORMS.map((p) => {
+                          const active = selectedPlatforms.includes(p);
+                          const PIcon = PLATFORM_FILTER_ICONS[p];
+                          return (
+                            <button
+                              key={p}
+                              onClick={() => togglePlatform(p)}
+                              className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 cursor-pointer",
+                                active
+                                  ? "border-violet-500/40 bg-gradient-to-r from-violet-500/20 to-pink-500/10 text-violet-300"
+                                  : "border-white/10 bg-white/[0.04] text-zinc-400 hover:border-white/20 hover:text-zinc-200 hover:bg-white/[0.07]",
+                              )}
+                            >
+                              {PIcon
+                                ? <PIcon className="w-5 h-5 rounded-[4px] shrink-0" />
+                                : <PlatformBadge platform={p} className="w-5 h-5" />
+                              }
+                              {PLATFORM_META[p]?.label ?? p}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Niche / Category</p>
+                        <Select value={niche} onValueChange={setNiche}>
+                          <SelectTrigger className="h-9 border-white/10 bg-zinc-800/60 text-zinc-100 text-sm focus:ring-violet-500/40 focus:border-violet-500/40 cursor-pointer">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl">
+                            {NICHES.map((n) => {
+                              const NIcon = NICHE_ICONS[n];
+                              return (
+                                <SelectItem key={n} value={n} className="text-zinc-200 focus:bg-violet-500/15 focus:text-violet-200 cursor-pointer">
+                                  <span className="flex items-center gap-2">
+                                    {NIcon && <NIcon className="w-3.5 h-3.5 text-zinc-400 shrink-0" />}
+                                    {n}
+                                  </span>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Audience Reach</p>
+                        <div className="flex flex-wrap gap-2">
+                          {REACH_RANGES.map((r) => (
+                            <button
+                              key={r.value}
+                              onClick={() => setReachRange(r.value)}
+                              className={cn(
+                                "px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 cursor-pointer",
+                                reachRange === r.value
+                                  ? "border-violet-500/40 bg-gradient-to-r from-violet-500/20 to-pink-500/10 text-violet-300"
+                                  : "border-white/10 bg-white/[0.04] text-zinc-400 hover:border-white/20 hover:text-zinc-200 hover:bg-white/[0.07]",
+                              )}
+                            >
+                              {r.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Footer: count + clear */}
+                <div className="flex items-center justify-between pt-1 border-t border-white/[0.08]">
+                  <span className="text-xs text-zinc-500">
+                    {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+                  </span>
+                  {isFiltered && (
+                    <button
+                      onClick={resetFilters}
+                      className="text-xs text-zinc-500 hover:text-zinc-200 flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <X className="w-3 h-3" />Clear all
+                    </button>
+                  )}
                 </div>
-              </>
-            )}
-            {isFiltered && (
-              <div className="flex items-center justify-between pt-1 border-t border-zinc-200 dark:border-zinc-800">
-                <span className="text-xs text-muted-foreground">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</span>
-                <button onClick={resetFilters} className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"><X className="w-3 h-3" />Clear all</button>
               </div>
-            )}
-          </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Count */}

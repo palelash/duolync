@@ -70,11 +70,10 @@ function CreatorCard({ creator, rank }: { creator: MatchedCreator; rank: number 
 
   return (
     <div
-      className="rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.01]"
+      className="rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.01] border bg-white/[0.03] backdrop-blur-xl"
       style={{
-        background: "var(--bg-card, rgba(255,255,255,0.025))",
-        border: `1px solid ${matchColor}22`,
-        boxShadow: rank === 0 ? `0 0 24px ${matchColor}12` : "none",
+        borderColor: `${matchColor}20`,
+        boxShadow: rank === 0 ? `0 0 30px ${matchColor}10` : "none",
       }}
     >
       {/* Top bar */}
@@ -123,11 +122,11 @@ function CreatorCard({ creator, rank }: { creator: MatchedCreator; rank: number 
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Link
-                href={`/profile/${creator.id}`}
-                className="font-semibold text-sm hover:text-violet-400 transition-colors truncate"
-              >
+            <div className="flex items-center gap-2 min-w-0">
+                <Link
+                  href={`/profile/${creator.id}`}
+                  className="font-semibold text-sm hover:text-violet-400 transition-colors truncate text-zinc-100"
+                >
                 {creator.fullName}
               </Link>
               {creator.primaryPlatform && (
@@ -195,10 +194,10 @@ function CreatorCard({ creator, rank }: { creator: MatchedCreator; rank: number 
         {/* CTA */}
         <Link
           href={`/profile/${creator.id}`}
-          className="flex items-center justify-center gap-2 w-full rounded-xl py-2 text-xs font-semibold transition-all hover:opacity-90"
+          className="flex items-center justify-center gap-2 w-full rounded-2xl py-2.5 text-xs font-semibold transition-all hover:opacity-90"
           style={{
-            background: `linear-gradient(135deg, ${VIOLET}30, ${CYAN}20)`,
-            border: `1px solid ${VIOLET}30`,
+            background: `linear-gradient(135deg, ${VIOLET}25, ${CYAN}15)`,
+            border: `1px solid ${VIOLET}28`,
             color: VIOLET,
           }}
         >
@@ -266,18 +265,14 @@ const SmartMatch = () => {
             </span>
           </h1>
           <p className="text-muted-foreground text-sm max-w-xl">
-            Describe your brand and campaign in plain language. Our AI analyzes 200+ data points to surface the creators most likely to drive results.
+            Describe your brand and campaign in plain language. Our AI analyzes audience fit, engagement quality, and niche alignment to surface the most relevant creators.
           </p>
         </div>
 
         {/* ── Search bar ─────────────────────────────────────────────────── */}
         {!results && (
           <div
-            className="rounded-2xl p-5 mb-6"
-            style={{
-              background: "var(--bg-card, rgba(255,255,255,0.025))",
-              border: "1px solid rgba(192,132,252,0.2)",
-            }}
+            className="rounded-3xl p-5 mb-6 border border-violet-500/20 bg-white/[0.03] backdrop-blur-xl"
           >
             <div className="flex items-start gap-3 mb-4">
               <div
@@ -325,17 +320,18 @@ const SmartMatch = () => {
 
             <div className="flex items-center justify-between gap-3">
               <p className="text-[10px] text-muted-foreground">Press ⌘↵ to run • Results ranked by AI match score</p>
-              <Button
+                <Button
                 onClick={runMatch}
                 disabled={!query.trim() || loading}
                 size="sm"
-                className="gap-2 font-semibold shrink-0"
+                className="gap-2 font-semibold shrink-0 rounded-xl"
                 style={{
                   background: query.trim() && !loading
                     ? `linear-gradient(135deg, #7c3aed, ${VIOLET})`
                     : undefined,
                   border: "none",
                   color: "#fff",
+                  boxShadow: query.trim() && !loading ? "0 4px 16px rgba(124,58,237,0.25)" : undefined,
                 }}
               >
                 {loading ? (
@@ -363,7 +359,7 @@ const SmartMatch = () => {
             </div>
             <div className="text-center">
               <p className="font-semibold mb-1">AI is analyzing creators…</p>
-              <p className="text-sm text-muted-foreground">Cross-referencing 200+ data points across your query</p>
+              <p className="text-sm text-muted-foreground">Analyzing audience fit and niche alignment across your query</p>
             </div>
             <div className="flex gap-1.5">
               {[0, 1, 2].map((i) => (
@@ -472,20 +468,19 @@ const SmartMatch = () => {
             ].map(({ icon: Icon, color, title, desc }) => (
               <div
                 key={title}
-                className="rounded-2xl p-5"
+                className="rounded-3xl p-5 border bg-white/[0.03] backdrop-blur-xl"
                 style={{
-                  background: "var(--bg-card, rgba(255,255,255,0.025))",
-                  border: `1px solid ${color}15`,
+                  borderColor: `${color}18`,
                 }}
               >
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                  style={{ background: `${color}12`, border: `1px solid ${color}20` }}
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center mb-3"
+                  style={{ background: `${color}10`, border: `1px solid ${color}18` }}
                 >
-                  <Icon className="w-4 h-4" style={{ color }} />
+                  <Icon className="w-4 h-4" style={{ color }} strokeWidth={1.5} />
                 </div>
-                <h3 className="font-semibold text-sm mb-1">{title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                <h3 className="font-semibold text-sm mb-1 text-zinc-100">{title}</h3>
+                <p className="text-xs text-zinc-500 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>

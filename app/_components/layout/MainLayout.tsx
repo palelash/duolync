@@ -18,7 +18,7 @@ const MainLayout = ({ children, showGroupsPanel = true }: MainLayoutProps) => {
 
   return (
     <div
-      className="min-h-screen bg-zinc-50 dark:bg-[#09090b] text-zinc-900 dark:text-zinc-50 transition-colors duration-300 flex flex-col"
+      className="min-h-screen bg-[#070709] text-zinc-50 transition-colors duration-300 flex flex-col"
       data-role={profile?.user_type ?? "creator"}
     >
       <AuthenticatedHeader />

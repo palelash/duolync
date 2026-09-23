@@ -17,13 +17,13 @@ function Pulse({ className }: { className?: string }) {
 
 function KpiCardSkeleton() {
   return (
-    <div className="stat-card flex flex-col gap-2">
+    <div className="rounded-3xl border border-white/[0.06] bg-white/[0.03] p-5 flex flex-col gap-2">
       {/* Icon placeholder */}
-      <Pulse className="w-6 h-6 rounded-lg" />
+      <Pulse className="w-5 h-5 rounded-xl bg-zinc-800" />
       {/* Number */}
-      <Pulse className="h-7 w-16 rounded-lg" />
+      <Pulse className="h-7 w-16 rounded-lg bg-zinc-800" />
       {/* Label */}
-      <Pulse className="h-3.5 w-24 rounded-md" />
+      <Pulse className="h-3 w-24 rounded-md bg-zinc-800/70" />
     </div>
   );
 }
@@ -142,17 +142,17 @@ export function CalendarSkeleton() {
 
 export function SocialConnectionsSkeleton() {
   return (
-    <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 p-6">
+    <div className="rounded-3xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-xl p-6">
       <div className="flex items-start justify-between gap-6 flex-wrap">
         {/* Aggregated stats */}
         <div className="flex items-center gap-8">
           <div className="space-y-1.5">
-            <Pulse className="h-8 w-20 rounded-lg" />
-            <Pulse className="h-3 w-24 rounded-md" />
+            <Pulse className="h-8 w-20 rounded-lg bg-zinc-800" />
+            <Pulse className="h-3 w-24 rounded-md bg-zinc-800/70" />
           </div>
           <div className="space-y-1.5">
-            <Pulse className="h-8 w-16 rounded-lg" />
-            <Pulse className="h-3 w-20 rounded-md" />
+            <Pulse className="h-8 w-16 rounded-lg bg-zinc-800" />
+            <Pulse className="h-3 w-20 rounded-md bg-zinc-800/70" />
           </div>
         </div>
         {/* Platform rows */}
@@ -160,13 +160,13 @@ export function SocialConnectionsSkeleton() {
           {Array.from({ length: 2 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center justify-between gap-4 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60"
+              className="flex items-center justify-between gap-4 px-3 py-2 rounded-2xl bg-white/[0.04] border border-white/[0.06]"
             >
               <div className="flex items-center gap-2">
-                <Pulse className="w-5 h-5 rounded-md" />
-                <Pulse className="h-3 w-14 rounded-md" />
+                <Pulse className="w-5 h-5 rounded-md bg-zinc-800" />
+                <Pulse className="h-3 w-14 rounded-md bg-zinc-800" />
               </div>
-              <Pulse className="h-3 w-20 rounded-md" />
+              <Pulse className="h-3 w-20 rounded-md bg-zinc-800" />
             </div>
           ))}
         </div>

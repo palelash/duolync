@@ -194,9 +194,9 @@ export function BentoSection() {
             </div>
           </GlassCard>
 
-          {/* 3 — Mail & CRM */}
+          {/* 3 — Deal Inbox & Tracking */}
           <GlassCard borderColor={`${CYAN}28`} glowColor={`${CYAN}06`}>
-            <Badge color={CYAN_T} Icon={Mail} label="Mail & CRM" />
+            <Badge color={CYAN_T} Icon={Mail} label="Deal Inbox & Tracking" />
             <h3 className="font-display font-bold text-white text-lg mb-1">One inbox. Zero chaos.</h3>
             <p className="text-slate-500 text-xs mb-3">Every brand communication, deal negotiation, and follow-up — all in one place.</p>
 

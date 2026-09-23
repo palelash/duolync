@@ -40,24 +40,24 @@ const BRAND_STEPS = [
     title: "AI Smart Match",
     subtitle: "Automated creator discovery",
     description:
-      "Our AI ranks thousands of creators by a live Compatibility Score — factoring in engagement quality, audience fit, past campaign ROI, and fake-follower detection.",
+      "Our AI ranks creators by a live Compatibility Score — factoring in engagement quality, audience demographics, and niche alignment with your brand.",
     accent: "#67e8f9",
     accentBg: "rgba(6,182,212,0.12)",
     accentBorder: "rgba(6,182,212,0.3)",
-    perks: ["Live compatibility score", "Fake follower detection", "One-click bulk outreach"],
+    perks: ["Live compatibility score", "Engagement quality analysis", "Filtered creator discovery"],
     mockup: "brand-02",
   },
   {
     number: "03",
     icon: Rocket,
     title: "Launch & Manage",
-    subtitle: "Unified calendar and CRM",
+    subtitle: "Campaign management and tracking",
     description:
-      "Plan every post, track every deliverable, and measure ROI — all in one dashboard. Scale from one campaign to a hundred without leaving the platform.",
+      "Plan every post, track every deliverable, and measure results — all in one dashboard. Manage collaboration timelines without leaving the platform.",
     accent: "#34d399",
     accentBg: "rgba(52,211,153,0.12)",
     accentBorder: "rgba(52,211,153,0.3)",
-    perks: ["Integrated campaign calendar", "Automated payment escrow", "Live ROI analytics"],
+    perks: ["Integrated campaign calendar", "Deliverable and deal tracking", "Campaign analytics dashboard"],
     mockup: "brand-03",
   },
 ];
@@ -93,13 +93,13 @@ const CREATOR_STEPS = [
     number: "03",
     icon: Brain,
     title: "Grow with AI",
-    subtitle: "Personalized AI growth mentor",
+    subtitle: "AI content insights (Beta)",
     description:
-      "Our AI mentor analyzes your content, engagement, and audience trends weekly. It delivers personalized action plans — whether you're chasing your first 1K or your next million.",
+      "Connect your social accounts and get data-driven insights into your content performance. Understand what works, when to post, and what deals to prioritize — powered by your real account data.",
     accent: "#c084fc",
     accentBg: "rgba(192,132,252,0.12)",
     accentBorder: "rgba(192,132,252,0.3)",
-    perks: ["Weekly personalized tips", "Content performance scoring", "Roadmap to next milestone"],
+    perks: ["Content performance insights", "Best posting time recommendations", "Deal-fit analysis by niche"],
     mockup: "creator-03",
   },
 ];
@@ -250,7 +250,7 @@ function CreatorMockup03() {
       <div className="rounded-xl p-3" style={{ background: "rgba(192,132,252,0.08)", border: "1px solid rgba(192,132,252,0.2)" }}>
         <div className="flex items-center gap-2 mb-2">
           <Brain size={12} style={{ color: "#c084fc" }} />
-          <span className="text-[10px] font-semibold" style={{ color: "#c084fc" }}>AI Growth Mentor · This week</span>
+          <span className="text-[10px] font-semibold" style={{ color: "#c084fc" }}>AI Growth Tools · Beta</span>
         </div>
         {["Post on Tue & Thu 7–9 PM for +34% reach", "Add 3 trending sounds to your next Reel", "Your hook length is 2s — try stretching to 4s"].map((tip, i) => (
           <div key={i} className="flex items-start gap-2 mt-1.5">
@@ -604,7 +604,7 @@ export default function HowItWorksPage() {
               style={{ background: "linear-gradient(135deg, #7c3aed, #0891b2)", boxShadow: "0 0 32px rgba(124,58,237,0.25)" }}
             >
               <Sparkles size={15} />
-              Join the Waitlist
+              Create Your Account
               <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
             </Link>
             <Link

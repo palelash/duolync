@@ -13,10 +13,10 @@ import {
 import Link from "next/link";
 
 const trust = [
-  { icon: Star, value: "10K+", label: "Creators" },
-  { icon: TrendingUp, value: "3.2×", label: "Avg. ROI" },
-  { icon: ShieldCheck, value: "100%", label: "Verified" },
-  { icon: Building2, value: "2,400+", label: "Brands joined" },
+  { icon: Users, value: "Verified", label: "Creator Profiles" },
+  { icon: ShieldCheck, value: "Secure", label: "Deal Management" },
+  { icon: TrendingUp, value: "Real-Time", label: "Analytics" },
+  { icon: Building2, value: "Multi-Platform", label: "YT · TT · IG" },
 ];
 
 const avatarGradients = [
@@ -131,8 +131,8 @@ export function HeroSection() {
             className="text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
             style={{ color: "var(--text-muted)" }}
           >
-            Duolync uses AI to match brands with perfect creators, manage
-            campaigns at scale, and help creators land the deals they deserve.
+            Duolync connects brands with verified creators, streamlines
+            campaign management, and helps creators land the deals they deserve.
           </motion.p>
 
           {/* Dual CTA */}
@@ -201,24 +201,8 @@ export function HeroSection() {
                 ))}
               </div>
               <span style={{ color: "var(--text-muted)" }}>
-                <strong className="text-slate-700 dark:text-slate-300">12,000+</strong> brands &
-                creators already using Duolync
+                Brands & creators connecting on Duolync
               </span>
-            </div>
-            <div className="hidden sm:block w-px h-4 bg-slate-800" />
-            <div className="flex items-center gap-1.5 text-slate-500">
-              <div className="flex" aria-hidden="true">
-                {"★★★★★".split("").map((s, i) => (
-                  <span
-                    key={i}
-                    className="text-sm"
-                    style={{ color: "var(--accent-amber-text)" }}
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-              <span>4.9 avg. rating</span>
             </div>
           </motion.div>
 
@@ -265,7 +249,7 @@ export function HeroSection() {
           {[
             {
               label: "For Brands",
-              desc: "AI matching · Campaign tools · CRM",
+              desc: "AI matching · Campaign tools · Analytics",
               color: "var(--accent-violet-text)",
               bg: "var(--glow-purple)",
               border: "rgba(124,58,237,0.25)",

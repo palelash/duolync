@@ -34,7 +34,7 @@ const roadmapSteps = [
   {
     phase: "Phase 3", title: "Monetization", milestone: "First Paid Deal",
     color: AMBER_T, bg: "rgba(252,211,77,0.1)", border: "rgba(252,211,77,0.25)", done: false,
-    tasks: ["Brand pitch templates", "Rate card established", "First $500+ deal signed", "CRM setup for follow-ups"],
+    tasks: ["Brand pitch templates", "Rate card established", "First $500+ deal signed", "Deal tracking setup in Duolync"],
   },
   {
     phase: "Phase 4", title: "Scale", milestone: "10K → 100K",
@@ -44,9 +44,9 @@ const roadmapSteps = [
 ];
 
 const proStats = [
-  { icon: Users,     value: "10K",   label: "avg. followers by month 4", color: PINK_T    },
-  { icon: DollarSign, value: "$1.2K", label: "first deal avg. value",     color: AMBER_T   },
-  { icon: TrendingUp, value: "89%",   label: "complete roadmap in 6mo",   color: EMERALD_T },
+  { icon: Users,     value: "Grow",     label: "your audience systematically", color: PINK_T    },
+  { icon: DollarSign, value: "Land",    label: "your first paid brand deal",   color: AMBER_T   },
+  { icon: TrendingUp, value: "Scale",   label: "with data-driven insights",    color: EMERALD_T },
 ];
 
 function RoadmapModal({ onClose }: { onClose: () => void }) {
@@ -148,7 +148,7 @@ function RoadmapModal({ onClose }: { onClose: () => void }) {
                     ))}
                   </div>
                   <span className="text-[11px] text-slate-500">
-                    <strong className="text-slate-300">2,400+</strong> creators already signed up
+                    Creators already building their portfolios on Duolync
                   </span>
                   <div className="flex">
                     {"★★★★★".split("").map((s, i) => (

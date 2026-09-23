@@ -41,20 +41,18 @@ const socialLinks = [
 
 const footerColumns = [
   {
-    heading: "Product",
+    heading: "Platform",
     links: [
-      { label: "Discovery",   href: "/discovery" },
-      { label: "Campaigns",   href: "/campaigns" },
-      { label: "Marketplace", href: "/marketplace" },
-      { label: "Analytics",   href: "/analytics" },
+      { label: "For Brands",    href: "/for-brands" },
+      { label: "For Creators",  href: "/for-creators" },
+      { label: "How It Works",  href: "/how-it-works" },
     ],
   },
   {
-    heading: "Resources",
+    heading: "Company",
     links: [
       { label: "About Us",    href: "/about" },
       { label: "Contact Us",  href: "/contact" },
-      { label: "Blog",        href: "/blog" },
     ],
   },
   {
@@ -137,24 +135,10 @@ const Footer = () => {
 
       {/* Bottom bar */}
       <div className="border-t border-neutral-800/60">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex items-center justify-center">
           <p className="text-xs text-zinc-600">
             © {new Date().getFullYear()} Duolync. All rights reserved.
           </p>
-          <div className="flex items-center gap-5">
-            <Link
-              href="/privacy"
-              className="text-xs text-zinc-600 transition-colors duration-200 hover:text-zinc-400"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="text-xs text-zinc-600 transition-colors duration-200 hover:text-zinc-400"
-            >
-              Terms of Service
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

@@ -63,6 +63,7 @@ import {
   getCreatorAnalyticsAction,
   type CreatorAnalytics,
 } from "@/app/actions/analytics";
+import { SOCIAL_ICONS, SocialBadge } from "@/app/_components/icons/SocialIcons";
 
 // ─── Shared types (re-exported for discover pages) ───────────────────────────
 
@@ -188,7 +189,12 @@ function formatPeakHour(h: number): string {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-export const PlatformBadge = ({ platform }: { platform: string }) => {
+export const PlatformBadge = ({ platform, className }: { platform: string; className?: string }) => {
+  const Icon = SOCIAL_ICONS[platform.toLowerCase()];
+  if (Icon) {
+    return <Icon className={cn("w-6 h-6 rounded-md shrink-0 overflow-hidden", className)} />;
+  }
+  // Fallback for unknown platforms
   const meta = PLATFORM_META[platform] ?? {
     abbr: platform.slice(0, 2).toUpperCase(),
     badgeClass: "bg-neutral-700 text-white",
@@ -197,7 +203,8 @@ export const PlatformBadge = ({ platform }: { platform: string }) => {
     <span
       className={cn(
         "inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold shrink-0",
-        meta.badgeClass
+        meta.badgeClass,
+        className,
       )}
     >
       {meta.abbr}
@@ -306,14 +313,14 @@ const MOCK_POST_POOL = [
 ];
 
 /** Generate 6 deterministic mock posts seeded from creator id + platform. */
-/** Per-platform emoji + label shown in section headers. */
-const PLATFORM_DISPLAY: Record<string, { emoji: string; label: string }> = {
-  instagram: { emoji: "📷", label: "Instagram Posts" },
-  tiktok:    { emoji: "📱", label: "TikTok Videos"   },
-  youtube:   { emoji: "▶️",  label: "YouTube Videos"  },
-  twitch:    { emoji: "🎮", label: "Twitch Clips"    },
-  twitter:   { emoji: "𝕏",  label: "X / Twitter"     },
-  linkedin:  { emoji: "💼", label: "LinkedIn"         },
+/** Per-platform icon + label shown in section headers. */
+const PLATFORM_DISPLAY: Record<string, { label: string }> = {
+  instagram: { label: "Instagram Posts" },
+  tiktok:    { label: "TikTok Videos"   },
+  youtube:   { label: "YouTube Videos"  },
+  twitch:    { label: "Twitch Clips"    },
+  twitter:   { label: "X / Twitter"     },
+  linkedin:  { label: "LinkedIn"         },
 };
 
 /**
@@ -385,8 +392,8 @@ function fmt(n: number): string {
 
 function PortfolioPostThumbnail({ post }: { post: SocialPostItem }) {
   const [imgErr, setImgErr] = useState(false);
-  const emoji = PLATFORM_DISPLAY[post.platform]?.emoji ?? "📱";
   const isClickable = Boolean(post.postUrl);
+  const PlatformIcon = SOCIAL_ICONS[post.platform];
 
   const inner = (
     <div className={cn("relative aspect-square rounded-xl overflow-hidden bg-zinc-100 dark:bg-neutral-800 group", isClickable ? "cursor-pointer" : "cursor-default")}>
@@ -399,7 +406,12 @@ function PortfolioPostThumbnail({ post }: { post: SocialPostItem }) {
           onError={() => setImgErr(true)}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-3xl">{emoji}</div>
+        <div className="w-full h-full flex items-center justify-center">
+          {PlatformIcon
+            ? <PlatformIcon className="w-8 h-8 rounded-md" />
+            : <span className="text-3xl">📱</span>
+          }
+        </div>
       )}
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-200" />
       {/* Hover stats overlay */}
@@ -880,12 +892,17 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                           {activePlatforms.map((platform) => {
                             const posts = mockPosts.filter((p) => p.platform === platform);
                             if (posts.length === 0) return null;
-                            const { emoji, label } = PLATFORM_DISPLAY[platform] ??
-                              { emoji: "📱", label: `${platform} Posts` };
+                            const { label } = PLATFORM_DISPLAY[platform] ??
+                              { label: `${platform} Posts` };
+                            const PIcon = SOCIAL_ICONS[platform];
                             return (
                               <div key={platform}>
                                 <p className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 flex items-center gap-1.5">
-                                  <span>{emoji}</span>{label}
+                                  {PIcon
+                                    ? <PIcon className="w-4 h-4 rounded-[3px]" />
+                                    : <span className="text-sm">📱</span>
+                                  }
+                                  {label}
                                 </p>
                                 <div className="grid grid-cols-3 gap-2">
                                   {posts.map((post) => (
@@ -914,12 +931,17 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                         {postPlatforms.map((platform) => {
                           const posts = previewPosts.filter((p) => p.platform === platform);
                           if (posts.length === 0) return null;
-                          const { emoji, label } = PLATFORM_DISPLAY[platform] ??
-                            { emoji: "📱", label: `${platform} Posts` };
+                          const { label } = PLATFORM_DISPLAY[platform] ??
+                            { label: `${platform} Posts` };
+                          const PIcon = SOCIAL_ICONS[platform];
                           return (
                             <div key={platform}>
                               <p className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 flex items-center gap-1.5">
-                                <span>{emoji}</span>{label}
+                                {PIcon
+                                  ? <PIcon className="w-4 h-4 rounded-[3px]" />
+                                  : <span className="text-sm">📱</span>
+                                }
+                                {label}
                               </p>
                               <div className="grid grid-cols-3 gap-2">
                                 {posts.map((post) => (
@@ -1366,12 +1388,17 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                 return postPlatforms.map((platform) => {
                   const posts = allPosts.filter((p) => p.platform === platform);
                   if (posts.length === 0) return null;
-                  const { emoji, label } = PLATFORM_DISPLAY[platform] ??
-                    { emoji: "📱", label: `${platform} Posts` };
+                  const { label } = PLATFORM_DISPLAY[platform] ??
+                    { label: `${platform} Posts` };
+                  const PIcon = SOCIAL_ICONS[platform];
                   return (
                     <div key={platform}>
                       <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-3 flex items-center gap-1.5">
-                        <span>{emoji}</span>{label}
+                        {PIcon
+                          ? <PIcon className="w-4 h-4 rounded-[3px]" />
+                          : <span className="text-sm">📱</span>
+                        }
+                        {label}
                         <span className="ml-1 text-zinc-400 dark:text-zinc-600">({posts.length})</span>
                       </p>
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">

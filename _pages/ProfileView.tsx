@@ -484,7 +484,7 @@ function SyncDataModal({
           Sync Analytics
         </DialogTitle>
         <DialogDescription>
-          Pull real-time follower count, engagement, and niches from Apify.
+          We'll verify your public account to sync your latest follower count, engagement stats, and content niches.
         </DialogDescription>
       </DialogHeader>
 
@@ -1173,7 +1173,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="font-display font-bold">Rich Analytics</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Powered by Apify</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Synced from your public profile</p>
               </div>
               <div className="flex items-center gap-2">
               {profileData.lastSyncedAt ? (

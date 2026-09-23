@@ -304,7 +304,7 @@ export function SearchSection() {
               className="text-lg leading-relaxed mb-8"
               style={{ color: "var(--text-muted)" }}
             >
-              Find the perfect creators for your campaign with AI-powered
+              Find the right creators for your campaign with AI-powered
               search. Filter by niche, engagement rate, location, platform, and
               audience demographics — in seconds.
             </motion.p>
@@ -332,10 +332,10 @@ export function SearchSection() {
 
             <motion.ul variants={stagger} className="space-y-4 mb-8">
               {[
-                "10K+ verified creator profiles across all major platforms",
+                "Verified creator profiles across TikTok, YouTube, and Instagram",
                 "Filter by niche, hashtag, keyword, location, and audience size",
-                "AI-ranked results by brand-fit score and predicted conversion rate",
-                "Fake follower detection built in — only real audiences",
+                "AI-ranked results by brand-fit score and engagement quality",
+                "Audience authenticity analysis — prioritize genuine engagement",
               ].map((text, i) => (
                 <motion.li
                   key={i}

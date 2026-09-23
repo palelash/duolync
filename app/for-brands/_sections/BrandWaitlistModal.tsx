@@ -80,14 +80,13 @@ export function BrandWaitlistModal({ onClose }: { onClose: () => void }) {
 
             {/* Heading */}
             <h3 className="font-display font-bold text-white text-2xl text-center leading-snug mb-3">
-              Create Your Duolync Account 🚀
+              Create Your Duolync Account
             </h3>
 
             {/* Subtext */}
             <p className="text-slate-400 text-sm text-center leading-relaxed mb-6">
-              Our AI engine indexes 10K+ verified creator profiles across TikTok, Instagram,
-              and YouTube. Sign up today and get{" "}
-              <strong className="text-slate-300">30 days of complimentary premium access</strong>.
+              Discover verified creator profiles across TikTok, Instagram,
+              and YouTube. Start for free — no credit card required.
             </p>
 
             {/* Social proof bar */}
@@ -102,12 +101,12 @@ export function BrandWaitlistModal({ onClose }: { onClose: () => void }) {
                   ))}
                 </div>
                 <span className="text-[11px] text-slate-500">
-                  <strong className="text-slate-300">340+</strong> brands signed up
+                  Brands already on Duolync
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
                 <Shield size={10} className="text-cyan-400" />
-                SOC-2 compliant
+                Privacy protected
               </div>
             </div>
 
