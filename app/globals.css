@@ -707,6 +707,29 @@
   .animate-auth-orb-2 { animation: authOrb2 30s ease-in-out infinite; animation-delay: -10s; }
   .animate-auth-orb-3 { animation: authOrb3 17s ease-in-out infinite; animation-delay: -6s; }
 
+  /* ── Auth collage card float animations ─────────────────────── */
+  @keyframes floatCard1 {
+    0%, 100% { transform: rotate(-6deg) translateY(0px);  }
+    50%       { transform: rotate(-6deg) translateY(-13px); }
+  }
+  @keyframes floatCard2 {
+    0%, 100% { transform: translateY(0px);   }
+    50%       { transform: translateY(-17px); }
+  }
+  @keyframes floatCard3 {
+    0%, 100% { transform: rotate(5deg) translateY(0px);  }
+    50%       { transform: rotate(5deg) translateY(-11px); }
+  }
+  @keyframes floatPill {
+    0%, 100% { transform: translateX(-50%) translateY(0px);   }
+    50%       { transform: translateX(-50%) translateY(-6px); }
+  }
+
+  .animate-float-card-1 { animation: floatCard1 6s   ease-in-out infinite; }
+  .animate-float-card-2 { animation: floatCard2 7.5s ease-in-out infinite; animation-delay: -2s; }
+  .animate-float-card-3 { animation: floatCard3 5.5s ease-in-out infinite; animation-delay: -1s; }
+  .animate-float-pill   { animation: floatPill  8s   ease-in-out infinite; animation-delay: -3s; }
+
   /* Gradient border */
   .gradient-border {
     position: relative;

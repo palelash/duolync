@@ -53,35 +53,30 @@ export function AIStrategyConsultant({ industry }: Props) {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden"
-      style={{
-        background: "var(--bg-card, rgba(255,255,255,0.025))",
-        border: "1px solid rgba(52,211,153,0.18)",
-      }}
+      className="rounded-3xl overflow-hidden border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl"
     >
       {/* Header */}
       <div
-        className="px-5 py-4 flex items-center justify-between"
-        style={{ borderBottom: "1px solid rgba(52,211,153,0.12)" }}
+        className="px-5 py-4 flex items-center justify-between border-b border-white/[0.06]"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.22)" }}
+            className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ background: "rgba(52,211,153,0.10)", border: "1px solid rgba(52,211,153,0.18)" }}
           >
-            <BarChart3 className="w-4 h-4" style={{ color: "#34d399" }} />
+            <BarChart3 className="w-4 h-4" style={{ color: "#34d399" }} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">AI Strategy Consultant</h3>
-            <p className="text-xs text-muted-foreground">Ad format & ROI recommendations</p>
+            <h3 className="font-semibold text-sm text-zinc-100">AI Strategy Consultant</h3>
+            <p className="text-xs text-zinc-500">Ad format & ROI recommendations</p>
           </div>
         </div>
         {result && (
           <button
             onClick={reset}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
             New query
           </button>
         )}
@@ -91,7 +86,7 @@ export function AIStrategyConsultant({ industry }: Props) {
         {/* Input state */}
         {!result && (
           <>
-            <p className="text-sm text-muted-foreground mb-3">
+            <p className="text-sm text-zinc-400 mb-3">
               Describe your product and campaign goal. The AI will recommend the most effective ad formats with predicted ROI.
             </p>
 
@@ -103,8 +98,8 @@ export function AIStrategyConsultant({ industry }: Props) {
                   onClick={() => { setPrompt(ex); textareaRef.current?.focus(); }}
                   className="text-[10px] px-2.5 py-1 rounded-full transition-colors"
                   style={{
-                    background: "rgba(52,211,153,0.08)",
-                    border: "1px solid rgba(52,211,153,0.18)",
+                    background: "rgba(52,211,153,0.07)",
+                    border: "1px solid rgba(52,211,153,0.15)",
                     color: "#34d399",
                   }}
                 >
@@ -123,32 +118,31 @@ export function AIStrategyConsultant({ industry }: Props) {
                 }}
                 placeholder="e.g. Skincare brand targeting women 25–40 with a $10K budget focused on conversions…"
                 rows={3}
-                className="w-full resize-none rounded-xl text-sm px-4 py-3 pr-12 outline-none transition-colors"
+                className="w-full resize-none rounded-2xl text-sm px-4 py-3 pr-12 outline-none transition-colors text-zinc-200 placeholder:text-zinc-600"
                 style={{
                   background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(52,211,153,0.2)",
-                  color: "inherit",
+                  border: "1px solid rgba(52,211,153,0.15)",
                 }}
               />
               <button
                 onClick={submit}
                 disabled={!prompt.trim() || loading}
-                className="absolute bottom-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+                className="absolute bottom-3 right-3 w-8 h-8 rounded-xl flex items-center justify-center transition-all"
                 style={{
                   background: prompt.trim() && !loading
                     ? "linear-gradient(135deg, #059669, #34d399)"
-                    : "rgba(255,255,255,0.05)",
+                    : "rgba(255,255,255,0.04)",
                   opacity: prompt.trim() && !loading ? 1 : 0.4,
                 }}
               >
                 {loading
                   ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                  : <Send className="w-3.5 h-3.5 text-white" />
+                  : <Send className="w-3.5 h-3.5 text-white" strokeWidth={1.5} />
                 }
               </button>
             </div>
 
-            <p className="text-[10px] text-muted-foreground mt-2">
+            <p className="text-[10px] text-zinc-600 mt-2">
               Press ⌘↵ to submit
             </p>
 
@@ -247,18 +241,18 @@ export function AIStrategyConsultant({ industry }: Props) {
                 size="sm"
                 onClick={reset}
                 variant="outline"
-                className="flex-1 text-xs"
+                className="flex-1 text-xs rounded-xl border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:bg-white/[0.08]"
               >
                 Try another query
               </Button>
               <Button
                 size="sm"
-                className="flex-1 text-xs gap-1.5"
-                style={{ background: "linear-gradient(135deg, #059669, #34d399)", border: "none", color: "#fff" }}
+                className="flex-1 text-xs gap-1.5 rounded-xl"
+                style={{ background: "linear-gradient(135deg, #059669, #34d399)", border: "none", color: "#fff", boxShadow: "0 4px 16px rgba(52,211,153,0.20)" }}
                 asChild
               >
                 <a href="/brand/smart-match">
-                  <TrendingUp className="w-3.5 h-3.5" />
+                  <TrendingUp className="w-3.5 h-3.5" strokeWidth={1.5} />
                   Find matching creators
                 </a>
               </Button>

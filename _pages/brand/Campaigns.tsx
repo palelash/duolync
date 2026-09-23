@@ -61,27 +61,27 @@ const PLATFORMS = [
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   DRAFT: {
     label: "Draft",
-    color: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+    color: "bg-zinc-800/60 text-zinc-400 border border-zinc-700/60",
     icon: Layers,
   },
   ACTIVE: {
     label: "Active",
-    color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    color: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15",
     icon: TrendingUp,
   },
   PAUSED: {
     label: "Paused",
-    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    color: "bg-amber-500/10 text-amber-400 border border-amber-500/15",
     icon: PauseCircle,
   },
   COMPLETED: {
     label: "Completed",
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    color: "bg-blue-500/10 text-blue-400 border border-blue-500/15",
     icon: CheckCircle2,
   },
   CANCELLED: {
     label: "Cancelled",
-    color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    color: "bg-red-500/10 text-red-400 border border-red-500/15",
     icon: XCircle,
   },
 };
@@ -629,35 +629,35 @@ function ConnectionsPanel({ open, campaignTitle, creators, loading, onClose }: C
         onClick={onClose}
         aria-hidden
       />
-      <aside className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 flex flex-col shadow-2xl">
-        <div className="flex items-center justify-between px-5 h-16 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+      <aside className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-zinc-900/95 backdrop-blur-xl border-l border-white/[0.07] flex flex-col shadow-2xl shadow-black/40">
+        <div className="flex items-center justify-between px-5 h-16 border-b border-white/[0.06] shrink-0">
           <div>
-            <h2 className="font-bold text-base">Eligible Creators</h2>
-            <p className="text-xs text-muted-foreground truncate max-w-[200px]">{campaignTitle}</p>
+            <h2 className="font-bold text-base text-zinc-100">Eligible Creators</h2>
+            <p className="text-xs text-zinc-500 truncate max-w-[200px]">{campaignTitle}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+            className="p-2 rounded-xl hover:bg-white/[0.06] transition-colors text-zinc-500 hover:text-zinc-200"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" strokeWidth={1.5} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : creators.length === 0 ? (
             <div className="flex flex-col items-center py-16 px-6 text-center">
-              <Users className="w-10 h-10 text-muted-foreground/40 mb-3" />
-              <p className="font-semibold text-sm mb-1">No connected creators</p>
-              <p className="text-xs text-muted-foreground">
+              <Users className="w-10 h-10 text-zinc-700 mb-3" strokeWidth={1.5} />
+              <p className="font-semibold text-sm mb-1 text-zinc-300">No connected creators</p>
+              <p className="text-xs text-zinc-500">
                 Connect with creators in the Discover tab to see them here.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-border/60">
+            <ul className="divide-y divide-white/[0.04]">
               {creators.map((creator) => {
                 const initials = creator.name
                   .split(" ")
@@ -666,8 +666,8 @@ function ConnectionsPanel({ open, campaignTitle, creators, loading, onClose }: C
                   .slice(0, 2)
                   .toUpperCase();
                 return (
-                  <li key={creator.userId} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/40 transition-colors">
-                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                  <li key={creator.userId} className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.04] transition-colors">
+                    <div className="w-10 h-10 rounded-2xl overflow-hidden shrink-0">
                       {creator.avatarUrl ? (
                         <img src={creator.avatarUrl} alt={creator.name} className="w-full h-full object-cover" />
                       ) : (
@@ -677,22 +677,22 @@ function ConnectionsPanel({ open, campaignTitle, creators, loading, onClose }: C
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{creator.name}</p>
+                      <p className="text-sm font-semibold truncate text-zinc-100">{creator.name}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         {creator.primaryPlatform && (
-                          <span className="text-xs">
+                          <span className="text-xs text-zinc-400">
                             {getPlatformMeta(creator.primaryPlatform)?.emoji ?? "🌐"}{" "}
                             {creator.primaryPlatform}
                           </span>
                         )}
                         {creator.niche && (
-                          <span className="text-xs text-muted-foreground truncate">
+                          <span className="text-xs text-zinc-500 truncate">
                             · {creator.niche}
                           </span>
                         )}
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground shrink-0">
+                    <span className="text-xs text-zinc-500 shrink-0">
                       {formatFollowers(creator.totalFollowers)} followers
                     </span>
                   </li>
@@ -702,8 +702,8 @@ function ConnectionsPanel({ open, campaignTitle, creators, loading, onClose }: C
           )}
         </div>
 
-        <div className="px-5 py-4 border-t border-zinc-200 dark:border-zinc-800 shrink-0">
-          <p className="text-xs text-muted-foreground text-center">
+        <div className="px-5 py-4 border-t border-white/[0.06] shrink-0">
+          <p className="text-xs text-zinc-600 text-center">
             {creators.length} connected creator{creators.length !== 1 ? "s" : ""} available
           </p>
         </div>
@@ -730,7 +730,7 @@ function CampaignCard({ campaign, onEdit, onDelete, onViewConnections, deleting 
   const isOverdue = remaining === "Overdue";
 
   return (
-    <article className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-md dark:hover:shadow-black/20 transition-all duration-200">
+    <article className="group relative bg-white/[0.03] backdrop-blur-xl border border-white/[0.07] rounded-3xl overflow-hidden hover:border-white/[0.14] hover:shadow-xl hover:shadow-black/20 transition-all duration-200">
       {/* Campaign image */}
       {campaign.imageUrl && (
         <div className="w-full h-32 overflow-hidden">
@@ -748,17 +748,17 @@ function CampaignCard({ campaign, onEdit, onDelete, onViewConnections, deleting 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
               <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold", meta.color)}>
-                <StatusIcon className="w-3 h-3" />
+                <StatusIcon className="w-3 h-3" strokeWidth={1.5} />
                 {meta.label}
               </span>
               {campaign.proposalCount > 0 && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">
-                  <FileText className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-500/10 text-violet-400 border border-violet-500/15">
+                  <FileText className="w-3 h-3" strokeWidth={1.5} />
                   {campaign.proposalCount} application{campaign.proposalCount !== 1 ? "s" : ""}
                 </span>
               )}
             </div>
-            <h3 className="font-bold text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="font-bold text-base leading-snug line-clamp-2 text-zinc-100 group-hover:text-violet-400 transition-colors">
               {campaign.title}
             </h3>
           </div>
@@ -766,24 +766,24 @@ function CampaignCard({ campaign, onEdit, onDelete, onViewConnections, deleting 
           <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => onEdit(campaign)}
-              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              className="p-1.5 rounded-xl hover:bg-white/[0.07] text-zinc-500 hover:text-zinc-200 transition-colors"
               title="Edit"
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil className="w-4 h-4" strokeWidth={1.5} />
             </button>
             <button
               onClick={() => onDelete(campaign.id)}
               disabled={deleting}
-              className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-muted-foreground hover:text-red-600 transition-colors disabled:opacity-50"
+              className="p-1.5 rounded-xl hover:bg-red-500/10 text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-50"
               title="Delete"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
         </div>
 
         {/* Description */}
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+        <p className="text-sm text-zinc-500 line-clamp-2 mb-3">
           {campaign.description}
         </p>
 
@@ -795,30 +795,30 @@ function CampaignCard({ campaign, onEdit, onDelete, onViewConnections, deleting 
               return (
                 <span
                   key={pid}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-white/[0.05] text-zinc-400 border border-white/[0.07]"
                 >
                   {pm?.emoji ?? "🌐"} {pm?.label ?? pid}
                 </span>
               );
             })}
             {campaign.platforms.length > 4 && (
-              <span className="text-xs text-muted-foreground">+{campaign.platforms.length - 4}</span>
+              <span className="text-xs text-zinc-600">+{campaign.platforms.length - 4}</span>
             )}
           </div>
         )}
 
         {/* Meta row */}
         <div className="flex items-center gap-4 flex-wrap text-sm mb-4">
-          <div className="flex items-center gap-1.5 font-semibold text-foreground">
-            <DollarSign className="w-4 h-4 text-emerald-500" />
+          <div className="flex items-center gap-1.5 font-semibold text-zinc-100">
+            <DollarSign className="w-4 h-4 text-emerald-400" strokeWidth={1.5} />
             {formatBudget(campaign.budget)}
           </div>
           {deadline && (
-            <div className={cn("flex items-center gap-1.5", isOverdue ? "text-red-500" : "text-muted-foreground")}>
-              <Clock className="w-4 h-4" />
+            <div className={cn("flex items-center gap-1.5", isOverdue ? "text-red-400" : "text-zinc-500")}>
+              <Clock className="w-4 h-4" strokeWidth={1.5} />
               <span className="text-xs">{deadline}</span>
               {remaining && (
-                <span className={cn("text-xs font-medium", isOverdue ? "text-red-500" : "text-orange-500")}>
+                <span className={cn("text-xs font-medium", isOverdue ? "text-red-400" : "text-amber-400")}>
                   ({remaining})
                 </span>
               )}
@@ -830,22 +830,22 @@ function CampaignCard({ campaign, onEdit, onDelete, onViewConnections, deleting 
         <div className="flex gap-2">
           <Link
             href={`/brand/campaigns/${campaign.id}`}
-            className="flex-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-primary/5 dark:hover:bg-primary/10 border border-zinc-200 dark:border-zinc-700 hover:border-primary/30 transition-all group/btn"
+            className="flex-1 flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] hover:border-violet-500/25 transition-all group/btn"
           >
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover/btn:text-foreground transition-colors">
-              <Users className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-sm font-medium text-zinc-500 group-hover/btn:text-zinc-200 transition-colors">
+              <Users className="w-4 h-4" strokeWidth={1.5} />
               {campaign.proposalCount > 0
                 ? `${campaign.proposalCount} applicant${campaign.proposalCount !== 1 ? "s" : ""}`
                 : "View applicants"}
             </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover/btn:text-primary transition-colors" />
+            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover/btn:text-violet-400 transition-colors" strokeWidth={1.5} />
           </Link>
           <button
             onClick={() => onViewConnections(campaign)}
             title="View connected creators"
-            className="px-3 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-primary/5 border border-zinc-200 dark:border-zinc-700 hover:border-primary/30 transition-all text-muted-foreground hover:text-foreground"
+            className="px-3 py-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] hover:border-violet-500/25 transition-all text-zinc-500 hover:text-zinc-200"
           >
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-4 h-4" strokeWidth={1.5} />
           </button>
         </div>
       </div>
@@ -943,19 +943,19 @@ const Campaigns = () => {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-              <Megaphone className="w-7 h-7 text-primary" />
+            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-zinc-100">
+              <Megaphone className="w-7 h-7 text-violet-400" strokeWidth={1.5} />
               Campaigns
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-zinc-500 text-sm mt-1">
               Manage your brand campaigns and connect with creators.
             </p>
           </div>
           <Button
             onClick={() => { setEditingCampaign(null); setModalOpen(true); }}
-            className="flex items-center gap-2 w-full sm:w-auto"
+            className="flex items-center gap-2 w-full sm:w-auto bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white border-0 rounded-2xl shadow-lg shadow-violet-500/20"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" strokeWidth={1.5} />
             New Campaign
           </Button>
         </div>
@@ -963,17 +963,17 @@ const Campaigns = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
-            { label: "Total", value: counts.total, icon: Target, color: "text-foreground" },
-            { label: "Active", value: counts.active, icon: TrendingUp, color: "text-emerald-600 dark:text-emerald-400" },
-            { label: "Draft", value: counts.draft, icon: Layers, color: "text-zinc-500 dark:text-zinc-400" },
-            { label: "Paused", value: counts.paused, icon: PauseCircle, color: "text-amber-600 dark:text-amber-400" },
+            { label: "Total", value: counts.total, icon: Target, color: "text-zinc-100" },
+            { label: "Active", value: counts.active, icon: TrendingUp, color: "text-emerald-400" },
+            { label: "Draft", value: counts.draft, icon: Layers, color: "text-zinc-400" },
+            { label: "Paused", value: counts.paused, icon: PauseCircle, color: "text-amber-400" },
           ].map((s) => (
             <div
               key={s.label}
-              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-4 flex flex-col gap-1"
+              className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.07] rounded-3xl p-3 sm:p-4 flex flex-col gap-1"
             >
-              <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <s.icon className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
+                <s.icon className="w-3.5 h-3.5" strokeWidth={1.5} />
                 {s.label}
               </div>
               <p className={cn("text-2xl font-bold", s.color)}>{s.value}</p>
@@ -999,8 +999,8 @@ const Campaigns = () => {
                 className={cn(
                   "shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all border",
                   statusFilter === tab.value
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 hover:border-primary/40 hover:text-foreground",
+                    ? "bg-gradient-to-r from-violet-600/80 to-purple-600/80 text-white border-violet-500/30 shadow-sm shadow-violet-500/20"
+                    : "bg-white/[0.04] text-zinc-400 border-white/[0.07] hover:border-white/[0.14] hover:text-zinc-200",
                 )}
               >
                 {tab.label}
@@ -1010,7 +1010,7 @@ const Campaigns = () => {
                       "inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold",
                       statusFilter === tab.value
                         ? "bg-white/20 text-white"
-                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400",
+                        : "bg-white/[0.06] text-zinc-500",
                     )}
                   >
                     {count}
@@ -1025,13 +1025,13 @@ const Campaigns = () => {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-32 bg-zinc-200 dark:bg-zinc-700" />
+              <div key={i} className="bg-white/[0.03] border border-white/[0.07] rounded-3xl overflow-hidden animate-pulse">
+                <div className="h-32 bg-zinc-800/60" />
                 <div className="p-5">
-                  <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-20 mb-3" />
-                  <div className="h-5 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4 mb-2" />
-                  <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-full mb-4" />
-                  <div className="h-10 bg-zinc-100 dark:bg-zinc-800 rounded-xl" />
+                  <div className="h-4 bg-zinc-800 rounded w-20 mb-3" />
+                  <div className="h-5 bg-zinc-800 rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-zinc-800/70 rounded w-full mb-4" />
+                  <div className="h-10 bg-zinc-800/40 rounded-2xl" />
                 </div>
               </div>
             ))}
@@ -1039,17 +1039,17 @@ const Campaigns = () => {
         ) : filtered.length === 0 ? (
           statusFilter !== "ALL" ? (
             <div className="flex flex-col items-center py-16 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center mb-4">
-                <Megaphone className="w-6 h-6 text-zinc-400 dark:text-zinc-500" />
+              <div className="w-14 h-14 rounded-3xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mb-4">
+                <Megaphone className="w-6 h-6 text-zinc-500" strokeWidth={1.5} />
               </div>
-              <p className="font-semibold text-sm mb-1">
+              <p className="font-semibold text-sm mb-1 text-zinc-300">
                 No {statusFilter.toLowerCase()} campaigns
               </p>
-              <p className="text-xs text-muted-foreground mb-4">
+              <p className="text-xs text-zinc-500 mb-4">
                 Switch the filter to see other campaigns.
               </p>
-              <Button variant="outline" size="sm" onClick={() => setStatusFilter("ALL")}>
-                <X className="w-3.5 h-3.5 mr-1.5" />
+              <Button variant="outline" size="sm" onClick={() => setStatusFilter("ALL")} className="border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:bg-white/[0.08] rounded-xl">
+                <X className="w-3.5 h-3.5 mr-1.5" strokeWidth={1.5} />
                 Show all
               </Button>
             </div>
@@ -1065,7 +1065,7 @@ const Campaigns = () => {
               }}
               tips={[
                 { icon: <Target className="w-3 h-3" />, label: "Set budget & platform" },
-                { icon: <Users className="w-3 h-3" />, label: "Reach 50K+ creators" },
+                { icon: <Users className="w-3 h-3" />, label: "Reach verified creators" },
                 { icon: <CheckCircle2 className="w-3 h-3" />, label: "Track collaborations" },
               ]}
             />

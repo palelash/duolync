@@ -12,7 +12,7 @@ const useCases = [
   {
     Icon: Building2,
     title: "Influencer Marketing Agency",
-    description: "Scale client campaigns without scaling your team. Run dozens of campaigns simultaneously with AI-powered matching, CRM automation, and real-time analytics.",
+    description: "Scale client campaigns without scaling your team. Run dozens of campaigns simultaneously with AI-powered matching, deal tracking, and real-time analytics.",
     color: "#a78bfa",
     bg: "var(--glow-purple)",
     border: "rgba(124,58,237,0.25)",
@@ -22,7 +22,7 @@ const useCases = [
   {
     Icon: Sparkles,
     title: "Creative Brand Owner",
-    description: "Find creators who actually fit your brand DNA — not just big follower counts. Our AI analyzes audience alignment and predicts sales success before you spend a dollar.",
+    description: "Find creators who actually fit your brand DNA — not just big follower counts. Our AI analyzes audience alignment and engagement quality before you commit to a deal.",
     color: "#67e8f9",
     bg: "rgba(6,182,212,0.1)",
     border: "rgba(6,182,212,0.25)",

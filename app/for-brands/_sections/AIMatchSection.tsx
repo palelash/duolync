@@ -35,9 +35,9 @@ const creators = [
 
 const aiInsights = [
   { label: "Audience-brand fit",     value: 94, color: "var(--accent-violet-text)" },
-  { label: "Sales prediction score", value: 89, color: "var(--accent-sky-text)" },
   { label: "Engagement quality",     value: 97, color: "var(--accent-emerald-text)" },
-  { label: "Content authenticity",   value: 92, color: "var(--accent-amber-text)" },
+  { label: "Niche relevance",        value: 92, color: "var(--accent-amber-text)" },
+  { label: "Audience authenticity",  value: 89, color: "var(--accent-sky-text)" },
 ];
 
 export function AIMatchSection() {
@@ -143,15 +143,15 @@ export function AIMatchSection() {
             </motion.h2>
 
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-8">
-              Our AI ingests your product catalog and brand identity, then cross-references it against
-              creator audience data to surface partnerships that are scientifically proven to convert.
+              Our matching system analyses your brand category and campaign goals, then cross-references
+              creator audience data to surface the most relevant partnerships for your product.
             </motion.p>
 
             <motion.ul variants={stagger} className="space-y-4 mb-8">
               {[
-                { icon: Target,    text: "Audience-to-brand affinity scoring across 200+ signals" },
-                { icon: TrendingUp, text: "Sales potential prediction before you spend a dollar" },
-                { icon: Star,      text: "Fake-follower and engagement fraud detection built in" },
+                { icon: Target,    text: "Audience-to-brand affinity scoring based on niche, demographics, and engagement" },
+                { icon: TrendingUp, text: "Engagement quality analysis to filter for authentic audiences" },
+                { icon: Star,      text: "Creator verification to surface only public, accessible accounts" },
                 { icon: Users,     text: "Cross-platform discovery: TikTok, Instagram, YouTube" },
               ].map((item, i) => (
                 <motion.li key={i} variants={fadeUp} className="flex items-center gap-3">

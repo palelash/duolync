@@ -50,7 +50,7 @@ const VALUES = [
       </svg>
     ),
     title: "Creator-Centric",
-    body: "Creators deserve real tools — not a discovery page. We give them analytics, filters, CRM, and an AI mentor that helps them grow.",
+    body: "Creators deserve real tools — not just a discovery page. We give them verified analytics, deal filters, and AI-driven insights that help them grow.",
     accent: "#ec4899",
     accentBg: "rgba(236,72,153,0.08)",
     accentBorder: "rgba(236,72,153,0.2)",
@@ -94,7 +94,7 @@ const VALUES = [
       </svg>
     ),
     title: "Trust & Transparency",
-    body: "We verify creators, detect fake followers, and hold payments in escrow — so both sides of every deal can collaborate with confidence.",
+    body: "We verify creator profiles against their real public data, so both sides of every deal can make informed decisions and collaborate with confidence.",
     accent: "#67e8f9",
     accentBg: "rgba(103,232,249,0.08)",
     accentBorder: "rgba(103,232,249,0.2)",
@@ -264,8 +264,8 @@ export default function AboutPage() {
                   </p>
                   <p>
                     And for creators, we built a real platform: cross-platform
-                    analytics, a smart deal inbox, a built-in CRM, and an AI
-                    mentor that actually helps you grow.
+                    analytics, a smart deal inbox, deal tracking tools, and
+                    AI-powered insights that help you grow.
                   </p>
                 </div>
               </div>
@@ -306,11 +306,11 @@ export default function AboutPage() {
                       color: "#ec4899",
                     },
                     {
-                      label: "Built-in CRM & campaign calendar",
+                      label: "Campaign management & deal tracking",
                       color: "#34d399",
                     },
                     {
-                      label: "AI growth mentor for creators",
+                      label: "AI growth tools for creators (Beta)",
                       color: "#67e8f9",
                     },
                   ].map((item) => (
@@ -399,7 +399,7 @@ export default function AboutPage() {
 
               <div className="relative">
                 <p className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-4">
-                  Early access
+                  Get started
                 </p>
                 <h2
                   className="font-display font-bold text-white mb-4"
@@ -408,11 +408,11 @@ export default function AboutPage() {
                     lineHeight: 1.15,
                   }}
                 >
-                  Join us from day one
+                  Join the platform
                 </h2>
                 <p className="text-slate-400 text-base max-w-md mx-auto mb-8 leading-relaxed">
-                  We&apos;re in early access. Be among the first brands and
-                  creators to shape what Duolync becomes.
+                  Sign up today and start connecting brands with creators
+                  across YouTube, TikTok, and Instagram.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -437,7 +437,7 @@ export default function AboutPage() {
                         d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"
                       />
                     </svg>
-                    Join the waitlist
+                    Create your account
                   </Link>
                   <Link
                     href="/contact"

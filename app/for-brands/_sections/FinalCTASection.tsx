@@ -12,10 +12,10 @@ const fadeUp: Variants = {
 const stagger: Variants = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
 const perks = [
-  { icon: Zap, text: "First access when we launch" },
-  { icon: Lock, text: "Locked-in founding member pricing" },
-  { icon: Bell, text: "Exclusive beta access to new features" },
-  { icon: Sparkles, text: "Priority onboarding & dedicated support" },
+  { icon: Zap, text: "Free plan to get started — no credit card required" },
+  { icon: Lock, text: "Campaign and creator management tools included" },
+  { icon: Bell, text: "Early access to new features as they roll out" },
+  { icon: Sparkles, text: "Priority support during onboarding" },
 ];
 
 const avatarGradients = [
@@ -74,19 +74,19 @@ export function FinalCTASection() {
           {/* Badge */}
           <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8 backdrop-blur-sm" style={{ background: "var(--glow-purple)", border: "1px solid rgba(124,58,237,0.4)", color: "var(--accent-violet-text)" }}>
             <Sparkles size={13} />
-            Now Live · Sign Up Free
+            For Brands · Sign Up Free
           </motion.div>
 
           {/* Headline */}
           <motion.h2 variants={fadeUp} className="font-display font-bold text-white leading-[1.08] tracking-tight mb-6" style={{ fontSize: "clamp(2.2rem, 5vw, 3.8rem)" }}>
-            Be the first brand to{" "}
+            Start finding{" "}
             <span style={{ background: "linear-gradient(90deg, #a78bfa, #38bdf8, #34d399)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              dominate with AI.
+              the right creators.
             </span>
           </motion.h2>
 
           <motion.p variants={fadeUp} className="text-slate-400 text-xl leading-relaxed mb-10 max-w-xl mx-auto">
-            Create your Duolync account today and be the first brand to dominate with AI-powered creator marketing.
+            Create your Duolync account today and start discovering, managing, and measuring creator partnerships in one place.
           </motion.p>
 
           {/* Perks grid */}
@@ -139,7 +139,7 @@ export function FinalCTASection() {
                 ))}
               </div>
               <span>
-                <strong className="text-slate-400">2,400+</strong> brands already on Duolync
+                Brands already discovering creators on Duolync
               </span>
             </div>
           </motion.div>

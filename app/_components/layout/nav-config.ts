@@ -11,7 +11,6 @@ export interface NavItem {
 }
 
 export const BRAND_NAV_ITEMS: NavItem[] = [
-  { icon: Compass,      label: "Feed",         path: "/feed" },
   { icon: Home,         label: "Dashboard",    path: "/brand/dashboard" },
   { icon: Search,       label: "Discover",     path: "/brand/discover" },
   { icon: Sparkles,     label: "Smart Match",  path: "/brand/smart-match" },
@@ -25,7 +24,6 @@ export const CREATOR_NAV_ITEMS: NavItem[] = [
   { icon: Home,         label: "Dashboard",          path: "/creator/dashboard" },
   { icon: Megaphone,    label: "Campaigns",           path: "/creator/campaigns" },
   { icon: Radio,        label: "Social Connections",  path: "/creator/presence" },
-  { icon: Compass,      label: "Feed",                path: "/feed" },
   { icon: Search,       label: "Discover",            path: "/creator/discover" },
   { icon: BarChart3,    label: "Analytics",           path: "/creator/analytics" },
   { icon: FileText,     label: "My Applications",     path: "/creator/applications" },

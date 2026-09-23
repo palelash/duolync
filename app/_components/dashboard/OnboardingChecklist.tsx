@@ -138,15 +138,14 @@ export function OnboardingChecklist({
   return (
     <div
       className={cn(
-        "mb-8 rounded-2xl overflow-hidden transition-all duration-500",
-        "border border-zinc-100 dark:border-white/[0.07]",
-        "bg-white dark:bg-zinc-950/80",
-        "shadow-sm dark:shadow-black/20",
+        "mb-8 rounded-3xl overflow-hidden transition-all duration-500",
+        "border border-white/[0.07]",
+        "bg-white/[0.03] backdrop-blur-xl",
       )}
     >
       {/* Purple top accent strip */}
       <div
-        className="h-0.5 w-full"
+        className="h-px w-full"
         style={{ background: "linear-gradient(90deg, #c084fc 0%, #f472b6 50%, #67e8f9 100%)" }}
       />
 
@@ -154,15 +153,15 @@ export function OnboardingChecklist({
       <div className="flex items-start justify-between px-5 pt-4 pb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100">
+            <h3 className="font-display font-bold text-base text-zinc-100">
               Get started with Duolync
             </h3>
             {/* Step badge */}
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/10 text-violet-500 dark:text-violet-400 border border-violet-500/20">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/10 text-violet-400 border border-violet-500/15">
               {completedCount}/{steps.length} done
             </span>
           </div>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          <p className="text-xs text-zinc-500">
             Complete these 3 steps to unlock your full creator profile.
           </p>
         </div>
@@ -170,7 +169,7 @@ export function OnboardingChecklist({
           onClick={handleDismiss}
           title="Dismiss"
           aria-label="Dismiss onboarding"
-          className="shrink-0 ml-3 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors"
+          className="shrink-0 ml-3 p-1.5 rounded-xl text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06] transition-colors"
         >
           <X className="w-3.5 h-3.5" />
         </button>
@@ -220,12 +219,12 @@ export function OnboardingChecklist({
               <div
                 key={step.id}
                 className={cn(
-                  "flex items-center gap-4 rounded-xl px-4 py-3 transition-all duration-200",
+                  "flex items-center gap-4 rounded-2xl px-4 py-3 transition-all duration-200",
                   step.done
-                    ? "bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-100 dark:border-emerald-500/15"
+                    ? "bg-emerald-500/[0.05] border border-emerald-500/[0.12]"
                     : isNext
-                      ? "bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60 shadow-sm"
-                      : "bg-zinc-50/50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800/50",
+                      ? "bg-white/[0.04] border border-white/[0.10] shadow-sm"
+                      : "bg-white/[0.02] border border-white/[0.05]",
                 )}
               >
                 {/* Step status icon */}
@@ -262,14 +261,14 @@ export function OnboardingChecklist({
                     className={cn(
                       "text-sm font-semibold leading-tight",
                       step.done
-                        ? "text-zinc-400 dark:text-zinc-500 line-through"
-                        : "text-zinc-900 dark:text-zinc-100",
+                        ? "text-zinc-600 line-through"
+                        : "text-zinc-100",
                     )}
                   >
                     {step.title}
                   </p>
                   {!step.done && (
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 leading-snug line-clamp-1">
+                    <p className="text-xs text-zinc-500 mt-0.5 leading-snug line-clamp-1">
                       {step.description}
                     </p>
                   )}
@@ -280,19 +279,19 @@ export function OnboardingChecklist({
                   <Link
                     href={step.href}
                     className={cn(
-                      "shrink-0 flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap",
+                      "shrink-0 flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors whitespace-nowrap",
                       isNext
                         ? "text-white"
-                        : "text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700",
+                        : "text-zinc-400 bg-white/[0.06] hover:bg-white/[0.10]",
                     )}
                     style={
                       isNext
-                        ? { background: step.accentColor, boxShadow: `0 0 12px ${step.accentColor}40` }
+                        ? { background: step.accentColor, boxShadow: `0 0 16px ${step.accentColor}35` }
                         : undefined
                     }
                   >
                     {step.cta}
-                    <ChevronRight className="w-3 h-3" />
+                    <ChevronRight className="w-3 h-3" strokeWidth={1.5} />
                   </Link>
                 )}
               </div>

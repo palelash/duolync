@@ -171,8 +171,7 @@ export function BentoSection() {
               Find creators that actually convert
             </h3>
             <p className="text-sm mb-5" style={{ color: "var(--text-muted)" }}>
-              {" "}
-              verified creators by niche, platform, engagement rate, and
+              Search verified creators by niche, platform, engagement rate, and
               audience demographics.
             </p>
             <div
@@ -333,8 +332,8 @@ export function BentoSection() {
               Contact at scale
             </h3>
             <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
-              Personalized bulk emails with AI-generated templates.
-              Auto-follow-up until you get a reply.
+              Send collaboration invites with AI-assisted templates.
+              Track responses and manage deals from one inbox.
             </p>
             <div
               className="rounded-xl p-3 space-y-2"
@@ -369,24 +368,32 @@ export function BentoSection() {
             </div>
           </GlassCard>
 
-          {/* 3: CRM */}
+          {/* 3: Campaign Tracking */}
           <GlassCard borderColor={`${EMERALD}28`} glowColor={`${EMERALD}06`}>
-            <div
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mb-3"
-              style={{
-                background: `${EMERALD}18`,
-                color: EMERALD_T,
-                border: `1px solid ${EMERALD}30`,
-              }}
-            >
-              <Database size={11} />
-              Campaign CRM
+            <div className="flex items-center gap-2 mb-3">
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: `${EMERALD}18`,
+                  color: EMERALD_T,
+                  border: `1px solid ${EMERALD}30`,
+                }}
+              >
+                <Database size={11} />
+                Campaign Management
+              </div>
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(52,211,153,0.15)", color: EMERALD_T, border: "1px solid rgba(52,211,153,0.35)" }}
+              >
+                Beta
+              </span>
             </div>
             <h3 className="font-display font-bold text-lg mb-1" style={{ color: "var(--text-base)" }}>
               Ditch the spreadsheet
             </h3>
             <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
-              Track every deal, campaign, and payment in one place.
+              Track every deal, campaign, and deliverable in one place.
             </p>
             <div className="space-y-2">
               {[
@@ -532,25 +539,32 @@ export function BentoSection() {
             </div>
           </GlassCard>
 
-          {/* 5: Chrome Extension */}
+          {/* 5: Chrome Extension — Coming Soon */}
           <GlassCard borderColor={`${AMBER}28`} glowColor={`${AMBER}06`}>
-            <div
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mb-3"
-              style={{
-                background: `${AMBER}18`,
-                color: AMBER_T,
-                border: `1px solid ${AMBER}30`,
-              }}
-            >
-              <Globe size={11} />
-              Chrome Extension
+            <div className="flex items-center gap-2 mb-3">
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: `${AMBER}18`,
+                  color: AMBER_T,
+                  border: `1px solid ${AMBER}30`,
+                }}
+              >
+                <Globe size={11} />
+                Browser Extension
+              </div>
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(252,211,77,0.15)", color: AMBER_T, border: "1px solid rgba(252,211,77,0.35)" }}
+              >
+                Coming Soon
+              </span>
             </div>
             <h3 className="font-display font-bold text-lg mb-1" style={{ color: "var(--text-base)" }}>
               Scout from anywhere
             </h3>
             <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
-              Save creators directly from TikTok, Instagram & YouTube — one
-              click, instantly to CRM.
+              Discover and save creator profiles while browsing TikTok, Instagram & YouTube — coming to Chrome & Edge.
             </p>
             {/* Browser mockup */}
             <div

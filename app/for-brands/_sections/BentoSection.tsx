@@ -104,7 +104,7 @@ export function BentoSection() {
             </span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-slate-400 max-w-lg mx-auto">
-            Everything a modern brand needs to dominate influencer marketing — powered by AI.
+            Everything a modern brand needs to run influencer marketing — powered by AI.
           </motion.p>
         </motion.div>
 
@@ -123,8 +123,8 @@ export function BentoSection() {
             glowColor="var(--glow-purple)"
           >
             <FeatureBadge color="var(--accent-violet-text)" Icon={Sparkles} label="AI Smart Matching" />
-            <h3 className="font-display font-bold text-white text-xl mb-1">Find your perfect creator in seconds</h3>
-            <p className="text-slate-500 text-sm mb-5">AI analyzes 200+ data points — audience demographics, engagement quality, brand affinity — to predict sales success before you commit.</p>
+            <h3 className="font-display font-bold text-white text-xl mb-1">Find the right creator in seconds</h3>
+            <p className="text-slate-500 text-sm mb-5">AI analyzes audience demographics, engagement quality, and brand affinity to surface the most relevant creators for your campaign.</p>
 
             {/* Creator cards mockup */}
             <div className="flex gap-3 flex-wrap">
@@ -296,11 +296,11 @@ export function BentoSection() {
             </div>
           </GlassCard>
 
-          {/* 4 — Chrome Extension */}
+          {/* 4 — Browser Extension — Coming Soon */}
           <GlassCard borderColor="rgba(251,191,36,0.22)" glowColor="rgba(251,191,36,0.05)">
-            <FeatureBadge color="var(--accent-amber-text)" Icon={Globe} label="Chrome Extension" />
+            <FeatureBadge color="var(--accent-amber-text)" Icon={Globe} label="Browser Extension · Coming Soon" />
             <h3 className="font-display font-bold text-white text-lg mb-1">Scout creators anywhere</h3>
-            <p className="text-slate-500 text-xs mb-3">Save creators from TikTok, Instagram & YouTube with one click.</p>
+            <p className="text-slate-500 text-xs mb-3">Coming soon — save creators from TikTok, Instagram & YouTube with one click.</p>
 
             {/* Browser window mockup */}
             <div className="rounded-2xl overflow-hidden" style={{ background: "var(--bg-page-alt)", border: "1px solid var(--border-card-strong)" }}>
@@ -330,21 +330,32 @@ export function BentoSection() {
               <div className="mx-3 mb-3 rounded-xl p-2" style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)" }}>
                 <div className="flex items-center gap-1.5 text-[9px] text-violet-300">
                   <CheckCircle2 size={9} />
-                  Saved to CRM · View profile →
+                  Saved to list · View profile →
                 </div>
               </div>
             </div>
           </GlassCard>
 
-          {/* 5 — CRM: spans 2 cols */}
+          {/* 5 — Creator Database & Outreach: spans 2 cols */}
           <GlassCard
             className="lg:col-span-2"
             borderColor="rgba(56,189,248,0.22)"
             glowColor="rgba(56,189,248,0.06)"
           >
-            <FeatureBadge color="var(--accent-sky-text)" Icon={Database} label="CRM & Bulk Outreach" />
-            <h3 className="font-display font-bold text-white text-xl mb-1">Mass reach. Zero chaos.</h3>
-            <p className="text-slate-500 text-sm mb-5">Centralized creator database with automated outreach, deal tracking, and full campaign history.</p>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "var(--accent-sky-text)18", color: "var(--accent-sky-text)", border: "1px solid var(--accent-sky-text)30" }}>
+                <Database size={11} />
+                Creator Database &amp; Outreach
+              </div>
+              <span
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ background: "rgba(56,189,248,0.15)", color: "var(--accent-sky-text)", border: "1px solid rgba(56,189,248,0.35)" }}
+              >
+                Beta
+              </span>
+            </div>
+            <h3 className="font-display font-bold text-white text-xl mb-1">Organized outreach. Zero chaos.</h3>
+            <p className="text-slate-500 text-sm mb-5">Centralized creator database with collaboration invites, deal tracking, and full campaign history.</p>
 
             {/* CRM table mockup */}
             <div className="rounded-2xl overflow-hidden" style={{ background: "var(--bg-card-subtle)", border: "1px solid var(--border-card)" }}>

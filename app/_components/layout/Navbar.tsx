@@ -66,7 +66,7 @@ const Navbar = () => {
             <Link
               href="/auth"
               className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #0891b2)" }}
+              style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)" }}
             >
               Get Started
               <ArrowRight size={14} />
@@ -136,7 +136,7 @@ const Navbar = () => {
                 <Link
                   href="/auth"
                   className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold text-white mt-1 transition-all hover:opacity-90"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #0891b2)" }}
+                  style={{ background: "linear-gradient(135deg, #7c3aed, #ec4899)" }}
                   onClick={() => setIsOpen(false)}
                 >
                   Get Started

@@ -14,9 +14,9 @@ const AMBER_T = "var(--accent-amber-text)";
 const PURPLE_T = "var(--accent-violet-text)";
 
 const tools = [
-  { Icon: ShieldCheck, title: "Fake Follower Checker", desc: "Verify if a creator has real, authentic followers — or bots.", color: "#f87171", bg: "rgba(248,113,113,0.12)", border: "rgba(248,113,113,0.25)" },
-  { Icon: BarChart3, title: "Engagement Calculator", desc: "Calculate true engagement rates across any social platform instantly.", color: "#34d399", bg: "rgba(52,211,153,0.12)", border: "rgba(52,211,153,0.25)" },
-  { Icon: Globe, title: "Chrome Extension", desc: "Discover and save creators directly while browsing social media.", color: "#67e8f9", bg: "rgba(103,232,249,0.12)", border: "rgba(103,232,249,0.25)" },
+  { Icon: ShieldCheck, title: "Audience Verification", desc: "Every creator profile is verified for authentic audience metrics before appearing in search results.", color: "#f87171", bg: "rgba(248,113,113,0.12)", border: "rgba(248,113,113,0.25)" },
+  { Icon: BarChart3, title: "Engagement Analytics", desc: "View real engagement rates and audience demographics across YouTube, TikTok, and Instagram.", color: "#34d399", bg: "rgba(52,211,153,0.12)", border: "rgba(52,211,153,0.25)" },
+  { Icon: Globe, title: "Browser Extension", desc: "Discover and save creator profiles while browsing — available for Chrome & Edge (coming soon).", color: "#67e8f9", bg: "rgba(103,232,249,0.12)", border: "rgba(103,232,249,0.25)" },
 ];
 
 const resources = [
@@ -66,11 +66,11 @@ export function ToolsSection() {
           <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
             <div className="rounded-3xl p-6 h-full" style={{ background: "var(--bg-card)", border: "1px solid var(--border-card-strong)" }}>
               <div className="mb-2">
-                <div className="text-lg font-display font-bold text-white">Free Tools</div>
-                <p className="text-slate-500 text-sm">Your complete guide to influencer marketing</p>
+                <div className="text-lg font-display font-bold text-white">Platform Features</div>
+                <p className="text-slate-500 text-sm">Built into every Duolync account</p>
               </div>
               <p className="text-slate-500 text-xs leading-relaxed mb-6">
-                Unlock the power of influencer marketing with Duolync's free resources. Gain insights, tips, and strategies to harness the potential of influencers for your business.
+                Duolync includes built-in tools to help brands evaluate creators and help creators present their best work — no third-party subscriptions needed.
               </p>
 
               <div className="space-y-3">
@@ -118,14 +118,17 @@ export function ToolsSection() {
               </div>
             ))}
 
-            {/* Chrome extension banner */}
+            {/* Coming Soon banner */}
             <div className="rounded-2xl p-5 flex items-center gap-4" style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(8,145,178,0.2))", border: "1px solid rgba(124,58,237,0.3)" }}>
               <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--border-card-strong)" }}>
                 <Globe size={20} className="text-white" />
               </div>
               <div className="flex-1">
-                <div className="text-sm font-semibold text-white mb-0.5">Free Chrome Extension</div>
-                <div className="text-[11px] text-slate-400">Find creators while browsing social media</div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <div className="text-sm font-semibold text-white">Browser Extension</div>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: "rgba(252,211,77,0.15)", color: "var(--accent-amber-text)", border: "1px solid rgba(252,211,77,0.3)" }}>Coming Soon</span>
+                </div>
+                <div className="text-[11px] text-slate-400">Discover creator profiles while browsing TikTok, Instagram & YouTube</div>
               </div>
             </div>
           </motion.div>

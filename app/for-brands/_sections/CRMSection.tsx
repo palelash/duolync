@@ -113,22 +113,31 @@ export function CRMSection() {
           variants={stagger}
           className="text-center mb-16"
         >
-          <motion.div
-            variants={fadeUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
-            style={{ background: "rgba(56,189,248,0.12)", border: "1px solid rgba(56,189,248,0.35)", color: "var(--accent-sky-text)" }}
-          >
-            <Database size={11} />
-            Integrated CRM &amp; Bulk Mailing
-          </motion.div>
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <motion.div
+              variants={fadeUp}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+              style={{ background: "rgba(56,189,248,0.12)", border: "1px solid rgba(56,189,248,0.35)", color: "var(--accent-sky-text)" }}
+            >
+              <Database size={11} />
+              Creator Database &amp; Outreach
+            </motion.div>
+            <motion.span
+              variants={fadeUp}
+              className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+              style={{ background: "rgba(56,189,248,0.15)", color: "var(--accent-sky-text)", border: "1px solid rgba(56,189,248,0.35)" }}
+            >
+              Beta
+            </motion.span>
+          </div>
           <motion.h2 variants={fadeUp} className="font-display font-bold text-white text-4xl md:text-5xl leading-tight mb-4">
-            One database.{" "}
+            One workspace.{" "}
             <span style={{ background: "linear-gradient(90deg, #7dd3fc, #a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Infinite reach.
+              Every partnership.
             </span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-slate-400 max-w-xl mx-auto text-lg">
-            Centralize every creator relationship, automate outreach at scale, and track every deal from first contact to payment.
+            Centralize every creator relationship, send collaboration invites, and track every deal from first contact to completion.
           </motion.p>
         </motion.div>
 
@@ -251,7 +260,7 @@ export function CRMSection() {
 
             {/* Footer */}
             <div className="flex items-center justify-between px-5 py-3" style={{ borderTop: "1px solid var(--bg-card-hover)", background: "rgba(255,255,255,0.01)" }}>
-              <span className="text-[11px] text-slate-600">128 creators · 24 active campaigns</span>
+              <span className="text-[11px] text-slate-600">Creator database · 24 active campaigns</span>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -438,10 +447,10 @@ export function CRMSection() {
           className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"
         >
           {[
-            { icon: Database, title: "Auto data collection", desc: "AI gathers creator stats, contact info, and history automatically."        },
-            { icon: Mail,     title: "Smart bulk mailing",   desc: "Personalized at scale with dynamic variables and A/B testing."             },
-            { icon: Star,     title: "Partnership history",  desc: "Track every collaboration, payment, and result in one place."              },
-            { icon: Bell,     title: "Deal pipeline",        desc: "Kanban-style deal tracking from first contact to signed agreement."        },
+            { icon: Database, title: "Creator database",      desc: "Build and organise a searchable list of creators you've discovered or worked with." },
+            { icon: Mail,     title: "Outreach tools",       desc: "Send collaboration invites with AI-assisted templates and track responses."          },
+            { icon: Star,     title: "Partnership history",  desc: "Track every collaboration and campaign result in one place."                          },
+            { icon: Bell,     title: "Deal pipeline",        desc: "Manage deal progress from first contact to confirmed deliverable."                    },
           ].map((f, i) => (
             <motion.div
               key={i}

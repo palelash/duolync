@@ -158,15 +158,15 @@ export function WaitlistModal() {
                         <Sparkles size={14} className="text-white" />
                       </div>
                       <span className="text-xs font-medium" style={{ color: "#c4b5fd" }}>
-                        Early Access
+                        Get Started
                       </span>
                     </div>
 
                     <h2 className="font-display font-bold text-2xl text-white mb-1">
-                      Join the Waitlist
+                      Join Duolync
                     </h2>
                     <p className="text-slate-400 text-sm mb-8">
-                      Be among the first to access Duolync. Choose your role to get started.
+                      Connect with verified creators or brands. Choose your role to get started.
                     </p>
 
                     <div className="space-y-3">
@@ -263,9 +263,9 @@ export function WaitlistModal() {
                       </div>
                       <div>
                         <h2 className="font-display font-bold text-xl text-white">
-                          {roleLabel} Waitlist
+                          Join as a {roleLabel}
                         </h2>
-                        <p className="text-slate-500 text-xs">Enter your email to reserve your spot</p>
+                        <p className="text-slate-500 text-xs">Enter your email to get started</p>
                       </div>
                     </div>
 
@@ -321,7 +321,7 @@ export function WaitlistModal() {
                         ) : (
                           <>
                             <Sparkles size={15} />
-                            Reserve My Spot
+                            Get Started
                             <ArrowRight size={15} />
                           </>
                         )}
@@ -329,7 +329,7 @@ export function WaitlistModal() {
                     </form>
 
                     <p className="text-center text-xs text-slate-600 mt-4">
-                      No spam, ever. We&apos;ll only notify you when we launch.
+                      No spam, ever. We respect your privacy.
                     </p>
                   </motion.div>
                 )}
@@ -362,10 +362,10 @@ export function WaitlistModal() {
                     </motion.div>
 
                     <h2 className="font-display font-bold text-2xl text-white mb-2">
-                      You&apos;re on the list!
+                      You&apos;re in!
                     </h2>
                     <p className="text-slate-400 text-sm mb-2">
-                      We&apos;ll notify you as soon as Duolync launches.
+                      We&apos;ll be in touch soon with your next steps.
                     </p>
                     <p className="text-slate-600 text-xs mb-8">
                       Joined as a <span style={{ color: role === "brand" ? "#a78bfa" : "#f472b6" }}>{roleLabel}</span>

@@ -70,13 +70,20 @@ export function ChromeExtensionSection() {
           >
             {/* ── Left: content ── */}
             <div>
-              <motion.div
-                variants={fadeUp}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
-                style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.35)", color: "var(--accent-amber-text)" }}
-              >
-                <Globe size={11} />
-                Chrome Extension — The Scout
+              <motion.div variants={fadeUp} className="flex items-center gap-2 mb-5">
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
+                  style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.35)", color: "var(--accent-amber-text)" }}
+                >
+                  <Globe size={11} />
+                  Browser Extension — The Scout
+                </div>
+                <span
+                  className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                  style={{ background: "rgba(251,191,36,0.15)", color: "var(--accent-amber-text)", border: "1px solid rgba(251,191,36,0.35)" }}
+                >
+                  Coming Soon
+                </span>
               </motion.div>
 
               <motion.h2 variants={fadeUp} className="font-display font-bold text-white text-4xl md:text-5xl leading-tight mb-5">
@@ -87,16 +94,16 @@ export function ChromeExtensionSection() {
               </motion.h2>
 
               <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-8">
-                Install The Scout on Chrome and start building your creator database without leaving
-                TikTok, Instagram, or YouTube. One click saves their full profile, stats, and contact info.
+                The Scout will let you discover and save creator profiles directly while browsing
+                TikTok, Instagram, or YouTube — without switching tabs. Currently in development for Chrome & Edge.
               </motion.p>
 
               <motion.ul variants={stagger} className="space-y-4 mb-8">
                 {[
                   { icon: Bookmark, text: "Save creator profiles with one click — directly from their social pages" },
-                  { icon: Star,     text: "Auto-fetches engagement rate, audience demographics, and niche tags"     },
-                  { icon: Users,    text: "Syncs instantly to your Duolync CRM and creator lists"                    },
-                  { icon: Zap,      text: "Works on TikTok, Instagram, YouTube, and Twitter/X"                      },
+                  { icon: Star,     text: "View engagement rate, follower count, and niche tags at a glance"        },
+                  { icon: Users,    text: "Syncs to your Duolync creator lists and campaign workspace"               },
+                  { icon: Zap,      text: "Planned for TikTok, Instagram, and YouTube"                              },
                 ].map((item, i) => (
                   <motion.li key={i} variants={fadeUp} className="flex items-center gap-3">
                     <div
@@ -118,9 +125,9 @@ export function ChromeExtensionSection() {
                   style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.35)", color: "var(--accent-amber-text)" }}
                 >
                   <Globe size={14} />
-                  Add to Chrome — Free
+                  Get Notified When It Launches
                 </button>
-                <span className="text-[11px] text-slate-600">Available for Chrome &amp; Edge</span>
+                <span className="text-[11px] text-slate-600">Coming to Chrome &amp; Edge</span>
               </motion.div>
             </div>
 
@@ -279,7 +286,7 @@ export function ChromeExtensionSection() {
                       ) : (
                         <>
                           <Plus size={12} />
-                          Save to CRM
+                          Save to List
                         </>
                       )}
                     </button>
@@ -301,7 +308,7 @@ export function ChromeExtensionSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[10px] font-semibold text-white flex items-center gap-1.5">
-                    Saved to CRM
+                    Saved to Creator List
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   </div>
                 </div>
@@ -321,9 +328,9 @@ export function ChromeExtensionSection() {
               style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.35)", color: "var(--accent-amber-text)" }}
             >
               <Globe size={14} />
-              Add to Chrome — Free
+              Get Notified When It Launches
             </button>
-            <span className="text-[11px] text-slate-600">Available for Chrome &amp; Edge</span>
+            <span className="text-[11px] text-slate-600">Coming to Chrome &amp; Edge</span>
           </div>
         </div>
       </section>
@@ -357,7 +364,7 @@ export function ChromeExtensionSection() {
             </div>
             <div>
               <div className="text-sm font-semibold text-white">Successfully saved!</div>
-              <div className="text-[11px] text-slate-500">Nova Beauty added to your CRM</div>
+              <div className="text-[11px] text-slate-500">Nova Beauty added to your creator list</div>
             </div>
           </motion.div>
         )}

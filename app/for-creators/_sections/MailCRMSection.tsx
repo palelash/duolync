@@ -457,7 +457,7 @@ export function MailCRMSection() {
               }}
             >
               <Mail size={11} />
-              Integrated Mail &amp; CRM
+              Deal Inbox &amp; Tracking
             </motion.div>
 
             <motion.h2
@@ -484,16 +484,16 @@ export function MailCRMSection() {
               className="text-slate-400 text-lg leading-relaxed mb-8"
             >
               No more lost emails. No more missed follow-ups. Every brand
-              conversation, contract, and payment — organized and searchable in
+              conversation and collaboration — organized and searchable in
               one place.
             </motion.p>
 
             <motion.ul variants={stagger} className="space-y-4 mb-8">
               {[
-                { icon: Mail,         text: "Unified inbox for all brand communications — across every platform" },
-                { icon: Star,         text: "Auto-tags deals by stage: Negotiating, Active, Paid, and Completed" },
-                { icon: Bell,         text: "Smart reminders when brands go quiet — so you never lose a deal" },
-                { icon: CheckCircle2, text: "Full partnership history and payment tracking in one timeline" },
+                { icon: Mail,         text: "Unified inbox for all brand communications from Duolync" },
+                { icon: Star,         text: "Auto-tags deals by stage: Negotiating, Active, and Completed" },
+                { icon: Bell,         text: "Reminders when brands go quiet — so you never lose a deal" },
+                { icon: CheckCircle2, text: "Full partnership history and collaboration timeline in one place" },
               ].map((item, i) => (
                 <motion.li
                   key={i}

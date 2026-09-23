@@ -55,27 +55,22 @@ export function AIGrowthMentor({ followerCount, engagementRate, niche, platforms
 
   return (
     <div
-      className="rounded-2xl overflow-hidden"
-      style={{
-        background: "var(--bg-card, rgba(255,255,255,0.025))",
-        border: "1px solid rgba(192,132,252,0.18)",
-      }}
+      className="rounded-3xl overflow-hidden border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl"
     >
       {/* Header */}
       <div
-        className="px-5 py-4 flex items-center justify-between"
-        style={{ borderBottom: "1px solid rgba(192,132,252,0.12)" }}
+        className="px-5 py-4 flex items-center justify-between border-b border-white/[0.06]"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(192,132,252,0.15)", border: "1px solid rgba(192,132,252,0.25)" }}
+            className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ background: "rgba(192,132,252,0.12)", border: "1px solid rgba(192,132,252,0.20)" }}
           >
-            <Sparkles className="w-4 h-4" style={{ color: "#c084fc" }} />
+            <Sparkles className="w-4 h-4" style={{ color: "#c084fc" }} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">AI Growth Mentor</h3>
-            <p className="text-xs text-muted-foreground">Personalized weekly strategy</p>
+            <h3 className="font-semibold text-sm text-zinc-100">AI Growth Mentor</h3>
+            <p className="text-xs text-zinc-500">Personalized weekly strategy</p>
           </div>
         </div>
 
@@ -83,9 +78,9 @@ export function AIGrowthMentor({ followerCount, engagementRate, niche, platforms
           <button
             onClick={analyze}
             disabled={loading}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
             Refresh
           </button>
         )}
@@ -96,14 +91,14 @@ export function AIGrowthMentor({ followerCount, engagementRate, niche, platforms
         {!result && !loading && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-zinc-400 leading-relaxed">
                 Let the AI analyze your{" "}
-                <span className="font-medium text-foreground">
+                <span className="font-medium text-zinc-200">
                   {engagementRate > 0 ? `${engagementRate}% engagement rate` : "profile"}
                 </span>{" "}
                 {niche ? (
                   <>
-                    in <span className="font-medium text-foreground">{niche}</span>{" "}
+                    in <span className="font-medium text-zinc-200">{niche}</span>{" "}
                   </>
                 ) : null}
                 and generate a personalized weekly growth plan.
@@ -112,14 +107,15 @@ export function AIGrowthMentor({ followerCount, engagementRate, niche, platforms
             <Button
               onClick={analyze}
               size="sm"
-              className="shrink-0 gap-2 font-semibold"
+              className="shrink-0 gap-2 font-semibold rounded-xl"
               style={{
                 background: "linear-gradient(135deg, #7c3aed, #c084fc)",
                 border: "none",
                 color: "#fff",
+                boxShadow: "0 4px 20px rgba(124,58,237,0.25)",
               }}
             >
-              <Zap className="w-3.5 h-3.5" />
+              <Zap className="w-3.5 h-3.5" strokeWidth={1.5} />
               Analyze My Growth
             </Button>
           </div>

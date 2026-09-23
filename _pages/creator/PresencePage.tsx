@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 import {
   Wifi, Zap, RefreshCw, TrendingUp, Users, BarChart3, Loader2,
   CheckCircle2, AlertCircle, Heart, MessageCircle, Eye, Pencil, Trash2,
@@ -32,40 +32,125 @@ import {
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
 import { removePlatformAction } from "@/app/actions/social-connections";
 
+// ─── Platform SVG Icons ───────────────────────────────────────────────────────
+
+function InstagramIcon({ className }: { className?: string }) {
+  // useId ensures each instance gets a unique gradient ID — avoids SVG defs collision
+  const uid = useId().replace(/:/g, "");
+  return (
+    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id={`ig-bg-${uid}`} cx="28%" cy="106%" r="148%">
+          <stop offset="0%"  stopColor="#fdf497" />
+          <stop offset="6%"  stopColor="#fdf497" />
+          <stop offset="44%" stopColor="#fd5949" />
+          <stop offset="62%" stopColor="#d6249f" />
+          <stop offset="90%" stopColor="#285AEB" />
+        </radialGradient>
+      </defs>
+      {/* Official gradient background */}
+      <rect width="24" height="24" rx="5.5" fill={`url(#ig-bg-${uid})`} />
+      {/* Camera body outline */}
+      <rect x="6.5" y="6.5" width="11" height="11" rx="3.2" stroke="white" strokeWidth="1.55" fill="none" />
+      {/* Lens circle */}
+      <circle cx="12" cy="12" r="3.1" stroke="white" strokeWidth="1.55" fill="none" />
+      {/* Flash dot */}
+      <circle cx="16.1" cy="7.9" r="0.95" fill="white" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ className }: { className?: string }) {
+  // Official TikTok shape: stylised music note with cyan + red double-exposure shadow
+  const path = "M13.8 3.6h-2.1V13a2.15 2.15 0 1 1-3-1.96V8.73a4.37 4.37 0 1 0 5.1 4.27V6.52a5.95 5.95 0 0 0 3.47 1.1V5.4a3.9 3.9 0 0 1-3.46-1.8z";
+  return (
+    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5.5" fill="#010101" />
+      {/* Cyan shadow offset left */}
+      <path d={path} fill="#69C9D0" transform="translate(-0.55,0)" opacity="0.9" />
+      {/* Red shadow offset right */}
+      <path d={path} fill="#EE1D52" transform="translate(0.55,0)" opacity="0.9" />
+      {/* Main white foreground */}
+      <path d={path} fill="white" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5.5" fill="#1877F2" />
+      {/* Official 'f' letterform */}
+      <path
+        d="M15.5 8h-2c-.28 0-.5.22-.5.5V10h2.5l-.38 2.5H13V19h-2.5v-6.5H9V10h1.5V8.5C10.5 6.57 12.07 5 14 5h1.5v3z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+function ThreadsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5.5" fill="#101010" />
+      {/* Official Threads "@"-derived mark */}
+      <path
+        d="M16.22 11.18a4.38 4.38 0 0 0-.4-.16c-.07-1.56-.95-2.46-2.44-2.47h-.05c-.89 0-1.64.38-2.09 1.06l.99.68c.3-.45.77-.69 1.1-.69.75 0 1.21.47 1.39 1.41-.45-.07-.92-.09-1.41-.07-1.43.08-2.34.88-2.28 1.98.03.56.32 1.05.8 1.36.42.28.96.41 1.53.38.74-.05 1.39-.34 1.87-.84.36-.39.6-.9.69-1.51.33.2.55.45.64.76.18.59.01 1.33-.45 1.88-.52.6-1.38.9-2.49.9-1.19 0-2.08-.39-2.65-1.15-.54-.72-.82-1.78-.82-3.15 0-1.37.28-2.43.82-3.15.57-.77 1.46-1.16 2.65-1.16.85 0 1.56.2 2.1.6.46.34.82.83 1.06 1.45l1.19-.4a4.5 4.5 0 0 0-1.33-1.98c-.76-.63-1.78-.97-3.02-.97-1.6 0-2.89.56-3.73 1.63-.76.99-1.15 2.34-1.15 4.01 0 1.67.39 3.02 1.15 4.01.84 1.07 2.13 1.63 3.73 1.63 1.32 0 2.38-.38 3.07-1.1.72-.76 1.01-1.84.84-2.91a2.73 2.73 0 0 0-.48-1.1zm-3.8 1.71c-.62.04-1.28-.25-1.3-.84-.02-.44.39-.94 1.35-.99.47-.03.9.01 1.37.08-.1.95-.65 1.71-1.42 1.75z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
+function YouTubeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5.5" fill="#FF0000" />
+      {/* White rounded-rect shield */}
+      <path
+        d="M19.8 8.26a2.08 2.08 0 0 0-1.46-1.47C17.06 6.5 12 6.5 12 6.5s-5.06 0-6.34.29A2.08 2.08 0 0 0 4.2 8.26C3.86 9.55 3.86 12 3.86 12s0 2.45.34 3.74a2.08 2.08 0 0 0 1.46 1.47C6.94 17.5 12 17.5 12 17.5s5.06 0 6.34-.29a2.08 2.08 0 0 0 1.46-1.47c.34-1.29.34-3.74.34-3.74s0-2.45-.34-3.74z"
+        fill="white"
+      />
+      {/* Play triangle in brand red */}
+      <polygon points="10.18,9.68 10.18,14.32 14.77,12" fill="#FF0000" />
+    </svg>
+  );
+}
+
 // ─── Platform config ──────────────────────────────────────────────────────────
 
 type PlatformConfig = {
   id: Platform | "youtube" | "facebook_page" | "threads";
   label: string;
   bg: string;
-  emoji: string;
+  icon: React.FC<{ className?: string }>;
   syncable: boolean;
   placeholder: string;
 };
 
 const PLATFORMS: PlatformConfig[] = [
   {
-    id: "instagram", label: "Instagram", emoji: "📷",
-    bg: "bg-pink-500/10 border-pink-500/20",
+    id: "instagram", label: "Instagram", icon: InstagramIcon,
+    bg: "bg-gradient-to-br from-fuchsia-500/10 to-orange-500/10 border-fuchsia-500/20",
     syncable: true, placeholder: "your_handle",
   },
   {
-    id: "tiktok", label: "TikTok", emoji: "🎵",
-    bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+    id: "tiktok", label: "TikTok", icon: TikTokIcon,
+    bg: "bg-zinc-900 border-zinc-700",
     syncable: true, placeholder: "",
   },
   {
-    id: "facebook_page", label: "Facebook Page", emoji: "🔵",
+    id: "facebook_page", label: "Facebook Page", icon: FacebookIcon,
     bg: "bg-blue-500/10 border-blue-500/20",
     syncable: true, placeholder: "",
   },
   {
-    id: "threads", label: "Threads", emoji: "🧵",
-    bg: "bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+    id: "threads", label: "Threads", icon: ThreadsIcon,
+    bg: "bg-zinc-900 border-zinc-700",
     syncable: true, placeholder: "",
   },
   {
-    id: "youtube", label: "YouTube", emoji: "▶️",
+    id: "youtube", label: "YouTube", icon: YouTubeIcon,
     bg: "bg-red-500/10 border-red-500/20",
     syncable: true, placeholder: "",
   },
@@ -185,13 +270,13 @@ function SyncModal({
     <DialogContent className="sm:max-w-sm bg-zinc-950 border-zinc-800 text-white">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <span className="text-xl">{cfg.emoji}</span>
+          <cfg.icon className="w-6 h-6" />
           {phase === "preview" ? "Confirm Account" : `Connect ${cfg.label}`}
         </DialogTitle>
         <DialogDescription className="text-zinc-400 text-sm">
           {phase === "preview"
             ? "Is this your account?"
-            : "Pull your follower count and latest posts via Apify."}
+            : "We'll verify your public account to import your stats and latest posts into your portfolio."}
         </DialogDescription>
       </DialogHeader>
 
@@ -239,8 +324,8 @@ function SyncModal({
                 className="w-14 h-14 rounded-full object-cover ring-2 ring-zinc-700 shrink-0"
               />
             ) : (
-              <div className="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-2xl shrink-0">
-                {cfg.emoji}
+              <div className="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
+                <cfg.icon className="w-7 h-7" />
               </div>
             )}
             <div className="min-w-0">
@@ -481,41 +566,42 @@ function PlatformCard({
   onSync: () => void;
   onRemove: () => void;
 }) {
+  const IconComp = platform.icon;
   return (
     <div
       className={cn(
-        "rounded-2xl border p-5 flex items-center gap-4 transition-all",
+        "rounded-2xl border p-4 flex items-center gap-4 transition-all",
         isConnected
-          ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
-          : "bg-zinc-50/80 dark:bg-zinc-900/40 border-zinc-200/60 dark:border-zinc-800/50",
+          ? "bg-zinc-900/80 border-white/[0.08] hover:border-white/[0.14]"
+          : "bg-zinc-900/40 border-white/[0.05] hover:border-white/[0.09]",
       )}
     >
       {/* Icon */}
-      <div className={cn("w-12 h-12 rounded-xl border flex items-center justify-center text-2xl shrink-0", platform.bg)}>
-        {platform.emoji}
+      <div className={cn("w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 overflow-hidden", platform.bg)}>
+        <IconComp className="w-7 h-7" />
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <p className="font-semibold text-sm text-foreground">{platform.label}</p>
+          <p className="font-semibold text-sm text-zinc-100">{platform.label}</p>
           {isConnected ? (
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               Connected
             </span>
           ) : (
-            <span className="text-[10px] font-medium text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+            <span className="text-[10px] font-medium text-zinc-500 bg-white/[0.05] border border-white/[0.08] px-1.5 py-0.5 rounded-full">
               Not Connected
             </span>
           )}
         </div>
         {isConnected && followers != null ? (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-zinc-400">
             {fmt(followers)} followers{engagement ? ` · ${engagement}% eng` : ""}
           </p>
         ) : (
-          <p className="text-xs text-muted-foreground/60">
+          <p className="text-xs text-zinc-600">
             {platform.syncable ? "Sync to import your stats" : "Coming soon"}
           </p>
         )}
@@ -530,7 +616,7 @@ function PlatformCard({
                 size="icon"
                 variant="ghost"
                 onClick={onSync}
-                className="w-8 h-8 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="w-8 h-8 text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06]"
                 title={`Re-sync ${platform.label}`}
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -539,7 +625,7 @@ function PlatformCard({
                 size="icon"
                 variant="ghost"
                 onClick={onRemove}
-                className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                className="w-8 h-8 text-zinc-600 hover:text-red-400 hover:bg-red-500/10"
                 title={`Remove ${platform.label}`}
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -550,7 +636,7 @@ function PlatformCard({
             <Button
               size="sm"
               onClick={onSync}
-              className="gap-1.5 bg-violet-50 dark:bg-violet-600/20 border border-violet-200 dark:border-violet-500/30 text-violet-600 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-600/30"
+              className="gap-1.5 bg-gradient-to-r from-violet-600/20 to-pink-600/10 border border-violet-500/30 text-violet-300 hover:from-violet-600/30 hover:to-pink-600/20 hover:border-violet-400/40"
               variant="outline"
             >
               <Zap className="w-3.5 h-3.5" /> Connect
@@ -588,13 +674,13 @@ function PostCard({
     }
   };
 
-  const emoji =
-    post.platform === "instagram" ? "📷" :
-    post.platform === "youtube"   ? "▶️" :
-    "🎵";
+  const PlatformIcon =
+    post.platform === "instagram" ? InstagramIcon :
+    post.platform === "youtube"   ? YouTubeIcon :
+    TikTokIcon;
 
   const inner = (
-    <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 group cursor-pointer relative">
+    <div className="rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900/80 group cursor-pointer relative">
       {/* Delete button */}
       {onDelete && (
         <button
@@ -623,8 +709,8 @@ function PostCard({
           />
         </div>
       ) : (
-        <div className="aspect-square w-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-3xl">
-          {emoji}
+        <div className="aspect-square w-full bg-zinc-900 flex items-center justify-center">
+          <PlatformIcon className="w-8 h-8 opacity-40" />
         </div>
       )}
 
@@ -755,7 +841,7 @@ const PresencePage = () => {
     if (platform === "threads") {
       const threadsAppId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
       if (!threadsAppId) {
-        toast({ title: "Threads integration not configured", description: "NEXT_PUBLIC_THREADS_APP_ID is missing.", variant: "destructive" });
+        toast({ title: "Threads connection unavailable", description: "Threads sign-in is not available right now. Please try again later or contact support.", variant: "destructive" });
         return;
       }
       window.location.href =
@@ -769,7 +855,7 @@ const PresencePage = () => {
 
     const appId = process.env.NEXT_PUBLIC_META_APP_ID;
     if (!appId) {
-      toast({ title: "Meta integration not configured", description: "NEXT_PUBLIC_META_APP_ID is missing.", variant: "destructive" });
+      toast({ title: "Instagram connection unavailable", description: "This connection is not available right now. Please try again later or contact support.", variant: "destructive" });
       return;
     }
 
@@ -787,8 +873,8 @@ const PresencePage = () => {
     const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
     if (!clientKey) {
       toast({
-        title: "TikTok integration not configured",
-        description: "NEXT_PUBLIC_TIKTOK_CLIENT_KEY is missing.",
+        title: "TikTok connection unavailable",
+        description: "TikTok sign-in is not available right now. Please try again later or contact support.",
         variant: "destructive",
       });
       return;
@@ -823,8 +909,8 @@ const PresencePage = () => {
     const clientId = process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID;
     if (!clientId) {
       toast({
-        title: "YouTube integration not configured",
-        description: "NEXT_PUBLIC_YOUTUBE_CLIENT_ID is missing.",
+        title: "YouTube connection unavailable",
+        description: "YouTube sign-in is not available right now. Please try again later or contact support.",
         variant: "destructive",
       });
       return;
@@ -889,8 +975,11 @@ const PresencePage = () => {
             <Wifi className="w-5 h-5 text-violet-500 dark:text-violet-400" />
             <h1 className="font-display text-2xl font-bold">Social Connections</h1>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Connect your platforms and track performance across all channels.
+          <p className="text-sm text-muted-foreground mb-2">
+            Connect your platforms to build your public creator portfolio and get matched with relevant brand campaigns.
+          </p>
+          <p className="text-xs text-muted-foreground/70">
+            We only read public account stats (followers, posts, engagement). We never post, message, or modify your accounts. You can disconnect at any time.
           </p>
         </div>
 
@@ -914,22 +1003,22 @@ const PresencePage = () => {
             {/* ── Summary stats bar ── */}
             {connectedPlatforms.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-zinc-200/60 dark:border-white/[0.06] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Connected</p>
-                  <p className="text-2xl font-bold font-display text-violet-600 dark:text-violet-400">
+                <div className="rounded-2xl border border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 mb-1.5">Connected</p>
+                  <p className="text-2xl font-bold font-display text-violet-400">
                     {connectedPlatforms.length}
-                    <span className="text-sm font-normal text-muted-foreground ml-1">platforms</span>
+                    <span className="text-sm font-normal text-zinc-500 ml-1">platforms</span>
                   </p>
                 </div>
-                <div className="rounded-2xl border border-zinc-200/60 dark:border-white/[0.06] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Followers</p>
-                  <p className="text-2xl font-bold font-display text-foreground">
+                <div className="rounded-2xl border border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 mb-1.5">Followers</p>
+                  <p className="text-2xl font-bold font-display text-zinc-100">
                     {totalFollowers != null ? fmt(totalFollowers) : "—"}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-zinc-200/60 dark:border-white/[0.06] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Avg Eng.</p>
-                  <p className="text-2xl font-bold font-display text-emerald-600 dark:text-emerald-400">
+                <div className="rounded-2xl border border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 mb-1.5">Avg Eng.</p>
+                  <p className="text-2xl font-bold font-display text-emerald-400">
                     {avgEngagement != null ? `${avgEngagement}%` : "—"}
                   </p>
                 </div>
@@ -938,11 +1027,11 @@ const PresencePage = () => {
             {/* ── Connect Accounts ── */}
             <section>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
                   Connect Accounts
                 </h2>
                 {lastSynced && (
-                  <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 rounded-full">
+                  <span className="inline-flex items-center gap-1.5 text-xs text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-full">
                     <RefreshCw className="w-3 h-3" />
                     Last synced {new Date(lastSynced).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
@@ -978,7 +1067,7 @@ const PresencePage = () => {
 
             {/* ── Performance Snapshot ── */}
             <section>
-              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">
                 Performance Snapshot
               </h2>
 
@@ -992,47 +1081,47 @@ const PresencePage = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5">
+                  <div className="rounded-2xl bg-zinc-900/80 border border-white/[0.07] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-4 h-4 text-violet-500 dark:text-violet-400" />
-                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Followers</p>
+                      <Users className="w-4 h-4 text-violet-400" />
+                      <p className="text-[11px] text-zinc-500 uppercase tracking-widest font-medium">Followers</p>
                     </div>
                     {totalFollowers != null ? (
-                      <p className="text-3xl font-bold font-display text-foreground">{fmt(totalFollowers)}</p>
+                      <p className="text-3xl font-bold font-display text-zinc-100">{fmt(totalFollowers)}</p>
                     ) : (
-                      <p className="text-sm text-muted-foreground/60 font-medium">Not synced</p>
+                      <p className="text-sm text-zinc-600 font-medium">Not synced</p>
                     )}
                   </div>
 
-                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5">
+                  <div className="rounded-2xl bg-zinc-900/80 border border-white/[0.07] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Engagement</p>
+                      <TrendingUp className="w-4 h-4 text-emerald-400" />
+                      <p className="text-[11px] text-zinc-500 uppercase tracking-widest font-medium">Engagement</p>
                     </div>
                     {avgEngagement != null ? (
-                      <p className="text-3xl font-bold font-display text-emerald-600 dark:text-emerald-400">
+                      <p className="text-3xl font-bold font-display text-emerald-400">
                         {avgEngagement.toFixed(1)}%
                       </p>
                     ) : (
-                      <p className="text-sm text-muted-foreground/60 font-medium">Not synced</p>
+                      <p className="text-sm text-zinc-600 font-medium">Not synced</p>
                     )}
                   </div>
 
-                  <div className="rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5">
+                  <div className="rounded-2xl bg-zinc-900/80 border border-white/[0.07] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <BarChart3 className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
-                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">Niches</p>
+                      <BarChart3 className="w-4 h-4 text-violet-400" />
+                      <p className="text-[11px] text-zinc-500 uppercase tracking-widest font-medium">Niches</p>
                     </div>
                     {niches.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {niches.slice(0, 3).map((n) => (
-                          <span key={n} className="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-500/15 text-violet-600 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20 font-medium">
+                          <span key={n} className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/20 font-medium">
                             {n}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground/60 font-medium">Not synced</p>
+                      <p className="text-sm text-zinc-600 font-medium">Not synced</p>
                     )}
                   </div>
                 </div>
@@ -1041,10 +1130,10 @@ const PresencePage = () => {
 
             {/* ── Latest Posts grouped by platform ── */}
             {(() => {
-              const PLATFORM_LABELS: Record<string, { label: string; emoji: string }> = {
-                instagram: { label: "Instagram Posts", emoji: "📷" },
-                tiktok: { label: "TikTok Videos", emoji: "🎵" },
-                youtube: { label: "YouTube Videos", emoji: "▶️" },
+              const PLATFORM_LABELS: Record<string, { label: string; Icon: React.FC<{ className?: string }> }> = {
+                instagram: { label: "Instagram Posts", Icon: InstagramIcon },
+                tiktok: { label: "TikTok Videos", Icon: TikTokIcon },
+                youtube: { label: "YouTube Videos", Icon: YouTubeIcon },
               };
               const groups = Object.entries(PLATFORM_LABELS).map(([key, meta]) => ({
                 key,
@@ -1056,14 +1145,14 @@ const PresencePage = () => {
 
               return (
                 <section className="space-y-8">
-                  <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                  <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
                     Latest Posts
                   </h2>
                   {groups.map(({ key, meta, items }) => (
                     <div key={key}>
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-                          <span>{meta.emoji}</span> {meta.label}
+                        <p className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
+                          <meta.Icon className="w-5 h-5" /> {meta.label}
                         </p>
                         {connectedPlatforms.includes(key) && (
                           <ResyncPostsButton
