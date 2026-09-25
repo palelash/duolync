@@ -6,6 +6,7 @@ import {
   User, Shield, Trash2, X, Save, Loader2,
   AlertTriangle, Bell, Check, Eye, EyeOff,
 } from "lucide-react";
+import ActiveSessions from "@/components/security/ActiveSessions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -405,6 +406,10 @@ function SecurityTab() {
             </span>
           </div>
         </div>
+      </Section>
+
+      <Section>
+        <ActiveSessions />
       </Section>
     </motion.div>
   );
