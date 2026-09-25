@@ -23,6 +23,9 @@ import {
   Building2,
   Link2,
   BadgeCheck,
+  Search,
+  ArrowDown,
+  ArrowUp,
 } from "lucide-react";
 import {
   approveCreator,
@@ -720,6 +723,11 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
   const [isPending, startTransition] = useTransition();
   const [dialog, setDialog] = useState<DialogState>(null);
   const [preview, setPreview] = useState<PendingCreator | null>(null);
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [sortOpen, setSortOpen] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState<"approve" | "reject" | null>(null);
 
   function updateStatus(id: string, status: ModerationStatus) {
     setCreators((prev) =>
@@ -746,12 +754,69 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
     });
   }
 
-  // Sort: PENDING first, then by name
-  const sorted = [...creators].sort((a, b) => {
-    if (a.moderationStatus === "PENDING" && b.moderationStatus !== "PENDING") return -1;
-    if (a.moderationStatus !== "PENDING" && b.moderationStatus === "PENDING") return 1;
-    return (a.user.name ?? "").localeCompare(b.user.name ?? "");
+  const filtered = creators.filter((c) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      (c.user.name?.toLowerCase().includes(q)) ||
+      c.user.email.toLowerCase().includes(q) ||
+      (c.niche?.toLowerCase().includes(q))
+    );
   });
+
+  const sorted = [...filtered].sort((a, b) => {
+    const dateA = new Date(a.user.createdAt).getTime();
+    const dateB = new Date(b.user.createdAt).getTime();
+    return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+  });
+
+  const allSelected = sorted.length > 0 && sorted.every((c) => selected.has(c.id));
+  const selectedInView = sorted.filter((c) => selected.has(c.id));
+  const selectedCount = selectedInView.length;
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((c) => next.delete(c.id));
+        return next;
+      });
+    } else {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((c) => next.add(c.id));
+        return next;
+      });
+    }
+  }
+
+  function toggleOne(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function handleBulkConfirm(note: string) {
+    if (!bulkAction) return;
+    const action = bulkAction;
+    const ids = selectedInView.map((c) => c.id);
+    setBulkAction(null);
+    setSelected(new Set());
+    startTransition(async () => {
+      for (const id of ids) {
+        if (action === "approve") {
+          await approveCreator(id);
+          updateStatus(id, "APPROVED");
+        } else {
+          await rejectCreator(id, note || undefined);
+          updateStatus(id, "REJECTED");
+        }
+      }
+    });
+  }
 
   return (
     <>
@@ -784,10 +849,133 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
         />
       )}
 
+      {bulkAction && (
+        <ConfirmDialog
+          open
+          title={
+            bulkAction === "approve"
+              ? `Approve ${selectedCount} creator${selectedCount !== 1 ? "s" : ""}?`
+              : `Reject ${selectedCount} creator${selectedCount !== 1 ? "s" : ""}?`
+          }
+          description={
+            bulkAction === "approve"
+              ? "All selected creators will become publicly visible and receive a notification."
+              : "All selected creators will be hidden from public pages and receive a notification."
+          }
+          confirmLabel={bulkAction === "approve" ? "Approve All" : "Reject All"}
+          confirmClass={
+            bulkAction === "approve"
+              ? "bg-emerald-600 hover:bg-emerald-500"
+              : "bg-red-600 hover:bg-red-500"
+          }
+          showNote={bulkAction === "reject"}
+          onConfirm={handleBulkConfirm}
+          onCancel={() => setBulkAction(null)}
+        />
+      )}
+
+      {/* Toolbar */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-sm flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Search by name, email, or niche…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 py-2 pl-9 pr-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          {selectedCount > 0 && (
+            <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5">
+              <span className="text-xs font-medium text-zinc-400">{selectedCount} selected</span>
+              <div className="h-3.5 w-px bg-zinc-700" />
+              <button
+                onClick={() => setBulkAction("approve")}
+                disabled={isPending}
+                className="text-xs font-medium text-emerald-400 transition-colors hover:text-emerald-300 disabled:opacity-50"
+              >
+                Approve
+              </button>
+              <button
+                onClick={() => setBulkAction("reject")}
+                disabled={isPending}
+                className="text-xs font-medium text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => {
+                  const ids = selectedInView.map((c) => c.id);
+                  setSelected(new Set());
+                  startTransition(async () => {
+                    for (const id of ids) {
+                      await setPendingCreator(id);
+                      updateStatus(id, "PENDING");
+                    }
+                  });
+                }}
+                disabled={isPending}
+                className="text-xs font-medium text-amber-400 transition-colors hover:text-amber-300 disabled:opacity-50"
+              >
+                Reset Pending
+              </button>
+            </div>
+          )}
+
+          <div className="relative">
+            <button
+              onClick={() => setSortOpen((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              {sortOrder === "newest" ? (
+                <ArrowDown className="h-3.5 w-3.5 text-zinc-400" />
+              ) : (
+                <ArrowUp className="h-3.5 w-3.5 text-zinc-400" />
+              )}
+              {sortOrder === "newest" ? "Newest first" : "Oldest first"}
+              <ChevronDown className="h-3 w-3 text-zinc-500" />
+            </button>
+            {sortOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setSortOpen(false)} />
+                <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[170px] rounded-xl border border-zinc-800 bg-zinc-950 py-1 shadow-2xl">
+                  <button
+                    onClick={() => { setSortOrder("newest"); setSortOpen(false); }}
+                    className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-900 ${sortOrder === "newest" ? "text-violet-400" : "text-zinc-300"}`}
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                    Newest to Oldest
+                  </button>
+                  <button
+                    onClick={() => { setSortOrder("oldest"); setSortOpen(false); }}
+                    className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-900 ${sortOrder === "oldest" ? "text-violet-400" : "text-zinc-300"}`}
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                    Oldest to Newest
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-wider text-zinc-500">
+              <th className="w-10 px-5 py-3.5">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => { if (el) el.indeterminate = !allSelected && selectedCount > 0; }}
+                  onChange={toggleAll}
+                  className="h-3.5 w-3.5 cursor-pointer rounded border-zinc-600 bg-zinc-800 accent-violet-500"
+                />
+              </th>
               <th className="px-5 py-3.5">Creator</th>
               <th className="px-5 py-3.5">Niche</th>
               <th className="px-5 py-3.5">Followers</th>
@@ -800,18 +988,26 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
           <tbody className="divide-y divide-zinc-800/60">
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-zinc-500">
-                  No creators found.
+                <td colSpan={8} className="py-12 text-center text-zinc-500">
+                  {search ? "No creators match your search." : "No creators found."}
                 </td>
               </tr>
             )}
             {sorted.map((c) => (
               <tr
                 key={c.id}
-                className={`transition-colors hover:bg-zinc-900/60 ${
+                className={`transition-colors hover:bg-zinc-900/60 ${selected.has(c.id) ? "bg-violet-500/5" : ""} ${
                   c.moderationStatus !== "PENDING" ? "opacity-70" : ""
                 }`}
               >
+                <td className="px-5 py-3.5">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(c.id)}
+                    onChange={() => toggleOne(c.id)}
+                    className="h-3.5 w-3.5 cursor-pointer rounded border-zinc-600 bg-zinc-800 accent-violet-500"
+                  />
+                </td>
                 {/* Creator */}
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
@@ -849,9 +1045,9 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
                   })}
                 </td>
                 {/* Moderation note */}
-                <td className="px-5 py-3.5 max-w-[160px]">
+                <td className="max-w-[160px] px-5 py-3.5">
                   {c.moderationNote ? (
-                    <span className="text-xs text-zinc-400 italic line-clamp-2">{c.moderationNote}</span>
+                    <span className="line-clamp-2 text-xs italic text-zinc-400">{c.moderationNote}</span>
                   ) : (
                     <span className="text-zinc-700">—</span>
                   )}
@@ -859,7 +1055,6 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
                 {/* Actions */}
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-2">
-                    {/* View button */}
                     <button
                       onClick={() => setPreview(c)}
                       title="Preview creator profile"
@@ -868,7 +1063,6 @@ function CreatorsTable({ initial }: { initial: PendingCreator[] }) {
                       <Eye className="h-3 w-3" />
                       View
                     </button>
-                    {/* Status dropdown */}
                     <StatusDropdown
                       currentStatus={c.moderationStatus}
                       isPending={isPending}
@@ -903,6 +1097,11 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
   const [isPending, startTransition] = useTransition();
   const [dialog, setDialog] = useState<DialogState>(null);
   const [preview, setPreview] = useState<PendingCampaign | null>(null);
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [sortOpen, setSortOpen] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState<"approve" | "reject" | null>(null);
 
   function updateStatus(id: string, status: ModerationStatus) {
     setCampaigns((prev) =>
@@ -929,11 +1128,69 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
     });
   }
 
-  const sorted = [...campaigns].sort((a, b) => {
-    if (a.moderationStatus === "PENDING" && b.moderationStatus !== "PENDING") return -1;
-    if (a.moderationStatus !== "PENDING" && b.moderationStatus === "PENDING") return 1;
-    return a.title.localeCompare(b.title);
+  const filtered = campaigns.filter((c) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      c.title.toLowerCase().includes(q) ||
+      c.brand.companyName.toLowerCase().includes(q) ||
+      (c.brand.industry?.toLowerCase().includes(q))
+    );
   });
+
+  const sorted = [...filtered].sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+  });
+
+  const allSelected = sorted.length > 0 && sorted.every((c) => selected.has(c.id));
+  const selectedInView = sorted.filter((c) => selected.has(c.id));
+  const selectedCount = selectedInView.length;
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((c) => next.delete(c.id));
+        return next;
+      });
+    } else {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((c) => next.add(c.id));
+        return next;
+      });
+    }
+  }
+
+  function toggleOne(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function handleBulkConfirm(note: string) {
+    if (!bulkAction) return;
+    const action = bulkAction;
+    const ids = selectedInView.map((c) => c.id);
+    setBulkAction(null);
+    setSelected(new Set());
+    startTransition(async () => {
+      for (const id of ids) {
+        if (action === "approve") {
+          await approveCampaign(id);
+          updateStatus(id, "APPROVED");
+        } else {
+          await rejectCampaign(id, note || undefined);
+          updateStatus(id, "REJECTED");
+        }
+      }
+    });
+  }
 
   return (
     <>
@@ -966,10 +1223,133 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
         />
       )}
 
+      {bulkAction && (
+        <ConfirmDialog
+          open
+          title={
+            bulkAction === "approve"
+              ? `Approve ${selectedCount} campaign${selectedCount !== 1 ? "s" : ""}?`
+              : `Reject ${selectedCount} campaign${selectedCount !== 1 ? "s" : ""}?`
+          }
+          description={
+            bulkAction === "approve"
+              ? "All selected campaigns will become publicly visible. The brands will receive a notification."
+              : "All selected campaigns will be hidden from public pages. The brands will receive a notification."
+          }
+          confirmLabel={bulkAction === "approve" ? "Approve All" : "Reject All"}
+          confirmClass={
+            bulkAction === "approve"
+              ? "bg-emerald-600 hover:bg-emerald-500"
+              : "bg-red-600 hover:bg-red-500"
+          }
+          showNote={bulkAction === "reject"}
+          onConfirm={handleBulkConfirm}
+          onCancel={() => setBulkAction(null)}
+        />
+      )}
+
+      {/* Toolbar */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-sm flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Search by title, brand, or industry…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 py-2 pl-9 pr-4 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          {selectedCount > 0 && (
+            <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5">
+              <span className="text-xs font-medium text-zinc-400">{selectedCount} selected</span>
+              <div className="h-3.5 w-px bg-zinc-700" />
+              <button
+                onClick={() => setBulkAction("approve")}
+                disabled={isPending}
+                className="text-xs font-medium text-emerald-400 transition-colors hover:text-emerald-300 disabled:opacity-50"
+              >
+                Approve
+              </button>
+              <button
+                onClick={() => setBulkAction("reject")}
+                disabled={isPending}
+                className="text-xs font-medium text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => {
+                  const ids = selectedInView.map((c) => c.id);
+                  setSelected(new Set());
+                  startTransition(async () => {
+                    for (const id of ids) {
+                      await setPendingCampaign(id);
+                      updateStatus(id, "PENDING");
+                    }
+                  });
+                }}
+                disabled={isPending}
+                className="text-xs font-medium text-amber-400 transition-colors hover:text-amber-300 disabled:opacity-50"
+              >
+                Reset Pending
+              </button>
+            </div>
+          )}
+
+          <div className="relative">
+            <button
+              onClick={() => setSortOpen((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              {sortOrder === "newest" ? (
+                <ArrowDown className="h-3.5 w-3.5 text-zinc-400" />
+              ) : (
+                <ArrowUp className="h-3.5 w-3.5 text-zinc-400" />
+              )}
+              {sortOrder === "newest" ? "Newest first" : "Oldest first"}
+              <ChevronDown className="h-3 w-3 text-zinc-500" />
+            </button>
+            {sortOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setSortOpen(false)} />
+                <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[170px] rounded-xl border border-zinc-800 bg-zinc-950 py-1 shadow-2xl">
+                  <button
+                    onClick={() => { setSortOrder("newest"); setSortOpen(false); }}
+                    className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-900 ${sortOrder === "newest" ? "text-violet-400" : "text-zinc-300"}`}
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                    Newest to Oldest
+                  </button>
+                  <button
+                    onClick={() => { setSortOrder("oldest"); setSortOpen(false); }}
+                    className={`flex w-full items-center gap-2.5 px-3 py-2 text-xs font-medium transition-colors hover:bg-zinc-900 ${sortOrder === "oldest" ? "text-violet-400" : "text-zinc-300"}`}
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                    Oldest to Newest
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-wider text-zinc-500">
+              <th className="w-10 px-5 py-3.5">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => { if (el) el.indeterminate = !allSelected && selectedCount > 0; }}
+                  onChange={toggleAll}
+                  className="h-3.5 w-3.5 cursor-pointer rounded border-zinc-600 bg-zinc-800 accent-violet-500"
+                />
+              </th>
               <th className="px-5 py-3.5">Campaign</th>
               <th className="px-5 py-3.5">Brand</th>
               <th className="px-5 py-3.5">Budget</th>
@@ -982,18 +1362,26 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
           <tbody className="divide-y divide-zinc-800/60">
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-zinc-500">
-                  No campaigns found.
+                <td colSpan={8} className="py-12 text-center text-zinc-500">
+                  {search ? "No campaigns match your search." : "No campaigns found."}
                 </td>
               </tr>
             )}
             {sorted.map((c) => (
               <tr
                 key={c.id}
-                className={`transition-colors hover:bg-zinc-900/60 ${
+                className={`transition-colors hover:bg-zinc-900/60 ${selected.has(c.id) ? "bg-violet-500/5" : ""} ${
                   c.moderationStatus !== "PENDING" ? "opacity-70" : ""
                 }`}
               >
+                <td className="px-5 py-3.5">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(c.id)}
+                    onChange={() => toggleOne(c.id)}
+                    className="h-3.5 w-3.5 cursor-pointer rounded border-zinc-600 bg-zinc-800 accent-violet-500"
+                  />
+                </td>
                 <td className="px-5 py-3.5">
                   <p className="font-medium text-zinc-200">{c.title}</p>
                   <p className="mt-0.5 max-w-xs truncate text-xs text-zinc-500">{c.description}</p>
@@ -1012,16 +1400,15 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
                     year: "numeric",
                   })}
                 </td>
-                <td className="px-5 py-3.5 max-w-[160px]">
+                <td className="max-w-[160px] px-5 py-3.5">
                   {c.moderationNote ? (
-                    <span className="text-xs text-zinc-400 italic line-clamp-2">{c.moderationNote}</span>
+                    <span className="line-clamp-2 text-xs italic text-zinc-400">{c.moderationNote}</span>
                   ) : (
                     <span className="text-zinc-700">—</span>
                   )}
                 </td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-2">
-                    {/* View button */}
                     <button
                       onClick={() => setPreview(c)}
                       title="Preview campaign details"
@@ -1030,7 +1417,6 @@ function CampaignsTable({ initial }: { initial: PendingCampaign[] }) {
                       <Eye className="h-3 w-3" />
                       View
                     </button>
-                    {/* Status dropdown */}
                     <StatusDropdown
                       currentStatus={c.moderationStatus}
                       isPending={isPending}

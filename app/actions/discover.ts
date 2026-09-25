@@ -24,9 +24,7 @@ export async function getCreatorsAction(): Promise<Creator[]> {
   const users = await db.user.findMany({
     where: {
       role: Role.CREATOR,
-      // Only show creators whose profile has been approved by an admin.
-      // The isNot: null guard is implicit — moderationStatus is on the profile.
-      creatorProfile: { moderationStatus: "APPROVED" },
+      creatorProfile: { isNot: null },
     },
     select: {
       id: true,
@@ -52,6 +50,7 @@ export async function getCreatorsAction(): Promise<Creator[]> {
           connectedPlatforms: true,
           location: true,
           socialLinks: true,
+          moderationStatus: true,
         },
       },
     },
@@ -124,8 +123,7 @@ export async function getCreatorsAction(): Promise<Creator[]> {
       primary_platform: (profile.primaryPlatform ?? null) as Creator["primary_platform"],
       location: profile.location ?? null,
       languages: ["English"],
-      // All DB creators in this list passed the moderationStatus: "APPROVED" filter
-      verified: true,
+      verified: profile.moderationStatus === "APPROVED",
       platforms,
       social_links: Object.keys(social_links).length > 0 ? social_links : null,
     };
