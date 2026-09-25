@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/app/_components/layout/Navbar";
 import Footer from "@/app/_components/layout/Footer";
 import { HeroSection } from "@/app/_components/home/HeroSection";
+import { FeaturesSection } from "@/app/_components/home/FeaturesSection";
 import { BentoSection } from "@/app/_components/home/BentoSection";
 import { SearchSection } from "@/app/_components/home/SearchSection";
 import { OutreachSection } from "@/app/_components/home/OutreachSection";
@@ -65,6 +66,7 @@ export default function Page() {
 
       <main>
         <HeroSection />
+        <FeaturesSection />
         <BentoSection />
         <SearchSection />
         <OutreachSection />
