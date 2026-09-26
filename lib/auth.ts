@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "@/lib/db";
 import { toPrismaRole } from "@/lib/roles";
+import { sendVerificationEmail } from "@/lib/email";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -18,6 +19,22 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+  },
+
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendVerificationEmail({
+        to: user.email,
+        name: user.name ?? user.email,
+        verificationUrl: url,
+      });
+    },
+    // After clicking the link the user is signed in and sent here
+    callbackURL: "/email-verified",
+    autoSignInAfterVerification: true,
+    // Always send on sign-up (default true)
+    sendOnSignUp: true,
   },
 
   user: {
