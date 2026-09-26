@@ -11,6 +11,55 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_ADDRESS = "Duolync <hello@duolync.com>";
 const APP_NAME = "Duolync";
 
+/** Absolute base URL used to build hosted-asset URLs in emails. */
+function getAppBaseUrl(): string {
+  return (
+    process.env.BETTER_AUTH_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "http://localhost:3000"
+  ).replace(/\/$/, "");
+}
+
+// ---------------------------------------------------------------------------
+// Shared building blocks
+// ---------------------------------------------------------------------------
+
+/**
+ * Centered logo block compatible with every major email client.
+ * Uses the real hosted logo asset; falls back gracefully to "Duolync" alt text.
+ * Gradient text (`background-clip:text`) is intentionally avoided — it is
+ * silently discarded by Outlook and most webmail clients.
+ */
+function buildLogoBlock(baseUrl: string): string {
+  const logoSrc = `${baseUrl}/duolync-logo.png`;
+  return `
+          <!-- ── Logo ── -->
+          <tr>
+            <td align="center" style="padding-bottom:36px;">
+              <a href="${baseUrl}" target="_blank" style="text-decoration:none;display:inline-block;">
+                <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                  <tr>
+                    <td style="vertical-align:middle;padding-right:10px;">
+                      <img src="${logoSrc}"
+                           alt="${APP_NAME}"
+                           width="44"
+                           height="44"
+                           style="display:block;width:44px;height:44px;border:0;outline:none;border-radius:10px;" />
+                    </td>
+                    <td style="vertical-align:middle;">
+                      <span style="font-size:22px;font-weight:700;color:#a78bfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;letter-spacing:-0.3px;">${APP_NAME}</span>
+                    </td>
+                  </tr>
+                </table>
+              </a>
+            </td>
+          </tr>`;
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 export async function sendVerificationEmail({
   to,
   name,
@@ -36,15 +85,46 @@ export async function sendVerificationEmail({
   });
 
   if (error) {
-    // Log the full error object — Resend errors carry a `name` field
-    // (e.g. "missing_api_key", "validation_error") that's more useful
-    // than the message alone.
     console.error("[email] Resend error:", JSON.stringify(error));
     throw new Error(`[email] Send failed (${error.name}): ${error.message}`);
   }
 
   console.log(`[email] Verification email sent (id: ${data?.id}) → ${to}`);
 }
+
+export async function sendPasswordResetEmail({
+  to,
+  name,
+  resetUrl,
+}: {
+  to: string;
+  name: string;
+  resetUrl: string;
+}) {
+  const firstName = name?.split(" ")[0] ?? "there";
+
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[email] Password reset URL for ${to}:\n  ${resetUrl}`);
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_ADDRESS,
+    to,
+    subject: `Reset your ${APP_NAME} password`,
+    html: buildPasswordResetEmailHtml({ firstName, resetUrl }),
+  });
+
+  if (error) {
+    console.error("[email] Resend error:", JSON.stringify(error));
+    throw new Error(`[email] Send failed (${error.name}): ${error.message}`);
+  }
+
+  console.log(`[email] Password reset email sent (id: ${data?.id}) → ${to}`);
+}
+
+// ---------------------------------------------------------------------------
+// HTML builders
+// ---------------------------------------------------------------------------
 
 function buildVerificationEmailHtml({
   firstName,
@@ -53,6 +133,7 @@ function buildVerificationEmailHtml({
   firstName: string;
   verificationUrl: string;
 }): string {
+  const baseUrl = getAppBaseUrl();
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,81 +142,212 @@ function buildVerificationEmailHtml({
   <title>Verify your email – ${APP_NAME}</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0f;min-height:100vh;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a0f;">
     <tr>
       <td align="center" style="padding:48px 16px;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
 
-          <!-- Logo -->
-          <tr>
-            <td align="center" style="padding-bottom:32px;">
-              <table cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="background:rgba(255,255,255,0.08);border-radius:14px;width:44px;height:44px;text-align:center;vertical-align:middle;border:1px solid rgba(255,255,255,0.12);">
-                    <span style="font-size:22px;font-weight:700;color:#ffffff;line-height:44px;">D</span>
-                  </td>
-                  <td style="padding-left:10px;vertical-align:middle;">
-                    <span style="font-size:22px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;color:transparent;">${APP_NAME}</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          ${buildLogoBlock(baseUrl)}
 
-          <!-- Card -->
+          <!-- ── Card ── -->
           <tr>
             <td style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:40px 36px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-              <!-- Icon -->
-              <table width="100%" cellpadding="0" cellspacing="0">
+                <!-- Icon -->
                 <tr>
                   <td align="center" style="padding-bottom:24px;">
-                    <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,rgba(167,139,250,0.2),rgba(236,72,153,0.2));border:1px solid rgba(167,139,250,0.3);display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:64px;font-size:28px;">
-                      ✉️
-                    </div>
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                      <tr>
+                        <td align="center" style="width:64px;height:64px;background:rgba(124,58,237,0.18);border:1px solid rgba(167,139,250,0.3);border-radius:16px;text-align:center;vertical-align:middle;line-height:64px;font-size:28px;">
+                          &#9993;
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
-              </table>
 
-              <!-- Heading -->
-              <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;text-align:center;">
-                Verify your email
-              </h1>
-              <p style="margin:0 0 28px;font-size:15px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.6;">
-                Hi ${firstName}, thanks for joining ${APP_NAME}! Click the button below to confirm your email address and activate your account.
-              </p>
+                <!-- Heading -->
+                <tr>
+                  <td align="center" style="padding-bottom:8px;">
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Verify your email
+                    </h1>
+                  </td>
+                </tr>
 
-              <!-- CTA button -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <!-- Body text -->
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <p style="margin:0;font-size:15px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Hi ${firstName}, thanks for joining ${APP_NAME}!<br />
+                      Click the button below to confirm your email address<br />and activate your account.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- CTA button -->
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                      <tr>
+                        <td align="center" style="background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:12px;">
+                          <a href="${verificationUrl}"
+                             target="_blank"
+                             style="display:inline-block;padding:14px 36px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;letter-spacing:0.01em;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Verify Email Address
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Fallback link -->
+                <tr>
+                  <td align="center" style="padding-bottom:4px;">
+                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Button not working? Paste this link into your browser:
+                    </p>
+                  </td>
+                </tr>
                 <tr>
                   <td align="center">
-                    <a href="${verificationUrl}"
-                       style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#7c3aed,#db2777);color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;letter-spacing:0.01em;">
-                      Verify Email Address
-                    </a>
+                    <p style="margin:0;font-size:11px;color:rgba(167,139,250,0.7);text-align:center;word-break:break-all;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      ${verificationUrl}
+                    </p>
                   </td>
                 </tr>
+
               </table>
-
-              <!-- Fallback link -->
-              <p style="margin:0 0 4px;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;">
-                Button not working? Paste this link into your browser:
-              </p>
-              <p style="margin:0;font-size:11px;color:rgba(167,139,250,0.7);text-align:center;word-break:break-all;">
-                ${verificationUrl}
-              </p>
-
             </td>
           </tr>
 
-          <!-- Footer -->
+          <!-- ── Footer ── -->
           <tr>
             <td align="center" style="padding-top:28px;">
-              <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.6;">
-                This link expires in 24 hours. If you didn't create a ${APP_NAME} account, you can safely ignore this email.
+              <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.25);text-align:center;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                This link expires in 24 hours. If you didn&apos;t create a ${APP_NAME} account,<br />you can safely ignore this email.
               </p>
-              <p style="margin:8px 0 0;font-size:12px;color:rgba(255,255,255,0.2);">
-                © ${new Date().getFullYear()} ${APP_NAME}. All rights reserved.
+              <p style="margin:8px 0 0;font-size:12px;color:rgba(255,255,255,0.2);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                &copy; ${new Date().getFullYear()} ${APP_NAME}. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildPasswordResetEmailHtml({
+  firstName,
+  resetUrl,
+}: {
+  firstName: string;
+  resetUrl: string;
+}): string {
+  const baseUrl = getAppBaseUrl();
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset your password – ${APP_NAME}</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a0f;">
+    <tr>
+      <td align="center" style="padding:48px 16px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;width:100%;">
+
+          ${buildLogoBlock(baseUrl)}
+
+          <!-- ── Card ── -->
+          <tr>
+            <td style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:40px 36px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                <!-- Icon -->
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                      <tr>
+                        <td align="center" style="width:64px;height:64px;background:rgba(124,58,237,0.18);border:1px solid rgba(167,139,250,0.3);border-radius:16px;text-align:center;vertical-align:middle;line-height:64px;font-size:28px;">
+                          &#128273;
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Heading -->
+                <tr>
+                  <td align="center" style="padding-bottom:8px;">
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Reset your password
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- Body text -->
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <p style="margin:0;font-size:15px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Hi ${firstName}, we received a request to reset your<br />
+                      ${APP_NAME} password. Click the button below<br />to choose a new one.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- CTA button -->
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                      <tr>
+                        <td align="center" style="background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:12px;">
+                          <a href="${resetUrl}"
+                             target="_blank"
+                             style="display:inline-block;padding:14px 36px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;letter-spacing:0.01em;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Reset Password
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Fallback link -->
+                <tr>
+                  <td align="center" style="padding-bottom:4px;">
+                    <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Button not working? Paste this link into your browser:
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <p style="margin:0;font-size:11px;color:rgba(167,139,250,0.7);text-align:center;word-break:break-all;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      ${resetUrl}
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── Footer ── -->
+          <tr>
+            <td align="center" style="padding-top:28px;">
+              <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.25);text-align:center;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                This link expires in 1 hour. If you didn&apos;t request a password reset,<br />you can safely ignore this email.
+              </p>
+              <p style="margin:8px 0 0;font-size:12px;color:rgba(255,255,255,0.2);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                &copy; ${new Date().getFullYear()} ${APP_NAME}. All rights reserved.
               </p>
             </td>
           </tr>
