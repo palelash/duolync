@@ -108,10 +108,9 @@ const Auth = () => {
       if (tab === "signup") {
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
-        toast({
-          title: "Account created!",
-          description: "Welcome to Duolync!",
-        });
+        // Redirect to the "check your inbox" page with the email pre-filled
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        return;
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;

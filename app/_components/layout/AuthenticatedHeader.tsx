@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Bell, MessageSquare, CheckCheck, Check, X, UserCheck, Search, Sun, Moon } from "lucide-react";
+import { LogOut, Bell, MessageSquare, CheckCheck, Check, X, UserCheck, Search, Sun, Moon, Settings } from "lucide-react";
 import {
   markNotificationsReadAction,
   type NotificationItem,
@@ -528,8 +528,9 @@ const AuthenticatedHeader = () => {
 
                 <DropdownMenuSeparator className="bg-white/[0.06]" />
 
-                <DropdownMenuItem asChild className="text-zinc-300 hover:text-zinc-100 focus:bg-white/[0.05]">
-                  <Link href={profile?.user_type === "brand" ? "/brand/settings" : "/creator/settings"}>
+                <DropdownMenuItem asChild className="cursor-pointer text-zinc-300 hover:text-zinc-100 focus:bg-white/[0.05]">
+                  <Link href={profile?.user_type === "brand" ? "/brand/settings" : "/creator/settings"} className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" strokeWidth={1.5} />
                     Settings
                   </Link>
                 </DropdownMenuItem>
@@ -567,7 +568,7 @@ const AuthenticatedHeader = () => {
 
                 <DropdownMenuItem
                   onClick={handleSignOut}
-                  className="text-red-400 focus:text-red-300 focus:bg-red-500/10"
+                  className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
                 >
                   <LogOut className="mr-2 h-4 w-4" strokeWidth={1.5} />
                   Sign out
