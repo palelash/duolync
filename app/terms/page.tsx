@@ -3,8 +3,8 @@ import Navbar from "@/app/_components/layout/Navbar";
 import Footer from "@/app/_components/layout/Footer";
 
 export const metadata = {
-  title: "Terms of Service — Duolync",
-  description: "Terms of Service for Duolync. Read the rules governing our creator-brand marketplace.",
+  title: "Terms of Use — Duolync",
+  description: "Terms of Use for Duolync. Read the rules governing our creator-brand marketplace.",
 };
 
 export default function TermsPage() {
@@ -33,7 +33,7 @@ export default function TermsPage() {
               className="font-display font-bold text-white mb-3"
               style={{ fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1 }}
             >
-              Terms of Service
+              Terms of Use
             </h1>
             <p className="text-sm text-zinc-500">Last updated: September 15, 2026</p>
           </div>
@@ -76,7 +76,7 @@ export default function TermsPage() {
             <p>
               Welcome to Duolync. By creating an account, accessing, or using the Duolync platform at{" "}
               <a href="https://duolync.com" target="_blank" rel="noopener noreferrer">duolync.com</a>{" "}
-              (the &ldquo;Service&rdquo;), you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;), our{" "}
+              (the &ldquo;Service&rdquo;), you agree to be bound by these Terms of Use (&ldquo;Terms&rdquo;), our{" "}
               <Link href="/privacy">Privacy Policy</Link>, and any additional guidelines or policies referenced herein.
             </p>
             <p>
@@ -156,19 +156,43 @@ export default function TermsPage() {
 
             <h3>Account Security</h3>
             <p>
-              You are responsible for maintaining the confidentiality of your account credentials and for all
-              activity that occurs under your account. You must:
+              You are solely responsible for maintaining the confidentiality of your account credentials and for all
+              activity that occurs under your account, whether or not authorized by you. You must:
             </p>
             <ul>
-              <li>Use a strong, unique password and update it regularly.</li>
-              <li>Enable two-factor authentication if offered by the platform.</li>
-              <li>Notify us immediately at <a href="mailto:hello@duolync.com">hello@duolync.com</a> if you suspect unauthorized access to your account.</li>
-              <li>Not share your login credentials with any other person.</li>
-              <li>Not access another User&apos;s account without authorization.</li>
+              <li>Use a strong, unique password that you do not reuse across other services, and update it promptly if you believe it has been compromised.</li>
+              <li>Enable Two-Factor Authentication (2FA) to add an additional layer of security to your account. Duolync strongly recommends enabling TOTP-based 2FA using an authenticator application.</li>
+              <li>
+                <strong>Safeguard your 2FA backup codes:</strong> When you enable 2FA, you will be given a set of
+                one-time-use backup recovery codes. These codes grant full access to your account and bypass your
+                authenticator app. You are fully responsible for storing these codes securely (e.g., in a password
+                manager or printed and kept in a secure location). Do not share your backup codes with anyone, including
+                Duolync support staff. Duolync will never ask you to provide a backup code. Lost backup codes cannot
+                be recovered — if both your authenticator app and backup codes are lost, account access may be
+                unrecoverable.
+              </li>
+              <li>Notify us immediately at <a href="mailto:hello@duolync.com">hello@duolync.com</a> if you suspect unauthorized access to your account, or if your authenticator device or backup codes have been lost, stolen, or compromised.</li>
+              <li>Not share your password, authenticator app access, or backup codes with any other person or entity.</li>
+              <li>Not access, or attempt to access, another User&apos;s account without their express authorization.</li>
+              <li>Log out of your account at the end of each session when using shared or public devices.</li>
             </ul>
             <p>
-              Duolync is not liable for any loss or damage arising from your failure to maintain account security.
+              Duolync is not liable for any loss, damage, or unauthorized activity arising from your failure to
+              maintain account security, including failure to protect your password, 2FA access, or backup codes.
             </p>
+
+            <h3>Two-Factor Authentication &amp; Account Recovery</h3>
+            <p>
+              If you lose access to both your authenticator application and your backup codes simultaneously,
+              Duolync may be unable to restore access to your account. As a security measure, we do not bypass
+              two-factor authentication without rigorous identity verification, and this process is not guaranteed
+              to succeed. You acknowledge and accept this risk by enabling 2FA on your account. To reduce this risk:
+            </p>
+            <ul>
+              <li>Store backup codes in at least two separate secure locations.</li>
+              <li>Consider using a cloud-synced authenticator app (e.g., Authy or Google Authenticator with cloud backup enabled).</li>
+              <li>Regenerate backup codes from <strong>Settings → Security</strong> immediately after using one, to ensure you always have a full set.</li>
+            </ul>
 
             <h3>Accurate Information</h3>
             <p>
@@ -520,7 +544,7 @@ export default function TermsPage() {
             {/* 15. Contact */}
             <h2 id="contact">Contact Us</h2>
             <p>
-              If you have any questions about these Terms of Service, please reach out:
+              If you have any questions about these Terms of Use, please reach out:
             </p>
             <ul>
               <li>
@@ -533,7 +557,7 @@ export default function TermsPage() {
               </li>
             </ul>
             <p>
-              We will respond to all Terms-related inquiries within 30 days.
+              We will respond to all Terms of Use inquiries within 30 days.
             </p>
 
           </div>
