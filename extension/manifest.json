@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Duolync – Save Creator",
+  "version": "1.0.0",
+  "description": "Save creator profiles from Instagram, TikTok, YouTube, and Threads directly to Duolync.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Save to Duolync"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.instagram.com/*",
+        "https://*.tiktok.com/*",
+        "https://*.youtube.com/*",
+        "https://*.threads.net/*",
+        "https://*.threads.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://*.instagram.com/*",
+    "https://*.tiktok.com/*",
+    "https://*.youtube.com/*",
+    "https://*.threads.net/*",
+    "https://*.threads.com/*",
+    "http://localhost:3000/*"
+  ],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ]
+}
