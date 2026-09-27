@@ -17,6 +17,7 @@ import {
 } from "@/app/actions/communities";
 import { getPendingApplicationsCountAction } from "@/app/actions/brand-applications";
 import { getPendingInvitationsCountAction } from "@/app/actions/invitations";
+import { getSavedCreatorsCountAction } from "@/app/actions/creators";
 import { cn } from "@/lib/utils";
 import { BRAND_NAV_ITEMS, CREATOR_NAV_ITEMS } from "./nav-config";
 
@@ -32,6 +33,7 @@ const GroupsPanel = () => {
   const [creating, setCreating] = useState(false);
   const [pendingApplications, setPendingApplications] = useState(0);
   const [pendingInvitations, setPendingInvitations] = useState(0);
+  const [savedCreatorsCount, setSavedCreatorsCount] = useState(0);
 
   useEffect(() => {
     getCommunityListsAction().then((res) => {
@@ -41,6 +43,9 @@ const GroupsPanel = () => {
       getPendingApplicationsCountAction()
         .then((res) => setPendingApplications(res.count))
         .catch(() => setPendingApplications(0));
+      getSavedCreatorsCountAction()
+        .then((res) => setSavedCreatorsCount(res.count))
+        .catch(() => setSavedCreatorsCount(0));
     } else {
       getPendingInvitationsCountAction()
         .then((res) => setPendingInvitations(res.count))
@@ -72,11 +77,19 @@ const GroupsPanel = () => {
             const isMessages = item.label === "Messages";
             const isCampaigns = item.label === "Campaigns" && isBrand;
             const isInvitations = item.label === "Invitations" && !isBrand;
+            const isSaved = item.label === "Saved" && isBrand;
             const hasUnreadMsg = isMessages && unreadCount > 0;
             const hasPendingApps = isCampaigns && pendingApplications > 0;
             const hasPendingInvites = isInvitations && pendingInvitations > 0;
-            const hasBadge = hasUnreadMsg || hasPendingApps || hasPendingInvites;
-            const badgeCount = isMessages ? unreadCount : isCampaigns ? pendingApplications : pendingInvitations;
+            const hasSavedCRM = isSaved && savedCreatorsCount > 0;
+            const hasBadge = hasUnreadMsg || hasPendingApps || hasPendingInvites || hasSavedCRM;
+            const badgeCount = isMessages
+              ? unreadCount
+              : isCampaigns
+              ? pendingApplications
+              : isSaved
+              ? savedCreatorsCount
+              : pendingInvitations;
             const activeClass = isBrand
               ? "bg-gradient-to-r from-violet-500/20 to-pink-500/10 text-violet-300 border border-violet-500/25 shadow-sm shadow-violet-500/10"
               : "bg-gradient-to-r from-violet-500/20 to-pink-500/10 text-violet-300 border border-violet-500/25 shadow-sm shadow-violet-500/10";

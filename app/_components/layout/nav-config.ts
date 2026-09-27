@@ -1,7 +1,7 @@
 import {
   Home, Search, MessageSquare, Heart, Sparkles,
   Compass, FileText, FolderOpen, Megaphone, Radio, Mail,
-  BarChart3,
+  BarChart3, BookUser,
 } from "lucide-react";
 
 export interface NavItem {
@@ -16,7 +16,7 @@ export const BRAND_NAV_ITEMS: NavItem[] = [
   { icon: Sparkles,     label: "Smart Match",  path: "/brand/smart-match" },
   { icon: FileText,     label: "Proposals",    path: "/brand/proposals" },
   { icon: Megaphone,    label: "Campaigns",    path: "/brand/campaigns" },
-  { icon: Heart,        label: "Saved",        path: "/brand/saved" },
+  { icon: BookUser,     label: "Saved",        path: "/brand/crm" },
   { icon: MessageSquare,label: "Messages",     path: "/messages" },
 ];
 

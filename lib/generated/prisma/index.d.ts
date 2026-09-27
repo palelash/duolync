@@ -104,6 +104,11 @@ export type Milestone = $Result.DefaultSelection<Prisma.$MilestonePayload>
  */
 export type CRMLead = $Result.DefaultSelection<Prisma.$CRMLeadPayload>
 /**
+ * Model Creator
+ * 
+ */
+export type Creator = $Result.DefaultSelection<Prisma.$CreatorPayload>
+/**
  * Model Task
  * 
  */
@@ -190,6 +195,27 @@ export const LeadStatus: {
 };
 
 export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
+
+
+export const SocialPlatform: {
+  INSTAGRAM: 'INSTAGRAM',
+  TIKTOK: 'TIKTOK',
+  YOUTUBE: 'YOUTUBE',
+  THREADS: 'THREADS'
+};
+
+export type SocialPlatform = (typeof SocialPlatform)[keyof typeof SocialPlatform]
+
+
+export const SavedCreatorStatus: {
+  SAVED: 'SAVED',
+  CONTACTED: 'CONTACTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  REJECTED: 'REJECTED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+export type SavedCreatorStatus = (typeof SavedCreatorStatus)[keyof typeof SavedCreatorStatus]
 
 
 export const ConnectionStatus: {
@@ -323,6 +349,14 @@ export const MilestoneStatus: typeof $Enums.MilestoneStatus
 export type LeadStatus = $Enums.LeadStatus
 
 export const LeadStatus: typeof $Enums.LeadStatus
+
+export type SocialPlatform = $Enums.SocialPlatform
+
+export const SocialPlatform: typeof $Enums.SocialPlatform
+
+export type SavedCreatorStatus = $Enums.SavedCreatorStatus
+
+export const SavedCreatorStatus: typeof $Enums.SavedCreatorStatus
 
 export type ConnectionStatus = $Enums.ConnectionStatus
 
@@ -668,6 +702,16 @@ export class PrismaClient<
     * ```
     */
   get cRMLead(): Prisma.CRMLeadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.creator`: Exposes CRUD operations for the **Creator** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Creators
+    * const creators = await prisma.creator.findMany()
+    * ```
+    */
+  get creator(): Prisma.CreatorDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.task`: Exposes CRUD operations for the **Task** model.
@@ -1210,6 +1254,7 @@ export namespace Prisma {
     Contract: 'Contract',
     Milestone: 'Milestone',
     CRMLead: 'CRMLead',
+    Creator: 'Creator',
     Task: 'Task',
     Connection: 'Connection',
     CommunityList: 'CommunityList',
@@ -1234,7 +1279,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "rateLimitEvent"
+      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "rateLimitEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2570,6 +2615,80 @@ export namespace Prisma {
           }
         }
       }
+      Creator: {
+        payload: Prisma.$CreatorPayload<ExtArgs>
+        fields: Prisma.CreatorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CreatorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CreatorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          findFirst: {
+            args: Prisma.CreatorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CreatorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          findMany: {
+            args: Prisma.CreatorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>[]
+          }
+          create: {
+            args: Prisma.CreatorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          createMany: {
+            args: Prisma.CreatorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CreatorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>[]
+          }
+          delete: {
+            args: Prisma.CreatorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          update: {
+            args: Prisma.CreatorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          deleteMany: {
+            args: Prisma.CreatorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CreatorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CreatorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>[]
+          }
+          upsert: {
+            args: Prisma.CreatorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorPayload>
+          }
+          aggregate: {
+            args: Prisma.CreatorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCreator>
+          }
+          groupBy: {
+            args: Prisma.CreatorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CreatorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CreatorCountArgs<ExtArgs>
+            result: $Utils.Optional<CreatorCountAggregateOutputType> | number
+          }
+        }
+      }
       Task: {
         payload: Prisma.$TaskPayload<ExtArgs>
         fields: Prisma.TaskFieldRefs
@@ -3362,6 +3481,7 @@ export namespace Prisma {
     contract?: ContractOmit
     milestone?: MilestoneOmit
     cRMLead?: CRMLeadOmit
+    creator?: CreatorOmit
     task?: TaskOmit
     connection?: ConnectionOmit
     communityList?: CommunityListOmit
@@ -3461,6 +3581,7 @@ export namespace Prisma {
     platformTokens: number
     sessions: number
     communityMemberships: number
+    savedCreators: number
     createdCampaignEvents: number
     requestedEventUpdates: number
     reviewedEventUpdates: number
@@ -3482,6 +3603,7 @@ export namespace Prisma {
     platformTokens?: boolean | UserCountOutputTypeCountPlatformTokensArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     communityMemberships?: boolean | UserCountOutputTypeCountCommunityMembershipsArgs
+    savedCreators?: boolean | UserCountOutputTypeCountSavedCreatorsArgs
     createdCampaignEvents?: boolean | UserCountOutputTypeCountCreatedCampaignEventsArgs
     requestedEventUpdates?: boolean | UserCountOutputTypeCountRequestedEventUpdatesArgs
     reviewedEventUpdates?: boolean | UserCountOutputTypeCountReviewedEventUpdatesArgs
@@ -3571,6 +3693,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCommunityMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommunityListMemberWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSavedCreatorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreatorWhereInput
   }
 
   /**
@@ -4161,6 +4290,7 @@ export namespace Prisma {
     platformTokens?: boolean | User$platformTokensArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     communityMemberships?: boolean | User$communityMembershipsArgs<ExtArgs>
+    savedCreators?: boolean | User$savedCreatorsArgs<ExtArgs>
     createdCampaignEvents?: boolean | User$createdCampaignEventsArgs<ExtArgs>
     requestedEventUpdates?: boolean | User$requestedEventUpdatesArgs<ExtArgs>
     reviewedEventUpdates?: boolean | User$reviewedEventUpdatesArgs<ExtArgs>
@@ -4232,6 +4362,7 @@ export namespace Prisma {
     platformTokens?: boolean | User$platformTokensArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     communityMemberships?: boolean | User$communityMembershipsArgs<ExtArgs>
+    savedCreators?: boolean | User$savedCreatorsArgs<ExtArgs>
     createdCampaignEvents?: boolean | User$createdCampaignEventsArgs<ExtArgs>
     requestedEventUpdates?: boolean | User$requestedEventUpdatesArgs<ExtArgs>
     reviewedEventUpdates?: boolean | User$reviewedEventUpdatesArgs<ExtArgs>
@@ -4261,6 +4392,7 @@ export namespace Prisma {
       platformTokens: Prisma.$PlatformTokenPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       communityMemberships: Prisma.$CommunityListMemberPayload<ExtArgs>[]
+      savedCreators: Prisma.$CreatorPayload<ExtArgs>[]
       createdCampaignEvents: Prisma.$CampaignEventPayload<ExtArgs>[]
       requestedEventUpdates: Prisma.$CampaignEventUpdatePayload<ExtArgs>[]
       reviewedEventUpdates: Prisma.$CampaignEventUpdatePayload<ExtArgs>[]
@@ -4690,6 +4822,7 @@ export namespace Prisma {
     platformTokens<T extends User$platformTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$platformTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     communityMemberships<T extends User$communityMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$communityMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityListMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    savedCreators<T extends User$savedCreatorsArgs<ExtArgs> = {}>(args?: Subset<T, User$savedCreatorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdCampaignEvents<T extends User$createdCampaignEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdCampaignEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     requestedEventUpdates<T extends User$requestedEventUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$requestedEventUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviewedEventUpdates<T extends User$reviewedEventUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewedEventUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5426,6 +5559,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CommunityListMemberScalarFieldEnum | CommunityListMemberScalarFieldEnum[]
+  }
+
+  /**
+   * User.savedCreators
+   */
+  export type User$savedCreatorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    where?: CreatorWhereInput
+    orderBy?: CreatorOrderByWithRelationInput | CreatorOrderByWithRelationInput[]
+    cursor?: CreatorWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CreatorScalarFieldEnum | CreatorScalarFieldEnum[]
   }
 
   /**
@@ -25459,6 +25616,1224 @@ export namespace Prisma {
 
 
   /**
+   * Model Creator
+   */
+
+  export type AggregateCreator = {
+    _count: CreatorCountAggregateOutputType | null
+    _avg: CreatorAvgAggregateOutputType | null
+    _sum: CreatorSumAggregateOutputType | null
+    _min: CreatorMinAggregateOutputType | null
+    _max: CreatorMaxAggregateOutputType | null
+  }
+
+  export type CreatorAvgAggregateOutputType = {
+    followersCount: number | null
+    postsCount: number | null
+  }
+
+  export type CreatorSumAggregateOutputType = {
+    followersCount: number | null
+    postsCount: number | null
+  }
+
+  export type CreatorMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    platform: $Enums.SocialPlatform | null
+    handle: string | null
+    name: string | null
+    avatarUrl: string | null
+    sourceUrl: string | null
+    followersCount: number | null
+    postsCount: number | null
+    email: string | null
+    notes: string | null
+    status: $Enums.SavedCreatorStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CreatorMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    platform: $Enums.SocialPlatform | null
+    handle: string | null
+    name: string | null
+    avatarUrl: string | null
+    sourceUrl: string | null
+    followersCount: number | null
+    postsCount: number | null
+    email: string | null
+    notes: string | null
+    status: $Enums.SavedCreatorStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CreatorCountAggregateOutputType = {
+    id: number
+    userId: number
+    platform: number
+    handle: number
+    name: number
+    avatarUrl: number
+    sourceUrl: number
+    followersCount: number
+    postsCount: number
+    email: number
+    notes: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CreatorAvgAggregateInputType = {
+    followersCount?: true
+    postsCount?: true
+  }
+
+  export type CreatorSumAggregateInputType = {
+    followersCount?: true
+    postsCount?: true
+  }
+
+  export type CreatorMinAggregateInputType = {
+    id?: true
+    userId?: true
+    platform?: true
+    handle?: true
+    name?: true
+    avatarUrl?: true
+    sourceUrl?: true
+    followersCount?: true
+    postsCount?: true
+    email?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CreatorMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    platform?: true
+    handle?: true
+    name?: true
+    avatarUrl?: true
+    sourceUrl?: true
+    followersCount?: true
+    postsCount?: true
+    email?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CreatorCountAggregateInputType = {
+    id?: true
+    userId?: true
+    platform?: true
+    handle?: true
+    name?: true
+    avatarUrl?: true
+    sourceUrl?: true
+    followersCount?: true
+    postsCount?: true
+    email?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CreatorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Creator to aggregate.
+     */
+    where?: CreatorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Creators to fetch.
+     */
+    orderBy?: CreatorOrderByWithRelationInput | CreatorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CreatorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Creators from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Creators.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Creators
+    **/
+    _count?: true | CreatorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CreatorAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CreatorSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CreatorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CreatorMaxAggregateInputType
+  }
+
+  export type GetCreatorAggregateType<T extends CreatorAggregateArgs> = {
+        [P in keyof T & keyof AggregateCreator]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCreator[P]>
+      : GetScalarType<T[P], AggregateCreator[P]>
+  }
+
+
+
+
+  export type CreatorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreatorWhereInput
+    orderBy?: CreatorOrderByWithAggregationInput | CreatorOrderByWithAggregationInput[]
+    by: CreatorScalarFieldEnum[] | CreatorScalarFieldEnum
+    having?: CreatorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CreatorCountAggregateInputType | true
+    _avg?: CreatorAvgAggregateInputType
+    _sum?: CreatorSumAggregateInputType
+    _min?: CreatorMinAggregateInputType
+    _max?: CreatorMaxAggregateInputType
+  }
+
+  export type CreatorGroupByOutputType = {
+    id: string
+    userId: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name: string | null
+    avatarUrl: string | null
+    sourceUrl: string | null
+    followersCount: number | null
+    postsCount: number | null
+    email: string | null
+    notes: string | null
+    status: $Enums.SavedCreatorStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: CreatorCountAggregateOutputType | null
+    _avg: CreatorAvgAggregateOutputType | null
+    _sum: CreatorSumAggregateOutputType | null
+    _min: CreatorMinAggregateOutputType | null
+    _max: CreatorMaxAggregateOutputType | null
+  }
+
+  type GetCreatorGroupByPayload<T extends CreatorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CreatorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CreatorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CreatorGroupByOutputType[P]>
+            : GetScalarType<T[P], CreatorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CreatorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    platform?: boolean
+    handle?: boolean
+    name?: boolean
+    avatarUrl?: boolean
+    sourceUrl?: boolean
+    followersCount?: boolean
+    postsCount?: boolean
+    email?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creator"]>
+
+  export type CreatorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    platform?: boolean
+    handle?: boolean
+    name?: boolean
+    avatarUrl?: boolean
+    sourceUrl?: boolean
+    followersCount?: boolean
+    postsCount?: boolean
+    email?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creator"]>
+
+  export type CreatorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    platform?: boolean
+    handle?: boolean
+    name?: boolean
+    avatarUrl?: boolean
+    sourceUrl?: boolean
+    followersCount?: boolean
+    postsCount?: boolean
+    email?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creator"]>
+
+  export type CreatorSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    platform?: boolean
+    handle?: boolean
+    name?: boolean
+    avatarUrl?: boolean
+    sourceUrl?: boolean
+    followersCount?: boolean
+    postsCount?: boolean
+    email?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CreatorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "platform" | "handle" | "name" | "avatarUrl" | "sourceUrl" | "followersCount" | "postsCount" | "email" | "notes" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["creator"]>
+  export type CreatorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CreatorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CreatorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CreatorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Creator"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      platform: $Enums.SocialPlatform
+      handle: string
+      name: string | null
+      avatarUrl: string | null
+      sourceUrl: string | null
+      followersCount: number | null
+      postsCount: number | null
+      email: string | null
+      notes: string | null
+      status: $Enums.SavedCreatorStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["creator"]>
+    composites: {}
+  }
+
+  type CreatorGetPayload<S extends boolean | null | undefined | CreatorDefaultArgs> = $Result.GetResult<Prisma.$CreatorPayload, S>
+
+  type CreatorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CreatorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CreatorCountAggregateInputType | true
+    }
+
+  export interface CreatorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Creator'], meta: { name: 'Creator' } }
+    /**
+     * Find zero or one Creator that matches the filter.
+     * @param {CreatorFindUniqueArgs} args - Arguments to find a Creator
+     * @example
+     * // Get one Creator
+     * const creator = await prisma.creator.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CreatorFindUniqueArgs>(args: SelectSubset<T, CreatorFindUniqueArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Creator that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CreatorFindUniqueOrThrowArgs} args - Arguments to find a Creator
+     * @example
+     * // Get one Creator
+     * const creator = await prisma.creator.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CreatorFindUniqueOrThrowArgs>(args: SelectSubset<T, CreatorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Creator that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorFindFirstArgs} args - Arguments to find a Creator
+     * @example
+     * // Get one Creator
+     * const creator = await prisma.creator.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CreatorFindFirstArgs>(args?: SelectSubset<T, CreatorFindFirstArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Creator that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorFindFirstOrThrowArgs} args - Arguments to find a Creator
+     * @example
+     * // Get one Creator
+     * const creator = await prisma.creator.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CreatorFindFirstOrThrowArgs>(args?: SelectSubset<T, CreatorFindFirstOrThrowArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Creators that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Creators
+     * const creators = await prisma.creator.findMany()
+     * 
+     * // Get first 10 Creators
+     * const creators = await prisma.creator.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const creatorWithIdOnly = await prisma.creator.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CreatorFindManyArgs>(args?: SelectSubset<T, CreatorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Creator.
+     * @param {CreatorCreateArgs} args - Arguments to create a Creator.
+     * @example
+     * // Create one Creator
+     * const Creator = await prisma.creator.create({
+     *   data: {
+     *     // ... data to create a Creator
+     *   }
+     * })
+     * 
+     */
+    create<T extends CreatorCreateArgs>(args: SelectSubset<T, CreatorCreateArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Creators.
+     * @param {CreatorCreateManyArgs} args - Arguments to create many Creators.
+     * @example
+     * // Create many Creators
+     * const creator = await prisma.creator.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CreatorCreateManyArgs>(args?: SelectSubset<T, CreatorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Creators and returns the data saved in the database.
+     * @param {CreatorCreateManyAndReturnArgs} args - Arguments to create many Creators.
+     * @example
+     * // Create many Creators
+     * const creator = await prisma.creator.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Creators and only return the `id`
+     * const creatorWithIdOnly = await prisma.creator.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CreatorCreateManyAndReturnArgs>(args?: SelectSubset<T, CreatorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Creator.
+     * @param {CreatorDeleteArgs} args - Arguments to delete one Creator.
+     * @example
+     * // Delete one Creator
+     * const Creator = await prisma.creator.delete({
+     *   where: {
+     *     // ... filter to delete one Creator
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CreatorDeleteArgs>(args: SelectSubset<T, CreatorDeleteArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Creator.
+     * @param {CreatorUpdateArgs} args - Arguments to update one Creator.
+     * @example
+     * // Update one Creator
+     * const creator = await prisma.creator.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CreatorUpdateArgs>(args: SelectSubset<T, CreatorUpdateArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Creators.
+     * @param {CreatorDeleteManyArgs} args - Arguments to filter Creators to delete.
+     * @example
+     * // Delete a few Creators
+     * const { count } = await prisma.creator.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CreatorDeleteManyArgs>(args?: SelectSubset<T, CreatorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Creators.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Creators
+     * const creator = await prisma.creator.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CreatorUpdateManyArgs>(args: SelectSubset<T, CreatorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Creators and returns the data updated in the database.
+     * @param {CreatorUpdateManyAndReturnArgs} args - Arguments to update many Creators.
+     * @example
+     * // Update many Creators
+     * const creator = await prisma.creator.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Creators and only return the `id`
+     * const creatorWithIdOnly = await prisma.creator.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CreatorUpdateManyAndReturnArgs>(args: SelectSubset<T, CreatorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Creator.
+     * @param {CreatorUpsertArgs} args - Arguments to update or create a Creator.
+     * @example
+     * // Update or create a Creator
+     * const creator = await prisma.creator.upsert({
+     *   create: {
+     *     // ... data to create a Creator
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Creator we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CreatorUpsertArgs>(args: SelectSubset<T, CreatorUpsertArgs<ExtArgs>>): Prisma__CreatorClient<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Creators.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorCountArgs} args - Arguments to filter Creators to count.
+     * @example
+     * // Count the number of Creators
+     * const count = await prisma.creator.count({
+     *   where: {
+     *     // ... the filter for the Creators we want to count
+     *   }
+     * })
+    **/
+    count<T extends CreatorCountArgs>(
+      args?: Subset<T, CreatorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CreatorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Creator.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CreatorAggregateArgs>(args: Subset<T, CreatorAggregateArgs>): Prisma.PrismaPromise<GetCreatorAggregateType<T>>
+
+    /**
+     * Group by Creator.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CreatorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CreatorGroupByArgs['orderBy'] }
+        : { orderBy?: CreatorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CreatorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCreatorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Creator model
+   */
+  readonly fields: CreatorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Creator.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CreatorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Creator model
+   */
+  interface CreatorFieldRefs {
+    readonly id: FieldRef<"Creator", 'String'>
+    readonly userId: FieldRef<"Creator", 'String'>
+    readonly platform: FieldRef<"Creator", 'SocialPlatform'>
+    readonly handle: FieldRef<"Creator", 'String'>
+    readonly name: FieldRef<"Creator", 'String'>
+    readonly avatarUrl: FieldRef<"Creator", 'String'>
+    readonly sourceUrl: FieldRef<"Creator", 'String'>
+    readonly followersCount: FieldRef<"Creator", 'Int'>
+    readonly postsCount: FieldRef<"Creator", 'Int'>
+    readonly email: FieldRef<"Creator", 'String'>
+    readonly notes: FieldRef<"Creator", 'String'>
+    readonly status: FieldRef<"Creator", 'SavedCreatorStatus'>
+    readonly createdAt: FieldRef<"Creator", 'DateTime'>
+    readonly updatedAt: FieldRef<"Creator", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Creator findUnique
+   */
+  export type CreatorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter, which Creator to fetch.
+     */
+    where: CreatorWhereUniqueInput
+  }
+
+  /**
+   * Creator findUniqueOrThrow
+   */
+  export type CreatorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter, which Creator to fetch.
+     */
+    where: CreatorWhereUniqueInput
+  }
+
+  /**
+   * Creator findFirst
+   */
+  export type CreatorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter, which Creator to fetch.
+     */
+    where?: CreatorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Creators to fetch.
+     */
+    orderBy?: CreatorOrderByWithRelationInput | CreatorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Creators.
+     */
+    cursor?: CreatorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Creators from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Creators.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Creators.
+     */
+    distinct?: CreatorScalarFieldEnum | CreatorScalarFieldEnum[]
+  }
+
+  /**
+   * Creator findFirstOrThrow
+   */
+  export type CreatorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter, which Creator to fetch.
+     */
+    where?: CreatorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Creators to fetch.
+     */
+    orderBy?: CreatorOrderByWithRelationInput | CreatorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Creators.
+     */
+    cursor?: CreatorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Creators from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Creators.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Creators.
+     */
+    distinct?: CreatorScalarFieldEnum | CreatorScalarFieldEnum[]
+  }
+
+  /**
+   * Creator findMany
+   */
+  export type CreatorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter, which Creators to fetch.
+     */
+    where?: CreatorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Creators to fetch.
+     */
+    orderBy?: CreatorOrderByWithRelationInput | CreatorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Creators.
+     */
+    cursor?: CreatorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Creators from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Creators.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Creators.
+     */
+    distinct?: CreatorScalarFieldEnum | CreatorScalarFieldEnum[]
+  }
+
+  /**
+   * Creator create
+   */
+  export type CreatorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Creator.
+     */
+    data: XOR<CreatorCreateInput, CreatorUncheckedCreateInput>
+  }
+
+  /**
+   * Creator createMany
+   */
+  export type CreatorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Creators.
+     */
+    data: CreatorCreateManyInput | CreatorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Creator createManyAndReturn
+   */
+  export type CreatorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * The data used to create many Creators.
+     */
+    data: CreatorCreateManyInput | CreatorCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Creator update
+   */
+  export type CreatorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Creator.
+     */
+    data: XOR<CreatorUpdateInput, CreatorUncheckedUpdateInput>
+    /**
+     * Choose, which Creator to update.
+     */
+    where: CreatorWhereUniqueInput
+  }
+
+  /**
+   * Creator updateMany
+   */
+  export type CreatorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Creators.
+     */
+    data: XOR<CreatorUpdateManyMutationInput, CreatorUncheckedUpdateManyInput>
+    /**
+     * Filter which Creators to update
+     */
+    where?: CreatorWhereInput
+    /**
+     * Limit how many Creators to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Creator updateManyAndReturn
+   */
+  export type CreatorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * The data used to update Creators.
+     */
+    data: XOR<CreatorUpdateManyMutationInput, CreatorUncheckedUpdateManyInput>
+    /**
+     * Filter which Creators to update
+     */
+    where?: CreatorWhereInput
+    /**
+     * Limit how many Creators to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Creator upsert
+   */
+  export type CreatorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Creator to update in case it exists.
+     */
+    where: CreatorWhereUniqueInput
+    /**
+     * In case the Creator found by the `where` argument doesn't exist, create a new Creator with this data.
+     */
+    create: XOR<CreatorCreateInput, CreatorUncheckedCreateInput>
+    /**
+     * In case the Creator was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CreatorUpdateInput, CreatorUncheckedUpdateInput>
+  }
+
+  /**
+   * Creator delete
+   */
+  export type CreatorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+    /**
+     * Filter which Creator to delete.
+     */
+    where: CreatorWhereUniqueInput
+  }
+
+  /**
+   * Creator deleteMany
+   */
+  export type CreatorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Creators to delete
+     */
+    where?: CreatorWhereInput
+    /**
+     * Limit how many Creators to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Creator without action
+   */
+  export type CreatorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Creator
+     */
+    select?: CreatorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Creator
+     */
+    omit?: CreatorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Task
    */
 
@@ -35792,6 +37167,26 @@ export namespace Prisma {
   export type CRMLeadScalarFieldEnum = (typeof CRMLeadScalarFieldEnum)[keyof typeof CRMLeadScalarFieldEnum]
 
 
+  export const CreatorScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    platform: 'platform',
+    handle: 'handle',
+    name: 'name',
+    avatarUrl: 'avatarUrl',
+    sourceUrl: 'sourceUrl',
+    followersCount: 'followersCount',
+    postsCount: 'postsCount',
+    email: 'email',
+    notes: 'notes',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CreatorScalarFieldEnum = (typeof CreatorScalarFieldEnum)[keyof typeof CreatorScalarFieldEnum]
+
+
   export const TaskScalarFieldEnum: {
     id: 'id',
     contractId: 'contractId',
@@ -36160,6 +37555,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SocialPlatform'
+   */
+  export type EnumSocialPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SocialPlatform'>
+    
+
+
+  /**
+   * Reference to a field of type 'SocialPlatform[]'
+   */
+  export type ListEnumSocialPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SocialPlatform[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SavedCreatorStatus'
+   */
+  export type EnumSavedCreatorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SavedCreatorStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SavedCreatorStatus[]'
+   */
+  export type ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SavedCreatorStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ConnectionStatus'
    */
   export type EnumConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionStatus'>
@@ -36261,6 +37684,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenListRelationFilter
     sessions?: SessionListRelationFilter
     communityMemberships?: CommunityListMemberListRelationFilter
+    savedCreators?: CreatorListRelationFilter
     createdCampaignEvents?: CampaignEventListRelationFilter
     requestedEventUpdates?: CampaignEventUpdateListRelationFilter
     reviewedEventUpdates?: CampaignEventUpdateListRelationFilter
@@ -36297,6 +37721,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     communityMemberships?: CommunityListMemberOrderByRelationAggregateInput
+    savedCreators?: CreatorOrderByRelationAggregateInput
     createdCampaignEvents?: CampaignEventOrderByRelationAggregateInput
     requestedEventUpdates?: CampaignEventUpdateOrderByRelationAggregateInput
     reviewedEventUpdates?: CampaignEventUpdateOrderByRelationAggregateInput
@@ -36336,6 +37761,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenListRelationFilter
     sessions?: SessionListRelationFilter
     communityMemberships?: CommunityListMemberListRelationFilter
+    savedCreators?: CreatorListRelationFilter
     createdCampaignEvents?: CampaignEventListRelationFilter
     requestedEventUpdates?: CampaignEventUpdateListRelationFilter
     reviewedEventUpdates?: CampaignEventUpdateListRelationFilter
@@ -37800,6 +39226,109 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"CRMLead"> | Date | string
   }
 
+  export type CreatorWhereInput = {
+    AND?: CreatorWhereInput | CreatorWhereInput[]
+    OR?: CreatorWhereInput[]
+    NOT?: CreatorWhereInput | CreatorWhereInput[]
+    id?: StringFilter<"Creator"> | string
+    userId?: StringFilter<"Creator"> | string
+    platform?: EnumSocialPlatformFilter<"Creator"> | $Enums.SocialPlatform
+    handle?: StringFilter<"Creator"> | string
+    name?: StringNullableFilter<"Creator"> | string | null
+    avatarUrl?: StringNullableFilter<"Creator"> | string | null
+    sourceUrl?: StringNullableFilter<"Creator"> | string | null
+    followersCount?: IntNullableFilter<"Creator"> | number | null
+    postsCount?: IntNullableFilter<"Creator"> | number | null
+    email?: StringNullableFilter<"Creator"> | string | null
+    notes?: StringNullableFilter<"Creator"> | string | null
+    status?: EnumSavedCreatorStatusFilter<"Creator"> | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFilter<"Creator"> | Date | string
+    updatedAt?: DateTimeFilter<"Creator"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CreatorOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    platform?: SortOrder
+    handle?: SortOrder
+    name?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
+    sourceUrl?: SortOrderInput | SortOrder
+    followersCount?: SortOrderInput | SortOrder
+    postsCount?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CreatorWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_platform_handle?: CreatorUserIdPlatformHandleCompoundUniqueInput
+    AND?: CreatorWhereInput | CreatorWhereInput[]
+    OR?: CreatorWhereInput[]
+    NOT?: CreatorWhereInput | CreatorWhereInput[]
+    userId?: StringFilter<"Creator"> | string
+    platform?: EnumSocialPlatformFilter<"Creator"> | $Enums.SocialPlatform
+    handle?: StringFilter<"Creator"> | string
+    name?: StringNullableFilter<"Creator"> | string | null
+    avatarUrl?: StringNullableFilter<"Creator"> | string | null
+    sourceUrl?: StringNullableFilter<"Creator"> | string | null
+    followersCount?: IntNullableFilter<"Creator"> | number | null
+    postsCount?: IntNullableFilter<"Creator"> | number | null
+    email?: StringNullableFilter<"Creator"> | string | null
+    notes?: StringNullableFilter<"Creator"> | string | null
+    status?: EnumSavedCreatorStatusFilter<"Creator"> | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFilter<"Creator"> | Date | string
+    updatedAt?: DateTimeFilter<"Creator"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_platform_handle">
+
+  export type CreatorOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    platform?: SortOrder
+    handle?: SortOrder
+    name?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
+    sourceUrl?: SortOrderInput | SortOrder
+    followersCount?: SortOrderInput | SortOrder
+    postsCount?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CreatorCountOrderByAggregateInput
+    _avg?: CreatorAvgOrderByAggregateInput
+    _max?: CreatorMaxOrderByAggregateInput
+    _min?: CreatorMinOrderByAggregateInput
+    _sum?: CreatorSumOrderByAggregateInput
+  }
+
+  export type CreatorScalarWhereWithAggregatesInput = {
+    AND?: CreatorScalarWhereWithAggregatesInput | CreatorScalarWhereWithAggregatesInput[]
+    OR?: CreatorScalarWhereWithAggregatesInput[]
+    NOT?: CreatorScalarWhereWithAggregatesInput | CreatorScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Creator"> | string
+    userId?: StringWithAggregatesFilter<"Creator"> | string
+    platform?: EnumSocialPlatformWithAggregatesFilter<"Creator"> | $Enums.SocialPlatform
+    handle?: StringWithAggregatesFilter<"Creator"> | string
+    name?: StringNullableWithAggregatesFilter<"Creator"> | string | null
+    avatarUrl?: StringNullableWithAggregatesFilter<"Creator"> | string | null
+    sourceUrl?: StringNullableWithAggregatesFilter<"Creator"> | string | null
+    followersCount?: IntNullableWithAggregatesFilter<"Creator"> | number | null
+    postsCount?: IntNullableWithAggregatesFilter<"Creator"> | number | null
+    email?: StringNullableWithAggregatesFilter<"Creator"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"Creator"> | string | null
+    status?: EnumSavedCreatorStatusWithAggregatesFilter<"Creator"> | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeWithAggregatesFilter<"Creator"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Creator"> | Date | string
+  }
+
   export type TaskWhereInput = {
     AND?: TaskWhereInput | TaskWhereInput[]
     OR?: TaskWhereInput[]
@@ -38451,6 +39980,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -38487,6 +40017,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -38523,6 +40054,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -38559,6 +40091,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -40172,6 +41705,124 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CreatorCreateInput = {
+    id?: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSavedCreatorsInput
+  }
+
+  export type CreatorUncheckedCreateInput = {
+    id?: string
+    userId: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CreatorUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSavedCreatorsNestedInput
+  }
+
+  export type CreatorUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorCreateManyInput = {
+    id?: string
+    userId: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CreatorUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TaskCreateInput = {
     id?: string
     title: string
@@ -40912,6 +42563,12 @@ export namespace Prisma {
     none?: CommunityListMemberWhereInput
   }
 
+  export type CreatorListRelationFilter = {
+    every?: CreatorWhereInput
+    some?: CreatorWhereInput
+    none?: CreatorWhereInput
+  }
+
   export type CampaignEventListRelationFilter = {
     every?: CampaignEventWhereInput
     some?: CampaignEventWhereInput
@@ -40970,6 +42627,10 @@ export namespace Prisma {
   }
 
   export type CommunityListMemberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CreatorOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -42270,6 +43931,107 @@ export namespace Prisma {
     _max?: NestedEnumLeadStatusFilter<$PrismaModel>
   }
 
+  export type EnumSocialPlatformFilter<$PrismaModel = never> = {
+    equals?: $Enums.SocialPlatform | EnumSocialPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumSocialPlatformFilter<$PrismaModel> | $Enums.SocialPlatform
+  }
+
+  export type EnumSavedCreatorStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SavedCreatorStatus | EnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSavedCreatorStatusFilter<$PrismaModel> | $Enums.SavedCreatorStatus
+  }
+
+  export type CreatorUserIdPlatformHandleCompoundUniqueInput = {
+    userId: string
+    platform: $Enums.SocialPlatform
+    handle: string
+  }
+
+  export type CreatorCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    platform?: SortOrder
+    handle?: SortOrder
+    name?: SortOrder
+    avatarUrl?: SortOrder
+    sourceUrl?: SortOrder
+    followersCount?: SortOrder
+    postsCount?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CreatorAvgOrderByAggregateInput = {
+    followersCount?: SortOrder
+    postsCount?: SortOrder
+  }
+
+  export type CreatorMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    platform?: SortOrder
+    handle?: SortOrder
+    name?: SortOrder
+    avatarUrl?: SortOrder
+    sourceUrl?: SortOrder
+    followersCount?: SortOrder
+    postsCount?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CreatorMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    platform?: SortOrder
+    handle?: SortOrder
+    name?: SortOrder
+    avatarUrl?: SortOrder
+    sourceUrl?: SortOrder
+    followersCount?: SortOrder
+    postsCount?: SortOrder
+    email?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CreatorSumOrderByAggregateInput = {
+    followersCount?: SortOrder
+    postsCount?: SortOrder
+  }
+
+  export type EnumSocialPlatformWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SocialPlatform | EnumSocialPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumSocialPlatformWithAggregatesFilter<$PrismaModel> | $Enums.SocialPlatform
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSocialPlatformFilter<$PrismaModel>
+    _max?: NestedEnumSocialPlatformFilter<$PrismaModel>
+  }
+
+  export type EnumSavedCreatorStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SavedCreatorStatus | EnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSavedCreatorStatusWithAggregatesFilter<$PrismaModel> | $Enums.SavedCreatorStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSavedCreatorStatusFilter<$PrismaModel>
+    _max?: NestedEnumSavedCreatorStatusFilter<$PrismaModel>
+  }
+
   export type ContractNullableScalarRelationFilter = {
     is?: ContractWhereInput | null
     isNot?: ContractWhereInput | null
@@ -42767,6 +44529,13 @@ export namespace Prisma {
     connect?: CommunityListMemberWhereUniqueInput | CommunityListMemberWhereUniqueInput[]
   }
 
+  export type CreatorCreateNestedManyWithoutUserInput = {
+    create?: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput> | CreatorCreateWithoutUserInput[] | CreatorUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CreatorCreateOrConnectWithoutUserInput | CreatorCreateOrConnectWithoutUserInput[]
+    createMany?: CreatorCreateManyUserInputEnvelope
+    connect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+  }
+
   export type CampaignEventCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<CampaignEventCreateWithoutCreatedByInput, CampaignEventUncheckedCreateWithoutCreatedByInput> | CampaignEventCreateWithoutCreatedByInput[] | CampaignEventUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: CampaignEventCreateOrConnectWithoutCreatedByInput | CampaignEventCreateOrConnectWithoutCreatedByInput[]
@@ -42909,6 +44678,13 @@ export namespace Prisma {
     connectOrCreate?: CommunityListMemberCreateOrConnectWithoutCreatorInput | CommunityListMemberCreateOrConnectWithoutCreatorInput[]
     createMany?: CommunityListMemberCreateManyCreatorInputEnvelope
     connect?: CommunityListMemberWhereUniqueInput | CommunityListMemberWhereUniqueInput[]
+  }
+
+  export type CreatorUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput> | CreatorCreateWithoutUserInput[] | CreatorUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CreatorCreateOrConnectWithoutUserInput | CreatorCreateOrConnectWithoutUserInput[]
+    createMany?: CreatorCreateManyUserInputEnvelope
+    connect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
   }
 
   export type CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput = {
@@ -43155,6 +44931,20 @@ export namespace Prisma {
     update?: CommunityListMemberUpdateWithWhereUniqueWithoutCreatorInput | CommunityListMemberUpdateWithWhereUniqueWithoutCreatorInput[]
     updateMany?: CommunityListMemberUpdateManyWithWhereWithoutCreatorInput | CommunityListMemberUpdateManyWithWhereWithoutCreatorInput[]
     deleteMany?: CommunityListMemberScalarWhereInput | CommunityListMemberScalarWhereInput[]
+  }
+
+  export type CreatorUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput> | CreatorCreateWithoutUserInput[] | CreatorUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CreatorCreateOrConnectWithoutUserInput | CreatorCreateOrConnectWithoutUserInput[]
+    upsert?: CreatorUpsertWithWhereUniqueWithoutUserInput | CreatorUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CreatorCreateManyUserInputEnvelope
+    set?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    disconnect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    delete?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    connect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    update?: CreatorUpdateWithWhereUniqueWithoutUserInput | CreatorUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CreatorUpdateManyWithWhereWithoutUserInput | CreatorUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CreatorScalarWhereInput | CreatorScalarWhereInput[]
   }
 
   export type CampaignEventUpdateManyWithoutCreatedByNestedInput = {
@@ -43437,6 +45227,20 @@ export namespace Prisma {
     update?: CommunityListMemberUpdateWithWhereUniqueWithoutCreatorInput | CommunityListMemberUpdateWithWhereUniqueWithoutCreatorInput[]
     updateMany?: CommunityListMemberUpdateManyWithWhereWithoutCreatorInput | CommunityListMemberUpdateManyWithWhereWithoutCreatorInput[]
     deleteMany?: CommunityListMemberScalarWhereInput | CommunityListMemberScalarWhereInput[]
+  }
+
+  export type CreatorUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput> | CreatorCreateWithoutUserInput[] | CreatorUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CreatorCreateOrConnectWithoutUserInput | CreatorCreateOrConnectWithoutUserInput[]
+    upsert?: CreatorUpsertWithWhereUniqueWithoutUserInput | CreatorUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CreatorCreateManyUserInputEnvelope
+    set?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    disconnect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    delete?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    connect?: CreatorWhereUniqueInput | CreatorWhereUniqueInput[]
+    update?: CreatorUpdateWithWhereUniqueWithoutUserInput | CreatorUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CreatorUpdateManyWithWhereWithoutUserInput | CreatorUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CreatorScalarWhereInput | CreatorScalarWhereInput[]
   }
 
   export type CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput = {
@@ -44681,6 +46485,28 @@ export namespace Prisma {
     update?: XOR<XOR<BrandProfileUpdateToOneWithWhereWithoutCrmLeadsInput, BrandProfileUpdateWithoutCrmLeadsInput>, BrandProfileUncheckedUpdateWithoutCrmLeadsInput>
   }
 
+  export type UserCreateNestedOneWithoutSavedCreatorsInput = {
+    create?: XOR<UserCreateWithoutSavedCreatorsInput, UserUncheckedCreateWithoutSavedCreatorsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSavedCreatorsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumSocialPlatformFieldUpdateOperationsInput = {
+    set?: $Enums.SocialPlatform
+  }
+
+  export type EnumSavedCreatorStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SavedCreatorStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutSavedCreatorsNestedInput = {
+    create?: XOR<UserCreateWithoutSavedCreatorsInput, UserUncheckedCreateWithoutSavedCreatorsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSavedCreatorsInput
+    upsert?: UserUpsertWithoutSavedCreatorsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSavedCreatorsInput, UserUpdateWithoutSavedCreatorsInput>, UserUncheckedUpdateWithoutSavedCreatorsInput>
+  }
+
   export type ContractCreateNestedOneWithoutTasksInput = {
     create?: XOR<ContractCreateWithoutTasksInput, ContractUncheckedCreateWithoutTasksInput>
     connectOrCreate?: ContractCreateOrConnectWithoutTasksInput
@@ -45411,6 +47237,40 @@ export namespace Prisma {
     _max?: NestedEnumLeadStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumSocialPlatformFilter<$PrismaModel = never> = {
+    equals?: $Enums.SocialPlatform | EnumSocialPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumSocialPlatformFilter<$PrismaModel> | $Enums.SocialPlatform
+  }
+
+  export type NestedEnumSavedCreatorStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SavedCreatorStatus | EnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSavedCreatorStatusFilter<$PrismaModel> | $Enums.SavedCreatorStatus
+  }
+
+  export type NestedEnumSocialPlatformWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SocialPlatform | EnumSocialPlatformFieldRefInput<$PrismaModel>
+    in?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SocialPlatform[] | ListEnumSocialPlatformFieldRefInput<$PrismaModel>
+    not?: NestedEnumSocialPlatformWithAggregatesFilter<$PrismaModel> | $Enums.SocialPlatform
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSocialPlatformFilter<$PrismaModel>
+    _max?: NestedEnumSocialPlatformFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSavedCreatorStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SavedCreatorStatus | EnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SavedCreatorStatus[] | ListEnumSavedCreatorStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSavedCreatorStatusWithAggregatesFilter<$PrismaModel> | $Enums.SavedCreatorStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSavedCreatorStatusFilter<$PrismaModel>
+    _max?: NestedEnumSavedCreatorStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumConnectionStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
@@ -45892,6 +47752,48 @@ export namespace Prisma {
 
   export type CommunityListMemberCreateManyCreatorInputEnvelope = {
     data: CommunityListMemberCreateManyCreatorInput | CommunityListMemberCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CreatorCreateWithoutUserInput = {
+    id?: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CreatorUncheckedCreateWithoutUserInput = {
+    id?: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CreatorCreateOrConnectWithoutUserInput = {
+    where: CreatorWhereUniqueInput
+    create: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput>
+  }
+
+  export type CreatorCreateManyUserInputEnvelope = {
+    data: CreatorCreateManyUserInput | CreatorCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -46588,6 +48490,42 @@ export namespace Prisma {
     addedAt?: DateTimeFilter<"CommunityListMember"> | Date | string
   }
 
+  export type CreatorUpsertWithWhereUniqueWithoutUserInput = {
+    where: CreatorWhereUniqueInput
+    update: XOR<CreatorUpdateWithoutUserInput, CreatorUncheckedUpdateWithoutUserInput>
+    create: XOR<CreatorCreateWithoutUserInput, CreatorUncheckedCreateWithoutUserInput>
+  }
+
+  export type CreatorUpdateWithWhereUniqueWithoutUserInput = {
+    where: CreatorWhereUniqueInput
+    data: XOR<CreatorUpdateWithoutUserInput, CreatorUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CreatorUpdateManyWithWhereWithoutUserInput = {
+    where: CreatorScalarWhereInput
+    data: XOR<CreatorUpdateManyMutationInput, CreatorUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CreatorScalarWhereInput = {
+    AND?: CreatorScalarWhereInput | CreatorScalarWhereInput[]
+    OR?: CreatorScalarWhereInput[]
+    NOT?: CreatorScalarWhereInput | CreatorScalarWhereInput[]
+    id?: StringFilter<"Creator"> | string
+    userId?: StringFilter<"Creator"> | string
+    platform?: EnumSocialPlatformFilter<"Creator"> | $Enums.SocialPlatform
+    handle?: StringFilter<"Creator"> | string
+    name?: StringNullableFilter<"Creator"> | string | null
+    avatarUrl?: StringNullableFilter<"Creator"> | string | null
+    sourceUrl?: StringNullableFilter<"Creator"> | string | null
+    followersCount?: IntNullableFilter<"Creator"> | number | null
+    postsCount?: IntNullableFilter<"Creator"> | number | null
+    email?: StringNullableFilter<"Creator"> | string | null
+    notes?: StringNullableFilter<"Creator"> | string | null
+    status?: EnumSavedCreatorStatusFilter<"Creator"> | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFilter<"Creator"> | Date | string
+    updatedAt?: DateTimeFilter<"Creator"> | Date | string
+  }
+
   export type CampaignEventUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: CampaignEventWhereUniqueInput
     update: XOR<CampaignEventUpdateWithoutCreatedByInput, CampaignEventUncheckedUpdateWithoutCreatedByInput>
@@ -46808,6 +48746,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -46843,6 +48782,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -47078,6 +49018,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -47113,6 +49054,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -47438,6 +49380,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -47473,6 +49416,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -47624,6 +49568,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -47659,6 +49604,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -47806,6 +49752,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -47841,6 +49788,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -47892,6 +49840,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -47927,6 +49876,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -47962,6 +49912,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -47997,6 +49948,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48048,6 +50000,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48083,6 +50036,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -48118,6 +50072,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -48153,6 +50108,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48204,6 +50160,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48239,6 +50196,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -48274,6 +50232,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -48309,6 +50268,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48360,6 +50320,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48395,6 +50356,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -48430,6 +50392,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -48465,6 +50428,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48516,6 +50480,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48551,6 +50516,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -48586,6 +50552,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -48621,6 +50588,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48661,6 +50629,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -48696,6 +50665,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -48747,6 +50717,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48782,6 +50753,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -48828,6 +50800,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -48863,6 +50836,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -49349,6 +51323,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
@@ -49384,6 +51359,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
@@ -49595,6 +51571,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
@@ -49630,6 +51607,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
@@ -49714,6 +51692,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
@@ -49749,6 +51728,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
@@ -49789,6 +51769,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
@@ -49824,6 +51805,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
@@ -49914,6 +51896,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
@@ -49949,6 +51932,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
@@ -49995,6 +51979,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
@@ -50030,6 +52015,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
@@ -50606,6 +52592,166 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutBrandNestedInput
   }
 
+  export type UserCreateWithoutSavedCreatorsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSavedCreatorsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSavedCreatorsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSavedCreatorsInput, UserUncheckedCreateWithoutSavedCreatorsInput>
+  }
+
+  export type UserUpsertWithoutSavedCreatorsInput = {
+    update: XOR<UserUpdateWithoutSavedCreatorsInput, UserUncheckedUpdateWithoutSavedCreatorsInput>
+    create: XOR<UserCreateWithoutSavedCreatorsInput, UserUncheckedCreateWithoutSavedCreatorsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSavedCreatorsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSavedCreatorsInput, UserUncheckedUpdateWithoutSavedCreatorsInput>
+  }
+
+  export type UserUpdateWithoutSavedCreatorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSavedCreatorsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
   export type ContractCreateWithoutTasksInput = {
     id?: string
     status?: $Enums.ContractStatus
@@ -50691,6 +52837,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -50726,6 +52873,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -50766,6 +52914,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -50801,6 +52950,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -50852,6 +53002,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -50887,6 +53038,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -50933,6 +53085,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -50968,6 +53121,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -51140,6 +53294,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -51175,6 +53330,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -51251,6 +53407,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -51286,6 +53443,7 @@ export namespace Prisma {
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -51321,6 +53479,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -51356,6 +53515,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -51407,6 +53567,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -51442,6 +53603,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -51810,6 +53972,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -51845,6 +54008,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -52004,6 +54168,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -52039,6 +54204,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -52074,6 +54240,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -52109,6 +54276,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -52149,6 +54317,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -52184,6 +54353,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -52224,6 +54394,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -52259,6 +54430,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -52299,6 +54471,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
@@ -52334,6 +54507,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
@@ -52444,6 +54618,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -52479,6 +54654,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -52525,6 +54701,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -52560,6 +54737,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -52606,6 +54784,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -52641,6 +54820,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -52687,6 +54867,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
@@ -52722,6 +54903,7 @@ export namespace Prisma {
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
     requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
     reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -52889,6 +55071,22 @@ export namespace Prisma {
     id?: string
     listId: string
     addedAt?: Date | string
+  }
+
+  export type CreatorCreateManyUserInput = {
+    id?: string
+    platform: $Enums.SocialPlatform
+    handle: string
+    name?: string | null
+    avatarUrl?: string | null
+    sourceUrl?: string | null
+    followersCount?: number | null
+    postsCount?: number | null
+    email?: string | null
+    notes?: string | null
+    status?: $Enums.SavedCreatorStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CampaignEventCreateManyCreatedByInput = {
@@ -53280,6 +55478,54 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     listId?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: EnumSocialPlatformFieldUpdateOperationsInput | $Enums.SocialPlatform
+    handle?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    followersCount?: NullableIntFieldUpdateOperationsInput | number | null
+    postsCount?: NullableIntFieldUpdateOperationsInput | number | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumSavedCreatorStatusFieldUpdateOperationsInput | $Enums.SavedCreatorStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CampaignEventUpdateWithoutCreatedByInput = {

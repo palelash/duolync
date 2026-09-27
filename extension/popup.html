@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duolync</title>
+    <style>
+      /* ── Reset & Base ─────────────────────────────────────────── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        width: 340px;
+        min-height: 200px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0a0a0a;
+        color: #f5f5f5;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ──────────────────────────────────────────────── */
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 18px 14px;
+        border-bottom: 1px solid #1e1e1e;
+      }
+
+      .logo {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.5px;
+        flex-shrink: 0;
+      }
+
+      .header-text h1 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #f5f5f5;
+        line-height: 1.2;
+      }
+
+      .header-text p {
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.3;
+        margin-top: 1px;
+      }
+
+      /* ── Main Content ─────────────────────────────────────────── */
+      .content {
+        padding: 16px 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      /* ── Platform Badge ───────────────────────────────────────── */
+      .platform-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        width: fit-content;
+      }
+
+      .platform-badge.instagram { background: #3d1f40; color: #e879f9; }
+      .platform-badge.tiktok    { background: #0d2e36; color: #2dd4bf; }
+      .platform-badge.youtube   { background: #3d1212; color: #f87171; }
+      .platform-badge.threads   { background: #1c1c1c; color: #a3a3a3; }
+      .platform-badge.unknown   { background: #1c1c1c; color: #6b7280; }
+
+      .platform-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      /* ── Creator Card ─────────────────────────────────────────── */
+      .creator-card {
+        background: #141414;
+        border: 1px solid #1e1e1e;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .creator-card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .avatar-wrap {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #1e1e1e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .avatar-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-placeholder {
+        font-size: 20px;
+        color: #4b5563;
+      }
+
+      .creator-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .creator-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f5f5f5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .creator-handle {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* ── Stats strip (always visible, below name/handle) ────────── */
+      .stats-strip {
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr;
+        border-top: 1px solid #222;
+      }
+
+      .stat-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 6px;
+        gap: 2px;
+      }
+
+      .stat-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: #f0f0f0;
+        line-height: 1;
+        letter-spacing: -0.3px;
+      }
+
+      .stat-value.empty {
+        color: #3f3f3f;
+        font-size: 13px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+        color: #4b5563;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+
+      .stat-divider {
+        background: #222;
+        align-self: stretch;
+      }
+
+      /* ── State Messages ───────────────────────────────────────── */
+      .state-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 20px 0;
+        text-align: center;
+      }
+
+      .state-message .icon { font-size: 28px; }
+
+      .state-message .title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #d1d5db;
+      }
+
+      .state-message .desc {
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.5;
+        max-width: 220px;
+      }
+
+      /* ── Button ───────────────────────────────────────────────── */
+      .btn-save {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s, transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        letter-spacing: 0.2px;
+      }
+
+      .btn-save:hover:not(:disabled) { opacity: 0.88; }
+      .btn-save:active:not(:disabled) { transform: scale(0.98); }
+      .btn-save:disabled { opacity: 0.45; cursor: not-allowed; }
+
+      .btn-save.success {
+        background: linear-gradient(135deg, #059669, #10b981);
+      }
+
+      .btn-save.error {
+        background: linear-gradient(135deg, #be123c, #f43f5e);
+      }
+
+      .btn-save.already-saved {
+        background: #1a1a1a;
+        border: 1px solid #2e2e2e;
+        color: #6b7280;
+      }
+
+      /* ── Saved-at hint ────────────────────────────────────────── */
+      .saved-at-hint {
+        text-align: center;
+        font-size: 10px;
+        color: #4b5563;
+        margin-top: 6px;
+      }
+
+      .saved-at-hint span {
+        color: #6b7280;
+      }
+
+      /* ── Spinner ──────────────────────────────────────────────── */
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ── Footer ──────────────────────────────────────────────── */
+      .footer {
+        padding: 10px 18px 14px;
+        text-align: center;
+        font-size: 10px;
+        color: #374151;
+      }
+
+      .footer a {
+        color: #7c3aed;
+        text-decoration: none;
+      }
+
+      /* ── Utility ──────────────────────────────────────────────── */
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">D</div>
+      <div class="header-text">
+        <h1>Duolync</h1>
+        <p>Creator discovery platform</p>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="content">
+
+      <!-- Loading state -->
+      <div id="state-loading" class="state-message">
+        <div class="spinner" style="width:22px;height:22px;margin-bottom:4px;"></div>
+        <span class="title">Detecting creator…</span>
+      </div>
+
+      <!-- Unsupported page state -->
+      <div id="state-unsupported" class="state-message hidden">
+        <div class="icon">🔍</div>
+        <span class="title">No creator detected</span>
+        <span class="desc">Navigate to a creator's profile on Instagram, TikTok, YouTube, or Threads.</span>
+      </div>
+
+      <!-- Creator found state -->
+      <div id="state-found" class="hidden">
+        <div id="platform-badge" class="platform-badge unknown">
+          <div class="platform-dot"></div>
+          <span id="platform-label">Unknown</span>
+        </div>
+
+        <div class="creator-card" style="margin-top:10px;">
+          <!-- Avatar + name row -->
+          <div class="creator-card-top">
+            <div class="avatar-wrap">
+              <img id="creator-avatar" src="" alt="avatar" />
+              <div id="avatar-placeholder" class="avatar-placeholder hidden">👤</div>
+            </div>
+            <div class="creator-info">
+              <div id="creator-name" class="creator-name">—</div>
+              <div id="creator-handle" class="creator-handle">—</div>
+            </div>
+          </div>
+
+          <!-- Stats strip — always shown, "—" when no data -->
+          <div class="stats-strip">
+            <div class="stat-block">
+              <div id="stat-followers" class="stat-value empty">—</div>
+              <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-block">
+              <div id="stat-posts" class="stat-value empty">—</div>
+              <div class="stat-label">Posts</div>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-save" class="btn-save" style="margin-top:14px;">
+          <span id="btn-icon">＋</span>
+          <span id="btn-label">Save to Duolync</span>
+        </button>
+
+        <p id="saved-at-hint" class="saved-at-hint hidden">
+          Saved on <span id="saved-at-date"></span>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a href="https://duolync.com" target="_blank">duolync.com</a>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
