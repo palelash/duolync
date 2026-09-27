@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react";
-import { inferAdditionalFields } from "better-auth/client/plugins";
+import { inferAdditionalFields, twoFactorClient } from "better-auth/client/plugins";
 import type { auth } from "@/lib/auth";
 
 // On the client side use the page's actual origin so auth works on any domain
@@ -18,7 +18,10 @@ function resolveBaseURL(): string | undefined {
 
 export const authClient = createAuthClient({
   baseURL: resolveBaseURL(),
-  plugins: [inferAdditionalFields<typeof auth>()],
+  plugins: [
+    inferAdditionalFields<typeof auth>(),
+    twoFactorClient(),
+  ],
 });
 
 export const {

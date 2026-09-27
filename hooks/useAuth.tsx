@@ -68,7 +68,7 @@ interface AuthContextType {
     password: string,
     fullName: string,
   ) => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; twoFactorRequired: boolean }>;
   signInWithProvider: (
     provider: "google" | "facebook",
     callbackURL?: string,
@@ -215,9 +215,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleSignIn = async (
     email: string,
     password: string,
-  ): Promise<{ error: Error | null }> => {
+  ): Promise<{ error: Error | null; twoFactorRequired: boolean }> => {
     const result = await baSignIn.email({ email, password });
-    return { error: result.error ? new Error(result.error.message) : null };
+    const twoFactorRequired = Boolean(
+      (result.data as { twoFactorRedirect?: boolean } | null)?.twoFactorRedirect,
+    );
+    return {
+      error: result.error ? new Error(result.error.message) : null,
+      twoFactorRequired,
+    };
   };
 
   const handleSignInWithProvider = async (
