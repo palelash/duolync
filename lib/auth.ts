@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { twoFactor } from "better-auth/plugins";
 import { db } from "@/lib/db";
 import { toPrismaRole } from "@/lib/roles";
 import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/email";
@@ -134,6 +135,11 @@ export const auth = betterAuth({
         .map((origin) => origin?.trim())
         .filter((origin): origin is string => Boolean(origin)),
     ),
+  ],
+  plugins: [
+    twoFactor({
+      issuer: "Duolync",
+    }),
   ],
 });
 

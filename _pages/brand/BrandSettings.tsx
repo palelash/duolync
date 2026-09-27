@@ -7,6 +7,7 @@ import {
   AlertTriangle, Bell, Check, Eye, EyeOff,
 } from "lucide-react";
 import ActiveSessions from "@/components/security/ActiveSessions";
+import { TwoFactorSection } from "@/components/security/TwoFactorSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -421,15 +422,8 @@ function SecurityTab() {
             </AnimatePresence>
           </div>
 
-          <div className="flex items-center justify-between py-3.5">
-            <div>
-              <p className="text-sm font-medium">Two-Factor Authentication</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Add an extra layer of security</p>
-            </div>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700">
-              Coming soon
-            </span>
-          </div>
+          {/* 2FA row */}
+          <TwoFactorSection accentColor="cyan" />
         </div>
       </Section>
 

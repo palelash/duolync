@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { AuthHoldScreen } from "@/app/_components/auth/AuthHoldScreen";
+import { TwoFactorOtpStep } from "@/app/_components/security/TwoFactorSection";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 
 type AuthTab = "signup" | "login";
@@ -66,6 +68,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
 
   const { user, profile, loading, signUp, signIn, signInWithProvider } = useAuth();
   const { toast } = useToast();
@@ -100,6 +103,7 @@ const Auth = () => {
     setEmail("");
     setPassword("");
     setFullName("");
+    setTwoFactorRequired(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,8 +117,12 @@ const Auth = () => {
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
         return;
       } else {
-        const { error } = await signIn(email, password);
+        const { error, twoFactorRequired: needs2FA } = await signIn(email, password);
         if (error) throw error;
+        if (needs2FA) {
+          setTwoFactorRequired(true);
+          return;
+        }
         toast({ title: "Welcome back!" });
       }
     } catch (err: unknown) {
@@ -339,6 +347,21 @@ const Auth = () => {
             </a>
           </div>
 
+          <AnimatePresence mode="wait">
+            {twoFactorRequired ? (
+              <TwoFactorOtpStep
+                key="2fa"
+                onBack={() => { setTwoFactorRequired(false); setPassword(""); }}
+                onSuccess={() => { toast({ title: "Welcome back!" }); }}
+              />
+            ) : (
+              <motion.div
+                key="auth-form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
           {/* Tab switcher */}
           <div className="flex bg-black/[0.04] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] rounded-xl p-1 mb-7 backdrop-blur-sm">
             {(["signup", "login"] as const).map((t) => (
@@ -513,6 +536,9 @@ const Auth = () => {
               </>
             )}
           </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
