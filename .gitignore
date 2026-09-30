@@ -30,3 +30,6 @@ dist-ssr
 
 # Design review screenshots (local only)
 .design-review/
+
+# Generated import tooling output — contains personal data, never commit
+tmp/
