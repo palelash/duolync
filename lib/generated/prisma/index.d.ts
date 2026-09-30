@@ -158,7 +158,25 @@ export type RateLimitEvent = $Result.DefaultSelection<Prisma.$RateLimitEventPayl
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const ProfileOrigin: {
+  REGISTERED: 'REGISTERED',
+  IMPORTED: 'IMPORTED'
+};
+
+export type ProfileOrigin = (typeof ProfileOrigin)[keyof typeof ProfileOrigin]
+
+
+export const ClaimStatus: {
+  NOT_APPLICABLE: 'NOT_APPLICABLE',
+  UNCLAIMED: 'UNCLAIMED',
+  CLAIM_PENDING: 'CLAIM_PENDING',
+  CLAIMED: 'CLAIMED'
+};
+
+export type ClaimStatus = (typeof ClaimStatus)[keyof typeof ClaimStatus]
+
+
+export const Role: {
   BRAND: 'BRAND',
   CREATOR: 'CREATOR',
   ADMIN: 'ADMIN'
@@ -333,6 +351,14 @@ export const ReportReason: {
 export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
 
 }
+
+export type ProfileOrigin = $Enums.ProfileOrigin
+
+export const ProfileOrigin: typeof $Enums.ProfileOrigin
+
+export type ClaimStatus = $Enums.ClaimStatus
+
+export const ClaimStatus: typeof $Enums.ClaimStatus
 
 export type Role = $Enums.Role
 
@@ -3574,6 +3600,7 @@ export namespace Prisma {
     accounts: number
     receivedConnections: number
     sentConnections: number
+    claimedCreatorProfiles: number
     receivedMessages: number
     sentMessages: number
     notifications: number
@@ -3596,6 +3623,7 @@ export namespace Prisma {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     receivedConnections?: boolean | UserCountOutputTypeCountReceivedConnectionsArgs
     sentConnections?: boolean | UserCountOutputTypeCountSentConnectionsArgs
+    claimedCreatorProfiles?: boolean | UserCountOutputTypeCountClaimedCreatorProfilesArgs
     receivedMessages?: boolean | UserCountOutputTypeCountReceivedMessagesArgs
     sentMessages?: boolean | UserCountOutputTypeCountSentMessagesArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
@@ -3644,6 +3672,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSentConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ConnectionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountClaimedCreatorProfilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreatorProfileWhereInput
   }
 
   /**
@@ -4080,6 +4115,7 @@ export namespace Prisma {
     banned: boolean | null
     banReason: string | null
     twoFactorEnabled: boolean | null
+    isImported: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -4095,6 +4131,7 @@ export namespace Prisma {
     banned: boolean | null
     banReason: string | null
     twoFactorEnabled: boolean | null
+    isImported: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -4110,6 +4147,7 @@ export namespace Prisma {
     banned: number
     banReason: number
     twoFactorEnabled: number
+    isImported: number
     _all: number
   }
 
@@ -4127,6 +4165,7 @@ export namespace Prisma {
     banned?: true
     banReason?: true
     twoFactorEnabled?: true
+    isImported?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -4142,6 +4181,7 @@ export namespace Prisma {
     banned?: true
     banReason?: true
     twoFactorEnabled?: true
+    isImported?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -4157,6 +4197,7 @@ export namespace Prisma {
     banned?: true
     banReason?: true
     twoFactorEnabled?: true
+    isImported?: true
     _all?: true
   }
 
@@ -4245,6 +4286,7 @@ export namespace Prisma {
     banned: boolean
     banReason: string | null
     twoFactorEnabled: boolean
+    isImported: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -4277,12 +4319,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: boolean
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     twoFactor?: boolean | User$twoFactorArgs<ExtArgs>
     brandProfile?: boolean | User$brandProfileArgs<ExtArgs>
     receivedConnections?: boolean | User$receivedConnectionsArgs<ExtArgs>
     sentConnections?: boolean | User$sentConnectionsArgs<ExtArgs>
     creatorProfile?: boolean | User$creatorProfileArgs<ExtArgs>
+    claimedCreatorProfiles?: boolean | User$claimedCreatorProfilesArgs<ExtArgs>
     receivedMessages?: boolean | User$receivedMessagesArgs<ExtArgs>
     sentMessages?: boolean | User$sentMessagesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -4315,6 +4359,7 @@ export namespace Prisma {
     banned?: boolean
     banReason?: boolean
     twoFactorEnabled?: boolean
+    isImported?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4330,6 +4375,7 @@ export namespace Prisma {
     banned?: boolean
     banReason?: boolean
     twoFactorEnabled?: boolean
+    isImported?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -4345,9 +4391,10 @@ export namespace Prisma {
     banned?: boolean
     banReason?: boolean
     twoFactorEnabled?: boolean
+    isImported?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "role" | "createdAt" | "updatedAt" | "hasCompletedOnboarding" | "banned" | "banReason" | "twoFactorEnabled", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "role" | "createdAt" | "updatedAt" | "hasCompletedOnboarding" | "banned" | "banReason" | "twoFactorEnabled" | "isImported", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     twoFactor?: boolean | User$twoFactorArgs<ExtArgs>
@@ -4355,6 +4402,7 @@ export namespace Prisma {
     receivedConnections?: boolean | User$receivedConnectionsArgs<ExtArgs>
     sentConnections?: boolean | User$sentConnectionsArgs<ExtArgs>
     creatorProfile?: boolean | User$creatorProfileArgs<ExtArgs>
+    claimedCreatorProfiles?: boolean | User$claimedCreatorProfilesArgs<ExtArgs>
     receivedMessages?: boolean | User$receivedMessagesArgs<ExtArgs>
     sentMessages?: boolean | User$sentMessagesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -4385,6 +4433,7 @@ export namespace Prisma {
       receivedConnections: Prisma.$ConnectionPayload<ExtArgs>[]
       sentConnections: Prisma.$ConnectionPayload<ExtArgs>[]
       creatorProfile: Prisma.$CreatorProfilePayload<ExtArgs> | null
+      claimedCreatorProfiles: Prisma.$CreatorProfilePayload<ExtArgs>[]
       receivedMessages: Prisma.$MessagePayload<ExtArgs>[]
       sentMessages: Prisma.$MessagePayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
@@ -4415,6 +4464,7 @@ export namespace Prisma {
       banned: boolean
       banReason: string | null
       twoFactorEnabled: boolean
+      isImported: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4815,6 +4865,7 @@ export namespace Prisma {
     receivedConnections<T extends User$receivedConnectionsArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedConnectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sentConnections<T extends User$sentConnectionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sentConnectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     creatorProfile<T extends User$creatorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$creatorProfileArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    claimedCreatorProfiles<T extends User$claimedCreatorProfilesArgs<ExtArgs> = {}>(args?: Subset<T, User$claimedCreatorProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receivedMessages<T extends User$receivedMessagesArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sentMessages<T extends User$sentMessagesArgs<ExtArgs> = {}>(args?: Subset<T, User$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4872,6 +4923,7 @@ export namespace Prisma {
     readonly banned: FieldRef<"User", 'Boolean'>
     readonly banReason: FieldRef<"User", 'String'>
     readonly twoFactorEnabled: FieldRef<"User", 'Boolean'>
+    readonly isImported: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -5391,6 +5443,30 @@ export namespace Prisma {
      */
     include?: CreatorProfileInclude<ExtArgs> | null
     where?: CreatorProfileWhereInput
+  }
+
+  /**
+   * User.claimedCreatorProfiles
+   */
+  export type User$claimedCreatorProfilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorProfile
+     */
+    select?: CreatorProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorProfile
+     */
+    omit?: CreatorProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorProfileInclude<ExtArgs> | null
+    where?: CreatorProfileWhereInput
+    orderBy?: CreatorProfileOrderByWithRelationInput | CreatorProfileOrderByWithRelationInput[]
+    cursor?: CreatorProfileWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CreatorProfileScalarFieldEnum | CreatorProfileScalarFieldEnum[]
   }
 
   /**
@@ -7091,6 +7167,13 @@ export namespace Prisma {
     moderationStatus: $Enums.ModerationStatus | null
     moderationNote: string | null
     moderatedAt: Date | null
+    profileOrigin: $Enums.ProfileOrigin | null
+    claimStatus: $Enums.ClaimStatus | null
+    claimedByUserId: string | null
+    claimedAt: Date | null
+    importedEmail: string | null
+    importedAt: Date | null
+    importBatchId: string | null
   }
 
   export type CreatorProfileMaxAggregateOutputType = {
@@ -7109,6 +7192,13 @@ export namespace Prisma {
     moderationStatus: $Enums.ModerationStatus | null
     moderationNote: string | null
     moderatedAt: Date | null
+    profileOrigin: $Enums.ProfileOrigin | null
+    claimStatus: $Enums.ClaimStatus | null
+    claimedByUserId: string | null
+    claimedAt: Date | null
+    importedEmail: string | null
+    importedAt: Date | null
+    importBatchId: string | null
   }
 
   export type CreatorProfileCountAggregateOutputType = {
@@ -7130,6 +7220,13 @@ export namespace Prisma {
     moderationStatus: number
     moderationNote: number
     moderatedAt: number
+    profileOrigin: number
+    claimStatus: number
+    claimedByUserId: number
+    claimedAt: number
+    importedEmail: number
+    importedAt: number
+    importBatchId: number
     _all: number
   }
 
@@ -7164,6 +7261,13 @@ export namespace Prisma {
     moderationStatus?: true
     moderationNote?: true
     moderatedAt?: true
+    profileOrigin?: true
+    claimStatus?: true
+    claimedByUserId?: true
+    claimedAt?: true
+    importedEmail?: true
+    importedAt?: true
+    importBatchId?: true
   }
 
   export type CreatorProfileMaxAggregateInputType = {
@@ -7182,6 +7286,13 @@ export namespace Prisma {
     moderationStatus?: true
     moderationNote?: true
     moderatedAt?: true
+    profileOrigin?: true
+    claimStatus?: true
+    claimedByUserId?: true
+    claimedAt?: true
+    importedEmail?: true
+    importedAt?: true
+    importBatchId?: true
   }
 
   export type CreatorProfileCountAggregateInputType = {
@@ -7203,6 +7314,13 @@ export namespace Prisma {
     moderationStatus?: true
     moderationNote?: true
     moderatedAt?: true
+    profileOrigin?: true
+    claimStatus?: true
+    claimedByUserId?: true
+    claimedAt?: true
+    importedEmail?: true
+    importedAt?: true
+    importBatchId?: true
     _all?: true
   }
 
@@ -7311,6 +7429,13 @@ export namespace Prisma {
     moderationStatus: $Enums.ModerationStatus
     moderationNote: string | null
     moderatedAt: Date | null
+    profileOrigin: $Enums.ProfileOrigin
+    claimStatus: $Enums.ClaimStatus
+    claimedByUserId: string | null
+    claimedAt: Date | null
+    importedEmail: string | null
+    importedAt: Date | null
+    importBatchId: string | null
     _count: CreatorProfileCountAggregateOutputType | null
     _avg: CreatorProfileAvgAggregateOutputType | null
     _sum: CreatorProfileSumAggregateOutputType | null
@@ -7351,11 +7476,19 @@ export namespace Prisma {
     moderationStatus?: boolean
     moderationNote?: boolean
     moderatedAt?: boolean
+    profileOrigin?: boolean
+    claimStatus?: boolean
+    claimedByUserId?: boolean
+    claimedAt?: boolean
+    importedEmail?: boolean
+    importedAt?: boolean
+    importBatchId?: boolean
     applications?: boolean | CreatorProfile$applicationsArgs<ExtArgs>
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
@@ -7378,7 +7511,15 @@ export namespace Prisma {
     moderationStatus?: boolean
     moderationNote?: boolean
     moderatedAt?: boolean
+    profileOrigin?: boolean
+    claimStatus?: boolean
+    claimedByUserId?: boolean
+    claimedAt?: boolean
+    importedEmail?: boolean
+    importedAt?: boolean
+    importBatchId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
   export type CreatorProfileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7400,7 +7541,15 @@ export namespace Prisma {
     moderationStatus?: boolean
     moderationNote?: boolean
     moderatedAt?: boolean
+    profileOrigin?: boolean
+    claimStatus?: boolean
+    claimedByUserId?: boolean
+    claimedAt?: boolean
+    importedEmail?: boolean
+    importedAt?: boolean
+    importBatchId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
   export type CreatorProfileSelectScalar = {
@@ -7422,22 +7571,32 @@ export namespace Prisma {
     moderationStatus?: boolean
     moderationNote?: boolean
     moderatedAt?: boolean
+    profileOrigin?: boolean
+    claimStatus?: boolean
+    claimedByUserId?: boolean
+    claimedAt?: boolean
+    importedEmail?: boolean
+    importedAt?: boolean
+    importBatchId?: boolean
   }
 
-  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "niche" | "primaryPlatform" | "location" | "totalFollowers" | "avgEngagementRate" | "lastStatsUpdate" | "socialLinks" | "followerCount" | "averageEngagement" | "topNiches" | "lastSyncedAt" | "connectedPlatforms" | "moderationStatus" | "moderationNote" | "moderatedAt", ExtArgs["result"]["creatorProfile"]>
+  export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "bio" | "niche" | "primaryPlatform" | "location" | "totalFollowers" | "avgEngagementRate" | "lastStatsUpdate" | "socialLinks" | "followerCount" | "averageEngagement" | "topNiches" | "lastSyncedAt" | "connectedPlatforms" | "moderationStatus" | "moderationNote" | "moderatedAt" | "profileOrigin" | "claimStatus" | "claimedByUserId" | "claimedAt" | "importedEmail" | "importedAt" | "importBatchId", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applications?: boolean | CreatorProfile$applicationsArgs<ExtArgs>
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CreatorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
   }
   export type CreatorProfileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
   }
 
   export type $CreatorProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7448,6 +7607,7 @@ export namespace Prisma {
       campaignEvents: Prisma.$CampaignEventPayload<ExtArgs>[]
       socialPosts: Prisma.$SocialPostPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
+      claimedBy: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7468,6 +7628,13 @@ export namespace Prisma {
       moderationStatus: $Enums.ModerationStatus
       moderationNote: string | null
       moderatedAt: Date | null
+      profileOrigin: $Enums.ProfileOrigin
+      claimStatus: $Enums.ClaimStatus
+      claimedByUserId: string | null
+      claimedAt: Date | null
+      importedEmail: string | null
+      importedAt: Date | null
+      importBatchId: string | null
     }, ExtArgs["result"]["creatorProfile"]>
     composites: {}
   }
@@ -7867,6 +8034,7 @@ export namespace Prisma {
     campaignEvents<T extends CreatorProfile$campaignEventsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$campaignEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     socialPosts<T extends CreatorProfile$socialPostsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$socialPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SocialPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    claimedBy<T extends CreatorProfile$claimedByArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$claimedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7914,6 +8082,13 @@ export namespace Prisma {
     readonly moderationStatus: FieldRef<"CreatorProfile", 'ModerationStatus'>
     readonly moderationNote: FieldRef<"CreatorProfile", 'String'>
     readonly moderatedAt: FieldRef<"CreatorProfile", 'DateTime'>
+    readonly profileOrigin: FieldRef<"CreatorProfile", 'ProfileOrigin'>
+    readonly claimStatus: FieldRef<"CreatorProfile", 'ClaimStatus'>
+    readonly claimedByUserId: FieldRef<"CreatorProfile", 'String'>
+    readonly claimedAt: FieldRef<"CreatorProfile", 'DateTime'>
+    readonly importedEmail: FieldRef<"CreatorProfile", 'String'>
+    readonly importedAt: FieldRef<"CreatorProfile", 'DateTime'>
+    readonly importBatchId: FieldRef<"CreatorProfile", 'String'>
   }
     
 
@@ -8408,6 +8583,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SocialPostScalarFieldEnum | SocialPostScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.claimedBy
+   */
+  export type CreatorProfile$claimedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -36894,7 +37088,8 @@ export namespace Prisma {
     hasCompletedOnboarding: 'hasCompletedOnboarding',
     banned: 'banned',
     banReason: 'banReason',
-    twoFactorEnabled: 'twoFactorEnabled'
+    twoFactorEnabled: 'twoFactorEnabled',
+    isImported: 'isImported'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -36933,7 +37128,14 @@ export namespace Prisma {
     connectedPlatforms: 'connectedPlatforms',
     moderationStatus: 'moderationStatus',
     moderationNote: 'moderationNote',
-    moderatedAt: 'moderatedAt'
+    moderatedAt: 'moderatedAt',
+    profileOrigin: 'profileOrigin',
+    claimStatus: 'claimStatus',
+    claimedByUserId: 'claimedByUserId',
+    claimedAt: 'claimedAt',
+    importedEmail: 'importedEmail',
+    importedAt: 'importedAt',
+    importBatchId: 'importBatchId'
   };
 
   export type CreatorProfileScalarFieldEnum = (typeof CreatorProfileScalarFieldEnum)[keyof typeof CreatorProfileScalarFieldEnum]
@@ -37457,6 +37659,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ProfileOrigin'
+   */
+  export type EnumProfileOriginFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProfileOrigin'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProfileOrigin[]'
+   */
+  export type ListEnumProfileOriginFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProfileOrigin[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ClaimStatus'
+   */
+  export type EnumClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClaimStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ClaimStatus[]'
+   */
+  export type ListEnumClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClaimStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'CampaignStatus'
    */
   export type EnumCampaignStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CampaignStatus'>
@@ -37671,12 +37901,14 @@ export namespace Prisma {
     banned?: BoolFilter<"User"> | boolean
     banReason?: StringNullableFilter<"User"> | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
+    isImported?: BoolFilter<"User"> | boolean
     accounts?: AccountListRelationFilter
     twoFactor?: XOR<TwoFactorNullableScalarRelationFilter, TwoFactorWhereInput> | null
     brandProfile?: XOR<BrandProfileNullableScalarRelationFilter, BrandProfileWhereInput> | null
     receivedConnections?: ConnectionListRelationFilter
     sentConnections?: ConnectionListRelationFilter
     creatorProfile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
+    claimedCreatorProfiles?: CreatorProfileListRelationFilter
     receivedMessages?: MessageListRelationFilter
     sentMessages?: MessageListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -37708,12 +37940,14 @@ export namespace Prisma {
     banned?: SortOrder
     banReason?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
+    isImported?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     twoFactor?: TwoFactorOrderByWithRelationInput
     brandProfile?: BrandProfileOrderByWithRelationInput
     receivedConnections?: ConnectionOrderByRelationAggregateInput
     sentConnections?: ConnectionOrderByRelationAggregateInput
     creatorProfile?: CreatorProfileOrderByWithRelationInput
+    claimedCreatorProfiles?: CreatorProfileOrderByRelationAggregateInput
     receivedMessages?: MessageOrderByRelationAggregateInput
     sentMessages?: MessageOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
@@ -37748,12 +37982,14 @@ export namespace Prisma {
     banned?: BoolFilter<"User"> | boolean
     banReason?: StringNullableFilter<"User"> | string | null
     twoFactorEnabled?: BoolFilter<"User"> | boolean
+    isImported?: BoolFilter<"User"> | boolean
     accounts?: AccountListRelationFilter
     twoFactor?: XOR<TwoFactorNullableScalarRelationFilter, TwoFactorWhereInput> | null
     brandProfile?: XOR<BrandProfileNullableScalarRelationFilter, BrandProfileWhereInput> | null
     receivedConnections?: ConnectionListRelationFilter
     sentConnections?: ConnectionListRelationFilter
     creatorProfile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
+    claimedCreatorProfiles?: CreatorProfileListRelationFilter
     receivedMessages?: MessageListRelationFilter
     sentMessages?: MessageListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -37785,6 +38021,7 @@ export namespace Prisma {
     banned?: SortOrder
     banReason?: SortOrderInput | SortOrder
     twoFactorEnabled?: SortOrder
+    isImported?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -37806,6 +38043,7 @@ export namespace Prisma {
     banned?: BoolWithAggregatesFilter<"User"> | boolean
     banReason?: StringNullableWithAggregatesFilter<"User"> | string | null
     twoFactorEnabled?: BoolWithAggregatesFilter<"User"> | boolean
+    isImported?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type BrandProfileWhereInput = {
@@ -37920,11 +38158,19 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFilter<"CreatorProfile"> | $Enums.ModerationStatus
     moderationNote?: StringNullableFilter<"CreatorProfile"> | string | null
     moderatedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    profileOrigin?: EnumProfileOriginFilter<"CreatorProfile"> | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFilter<"CreatorProfile"> | $Enums.ClaimStatus
+    claimedByUserId?: StringNullableFilter<"CreatorProfile"> | string | null
+    claimedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importedEmail?: StringNullableFilter<"CreatorProfile"> | string | null
+    importedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importBatchId?: StringNullableFilter<"CreatorProfile"> | string | null
     applications?: ApplicationListRelationFilter
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    claimedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type CreatorProfileOrderByWithRelationInput = {
@@ -37946,16 +38192,25 @@ export namespace Prisma {
     moderationStatus?: SortOrder
     moderationNote?: SortOrderInput | SortOrder
     moderatedAt?: SortOrderInput | SortOrder
+    profileOrigin?: SortOrder
+    claimStatus?: SortOrder
+    claimedByUserId?: SortOrderInput | SortOrder
+    claimedAt?: SortOrderInput | SortOrder
+    importedEmail?: SortOrderInput | SortOrder
+    importedAt?: SortOrderInput | SortOrder
+    importBatchId?: SortOrderInput | SortOrder
     applications?: ApplicationOrderByRelationAggregateInput
     contracts?: ContractOrderByRelationAggregateInput
     campaignEvents?: CampaignEventOrderByRelationAggregateInput
     socialPosts?: SocialPostOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
+    claimedBy?: UserOrderByWithRelationInput
   }
 
   export type CreatorProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     userId?: string
+    claimedByUserId?: string
     AND?: CreatorProfileWhereInput | CreatorProfileWhereInput[]
     OR?: CreatorProfileWhereInput[]
     NOT?: CreatorProfileWhereInput | CreatorProfileWhereInput[]
@@ -37975,12 +38230,19 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFilter<"CreatorProfile"> | $Enums.ModerationStatus
     moderationNote?: StringNullableFilter<"CreatorProfile"> | string | null
     moderatedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    profileOrigin?: EnumProfileOriginFilter<"CreatorProfile"> | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFilter<"CreatorProfile"> | $Enums.ClaimStatus
+    claimedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importedEmail?: StringNullableFilter<"CreatorProfile"> | string | null
+    importedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importBatchId?: StringNullableFilter<"CreatorProfile"> | string | null
     applications?: ApplicationListRelationFilter
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "userId">
+    claimedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "userId" | "claimedByUserId">
 
   export type CreatorProfileOrderByWithAggregationInput = {
     id?: SortOrder
@@ -38001,6 +38263,13 @@ export namespace Prisma {
     moderationStatus?: SortOrder
     moderationNote?: SortOrderInput | SortOrder
     moderatedAt?: SortOrderInput | SortOrder
+    profileOrigin?: SortOrder
+    claimStatus?: SortOrder
+    claimedByUserId?: SortOrderInput | SortOrder
+    claimedAt?: SortOrderInput | SortOrder
+    importedEmail?: SortOrderInput | SortOrder
+    importedAt?: SortOrderInput | SortOrder
+    importBatchId?: SortOrderInput | SortOrder
     _count?: CreatorProfileCountOrderByAggregateInput
     _avg?: CreatorProfileAvgOrderByAggregateInput
     _max?: CreatorProfileMaxOrderByAggregateInput
@@ -38030,6 +38299,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusWithAggregatesFilter<"CreatorProfile"> | $Enums.ModerationStatus
     moderationNote?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
     moderatedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
+    profileOrigin?: EnumProfileOriginWithAggregatesFilter<"CreatorProfile"> | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusWithAggregatesFilter<"CreatorProfile"> | $Enums.ClaimStatus
+    claimedByUserId?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    claimedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
+    importedEmail?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
+    importedAt?: DateTimeNullableWithAggregatesFilter<"CreatorProfile"> | Date | string | null
+    importBatchId?: StringNullableWithAggregatesFilter<"CreatorProfile"> | string | null
   }
 
   export type SocialPostWhereInput = {
@@ -39967,12 +40243,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -40004,12 +40282,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -40041,12 +40321,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -40078,12 +40360,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -40115,6 +40399,7 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -40130,6 +40415,7 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -40145,6 +40431,7 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type BrandProfileCreateInput = {
@@ -40268,11 +40555,18 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateInput = {
@@ -40294,6 +40588,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -40318,11 +40619,18 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateInput = {
@@ -40344,6 +40652,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
@@ -40369,6 +40684,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
   }
 
   export type CreatorProfileUpdateManyMutationInput = {
@@ -40389,6 +40711,12 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CreatorProfileUncheckedUpdateManyInput = {
@@ -40410,6 +40738,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SocialPostCreateInput = {
@@ -42527,6 +42862,12 @@ export namespace Prisma {
     isNot?: CreatorProfileWhereInput | null
   }
 
+  export type CreatorProfileListRelationFilter = {
+    every?: CreatorProfileWhereInput
+    some?: CreatorProfileWhereInput
+    none?: CreatorProfileWhereInput
+  }
+
   export type MessageListRelationFilter = {
     every?: MessageWhereInput
     some?: MessageWhereInput
@@ -42606,6 +42947,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type CreatorProfileOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type MessageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -42663,6 +43008,7 @@ export namespace Prisma {
     banned?: SortOrder
     banReason?: SortOrder
     twoFactorEnabled?: SortOrder
+    isImported?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -42678,6 +43024,7 @@ export namespace Prisma {
     banned?: SortOrder
     banReason?: SortOrder
     twoFactorEnabled?: SortOrder
+    isImported?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -42693,6 +43040,7 @@ export namespace Prisma {
     banned?: SortOrder
     banReason?: SortOrder
     twoFactorEnabled?: SortOrder
+    isImported?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -42961,6 +43309,20 @@ export namespace Prisma {
     not?: NestedEnumModerationStatusFilter<$PrismaModel> | $Enums.ModerationStatus
   }
 
+  export type EnumProfileOriginFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileOrigin | EnumProfileOriginFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileOriginFilter<$PrismaModel> | $Enums.ProfileOrigin
+  }
+
+  export type EnumClaimStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClaimStatus | EnumClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClaimStatusFilter<$PrismaModel> | $Enums.ClaimStatus
+  }
+
   export type ApplicationListRelationFilter = {
     every?: ApplicationWhereInput
     some?: ApplicationWhereInput
@@ -42971,6 +43333,11 @@ export namespace Prisma {
     every?: SocialPostWhereInput
     some?: SocialPostWhereInput
     none?: SocialPostWhereInput
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
   }
 
   export type ApplicationOrderByRelationAggregateInput = {
@@ -43000,6 +43367,13 @@ export namespace Prisma {
     moderationStatus?: SortOrder
     moderationNote?: SortOrder
     moderatedAt?: SortOrder
+    profileOrigin?: SortOrder
+    claimStatus?: SortOrder
+    claimedByUserId?: SortOrder
+    claimedAt?: SortOrder
+    importedEmail?: SortOrder
+    importedAt?: SortOrder
+    importBatchId?: SortOrder
   }
 
   export type CreatorProfileAvgOrderByAggregateInput = {
@@ -43025,6 +43399,13 @@ export namespace Prisma {
     moderationStatus?: SortOrder
     moderationNote?: SortOrder
     moderatedAt?: SortOrder
+    profileOrigin?: SortOrder
+    claimStatus?: SortOrder
+    claimedByUserId?: SortOrder
+    claimedAt?: SortOrder
+    importedEmail?: SortOrder
+    importedAt?: SortOrder
+    importBatchId?: SortOrder
   }
 
   export type CreatorProfileMinOrderByAggregateInput = {
@@ -43043,6 +43424,13 @@ export namespace Prisma {
     moderationStatus?: SortOrder
     moderationNote?: SortOrder
     moderatedAt?: SortOrder
+    profileOrigin?: SortOrder
+    claimStatus?: SortOrder
+    claimedByUserId?: SortOrder
+    claimedAt?: SortOrder
+    importedEmail?: SortOrder
+    importedAt?: SortOrder
+    importBatchId?: SortOrder
   }
 
   export type CreatorProfileSumOrderByAggregateInput = {
@@ -43138,6 +43526,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumModerationStatusFilter<$PrismaModel>
     _max?: NestedEnumModerationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumProfileOriginWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileOrigin | EnumProfileOriginFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileOriginWithAggregatesFilter<$PrismaModel> | $Enums.ProfileOrigin
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProfileOriginFilter<$PrismaModel>
+    _max?: NestedEnumProfileOriginFilter<$PrismaModel>
+  }
+
+  export type EnumClaimStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClaimStatus | EnumClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClaimStatusWithAggregatesFilter<$PrismaModel> | $Enums.ClaimStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClaimStatusFilter<$PrismaModel>
+    _max?: NestedEnumClaimStatusFilter<$PrismaModel>
   }
 
   export type CreatorProfileScalarRelationFilter = {
@@ -43674,11 +44082,6 @@ export namespace Prisma {
   export type CampaignEventScalarRelationFilter = {
     is?: CampaignEventWhereInput
     isNot?: CampaignEventWhereInput
-  }
-
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
   }
 
   export type CampaignEventUpdateCountOrderByAggregateInput = {
@@ -44480,6 +44883,13 @@ export namespace Prisma {
     connect?: CreatorProfileWhereUniqueInput
   }
 
+  export type CreatorProfileCreateNestedManyWithoutClaimedByInput = {
+    create?: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput> | CreatorProfileCreateWithoutClaimedByInput[] | CreatorProfileUncheckedCreateWithoutClaimedByInput[]
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutClaimedByInput | CreatorProfileCreateOrConnectWithoutClaimedByInput[]
+    createMany?: CreatorProfileCreateManyClaimedByInputEnvelope
+    connect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+  }
+
   export type MessageCreateNestedManyWithoutReceiverInput = {
     create?: XOR<MessageCreateWithoutReceiverInput, MessageUncheckedCreateWithoutReceiverInput> | MessageCreateWithoutReceiverInput[] | MessageUncheckedCreateWithoutReceiverInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutReceiverInput | MessageCreateOrConnectWithoutReceiverInput[]
@@ -44629,6 +45039,13 @@ export namespace Prisma {
     create?: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutUserInput
     connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput = {
+    create?: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput> | CreatorProfileCreateWithoutClaimedByInput[] | CreatorProfileUncheckedCreateWithoutClaimedByInput[]
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutClaimedByInput | CreatorProfileCreateOrConnectWithoutClaimedByInput[]
+    createMany?: CreatorProfileCreateManyClaimedByInputEnvelope
+    connect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
   }
 
   export type MessageUncheckedCreateNestedManyWithoutReceiverInput = {
@@ -44833,6 +45250,20 @@ export namespace Prisma {
     delete?: CreatorProfileWhereInput | boolean
     connect?: CreatorProfileWhereUniqueInput
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutUserInput, CreatorProfileUpdateWithoutUserInput>, CreatorProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CreatorProfileUpdateManyWithoutClaimedByNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput> | CreatorProfileCreateWithoutClaimedByInput[] | CreatorProfileUncheckedCreateWithoutClaimedByInput[]
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutClaimedByInput | CreatorProfileCreateOrConnectWithoutClaimedByInput[]
+    upsert?: CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput | CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput[]
+    createMany?: CreatorProfileCreateManyClaimedByInputEnvelope
+    set?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    disconnect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    delete?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    connect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    update?: CreatorProfileUpdateWithWhereUniqueWithoutClaimedByInput | CreatorProfileUpdateWithWhereUniqueWithoutClaimedByInput[]
+    updateMany?: CreatorProfileUpdateManyWithWhereWithoutClaimedByInput | CreatorProfileUpdateManyWithWhereWithoutClaimedByInput[]
+    deleteMany?: CreatorProfileScalarWhereInput | CreatorProfileScalarWhereInput[]
   }
 
   export type MessageUpdateManyWithoutReceiverNestedInput = {
@@ -45129,6 +45560,20 @@ export namespace Prisma {
     delete?: CreatorProfileWhereInput | boolean
     connect?: CreatorProfileWhereUniqueInput
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutUserInput, CreatorProfileUpdateWithoutUserInput>, CreatorProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput> | CreatorProfileCreateWithoutClaimedByInput[] | CreatorProfileUncheckedCreateWithoutClaimedByInput[]
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutClaimedByInput | CreatorProfileCreateOrConnectWithoutClaimedByInput[]
+    upsert?: CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput | CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput[]
+    createMany?: CreatorProfileCreateManyClaimedByInputEnvelope
+    set?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    disconnect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    delete?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    connect?: CreatorProfileWhereUniqueInput | CreatorProfileWhereUniqueInput[]
+    update?: CreatorProfileUpdateWithWhereUniqueWithoutClaimedByInput | CreatorProfileUpdateWithWhereUniqueWithoutClaimedByInput[]
+    updateMany?: CreatorProfileUpdateManyWithWhereWithoutClaimedByInput | CreatorProfileUpdateManyWithWhereWithoutClaimedByInput[]
+    deleteMany?: CreatorProfileScalarWhereInput | CreatorProfileScalarWhereInput[]
   }
 
   export type MessageUncheckedUpdateManyWithoutReceiverNestedInput = {
@@ -45621,6 +46066,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutClaimedCreatorProfilesInput = {
+    create?: XOR<UserCreateWithoutClaimedCreatorProfilesInput, UserUncheckedCreateWithoutClaimedCreatorProfilesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutClaimedCreatorProfilesInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ApplicationUncheckedCreateNestedManyWithoutCreatorInput = {
     create?: XOR<ApplicationCreateWithoutCreatorInput, ApplicationUncheckedCreateWithoutCreatorInput> | ApplicationCreateWithoutCreatorInput[] | ApplicationUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutCreatorInput | ApplicationCreateOrConnectWithoutCreatorInput[]
@@ -45699,6 +46150,14 @@ export namespace Prisma {
     set?: $Enums.ModerationStatus
   }
 
+  export type EnumProfileOriginFieldUpdateOperationsInput = {
+    set?: $Enums.ProfileOrigin
+  }
+
+  export type EnumClaimStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ClaimStatus
+  }
+
   export type ApplicationUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<ApplicationCreateWithoutCreatorInput, ApplicationUncheckedCreateWithoutCreatorInput> | ApplicationCreateWithoutCreatorInput[] | ApplicationUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutCreatorInput | ApplicationCreateOrConnectWithoutCreatorInput[]
@@ -45761,6 +46220,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCreatorProfileInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatorProfileInput, UserUpdateWithoutCreatorProfileInput>, UserUncheckedUpdateWithoutCreatorProfileInput>
+  }
+
+  export type UserUpdateOneWithoutClaimedCreatorProfilesNestedInput = {
+    create?: XOR<UserCreateWithoutClaimedCreatorProfilesInput, UserUncheckedCreateWithoutClaimedCreatorProfilesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutClaimedCreatorProfilesInput
+    upsert?: UserUpsertWithoutClaimedCreatorProfilesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutClaimedCreatorProfilesInput, UserUpdateWithoutClaimedCreatorProfilesInput>, UserUncheckedUpdateWithoutClaimedCreatorProfilesInput>
   }
 
   export type ApplicationUncheckedUpdateManyWithoutCreatorNestedInput = {
@@ -47030,6 +47499,20 @@ export namespace Prisma {
     not?: NestedEnumModerationStatusFilter<$PrismaModel> | $Enums.ModerationStatus
   }
 
+  export type NestedEnumProfileOriginFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileOrigin | EnumProfileOriginFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileOriginFilter<$PrismaModel> | $Enums.ProfileOrigin
+  }
+
+  export type NestedEnumClaimStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClaimStatus | EnumClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClaimStatusFilter<$PrismaModel> | $Enums.ClaimStatus
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -47116,6 +47599,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumModerationStatusFilter<$PrismaModel>
     _max?: NestedEnumModerationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProfileOriginWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileOrigin | EnumProfileOriginFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileOrigin[] | ListEnumProfileOriginFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileOriginWithAggregatesFilter<$PrismaModel> | $Enums.ProfileOrigin
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProfileOriginFilter<$PrismaModel>
+    _max?: NestedEnumProfileOriginFilter<$PrismaModel>
+  }
+
+  export type NestedEnumClaimStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClaimStatus | EnumClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClaimStatus[] | ListEnumClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumClaimStatusWithAggregatesFilter<$PrismaModel> | $Enums.ClaimStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClaimStatusFilter<$PrismaModel>
+    _max?: NestedEnumClaimStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumCampaignStatusFilter<$PrismaModel = never> = {
@@ -47522,10 +48025,17 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutUserInput = {
@@ -47546,6 +48056,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -47555,6 +48072,78 @@ export namespace Prisma {
   export type CreatorProfileCreateOrConnectWithoutUserInput = {
     where: CreatorProfileWhereUniqueInput
     create: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type CreatorProfileCreateWithoutClaimedByInput = {
+    id?: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationCreateNestedManyWithoutCreatorInput
+    contracts?: ContractCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutClaimedByInput = {
+    id?: string
+    userId: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutClaimedByInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput>
+  }
+
+  export type CreatorProfileCreateManyClaimedByInputEnvelope = {
+    data: CreatorProfileCreateManyClaimedByInput | CreatorProfileCreateManyClaimedByInput[]
+    skipDuplicates?: boolean
   }
 
   export type MessageCreateWithoutReceiverInput = {
@@ -48267,10 +48856,17 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutUserInput = {
@@ -48291,10 +48887,64 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+  }
+
+  export type CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput = {
+    where: CreatorProfileWhereUniqueInput
+    update: XOR<CreatorProfileUpdateWithoutClaimedByInput, CreatorProfileUncheckedUpdateWithoutClaimedByInput>
+    create: XOR<CreatorProfileCreateWithoutClaimedByInput, CreatorProfileUncheckedCreateWithoutClaimedByInput>
+  }
+
+  export type CreatorProfileUpdateWithWhereUniqueWithoutClaimedByInput = {
+    where: CreatorProfileWhereUniqueInput
+    data: XOR<CreatorProfileUpdateWithoutClaimedByInput, CreatorProfileUncheckedUpdateWithoutClaimedByInput>
+  }
+
+  export type CreatorProfileUpdateManyWithWhereWithoutClaimedByInput = {
+    where: CreatorProfileScalarWhereInput
+    data: XOR<CreatorProfileUpdateManyMutationInput, CreatorProfileUncheckedUpdateManyWithoutClaimedByInput>
+  }
+
+  export type CreatorProfileScalarWhereInput = {
+    AND?: CreatorProfileScalarWhereInput | CreatorProfileScalarWhereInput[]
+    OR?: CreatorProfileScalarWhereInput[]
+    NOT?: CreatorProfileScalarWhereInput | CreatorProfileScalarWhereInput[]
+    id?: StringFilter<"CreatorProfile"> | string
+    userId?: StringFilter<"CreatorProfile"> | string
+    bio?: StringNullableFilter<"CreatorProfile"> | string | null
+    niche?: StringNullableFilter<"CreatorProfile"> | string | null
+    primaryPlatform?: StringNullableFilter<"CreatorProfile"> | string | null
+    location?: StringNullableFilter<"CreatorProfile"> | string | null
+    totalFollowers?: IntFilter<"CreatorProfile"> | number
+    avgEngagementRate?: FloatFilter<"CreatorProfile"> | number
+    lastStatsUpdate?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    socialLinks?: JsonNullableFilter<"CreatorProfile">
+    followerCount?: IntNullableFilter<"CreatorProfile"> | number | null
+    averageEngagement?: FloatNullableFilter<"CreatorProfile"> | number | null
+    topNiches?: StringNullableListFilter<"CreatorProfile">
+    lastSyncedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    connectedPlatforms?: StringNullableListFilter<"CreatorProfile">
+    moderationStatus?: EnumModerationStatusFilter<"CreatorProfile"> | $Enums.ModerationStatus
+    moderationNote?: StringNullableFilter<"CreatorProfile"> | string | null
+    moderatedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    profileOrigin?: EnumProfileOriginFilter<"CreatorProfile"> | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFilter<"CreatorProfile"> | $Enums.ClaimStatus
+    claimedByUserId?: StringNullableFilter<"CreatorProfile"> | string | null
+    claimedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importedEmail?: StringNullableFilter<"CreatorProfile"> | string | null
+    importedAt?: DateTimeNullableFilter<"CreatorProfile"> | Date | string | null
+    importBatchId?: StringNullableFilter<"CreatorProfile"> | string | null
   }
 
   export type MessageUpsertWithWhereUniqueWithoutReceiverInput = {
@@ -48734,11 +49384,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -48770,11 +49422,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -49006,11 +49660,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -49042,11 +49698,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -49368,11 +50026,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -49404,11 +50064,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -49430,6 +50092,87 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutCreatorProfileInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type UserCreateWithoutClaimedCreatorProfilesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserUncheckedCreateWithoutClaimedCreatorProfilesInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+  }
+
+  export type UserCreateOrConnectWithoutClaimedCreatorProfilesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutClaimedCreatorProfilesInput, UserUncheckedCreateWithoutClaimedCreatorProfilesInput>
   }
 
   export type ApplicationUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -49556,11 +50299,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -49592,11 +50337,100 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUpsertWithoutClaimedCreatorProfilesInput = {
+    update: XOR<UserUpdateWithoutClaimedCreatorProfilesInput, UserUncheckedUpdateWithoutClaimedCreatorProfilesInput>
+    create: XOR<UserCreateWithoutClaimedCreatorProfilesInput, UserUncheckedCreateWithoutClaimedCreatorProfilesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutClaimedCreatorProfilesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutClaimedCreatorProfilesInput, UserUncheckedUpdateWithoutClaimedCreatorProfilesInput>
+  }
+
+  export type UserUpdateWithoutClaimedCreatorProfilesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutClaimedCreatorProfilesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -49633,10 +50467,17 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutSocialPostsInput = {
@@ -49658,6 +50499,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
@@ -49697,10 +50545,17 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutSocialPostsInput = {
@@ -49722,6 +50577,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
@@ -49740,11 +50602,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -49776,11 +50640,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -49828,11 +50694,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -49864,11 +50732,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -49900,12 +50770,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -49936,12 +50808,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -49988,12 +50862,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -50024,12 +50900,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -50060,11 +50938,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -50096,11 +50976,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -50148,11 +51030,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -50184,11 +51068,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -50220,12 +51106,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -50256,12 +51144,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -50308,12 +51198,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -50344,12 +51236,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -50380,12 +51274,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -50416,12 +51312,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -50468,12 +51366,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -50504,12 +51404,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -50540,12 +51442,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
@@ -50576,12 +51480,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
@@ -50617,12 +51523,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
@@ -50653,12 +51561,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
@@ -50705,12 +51615,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
@@ -50741,12 +51653,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
@@ -50788,12 +51702,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
@@ -50824,12 +51740,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
@@ -51262,10 +52180,17 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutCampaignEventsInput = {
@@ -51287,6 +52212,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -51310,12 +52242,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -51346,12 +52280,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -51504,10 +52440,17 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutCampaignEventsInput = {
@@ -51529,6 +52472,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -51558,12 +52508,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -51594,12 +52546,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -51679,12 +52633,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -51715,12 +52671,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -51756,12 +52714,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -51792,12 +52752,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -51883,12 +52845,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -51919,12 +52883,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -51966,12 +52932,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -52002,12 +52970,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -52102,10 +53072,17 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutContractsInput = {
@@ -52127,6 +53104,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -52322,10 +53306,17 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutContractsInput = {
@@ -52347,6 +53338,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -52605,12 +53603,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -52641,12 +53641,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -52693,12 +53695,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -52729,12 +53733,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -52825,11 +53831,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -52861,11 +53869,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -52902,11 +53912,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -52938,11 +53950,13 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -52990,11 +54004,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -53026,11 +54042,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -53073,11 +54091,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -53109,11 +54129,13 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -53282,12 +54304,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -53318,12 +54342,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -53395,12 +54421,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -53431,12 +54459,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -53467,12 +54497,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
@@ -53503,12 +54535,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
@@ -53555,12 +54589,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
@@ -53591,12 +54627,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
@@ -53691,10 +54729,17 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutApplicationsInput = {
@@ -53716,6 +54761,13 @@ export namespace Prisma {
     moderationStatus?: $Enums.ModerationStatus
     moderationNote?: string | null
     moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
@@ -53820,10 +54872,17 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutApplicationsInput = {
@@ -53845,6 +54904,13 @@ export namespace Prisma {
     moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
     moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
     moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
@@ -53959,12 +55025,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -53995,12 +55063,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -54155,12 +55225,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -54191,12 +55263,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -54227,12 +55301,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -54263,12 +55339,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -54304,12 +55382,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -54340,12 +55420,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -54381,12 +55463,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -54417,12 +55501,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -54458,12 +55544,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -54494,12 +55582,14 @@ export namespace Prisma {
     banned?: boolean
     banReason?: string | null
     twoFactorEnabled?: boolean
+    isImported?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
     brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
     receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
     sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
     receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -54605,12 +55695,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -54641,12 +55733,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -54688,12 +55782,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -54724,12 +55820,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -54771,12 +55869,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -54807,12 +55907,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -54854,12 +55956,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -54890,12 +55994,14 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     banReason?: NullableStringFieldUpdateOperationsInput | string | null
     twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
     brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
     receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
     sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -55007,6 +56113,33 @@ export namespace Prisma {
     status?: $Enums.ConnectionStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type CreatorProfileCreateManyClaimedByInput = {
+    id?: string
+    userId: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
   }
 
   export type MessageCreateManyReceiverInput = {
@@ -55286,6 +56419,95 @@ export namespace Prisma {
     status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorProfileUpdateWithoutClaimedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutClaimedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateManyWithoutClaimedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUpdateWithoutReceiverInput = {

@@ -20,12 +20,15 @@ model User {
   banned                 Boolean               @default(false)
   banReason              String?
   twoFactorEnabled       Boolean               @default(false)
+  // True for synthetic User rows created by the import script, never by real sign-up
+  isImported             Boolean               @default(false)
   accounts               Account[]
   twoFactor              TwoFactor?
   brandProfile           BrandProfile?
   receivedConnections    Connection[]          @relation("ReceivedConnections")
   sentConnections        Connection[]          @relation("SentConnections")
-  creatorProfile         CreatorProfile?
+  creatorProfile         CreatorProfile?       @relation("CreatorProfileOwner")
+  claimedCreatorProfiles CreatorProfile[]      @relation("ClaimedCreatorProfiles")
   receivedMessages       Message[]             @relation("ReceivedMessages")
   sentMessages           Message[]             @relation("SentMessages")
   notifications          Notification[]
@@ -42,6 +45,8 @@ model User {
   creatorDisputes        Dispute[]             @relation("CreatorDisputes")
   reporterDisputes       Dispute[]             @relation("ReporterDisputes")
   targetedDisputes       Dispute[]             @relation("TargetedDisputes")
+
+  @@index([isImported])
 }
 
 model BrandProfile {
@@ -81,11 +86,31 @@ model CreatorProfile {
   moderationStatus   ModerationStatus @default(PENDING)
   moderationNote     String?
   moderatedAt        DateTime?
+  // ── Provenance / claim fields ─────────────────────────────────────────────
+  // REGISTERED = normal sign-up; IMPORTED = synthetic profile from import script
+  profileOrigin      ProfileOrigin    @default(REGISTERED)
+  // NOT_APPLICABLE for real registered creators; UNCLAIMED/CLAIM_PENDING/CLAIMED for imported
+  claimStatus        ClaimStatus      @default(NOT_APPLICABLE)
+  // The real Duolync User who claimed this imported profile (future claim flow)
+  claimedByUserId    String?          @unique
+  claimedAt          DateTime?
+  // Original email from the import source row (may be placeholder or real email from CSV)
+  importedEmail      String?
+  // Timestamp of the import run that created this profile
+  importedAt         DateTime?
+  // Stable identifier for the import batch/source file (e.g. "csv-v1-2026" or "csv-v2-2026")
+  importBatchId      String?
+  // ── Relations ──────────────────────────────────────────────────────────────
   applications       Application[]
   contracts          Contract[]
   campaignEvents     CampaignEvent[]
   socialPosts        SocialPost[]
-  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User             @relation("CreatorProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
+  claimedBy          User?            @relation("ClaimedCreatorProfiles", fields: [claimedByUserId], references: [id], onDelete: SetNull)
+  // claimedByUserId is covered by @unique above
+
+  @@index([profileOrigin])
+  @@index([profileOrigin, claimStatus])
 }
 
 model SocialPost {
@@ -441,6 +466,20 @@ model Application {
   @@unique([campaignId, creatorProfileId])
   @@index([creatorProfileId])
   @@index([campaignId, status])
+}
+
+// ── Imported creator provenance ───────────────────────────────────────────────
+
+enum ProfileOrigin {
+  REGISTERED
+  IMPORTED
+}
+
+enum ClaimStatus {
+  NOT_APPLICABLE
+  UNCLAIMED
+  CLAIM_PENDING
+  CLAIMED
 }
 
 enum Role {
