@@ -376,6 +376,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           thumbnail_url: thumbnailUrl,
           custom_url: channelCustomUrl,
         },
+        dataSource: "OFFICIAL_API",
+        providerAccountId: channelId,
       },
       update: {
         followerCount: subscriberCount,
@@ -389,6 +391,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           thumbnail_url: thumbnailUrl,
           custom_url: channelCustomUrl,
         },
+        dataSource: "OFFICIAL_API",
+        providerAccountId: channelId,
       },
     });
 
@@ -400,9 +404,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       });
 
       if (creatorProfile) {
-        // Delete stale YouTube posts then re-insert fresh ones
+        // OFFICIAL_API is authoritative — replace all lower-source posts for this platform
         await db.socialPost.deleteMany({
-          where: { creatorProfileId: creatorProfile.id, platform: "youtube" },
+          where: {
+            creatorProfileId: creatorProfile.id,
+            platform: "youtube",
+            dataSource: { in: ["OFFICIAL_API", "APIFY", "LEGACY_UNKNOWN"] },
+          },
         });
 
         await db.socialPost.createMany({
@@ -417,6 +425,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             comments: v.commentCount,
             postedAt: v.publishedAt ? new Date(v.publishedAt) : null,
             fetchedAt: new Date(),
+            dataSource: "OFFICIAL_API" as const,
+            providerPostId: v.videoId, // YouTube videoId is stable
           })),
         });
       }

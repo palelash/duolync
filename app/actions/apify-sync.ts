@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { canOverwrite } from "@/lib/platform-stats-policy";
 
 // ─── Apify actor IDs ──────────────────────────────────────────────────────────
 const ACTOR_IDS = {
@@ -170,7 +171,9 @@ function extractTikTokPreview(item: TikTokVideoItem, handle: string): AccountPre
 
 function extractInstagramSync(item: InstagramProfileItem) {
   const followerCount = item.followersCount ?? 0;
-  const engagementRate = 0;
+  // Apify Instagram profile scraper does not return engagement rate data.
+  // null is the honest value — do not invent 0 or a derived formula here.
+  const engagementRate = null;
 
   const rawPosts = item.latestPosts ?? [];
   console.info(`[apify] Instagram raw post count: ${rawPosts.length}`);
@@ -398,7 +401,7 @@ export async function confirmSyncAction(
   if (!items.length) return { success: false, error: "No data available. Please try syncing again." };
 
   let followerCount: number;
-  let engagementRate: number;
+  let engagementRate: number | null;
   let posts: { postUrl: string | null; imageUrl: string | null; caption: string | null; likes: number | null; comments: number | null; views: number | null; engagementRate: number | null; postedAt: Date | null }[];
   let niches: string[];
 
@@ -428,7 +431,38 @@ export async function confirmSyncAction(
     });
     if (!creatorProfile) return { success: false, error: "Creator profile not found." };
 
-    // Per-platform upsert — persist handle in raw JSON for future one-click re-syncs
+    // ── Two-gate write policy ──────────────────────────────────────────────────
+    // Run both queries in parallel to minimise latency.
+    const [existingStats, existingToken] = await Promise.all([
+      db.platformStats.findFirst({
+        where: { userId: creatorUserId, platform },
+        select: { dataSource: true },
+      }),
+      db.platformToken.findFirst({
+        where: { userId: creatorUserId, platform },
+        select: { id: true },
+      }),
+    ]);
+
+    // Gate 1 — hard rule: any PlatformToken blocks APIFY unconditionally.
+    // This protects LEGACY_UNKNOWN rows written before provenance existed.
+    if (existingToken) {
+      return {
+        success: false,
+        error: "platform_oauth_protected",
+      };
+    }
+
+    // Gate 2 — source authority: APIFY cannot overwrite a higher-authority row.
+    if (existingStats && !canOverwrite(existingStats.dataSource, "APIFY")) {
+      return {
+        success: false,
+        error: "platform_stats_protected",
+      };
+    }
+
+    // Both gates passed — proceed with write.
+    // Delete old row and create fresh APIFY-stamped row.
     await db.platformStats.deleteMany({ where: { userId: creatorUserId, platform } });
     await db.platformStats.create({
       data: {
@@ -437,19 +471,24 @@ export async function confirmSyncAction(
         followerCount,
         engagementRate,
         fetchedAt: lastSyncedAt,
+        dataSource: "APIFY",
+        // Apify actors don't return a stable platform account ID we can trust;
+        // providerAccountId is left null until a reliable source is identified.
+        providerAccountId: null,
         ...(handle ? { raw: { handle } } : {}),
       },
     });
 
-    // Aggregate
+    // Aggregate totals across all platforms for this user
     const allStats = await db.platformStats.findMany({
       where: { userId: creatorUserId },
       select: { followerCount: true, engagementRate: true },
     });
     const totalFollowers = allStats.reduce((s, r) => s + (r.followerCount ?? 0), 0);
-    const avgEng = allStats.length
-      ? allStats.reduce((s, r) => s + (r.engagementRate ?? 0), 0) / allStats.length
-      : engagementRate;
+    const ratedStats = allStats.filter((r) => r.engagementRate !== null);
+    const avgEng = ratedStats.length
+      ? ratedStats.reduce((s, r) => s + (r.engagementRate ?? 0), 0) / ratedStats.length
+      : (engagementRate ?? 0);
 
     const connectedPlatforms = Array.from(new Set([...creatorProfile.connectedPlatforms, platform]));
 
@@ -464,12 +503,38 @@ export async function confirmSyncAction(
       },
     });
 
-    // Upsert posts
+    // ── SocialPost write policy ────────────────────────────────────────────────
     if (posts.length) {
-      await db.socialPost.deleteMany({ where: { creatorProfileId: creatorProfile.id, platform } });
-      await db.socialPost.createMany({
-        data: posts.map((p) => ({ creatorProfileId: creatorProfile.id, platform, ...p })),
+      // If OFFICIAL_API posts exist for this platform, Apify must not replace them.
+      const officialPostCount = await db.socialPost.count({
+        where: { creatorProfileId: creatorProfile.id, platform, dataSource: "OFFICIAL_API" },
       });
+
+      if (officialPostCount === 0) {
+        // No official posts — Apify may write as fallback.
+        // Only delete Apify and legacy rows; never touch other sources.
+        await db.socialPost.deleteMany({
+          where: {
+            creatorProfileId: creatorProfile.id,
+            platform,
+            dataSource: { in: ["APIFY", "LEGACY_UNKNOWN"] },
+          },
+        });
+        await db.socialPost.createMany({
+          data: posts.map((p, i) => ({
+            creatorProfileId: creatorProfile.id,
+            platform,
+            ...p,
+            dataSource: "APIFY" as const,
+            // TikTok: use stable video ID from actor response (already in posts array via index).
+            // Instagram: no stable post ID is extracted by the current actor fields; null is correct.
+            providerPostId: platform === "tiktok"
+              ? ((items as TikTokVideoItem[]).filter((v) => v.webVideoUrl || v.diggCount != null)[i]?.id ?? null)
+              : null,
+          })),
+        });
+      }
+      // else: OFFICIAL_API posts exist — Apify does not touch SocialPost for this platform.
     }
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Database update failed" };
@@ -480,7 +545,7 @@ export async function confirmSyncAction(
   revalidatePath("/creator/dashboard");
   revalidatePath(`/profile/${creatorUserId}`);
 
-  return { success: true, platformFollowers: followerCount, platformEngagement: engagementRate };
+  return { success: true, platformFollowers: followerCount, platformEngagement: engagementRate ?? 0 };
 }
 
 // ─── Legacy: start full sync run (used by poll action below) ─────────────────

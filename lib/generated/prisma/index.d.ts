@@ -158,7 +158,18 @@ export type RateLimitEvent = $Result.DefaultSelection<Prisma.$RateLimitEventPayl
  * Enums
  */
 export namespace $Enums {
-  export const ProfileOrigin: {
+  export const DataSource: {
+  OFFICIAL_API: 'OFFICIAL_API',
+  APIFY: 'APIFY',
+  RAPIDAPI: 'RAPIDAPI',
+  MANUAL_IMPORT: 'MANUAL_IMPORT',
+  LEGACY_UNKNOWN: 'LEGACY_UNKNOWN'
+};
+
+export type DataSource = (typeof DataSource)[keyof typeof DataSource]
+
+
+export const ProfileOrigin: {
   REGISTERED: 'REGISTERED',
   IMPORTED: 'IMPORTED'
 };
@@ -351,6 +362,10 @@ export const ReportReason: {
 export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
 
 }
+
+export type DataSource = $Enums.DataSource
+
+export const DataSource: typeof $Enums.DataSource
 
 export type ProfileOrigin = $Enums.ProfileOrigin
 
@@ -8662,6 +8677,8 @@ export namespace Prisma {
     engagementRate: number | null
     postedAt: Date | null
     fetchedAt: Date | null
+    dataSource: $Enums.DataSource | null
+    providerPostId: string | null
   }
 
   export type SocialPostMaxAggregateOutputType = {
@@ -8677,6 +8694,8 @@ export namespace Prisma {
     engagementRate: number | null
     postedAt: Date | null
     fetchedAt: Date | null
+    dataSource: $Enums.DataSource | null
+    providerPostId: string | null
   }
 
   export type SocialPostCountAggregateOutputType = {
@@ -8692,6 +8711,8 @@ export namespace Prisma {
     engagementRate: number
     postedAt: number
     fetchedAt: number
+    dataSource: number
+    providerPostId: number
     _all: number
   }
 
@@ -8723,6 +8744,8 @@ export namespace Prisma {
     engagementRate?: true
     postedAt?: true
     fetchedAt?: true
+    dataSource?: true
+    providerPostId?: true
   }
 
   export type SocialPostMaxAggregateInputType = {
@@ -8738,6 +8761,8 @@ export namespace Prisma {
     engagementRate?: true
     postedAt?: true
     fetchedAt?: true
+    dataSource?: true
+    providerPostId?: true
   }
 
   export type SocialPostCountAggregateInputType = {
@@ -8753,6 +8778,8 @@ export namespace Prisma {
     engagementRate?: true
     postedAt?: true
     fetchedAt?: true
+    dataSource?: true
+    providerPostId?: true
     _all?: true
   }
 
@@ -8855,6 +8882,8 @@ export namespace Prisma {
     engagementRate: number | null
     postedAt: Date | null
     fetchedAt: Date
+    dataSource: $Enums.DataSource
+    providerPostId: string | null
     _count: SocialPostCountAggregateOutputType | null
     _avg: SocialPostAvgAggregateOutputType | null
     _sum: SocialPostSumAggregateOutputType | null
@@ -8889,6 +8918,8 @@ export namespace Prisma {
     engagementRate?: boolean
     postedAt?: boolean
     fetchedAt?: boolean
+    dataSource?: boolean
+    providerPostId?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["socialPost"]>
 
@@ -8905,6 +8936,8 @@ export namespace Prisma {
     engagementRate?: boolean
     postedAt?: boolean
     fetchedAt?: boolean
+    dataSource?: boolean
+    providerPostId?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["socialPost"]>
 
@@ -8921,6 +8954,8 @@ export namespace Prisma {
     engagementRate?: boolean
     postedAt?: boolean
     fetchedAt?: boolean
+    dataSource?: boolean
+    providerPostId?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["socialPost"]>
 
@@ -8937,9 +8972,11 @@ export namespace Prisma {
     engagementRate?: boolean
     postedAt?: boolean
     fetchedAt?: boolean
+    dataSource?: boolean
+    providerPostId?: boolean
   }
 
-  export type SocialPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "platform" | "postUrl" | "imageUrl" | "caption" | "likes" | "comments" | "views" | "engagementRate" | "postedAt" | "fetchedAt", ExtArgs["result"]["socialPost"]>
+  export type SocialPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "platform" | "postUrl" | "imageUrl" | "caption" | "likes" | "comments" | "views" | "engagementRate" | "postedAt" | "fetchedAt" | "dataSource" | "providerPostId", ExtArgs["result"]["socialPost"]>
   export type SocialPostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
   }
@@ -8968,6 +9005,8 @@ export namespace Prisma {
       engagementRate: number | null
       postedAt: Date | null
       fetchedAt: Date
+      dataSource: $Enums.DataSource
+      providerPostId: string | null
     }, ExtArgs["result"]["socialPost"]>
     composites: {}
   }
@@ -9404,6 +9443,8 @@ export namespace Prisma {
     readonly engagementRate: FieldRef<"SocialPost", 'Float'>
     readonly postedAt: FieldRef<"SocialPost", 'DateTime'>
     readonly fetchedAt: FieldRef<"SocialPost", 'DateTime'>
+    readonly dataSource: FieldRef<"SocialPost", 'DataSource'>
+    readonly providerPostId: FieldRef<"SocialPost", 'String'>
   }
     
 
@@ -15344,6 +15385,8 @@ export namespace Prisma {
     postCount: number | null
     engagementRate: number | null
     fetchedAt: Date | null
+    dataSource: $Enums.DataSource | null
+    providerAccountId: string | null
   }
 
   export type PlatformStatsMaxAggregateOutputType = {
@@ -15355,6 +15398,8 @@ export namespace Prisma {
     postCount: number | null
     engagementRate: number | null
     fetchedAt: Date | null
+    dataSource: $Enums.DataSource | null
+    providerAccountId: string | null
   }
 
   export type PlatformStatsCountAggregateOutputType = {
@@ -15367,6 +15412,8 @@ export namespace Prisma {
     engagementRate: number
     fetchedAt: number
     raw: number
+    dataSource: number
+    providerAccountId: number
     _all: number
   }
 
@@ -15394,6 +15441,8 @@ export namespace Prisma {
     postCount?: true
     engagementRate?: true
     fetchedAt?: true
+    dataSource?: true
+    providerAccountId?: true
   }
 
   export type PlatformStatsMaxAggregateInputType = {
@@ -15405,6 +15454,8 @@ export namespace Prisma {
     postCount?: true
     engagementRate?: true
     fetchedAt?: true
+    dataSource?: true
+    providerAccountId?: true
   }
 
   export type PlatformStatsCountAggregateInputType = {
@@ -15417,6 +15468,8 @@ export namespace Prisma {
     engagementRate?: true
     fetchedAt?: true
     raw?: true
+    dataSource?: true
+    providerAccountId?: true
     _all?: true
   }
 
@@ -15516,6 +15569,8 @@ export namespace Prisma {
     engagementRate: number | null
     fetchedAt: Date
     raw: JsonValue | null
+    dataSource: $Enums.DataSource
+    providerAccountId: string | null
     _count: PlatformStatsCountAggregateOutputType | null
     _avg: PlatformStatsAvgAggregateOutputType | null
     _sum: PlatformStatsSumAggregateOutputType | null
@@ -15547,6 +15602,8 @@ export namespace Prisma {
     engagementRate?: boolean
     fetchedAt?: boolean
     raw?: boolean
+    dataSource?: boolean
+    providerAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["platformStats"]>
 
@@ -15560,6 +15617,8 @@ export namespace Prisma {
     engagementRate?: boolean
     fetchedAt?: boolean
     raw?: boolean
+    dataSource?: boolean
+    providerAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["platformStats"]>
 
@@ -15573,6 +15632,8 @@ export namespace Prisma {
     engagementRate?: boolean
     fetchedAt?: boolean
     raw?: boolean
+    dataSource?: boolean
+    providerAccountId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["platformStats"]>
 
@@ -15586,9 +15647,11 @@ export namespace Prisma {
     engagementRate?: boolean
     fetchedAt?: boolean
     raw?: boolean
+    dataSource?: boolean
+    providerAccountId?: boolean
   }
 
-  export type PlatformStatsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "platform" | "followerCount" | "followingCount" | "postCount" | "engagementRate" | "fetchedAt" | "raw", ExtArgs["result"]["platformStats"]>
+  export type PlatformStatsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "platform" | "followerCount" | "followingCount" | "postCount" | "engagementRate" | "fetchedAt" | "raw" | "dataSource" | "providerAccountId", ExtArgs["result"]["platformStats"]>
   export type PlatformStatsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -15614,6 +15677,8 @@ export namespace Prisma {
       engagementRate: number | null
       fetchedAt: Date
       raw: Prisma.JsonValue | null
+      dataSource: $Enums.DataSource
+      providerAccountId: string | null
     }, ExtArgs["result"]["platformStats"]>
     composites: {}
   }
@@ -16047,6 +16112,8 @@ export namespace Prisma {
     readonly engagementRate: FieldRef<"PlatformStats", 'Float'>
     readonly fetchedAt: FieldRef<"PlatformStats", 'DateTime'>
     readonly raw: FieldRef<"PlatformStats", 'Json'>
+    readonly dataSource: FieldRef<"PlatformStats", 'DataSource'>
+    readonly providerAccountId: FieldRef<"PlatformStats", 'String'>
   }
     
 
@@ -37153,7 +37220,9 @@ export namespace Prisma {
     views: 'views',
     engagementRate: 'engagementRate',
     postedAt: 'postedAt',
-    fetchedAt: 'fetchedAt'
+    fetchedAt: 'fetchedAt',
+    dataSource: 'dataSource',
+    providerPostId: 'providerPostId'
   };
 
   export type SocialPostScalarFieldEnum = (typeof SocialPostScalarFieldEnum)[keyof typeof SocialPostScalarFieldEnum]
@@ -37241,7 +37310,9 @@ export namespace Prisma {
     postCount: 'postCount',
     engagementRate: 'engagementRate',
     fetchedAt: 'fetchedAt',
-    raw: 'raw'
+    raw: 'raw',
+    dataSource: 'dataSource',
+    providerAccountId: 'providerAccountId'
   };
 
   export type PlatformStatsScalarFieldEnum = (typeof PlatformStatsScalarFieldEnum)[keyof typeof PlatformStatsScalarFieldEnum]
@@ -37683,6 +37754,20 @@ export namespace Prisma {
    * Reference to a field of type 'ClaimStatus[]'
    */
   export type ListEnumClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClaimStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DataSource'
+   */
+  export type EnumDataSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DataSource'>
+    
+
+
+  /**
+   * Reference to a field of type 'DataSource[]'
+   */
+  export type ListEnumDataSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DataSource[]'>
     
 
 
@@ -38324,6 +38409,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"SocialPost"> | number | null
     postedAt?: DateTimeNullableFilter<"SocialPost"> | Date | string | null
     fetchedAt?: DateTimeFilter<"SocialPost"> | Date | string
+    dataSource?: EnumDataSourceFilter<"SocialPost"> | $Enums.DataSource
+    providerPostId?: StringNullableFilter<"SocialPost"> | string | null
     creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
   }
 
@@ -38340,6 +38427,8 @@ export namespace Prisma {
     engagementRate?: SortOrderInput | SortOrder
     postedAt?: SortOrderInput | SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerPostId?: SortOrderInput | SortOrder
     creatorProfile?: CreatorProfileOrderByWithRelationInput
   }
 
@@ -38359,6 +38448,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"SocialPost"> | number | null
     postedAt?: DateTimeNullableFilter<"SocialPost"> | Date | string | null
     fetchedAt?: DateTimeFilter<"SocialPost"> | Date | string
+    dataSource?: EnumDataSourceFilter<"SocialPost"> | $Enums.DataSource
+    providerPostId?: StringNullableFilter<"SocialPost"> | string | null
     creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
   }, "id">
 
@@ -38375,6 +38466,8 @@ export namespace Prisma {
     engagementRate?: SortOrderInput | SortOrder
     postedAt?: SortOrderInput | SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerPostId?: SortOrderInput | SortOrder
     _count?: SocialPostCountOrderByAggregateInput
     _avg?: SocialPostAvgOrderByAggregateInput
     _max?: SocialPostMaxOrderByAggregateInput
@@ -38398,6 +38491,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableWithAggregatesFilter<"SocialPost"> | number | null
     postedAt?: DateTimeNullableWithAggregatesFilter<"SocialPost"> | Date | string | null
     fetchedAt?: DateTimeWithAggregatesFilter<"SocialPost"> | Date | string
+    dataSource?: EnumDataSourceWithAggregatesFilter<"SocialPost"> | $Enums.DataSource
+    providerPostId?: StringNullableWithAggregatesFilter<"SocialPost"> | string | null
   }
 
   export type AccountWhereInput = {
@@ -38777,6 +38872,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"PlatformStats"> | number | null
     fetchedAt?: DateTimeFilter<"PlatformStats"> | Date | string
     raw?: JsonNullableFilter<"PlatformStats">
+    dataSource?: EnumDataSourceFilter<"PlatformStats"> | $Enums.DataSource
+    providerAccountId?: StringNullableFilter<"PlatformStats"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -38790,6 +38887,8 @@ export namespace Prisma {
     engagementRate?: SortOrderInput | SortOrder
     fetchedAt?: SortOrder
     raw?: SortOrderInput | SortOrder
+    dataSource?: SortOrder
+    providerAccountId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -38807,6 +38906,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"PlatformStats"> | number | null
     fetchedAt?: DateTimeFilter<"PlatformStats"> | Date | string
     raw?: JsonNullableFilter<"PlatformStats">
+    dataSource?: EnumDataSourceFilter<"PlatformStats"> | $Enums.DataSource
+    providerAccountId?: StringNullableFilter<"PlatformStats"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId_platform">
 
@@ -38820,6 +38921,8 @@ export namespace Prisma {
     engagementRate?: SortOrderInput | SortOrder
     fetchedAt?: SortOrder
     raw?: SortOrderInput | SortOrder
+    dataSource?: SortOrder
+    providerAccountId?: SortOrderInput | SortOrder
     _count?: PlatformStatsCountOrderByAggregateInput
     _avg?: PlatformStatsAvgOrderByAggregateInput
     _max?: PlatformStatsMaxOrderByAggregateInput
@@ -38840,6 +38943,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableWithAggregatesFilter<"PlatformStats"> | number | null
     fetchedAt?: DateTimeWithAggregatesFilter<"PlatformStats"> | Date | string
     raw?: JsonNullableWithAggregatesFilter<"PlatformStats">
+    dataSource?: EnumDataSourceWithAggregatesFilter<"PlatformStats"> | $Enums.DataSource
+    providerAccountId?: StringNullableWithAggregatesFilter<"PlatformStats"> | string | null
   }
 
   export type WaitlistWhereInput = {
@@ -40759,6 +40864,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
     creatorProfile: CreatorProfileCreateNestedOneWithoutSocialPostsInput
   }
 
@@ -40775,6 +40882,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
   }
 
   export type SocialPostUpdateInput = {
@@ -40789,6 +40898,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
     creatorProfile?: CreatorProfileUpdateOneRequiredWithoutSocialPostsNestedInput
   }
 
@@ -40805,6 +40916,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SocialPostCreateManyInput = {
@@ -40820,6 +40933,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
   }
 
   export type SocialPostUpdateManyMutationInput = {
@@ -40834,6 +40949,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SocialPostUncheckedUpdateManyInput = {
@@ -40849,6 +40966,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AccountCreateInput = {
@@ -41262,6 +41381,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
     user: UserCreateNestedOneWithoutPlatformStatsInput
   }
 
@@ -41275,6 +41396,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
   }
 
   export type PlatformStatsUpdateInput = {
@@ -41286,6 +41409,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutPlatformStatsNestedInput
   }
 
@@ -41299,6 +41424,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PlatformStatsCreateManyInput = {
@@ -41311,6 +41438,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
   }
 
   export type PlatformStatsUpdateManyMutationInput = {
@@ -41322,6 +41451,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PlatformStatsUncheckedUpdateManyInput = {
@@ -41334,6 +41465,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type WaitlistCreateInput = {
@@ -43548,6 +43681,13 @@ export namespace Prisma {
     _max?: NestedEnumClaimStatusFilter<$PrismaModel>
   }
 
+  export type EnumDataSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.DataSource | EnumDataSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumDataSourceFilter<$PrismaModel> | $Enums.DataSource
+  }
+
   export type CreatorProfileScalarRelationFilter = {
     is?: CreatorProfileWhereInput
     isNot?: CreatorProfileWhereInput
@@ -43566,6 +43706,8 @@ export namespace Prisma {
     engagementRate?: SortOrder
     postedAt?: SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerPostId?: SortOrder
   }
 
   export type SocialPostAvgOrderByAggregateInput = {
@@ -43588,6 +43730,8 @@ export namespace Prisma {
     engagementRate?: SortOrder
     postedAt?: SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerPostId?: SortOrder
   }
 
   export type SocialPostMinOrderByAggregateInput = {
@@ -43603,6 +43747,8 @@ export namespace Prisma {
     engagementRate?: SortOrder
     postedAt?: SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerPostId?: SortOrder
   }
 
   export type SocialPostSumOrderByAggregateInput = {
@@ -43610,6 +43756,16 @@ export namespace Prisma {
     comments?: SortOrder
     views?: SortOrder
     engagementRate?: SortOrder
+  }
+
+  export type EnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DataSource | EnumDataSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDataSourceFilter<$PrismaModel>
+    _max?: NestedEnumDataSourceFilter<$PrismaModel>
   }
 
   export type AccountProviderIdAccountIdCompoundUniqueInput = {
@@ -43811,6 +43967,8 @@ export namespace Prisma {
     engagementRate?: SortOrder
     fetchedAt?: SortOrder
     raw?: SortOrder
+    dataSource?: SortOrder
+    providerAccountId?: SortOrder
   }
 
   export type PlatformStatsAvgOrderByAggregateInput = {
@@ -43829,6 +43987,8 @@ export namespace Prisma {
     postCount?: SortOrder
     engagementRate?: SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerAccountId?: SortOrder
   }
 
   export type PlatformStatsMinOrderByAggregateInput = {
@@ -43840,6 +44000,8 @@ export namespace Prisma {
     postCount?: SortOrder
     engagementRate?: SortOrder
     fetchedAt?: SortOrder
+    dataSource?: SortOrder
+    providerAccountId?: SortOrder
   }
 
   export type PlatformStatsSumOrderByAggregateInput = {
@@ -46294,6 +46456,10 @@ export namespace Prisma {
     connect?: CreatorProfileWhereUniqueInput
   }
 
+  export type EnumDataSourceFieldUpdateOperationsInput = {
+    set?: $Enums.DataSource
+  }
+
   export type CreatorProfileUpdateOneRequiredWithoutSocialPostsNestedInput = {
     create?: XOR<CreatorProfileCreateWithoutSocialPostsInput, CreatorProfileUncheckedCreateWithoutSocialPostsInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutSocialPostsInput
@@ -47621,6 +47787,23 @@ export namespace Prisma {
     _max?: NestedEnumClaimStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumDataSourceFilter<$PrismaModel = never> = {
+    equals?: $Enums.DataSource | EnumDataSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumDataSourceFilter<$PrismaModel> | $Enums.DataSource
+  }
+
+  export type NestedEnumDataSourceWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DataSource | EnumDataSourceFieldRefInput<$PrismaModel>
+    in?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DataSource[] | ListEnumDataSourceFieldRefInput<$PrismaModel>
+    not?: NestedEnumDataSourceWithAggregatesFilter<$PrismaModel> | $Enums.DataSource
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDataSourceFilter<$PrismaModel>
+    _max?: NestedEnumDataSourceFilter<$PrismaModel>
+  }
+
   export type NestedEnumCampaignStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.CampaignStatus | EnumCampaignStatusFieldRefInput<$PrismaModel>
     in?: $Enums.CampaignStatus[] | ListEnumCampaignStatusFieldRefInput<$PrismaModel>
@@ -48233,6 +48416,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
   }
 
   export type PlatformStatsUncheckedCreateWithoutUserInput = {
@@ -48244,6 +48429,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
   }
 
   export type PlatformStatsCreateOrConnectWithoutUserInput = {
@@ -49049,6 +49236,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"PlatformStats"> | number | null
     fetchedAt?: DateTimeFilter<"PlatformStats"> | Date | string
     raw?: JsonNullableFilter<"PlatformStats">
+    dataSource?: EnumDataSourceFilter<"PlatformStats"> | $Enums.DataSource
+    providerAccountId?: StringNullableFilter<"PlatformStats"> | string | null
   }
 
   export type PlatformTokenUpsertWithWhereUniqueWithoutUserInput = {
@@ -49987,6 +50176,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
   }
 
   export type SocialPostUncheckedCreateWithoutCreatorProfileInput = {
@@ -50001,6 +50192,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
   }
 
   export type SocialPostCreateOrConnectWithoutCreatorProfileInput = {
@@ -50273,6 +50466,8 @@ export namespace Prisma {
     engagementRate?: FloatNullableFilter<"SocialPost"> | number | null
     postedAt?: DateTimeNullableFilter<"SocialPost"> | Date | string | null
     fetchedAt?: DateTimeFilter<"SocialPost"> | Date | string
+    dataSource?: EnumDataSourceFilter<"SocialPost"> | $Enums.DataSource
+    providerPostId?: StringNullableFilter<"SocialPost"> | string | null
   }
 
   export type UserUpsertWithoutCreatorProfileInput = {
@@ -56175,6 +56370,8 @@ export namespace Prisma {
     engagementRate?: number | null
     fetchedAt?: Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: $Enums.DataSource
+    providerAccountId?: string | null
   }
 
   export type PlatformTokenCreateManyUserInput = {
@@ -56591,6 +56788,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PlatformStatsUncheckedUpdateWithoutUserInput = {
@@ -56602,6 +56801,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PlatformStatsUncheckedUpdateManyWithoutUserInput = {
@@ -56613,6 +56814,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     raw?: NullableJsonNullValueInput | InputJsonValue
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerAccountId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PlatformTokenUpdateWithoutUserInput = {
@@ -57370,6 +57573,8 @@ export namespace Prisma {
     engagementRate?: number | null
     postedAt?: Date | string | null
     fetchedAt?: Date | string
+    dataSource?: $Enums.DataSource
+    providerPostId?: string | null
   }
 
   export type ApplicationUpdateWithoutCreatorInput = {
@@ -57498,6 +57703,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SocialPostUncheckedUpdateWithoutCreatorProfileInput = {
@@ -57512,6 +57719,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SocialPostUncheckedUpdateManyWithoutCreatorProfileInput = {
@@ -57526,6 +57735,8 @@ export namespace Prisma {
     engagementRate?: NullableFloatFieldUpdateOperationsInput | number | null
     postedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
+    providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ApplicationCreateManyCampaignInput = {

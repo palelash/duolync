@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import { canOverwrite } from "@/lib/platform-stats-policy";
 
 async function getSession() {
   return auth.api.getSession({ headers: await headers() });
@@ -45,63 +46,87 @@ export async function fetchCreatorStatsAction(
 
   // ── Persist / update cache ──────────────────────────────────────────────────
   if (liveData) {
-    const existing = await db.platformStats.findFirst({
-      where: { userId: session.user.id, platform },
-      select: { id: true },
-    });
+    // ── Two-gate write policy for RAPIDAPI ──────────────────────────────────
+    // Run both queries in parallel to minimise latency.
+    const [existing, existingToken] = await Promise.all([
+      db.platformStats.findFirst({
+        where: { userId: session.user.id, platform },
+        select: { id: true, dataSource: true },
+      }),
+      db.platformToken.findFirst({
+        where: { userId: session.user.id, platform },
+        select: { id: true },
+      }),
+    ]);
 
-    if (existing) {
-      await db.platformStats.update({
-        where: { id: existing.id },
-        data: {
-          followerCount: liveData.followerCount ?? null,
-          followingCount: liveData.followingCount ?? null,
-          postCount: liveData.postCount ?? null,
-          engagementRate: liveData.engagementRate ?? null,
-          fetchedAt: new Date(),
-          raw: JSON.parse(JSON.stringify({ username, source: "rapidapi" })),
-        },
-      });
-    } else {
-      await db.platformStats.create({
-        data: {
-          userId: session.user.id,
-          platform,
-          followerCount: liveData.followerCount ?? null,
-          followingCount: liveData.followingCount ?? null,
-          postCount: liveData.postCount ?? null,
-          engagementRate: liveData.engagementRate ?? null,
-          raw: JSON.parse(JSON.stringify({ username, source: "rapidapi" })),
-        },
-      });
+    // Gate 1 — hard rule: any PlatformToken blocks RAPIDAPI unconditionally.
+    // Fall back to cached data rather than erroring, so the UI still shows stats.
+    if (existingToken) {
+      // Skip RapidAPI write; return cached data below.
+      liveData = null;
+    }
+    // Gate 2 — source authority: RAPIDAPI cannot overwrite a higher-authority row.
+    else if (existing && !canOverwrite(existing.dataSource, "RAPIDAPI")) {
+      // Skip RapidAPI write; return cached data below.
+      liveData = null;
     }
 
-    // Also update aggregated totals on CreatorProfile
-    const allStats = await db.platformStats.findMany({
-      where: { userId: session.user.id },
-      select: { followerCount: true, engagementRate: true },
-    });
-    const totalFollowers = allStats.reduce(
-      (sum, s) => sum + (s.followerCount ?? 0),
-      0,
-    );
-    const ratedPlatforms = allStats.filter((s) => s.engagementRate !== null);
-    const avgEngagement =
-      ratedPlatforms.length > 0
-        ? ratedPlatforms.reduce((sum, s) => sum + (s.engagementRate ?? 0), 0) /
-          ratedPlatforms.length
-        : 0;
+    if (liveData) {
+      if (existing) {
+        await db.platformStats.update({
+          where: { id: existing.id },
+          data: {
+            followerCount: liveData.followerCount ?? null,
+            followingCount: liveData.followingCount ?? null,
+            postCount: liveData.postCount ?? null,
+            engagementRate: liveData.engagementRate ?? null,
+            fetchedAt: new Date(),
+            raw: JSON.parse(JSON.stringify({ username, source: "rapidapi" })),
+            dataSource: "RAPIDAPI",
+          },
+        });
+      } else {
+        await db.platformStats.create({
+          data: {
+            userId: session.user.id,
+            platform,
+            followerCount: liveData.followerCount ?? null,
+            followingCount: liveData.followingCount ?? null,
+            postCount: liveData.postCount ?? null,
+            engagementRate: liveData.engagementRate ?? null,
+            raw: JSON.parse(JSON.stringify({ username, source: "rapidapi" })),
+            dataSource: "RAPIDAPI",
+          },
+        });
+      }
 
-    await db.creatorProfile.updateMany({
-      where: { userId: session.user.id },
-      data: {
-        totalFollowers,
-        avgEngagementRate: avgEngagement,
-        lastStatsUpdate: new Date(),
-      },
-    });
+      // Also update aggregated totals on CreatorProfile
+      const allStats = await db.platformStats.findMany({
+        where: { userId: session.user.id },
+        select: { followerCount: true, engagementRate: true },
+      });
+      const totalFollowers = allStats.reduce(
+        (sum, s) => sum + (s.followerCount ?? 0),
+        0,
+      );
+      const ratedPlatforms = allStats.filter((s) => s.engagementRate !== null);
+      const avgEngagement =
+        ratedPlatforms.length > 0
+          ? ratedPlatforms.reduce((sum, s) => sum + (s.engagementRate ?? 0), 0) /
+            ratedPlatforms.length
+          : 0;
 
-    return { data: liveData, error: null };
+      await db.creatorProfile.updateMany({
+        where: { userId: session.user.id },
+        data: {
+          totalFollowers,
+          avgEngagementRate: avgEngagement,
+          lastStatsUpdate: new Date(),
+        },
+      });
+
+      return { data: liveData, error: null };
+    }
   }
 
   // ── Return cached data if available ─────────────────────────────────────────

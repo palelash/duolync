@@ -186,8 +186,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     await db.platformStats.upsert({
       where: { userId_platform: { userId, platform: "instagram" } },
-      create: { userId, platform: "instagram", followerCount: igFollowers, fetchedAt: new Date(), raw: igUsername ? { handle: igUsername } : undefined },
-      update: { followerCount: igFollowers, fetchedAt: new Date(), ...(igUsername ? { raw: { handle: igUsername } } : {}) },
+      create: {
+        userId, platform: "instagram",
+        followerCount: igFollowers,
+        fetchedAt: new Date(),
+        raw: igUsername ? { handle: igUsername } : undefined,
+        dataSource: "OFFICIAL_API",
+        providerAccountId: igAccountId ?? null,
+      },
+      update: {
+        followerCount: igFollowers,
+        fetchedAt: new Date(),
+        ...(igUsername ? { raw: { handle: igUsername } } : {}),
+        dataSource: "OFFICIAL_API",
+        providerAccountId: igAccountId ?? null,
+      },
     });
 
     const creator = await db.creatorProfile.findUnique({
@@ -209,9 +222,24 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       });
 
       if (posts.length > 0) {
-        await db.socialPost.deleteMany({ where: { creatorProfileId: creator.id, platform: "instagram" } });
+        // OFFICIAL_API is authoritative — replaces all lower-source posts for this platform
+        await db.socialPost.deleteMany({
+          where: {
+            creatorProfileId: creator.id,
+            platform: "instagram",
+            dataSource: { in: ["OFFICIAL_API", "APIFY", "LEGACY_UNKNOWN"] },
+          },
+        });
         await db.socialPost.createMany({
-          data: posts.map((p) => ({ creatorProfileId: creator.id, platform: "instagram", ...p })),
+          data: posts.map((p) => ({
+            creatorProfileId: creator.id,
+            platform: "instagram",
+            ...p,
+            dataSource: "OFFICIAL_API" as const,
+            // Instagram Graph API does not expose a stable post ID in the current
+            // fields requested; providerPostId is deferred to the SocialPost cleanup task
+            providerPostId: null,
+          })),
         });
       }
     }
