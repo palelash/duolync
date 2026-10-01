@@ -10,7 +10,7 @@ import {
   Plane, Laugh, GraduationCap, Music2, Leaf, LayoutGrid,
   HeartPulse, ShoppingBag, DollarSign, Film,
 } from "lucide-react";
-import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
+import { ApprovedBadge } from "@/app/_components/shared/ApprovedBadge";
 import { RichEmptyState } from "@/app/_components/shared/RichEmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -335,7 +335,7 @@ const CreatorCard = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className="font-display font-bold text-[15px] truncate text-zinc-900 dark:text-zinc-50">{creator.full_name}</span>
-              <VerifiedBadge show={creator.verified} />
+              <ApprovedBadge show={creator.isMarketplaceApproved} />
             </div>
             {creator.location && <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400"><MapPin className="w-3 h-3 shrink-0" /><span className="truncate">{creator.location}</span></div>}
           </div>

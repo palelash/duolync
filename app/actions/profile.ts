@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ConnectionStatus, Role } from "@/lib/generated/prisma";
+import { computeIsMarketplaceApproved } from "@/lib/creator-approval";
 import { fromPrismaRole } from "@/lib/roles";
 import { headers } from "next/headers";
 
@@ -157,8 +158,8 @@ export interface PublicProfile {
   primary_platform: string | null;
   total_followers: number;
   avg_engagement_rate: number;
-  /** True when the creator's moderationStatus === "APPROVED" */
-  verified: boolean;
+  /** True when the creator is marketplace-approved: moderationStatus=APPROVED AND (profileOrigin=REGISTERED OR claimStatus=CLAIMED). Does not imply identity verification. */
+  isMarketplaceApproved: boolean;
   // Apify analytics fields
   followerCount: number | null;
   averageEngagement: number | null;
@@ -266,6 +267,8 @@ export async function getProfileAction(
             lastSyncedAt: true,
             connectedPlatforms: true,
             moderationStatus: true,
+            profileOrigin: true,
+            claimStatus: true,
             socialPosts: {
               orderBy: { fetchedAt: "desc" },
               take: 9,
@@ -316,7 +319,13 @@ export async function getProfileAction(
     primary_platform: (creator?.primaryPlatform ?? null) as string | null,
     total_followers: creator?.totalFollowers ?? 0,
     avg_engagement_rate: creator?.avgEngagementRate ?? 0,
-    verified: creator?.moderationStatus === "APPROVED",
+    isMarketplaceApproved: creator
+      ? computeIsMarketplaceApproved({
+          moderationStatus: creator.moderationStatus,
+          profileOrigin: creator.profileOrigin,
+          claimStatus: creator.claimStatus,
+        })
+      : false,
     followerCount: creator?.followerCount ?? null,
     averageEngagement: creator?.averageEngagement ?? null,
     topNiches: creator?.topNiches ?? [],

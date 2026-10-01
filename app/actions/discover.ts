@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/generated/prisma";
+import { computeIsMarketplaceApproved } from "@/lib/creator-approval";
 import { headers } from "next/headers";
 import type { Creator } from "@/app/_components/discovery/ProfileDrawer";
 import type { BrandProfile } from "@/app/_components/discovery/ProfilesContext";
@@ -51,6 +52,8 @@ export async function getCreatorsAction(): Promise<Creator[]> {
           location: true,
           socialLinks: true,
           moderationStatus: true,
+          profileOrigin: true,
+          claimStatus: true,
         },
       },
     },
@@ -123,7 +126,11 @@ export async function getCreatorsAction(): Promise<Creator[]> {
       primary_platform: (profile.primaryPlatform ?? null) as Creator["primary_platform"],
       location: profile.location ?? null,
       languages: ["English"],
-      verified: profile.moderationStatus === "APPROVED",
+      isMarketplaceApproved: computeIsMarketplaceApproved({
+        moderationStatus: profile.moderationStatus,
+        profileOrigin: profile.profileOrigin,
+        claimStatus: profile.claimStatus,
+      }),
       platforms,
       social_links: Object.keys(social_links).length > 0 ? social_links : null,
     };
