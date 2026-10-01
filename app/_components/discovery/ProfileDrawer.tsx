@@ -21,6 +21,7 @@ import {
   Grid3X3,
   Loader2,
   Megaphone,
+  BadgeCheck,
 } from "lucide-react";
 import { ReportButton } from "@/app/_components/report/ReportModal";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ import {
 } from "@/app/actions/campaigns";
 import { sendBrandInvitationAction } from "@/app/actions/invitations";
 import { useToast } from "@/hooks/use-toast";
-import { VerifiedBadge } from "@/app/_components/shared/VerifiedBadge";
+import { ApprovedBadge } from "@/app/_components/shared/ApprovedBadge";
 import { cn } from "@/lib/utils";
 import {
   AreaChart,
@@ -78,7 +79,7 @@ export interface Creator {
   primary_platform: string | null;
   location: string | null;
   languages: string[];
-  verified?: boolean;
+  isMarketplaceApproved?: boolean;
   /** platform key → formatted follower count string (e.g. "12.3M") */
   platforms?: Record<string, string>;
   /** platform key (lowercase) → profile URL */
@@ -672,7 +673,7 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                 <span className="font-semibold text-[13px] truncate leading-tight text-zinc-900 dark:text-zinc-50">
                   {creator.full_name}
                 </span>
-                <VerifiedBadge show={creator.verified} size="xs" />
+                <ApprovedBadge show={creator.isMarketplaceApproved} size="xs" />
               </div>
               {creator.location && (
                 <div className="flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
@@ -744,9 +745,13 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                       </div>
                     )}
                   </div>
-                  {creator.verified && (
-                    <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-neutral-800 flex items-center justify-center">
-                      <VerifiedBadge show size="sm" />
+                  {creator.isMarketplaceApproved && (
+                    <div
+                      className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-neutral-800 flex items-center justify-center"
+                      title="Approved for the Duolync marketplace"
+                      aria-label="Approved for the Duolync marketplace"
+                    >
+                      <BadgeCheck className="h-4 w-4 text-violet-500" />
                     </div>
                   )}
                 </div>

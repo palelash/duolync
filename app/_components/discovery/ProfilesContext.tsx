@@ -44,7 +44,7 @@ export const SEED_CREATORS: Creator[] = [
     primary_platform: "instagram",
     location: "Los Angeles, CA",
     languages: ["English", "Spanish"],
-    verified: true,
+    isMarketplaceApproved: true,
     platforms: { instagram: "142K", tiktok: "38K" },
   },
   {
@@ -59,7 +59,7 @@ export const SEED_CREATORS: Creator[] = [
     primary_platform: "tiktok",
     location: "New York, NY",
     languages: ["English"],
-    verified: true,
+    isMarketplaceApproved: true,
     platforms: { tiktok: "380K", instagram: "95K" },
   },
   {
@@ -116,7 +116,7 @@ export const SEED_CREATORS: Creator[] = [
     primary_platform: "instagram",
     location: "Berlin, Germany",
     languages: ["English", "German"],
-    verified: true,
+    isMarketplaceApproved: true,
     platforms: { instagram: "1.24M", tiktok: "280K", youtube: "95K" },
   },
 ];

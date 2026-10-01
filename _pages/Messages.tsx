@@ -12,7 +12,6 @@ import {
   Search,
   ArrowLeft,
   MessageSquare,
-  BadgeCheck,
   Pencil,
   Loader2,
   X,
@@ -621,7 +620,6 @@ const Messages = () => {
                     <span className="font-semibold text-[14px] truncate text-zinc-900 dark:text-zinc-50">
                       {activeConvMeta.otherUserName}
                     </span>
-                    <BadgeCheck className="w-3.5 h-3.5 text-primary shrink-0 opacity-60" />
                   </div>
                   <div
                     className={cn(

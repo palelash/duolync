@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import MainLayout from "@/components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
+import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -249,6 +250,8 @@ function ProfileTab({
 
 function SecurityTab() {
   const { profile } = useAuth();
+  const { data: session } = useSession();
+  const emailVerified = session?.user?.emailVerified ?? false;
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
   const [showPw, setShowPw] = useState(false);
@@ -308,9 +311,11 @@ function SecurityTab() {
               <p className="text-sm font-medium">Email Address</p>
               <p className="text-xs text-muted-foreground mt-0.5">{profile?.email}</p>
             </div>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 font-medium">
-              Verified
-            </span>
+            {emailVerified && (
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 font-medium">
+                Verified
+              </span>
+            )}
           </div>
 
           {/* Password row */}

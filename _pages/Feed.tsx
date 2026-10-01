@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, SlidersHorizontal, Heart, MessageSquare, ExternalLink, MapPin, Users, TrendingUp, X, Verified, Sparkles, UserSearch, Filter, Layers } from "lucide-react";
+import { Search, SlidersHorizontal, Heart, MessageSquare, ExternalLink, MapPin, Users, TrendingUp, X, Sparkles, UserSearch, Filter, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -356,9 +356,6 @@ const Feed = () => {
                               <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                                 {creator.full_name || "Creator"}
                               </h3>
-                              {creator.total_followers >= 100000 && (
-                                <Verified className="w-4 h-4 text-primary shrink-0" />
-                              )}
                             </div>
                             <p className="text-sm text-muted-foreground truncate">
                               {creator.niche || "Content Creator"}
