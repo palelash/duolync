@@ -120,11 +120,23 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       update: { accessToken, expiresAt, scopes: "threads_basic", platformUserId: threadsId, username: threadsUsername, updatedAt: new Date() },
     });
 
-    // threads_basic doesn't expose follower count; the row marks it as connected
+    // threads_basic scope does not expose follower count; the row marks the platform as connected
     await db.platformStats.upsert({
       where: { userId_platform: { userId, platform: "threads" } },
-      create: { userId, platform: "threads", followerCount: null, fetchedAt: new Date(), raw: threadsUsername ? { handle: threadsUsername } : undefined },
-      update: { fetchedAt: new Date(), ...(threadsUsername ? { raw: { handle: threadsUsername } } : {}) },
+      create: {
+        userId, platform: "threads",
+        followerCount: null,
+        fetchedAt: new Date(),
+        raw: threadsUsername ? { handle: threadsUsername } : undefined,
+        dataSource: "OFFICIAL_API",
+        providerAccountId: threadsId,
+      },
+      update: {
+        fetchedAt: new Date(),
+        ...(threadsUsername ? { raw: { handle: threadsUsername } } : {}),
+        dataSource: "OFFICIAL_API",
+        providerAccountId: threadsId,
+      },
     });
 
     const creator = await db.creatorProfile.findUnique({

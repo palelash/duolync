@@ -219,6 +219,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           likes_count: likesCount,
           video_count: videoCount,
         },
+        dataSource: "OFFICIAL_API",
+        providerAccountId: openId,
       },
       update: {
         followerCount,
@@ -229,6 +231,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           likes_count: likesCount,
           video_count: videoCount,
         },
+        dataSource: "OFFICIAL_API",
+        providerAccountId: openId,
       },
     });
 

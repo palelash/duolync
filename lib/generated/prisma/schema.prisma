@@ -126,9 +126,14 @@ model SocialPost {
   engagementRate   Float?
   postedAt         DateTime?
   fetchedAt        DateTime       @default(now())
+  // ── Provenance ────────────────────────────────────────────────────────────
+  dataSource       DataSource     @default(LEGACY_UNKNOWN)
+  providerPostId   String? // stable platform post ID for future dedup (metadata only in this task)
   creatorProfile   CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
 
   @@index([creatorProfileId, platform])
+  @@index([creatorProfileId, platform, dataSource])
+  @@index([creatorProfileId, platform, providerPostId])
 }
 
 model Account {
@@ -203,19 +208,23 @@ model PlatformToken {
 }
 
 model PlatformStats {
-  id             String   @id @default(cuid())
-  userId         String
-  platform       String
-  followerCount  Int?
-  followingCount Int?
-  postCount      Int?
-  engagementRate Float?
-  fetchedAt      DateTime @default(now())
-  raw            Json?
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String     @id @default(cuid())
+  userId            String
+  platform          String
+  followerCount     Int?
+  followingCount    Int?
+  postCount         Int?
+  engagementRate    Float?
+  fetchedAt         DateTime   @default(now())
+  raw               Json?
+  // ── Provenance ─────────────────────────────────────────────────────────────
+  dataSource        DataSource @default(LEGACY_UNKNOWN)
+  providerAccountId String? // platform's own stable account ID
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, platform])
   @@index([userId, platform])
+  @@index([userId, platform, dataSource])
 }
 
 model Waitlist {
@@ -466,6 +475,16 @@ model Application {
   @@unique([campaignId, creatorProfileId])
   @@index([creatorProfileId])
   @@index([campaignId, status])
+}
+
+// ── Data provenance / write-source taxonomy ───────────────────────────────────
+
+enum DataSource {
+  OFFICIAL_API // OAuth callback with real platform credentials
+  APIFY // Apify actor scrape (apify-sync.ts)
+  RAPIDAPI // RapidAPI third-party scraper (stats.ts)
+  MANUAL_IMPORT // CSV import pipeline (reserved; does not write PlatformStats yet)
+  LEGACY_UNKNOWN // Pre-dates provenance tracking; source unverifiable
 }
 
 // ── Imported creator provenance ───────────────────────────────────────────────

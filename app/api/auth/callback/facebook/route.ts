@@ -138,8 +138,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     await db.platformStats.upsert({
       where: { userId_platform: { userId, platform: "facebook_page" } },
-      create: { userId, platform: "facebook_page", followerCount: fbPageFollowers, fetchedAt: new Date(), raw: fbPageName ? { pageName: fbPageName } : undefined },
-      update: { followerCount: fbPageFollowers, fetchedAt: new Date(), ...(fbPageName ? { raw: { pageName: fbPageName } } : {}) },
+      create: {
+        userId, platform: "facebook_page",
+        followerCount: fbPageFollowers,
+        fetchedAt: new Date(),
+        raw: fbPageName ? { pageName: fbPageName } : undefined,
+        dataSource: "OFFICIAL_API",
+        providerAccountId: fbPageId,
+      },
+      update: {
+        followerCount: fbPageFollowers,
+        fetchedAt: new Date(),
+        ...(fbPageName ? { raw: { pageName: fbPageName } } : {}),
+        dataSource: "OFFICIAL_API",
+        providerAccountId: fbPageId,
+      },
     });
 
     const creator = await db.creatorProfile.findUnique({
