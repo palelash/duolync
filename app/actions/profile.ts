@@ -37,7 +37,12 @@ export interface FullProfile {
   topNiches: string[];
   lastSyncedAt: string | null;
   connectedPlatforms: string[];
-  platformStats: { platform: string; followerCount: number | null; engagementRate: number | null }[];
+  platformStats: {
+    platform: string;
+    followerCount: number | null;
+    engagementRate: number | null;
+    dataSource: "OFFICIAL_API" | "APIFY" | "RAPIDAPI" | "MANUAL_IMPORT" | "LEGACY_UNKNOWN";
+  }[];
   hasCompletedOnboarding: boolean;
 }
 
@@ -61,7 +66,7 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
       hasCompletedOnboarding: true,
       platformStats: {
         orderBy: { fetchedAt: "desc" },
-        select: { platform: true, followerCount: true, engagementRate: true },
+        select: { platform: true, followerCount: true, engagementRate: true, dataSource: true },
       },
       brandProfile: {
         select: {
@@ -127,6 +132,7 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
       platform: s.platform,
       followerCount: s.followerCount,
       engagementRate: s.engagementRate,
+      dataSource: s.dataSource,
     })),
     hasCompletedOnboarding: user.hasCompletedOnboarding,
   };

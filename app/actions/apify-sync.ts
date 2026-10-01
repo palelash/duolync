@@ -301,7 +301,14 @@ export async function startVerifyAction(
   handle: string,
   platform: Platform,
 ): Promise<{ runId: string } | { error: string }> {
-  try { await requireSession(); } catch { return { error: "Unauthorized" }; }
+  let session: Awaited<ReturnType<typeof requireSession>>;
+  try { session = await requireSession(); } catch { return { error: "Unauthorized" }; }
+
+  const existingToken = await db.platformToken.findFirst({
+    where: { userId: session.user.id, platform },
+    select: { id: true },
+  });
+  if (existingToken) return { error: "platform_oauth_protected" };
 
   const h = handle.replace(/^@/, "").trim();
   if (!h) return { error: "Username is required." };
@@ -380,13 +387,22 @@ export async function pollVerifyAction(
  */
 export async function confirmSyncAction(
   datasetId: string,
-  creatorUserId: string,
   platform: Platform,
   handle?: string,
 ): Promise<{ success: true; platformFollowers: number; platformEngagement: number } | { success: false; error: string }> {
   let session: Awaited<ReturnType<typeof requireSession>>;
   try { session = await requireSession(); } catch { return { success: false, error: "Unauthorized" }; }
-  if (session.user.id !== creatorUserId) return { success: false, error: "You can only sync your own profile." };
+  // userId is always derived from the authenticated session — clients never supply it
+  const userId = session.user.id;
+
+  // Block before any Apify dataset read when this platform is officially connected.
+  const existingToken = await db.platformToken.findFirst({
+    where: { userId, platform },
+    select: { id: true },
+  });
+  if (existingToken) {
+    return { success: false, error: "platform_oauth_protected" };
+  }
 
   let token: string;
   try { token = getApifyToken(); } catch (err) {
@@ -426,34 +442,18 @@ export async function confirmSyncAction(
 
   try {
     const creatorProfile = await db.creatorProfile.findUnique({
-      where: { userId: creatorUserId },
-      select: { id: true, connectedPlatforms: true },
+      where: { userId },
+      select: { id: true },
     });
     if (!creatorProfile) return { success: false, error: "Creator profile not found." };
 
-    // ── Two-gate write policy ──────────────────────────────────────────────────
-    // Run both queries in parallel to minimise latency.
-    const [existingStats, existingToken] = await Promise.all([
-      db.platformStats.findFirst({
-        where: { userId: creatorUserId, platform },
-        select: { dataSource: true },
-      }),
-      db.platformToken.findFirst({
-        where: { userId: creatorUserId, platform },
-        select: { id: true },
-      }),
-    ]);
-
-    // Gate 1 — hard rule: any PlatformToken blocks APIFY unconditionally.
-    // This protects LEGACY_UNKNOWN rows written before provenance existed.
-    if (existingToken) {
-      return {
-        success: false,
-        error: "platform_oauth_protected",
-      };
-    }
-
+    // Gate 1 (PlatformToken) already returned above, before the dataset fetch.
     // Gate 2 — source authority: APIFY cannot overwrite a higher-authority row.
+    const existingStats = await db.platformStats.findFirst({
+      where: { userId, platform },
+      select: { dataSource: true },
+    });
+
     if (existingStats && !canOverwrite(existingStats.dataSource, "APIFY")) {
       return {
         success: false,
@@ -463,10 +463,10 @@ export async function confirmSyncAction(
 
     // Both gates passed — proceed with write.
     // Delete old row and create fresh APIFY-stamped row.
-    await db.platformStats.deleteMany({ where: { userId: creatorUserId, platform } });
+    await db.platformStats.deleteMany({ where: { userId, platform } });
     await db.platformStats.create({
       data: {
-        userId: creatorUserId,
+        userId,
         platform,
         followerCount,
         engagementRate,
@@ -481,7 +481,7 @@ export async function confirmSyncAction(
 
     // Aggregate totals across all platforms for this user
     const allStats = await db.platformStats.findMany({
-      where: { userId: creatorUserId },
+      where: { userId },
       select: { followerCount: true, engagementRate: true },
     });
     const totalFollowers = allStats.reduce((s, r) => s + (r.followerCount ?? 0), 0);
@@ -490,16 +490,14 @@ export async function confirmSyncAction(
       ? ratedStats.reduce((s, r) => s + (r.engagementRate ?? 0), 0) / ratedStats.length
       : (engagementRate ?? 0);
 
-    const connectedPlatforms = Array.from(new Set([...creatorProfile.connectedPlatforms, platform]));
-
     await db.creatorProfile.update({
-      where: { userId: creatorUserId },
+      where: { userId },
       data: {
         followerCount: totalFollowers,
         averageEngagement: parseFloat(avgEng.toFixed(2)),
         topNiches: niches,
         lastSyncedAt,
-        connectedPlatforms,
+        // connectedPlatforms is written ONLY by OAuth callbacks — Apify never touches it
       },
     });
 
@@ -540,10 +538,10 @@ export async function confirmSyncAction(
     return { success: false, error: err instanceof Error ? err.message : "Database update failed" };
   }
 
-  console.info(`[apify] Confirmed sync: ${platform} for user ${creatorUserId}`);
+  console.info(`[apify] Confirmed sync: ${platform} for user ${userId}`);
   revalidatePath("/creator/presence");
   revalidatePath("/creator/dashboard");
-  revalidatePath(`/profile/${creatorUserId}`);
+  revalidatePath(`/profile/${userId}`);
 
   return { success: true, platformFollowers: followerCount, platformEngagement: engagementRate ?? 0 };
 }
@@ -551,17 +549,24 @@ export async function confirmSyncAction(
 // ─── Legacy: start full sync run (used by poll action below) ─────────────────
 
 export async function startApifySyncAction(
-  creatorUserId: string,
   socialHandle: string,
   platform: Platform = "instagram",
 ): Promise<{ runId: string } | { error: string }> {
   let session: Awaited<ReturnType<typeof requireSession>>;
   try { session = await requireSession(); } catch { return { error: "Unauthorized" }; }
-  if (session.user.id !== creatorUserId) return { error: "You can only sync your own profile." };
+  const userId = session.user.id;
+
+  // Pre-check: if a PlatformToken already exists, block before starting any Apify run.
+  // This prevents wasted API credits when the platform is already OAuth-connected.
+  const existingToken = await db.platformToken.findFirst({
+    where: { userId, platform },
+    select: { id: true },
+  });
+  if (existingToken) return { error: "platform_oauth_protected" };
 
   // Rate limit: max 5 syncs per hour per user
   const { rateLimit } = await import("@/lib/rate-limit");
-  const allowed = await rateLimit(`${creatorUserId}:apify-sync`, 5, 60 * 60_000);
+  const allowed = await rateLimit(`${userId}:apify-sync`, 5, 60 * 60_000);
   if (!allowed) return { error: "Too many sync requests. Please wait before syncing again." };
 
   const handle = socialHandle.replace(/^@/, "").trim();
@@ -579,12 +584,11 @@ export async function startApifySyncAction(
 
 export async function pollApifyRunAction(
   runId: string,
-  creatorUserId: string,
   platform: Platform = "instagram",
 ): Promise<PollStatus> {
   let session: Awaited<ReturnType<typeof requireSession>>;
   try { session = await requireSession(); } catch { return { state: "failed", error: "Unauthorized" }; }
-  if (session.user.id !== creatorUserId) return { state: "failed", error: "Unauthorized" };
+  const userId = session.user.id;
 
   let token: string;
   try { token = getApifyToken(); } catch (err) {
@@ -600,11 +604,11 @@ export async function pollApifyRunAction(
   if (["RUNNING", "READY", "CREATED"].includes(status)) return { state: "running" };
   if (status !== "SUCCEEDED") return { state: "failed", error: `Run ended with status: ${status}` };
 
-  const result = await confirmSyncAction(defaultDatasetId, creatorUserId, platform);
+  const result = await confirmSyncAction(defaultDatasetId, platform);
   if (!result.success) return { state: "failed", error: result.error };
 
   const creatorProfile = await db.creatorProfile.findUnique({
-    where: { userId: creatorUserId },
+    where: { userId },
     select: { followerCount: true, averageEngagement: true, topNiches: true, lastSyncedAt: true },
   });
 
@@ -640,6 +644,13 @@ export async function startPortfolioResyncAction(
   let session: Awaited<ReturnType<typeof requireSession>>;
   try { session = await requireSession(); } catch { return { error: "Unauthorized" }; }
 
+  // Pre-check before any Apify HTTP call so an OAuth-connected platform never starts a paid run.
+  const existingToken = await db.platformToken.findFirst({
+    where: { userId: session.user.id, platform },
+    select: { id: true },
+  });
+  if (existingToken) return { error: "platform_oauth_protected" };
+
   let token: string;
   try { token = getApifyToken(); } catch (err) {
     return { error: err instanceof Error ? err.message : "Config error" };
@@ -666,17 +677,16 @@ export async function startPortfolioResyncAction(
 // ─── Legacy wrapper ───────────────────────────────────────────────────────────
 
 export async function syncCreatorProfileAction(
-  creatorUserId: string,
   socialHandle: string,
   platform: Platform = "instagram",
 ): Promise<SyncResult> {
-  const startResult = await startApifySyncAction(creatorUserId, socialHandle, platform);
+  const startResult = await startApifySyncAction(socialHandle, platform);
   if ("error" in startResult) return { success: false, error: startResult.error };
   const { runId } = startResult;
   const deadline = Date.now() + 110_000;
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, 3_000));
-    const poll = await pollApifyRunAction(runId, creatorUserId, platform);
+    const poll = await pollApifyRunAction(runId, platform);
     if (poll.state === "succeeded") return { success: true, data: poll.data };
     if (poll.state === "failed") return { success: false, error: poll.error };
   }
