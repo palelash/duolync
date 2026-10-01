@@ -16,8 +16,14 @@ export interface ConnectedAccount {
   followers: number | null;
   /** Engagement rate (0–100) from the last sync */
   engagementRate: number | null;
-  /** How this account was connected */
-  connectedVia: "oauth" | "apify";
+  /**
+   * How this row should be presented.
+   * "oauth"       = PlatformToken exists. This is the only Connected state.
+   * "public_data" = APIFY or RAPIDAPI stats and no PlatformToken.
+   * "unknown"     = stats exist (for example LEGACY_UNKNOWN) but the source is
+   *                 neither an official connection nor confirmed public data.
+   */
+  connectedVia: "oauth" | "public_data" | "unknown";
   /** ISO timestamp of last data refresh */
   lastSyncedAt: string | null;
 }
@@ -64,17 +70,19 @@ export async function getConnectedAccountsAction(): Promise<{
       });
     }
 
-    // Apify-synced platforms not covered by an OAuth token
+    // Stats without a PlatformToken are never Connected.
+    // APIFY and RAPIDAPI are public data. Anything else stays unlabeled.
     for (const stat of stats) {
       if (seenPlatforms.has(stat.platform)) continue;
       const rawData = stat.raw as { handle?: string } | null;
+      const isPublicSource = stat.dataSource === "APIFY" || stat.dataSource === "RAPIDAPI";
       accounts.push({
         id: stat.id,
         platform: stat.platform,
         username: rawData?.handle ?? null,
         followers: stat.followerCount ?? null,
         engagementRate: stat.engagementRate ?? null,
-        connectedVia: "apify",
+        connectedVia: isPublicSource ? "public_data" : "unknown",
         lastSyncedAt: stat.fetchedAt.toISOString(),
       });
     }
@@ -83,6 +91,31 @@ export async function getConnectedAccountsAction(): Promise<{
   } catch (err) {
     console.error("[getConnectedAccountsAction]:", err);
     return { data: [], error: "Failed to load connected accounts" };
+  }
+}
+
+/**
+ * Returns the platform identifiers for which the current user has an active
+ * PlatformToken (official OAuth connection). This is the canonical source of
+ * truth for "Connected" state — Apify/RapidAPI stats do NOT constitute a connection.
+ */
+export async function getOAuthConnectedPlatformsAction(): Promise<{
+  platforms: string[];
+  error: string | null;
+}> {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return { platforms: [], error: "Unauthorized" };
+
+    const tokens = await db.platformToken.findMany({
+      where: { userId: session.user.id },
+      select: { platform: true },
+    });
+
+    return { platforms: tokens.map((t) => t.platform), error: null };
+  } catch (err) {
+    console.error("[getOAuthConnectedPlatformsAction]:", err);
+    return { platforms: [], error: "Failed to load OAuth status" };
   }
 }
 

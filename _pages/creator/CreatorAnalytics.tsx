@@ -154,11 +154,13 @@ function PlatformCard({
   followerCount,
   engagementRate,
   totalFollowers,
+  dataSource,
 }: {
   platform: string;
   followerCount: number | null;
   engagementRate: number | null;
   totalFollowers: number;
+  dataSource?: string | null;
 }) {
   const key = platform.toLowerCase();
   const emoji = PLATFORM_EMOJIS[key] ?? "🌐";
@@ -173,6 +175,9 @@ function PlatformCard({
         <span className="text-2xl leading-none">{emoji}</span>
         <div className="min-w-0">
           <p className="font-semibold text-sm capitalize">{label}</p>
+          {(dataSource === "APIFY" || dataSource === "RAPIDAPI") && (
+            <p className="text-[10px] font-medium text-sky-600 dark:text-sky-400">Public data</p>
+          )}
           {eng > 0 && (
             <p className={cn("text-xs font-medium", engColor(eng))}>
               {eng.toFixed(2)}% — {engLabel(eng)}
@@ -301,9 +306,10 @@ const CreatorAnalytics = () => {
     load();
   }, []);
 
-  const isConnected = (profile?.connectedPlatforms?.length ?? 0) > 0;
   const totalFollowers = analytics?.totalFollowers ?? 0;
   const platformStats = profile?.platformStats ?? [];
+  // Show analytics whenever public or official stats exist. OAuth is not required.
+  const hasData = platformStats.length > 0 || (profile?.followerCount ?? 0) > 0 || totalFollowers > 0;
 
   const lastSynced = profile?.lastSyncedAt
     ? new Date(profile.lastSyncedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -320,7 +326,7 @@ const CreatorAnalytics = () => {
               Analytics
             </h1>
             <p className="text-muted-foreground text-sm">
-              Performance overview across all your connected platforms
+              Performance overview from your platform stats
             </p>
           </div>
           {lastSynced && (
@@ -333,11 +339,11 @@ const CreatorAnalytics = () => {
 
         {loading ? (
           <AnalyticsSkeleton />
-        ) : !isConnected ? (
+        ) : !hasData ? (
           <RichEmptyState
             icon={<BarChart3 className="w-8 h-8 text-violet-500" />}
-            headline="No connected platforms"
-            sub="Link your social accounts to unlock detailed analytics — followers, engagement trends, and posting insights."
+            headline="No data yet"
+            sub="Connect an account or refresh public profile data to unlock followers, engagement trends, and posting insights."
             primary={{ label: "Connect Accounts", href: "/creator/presence" }}
             secondary={{ label: "Learn more", href: "/creator/dashboard" }}
             tips={[
@@ -355,7 +361,7 @@ const CreatorAnalytics = () => {
                 icon={Users}
                 label="Total Followers"
                 value={formatNum(totalFollowers)}
-                sub={`across ${profile?.connectedPlatforms?.length ?? 0} platforms`}
+                sub={`across ${platformStats.length} platform${platformStats.length === 1 ? "" : "s"}`}
                 accentClass="text-violet-600 dark:text-violet-400"
               />
               <KpiCard
@@ -404,6 +410,7 @@ const CreatorAnalytics = () => {
                       followerCount={s.followerCount}
                       engagementRate={s.engagementRate}
                       totalFollowers={totalFollowers}
+                      dataSource={s.dataSource}
                     />
                   ))}
                 </div>
@@ -439,17 +446,17 @@ const CreatorAnalytics = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <Wifi className="w-4 h-4 text-emerald-500" />
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                    Connected Platforms
+                    Platforms with data
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(profile?.connectedPlatforms ?? []).map((p) => (
+                  {platformStats.map((s) => (
                     <span
-                      key={p}
+                      key={s.platform}
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
                     >
-                      {PLATFORM_EMOJIS[p.toLowerCase()] ?? "🌐"}
-                      {PLATFORM_LABELS[p.toLowerCase()] ?? p}
+                      {PLATFORM_EMOJIS[s.platform.toLowerCase()] ?? "🌐"}
+                      {PLATFORM_LABELS[s.platform.toLowerCase()] ?? s.platform}
                     </span>
                   ))}
                 </div>

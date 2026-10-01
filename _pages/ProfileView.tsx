@@ -29,6 +29,7 @@ import {
   type SocialLink,
 } from "@/app/actions/profile";
 import { startApifySyncAction, pollApifyRunAction } from "@/app/actions/apify-sync";
+import { getOAuthConnectedPlatformsAction } from "@/app/actions/social-connections";
 import { deletePostAction } from "@/app/actions/social-posts";
 import { sendMessageAction } from "@/app/actions/messages";
 import {
@@ -408,24 +409,27 @@ function StatItem({ icon: Icon, value, label, href }: { icon: React.ElementType;
   return content;
 }
 
-// ─── Sync Data Modal ──────────────────────────────────────────────────────────
+// ─── Refresh public data modal ────────────────────────────────────────────────
 
 const SYNC_PLATFORMS = ["instagram", "tiktok"] as const;
 type SyncPlatform = (typeof SYNC_PLATFORMS)[number];
 
 function SyncDataModal({
-  userId,
+  ownOAuthPlatforms,
   onSynced,
   onClose,
 }: {
-  userId: string;
+  ownOAuthPlatforms: Set<string>;
   onSynced: () => void;
   onClose: () => void;
 }) {
+  // Filter to only platforms with an Apify actor AND no OAuth token for this creator
+  const availablePlatforms = SYNC_PLATFORMS.filter((p) => !ownOAuthPlatforms.has(p));
+
   const [handle, setHandle] = useState("");
-  const [platform, setPlatform] = useState<SyncPlatform>("instagram");
+  const [platform, setPlatform] = useState<SyncPlatform>(availablePlatforms[0] ?? "instagram");
   const [syncing, setSyncing] = useState(false);
-  const [statusMsg, setStatusMsg] = useState("Starting scrape…");
+  const [statusMsg, setStatusMsg] = useState("Starting…");
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const { toast } = useToast();
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -434,20 +438,19 @@ function SyncDataModal({
     if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
   };
 
-  // Clean up interval on unmount
   useEffect(() => () => stopPolling(), []);
 
   const handleSync = async () => {
     if (!handle.trim()) return;
     setSyncing(true);
     setResult(null);
-    setStatusMsg("Starting scrape…");
+    setStatusMsg("Starting…");
 
-    const start = await startApifySyncAction(userId, handle.trim(), platform);
+    const start = await startApifySyncAction(handle.trim(), platform);
     if ("error" in start) {
       setSyncing(false);
       setResult({ ok: false, message: start.error });
-      toast({ title: "Sync failed", description: start.error, variant: "destructive" });
+      toast({ title: "Refresh failed", description: start.error, variant: "destructive" });
       return;
     }
 
@@ -455,23 +458,24 @@ function SyncDataModal({
     let elapsed = 0;
     pollRef.current = setInterval(async () => {
       elapsed += 3;
-      setStatusMsg(`Scraping ${platform} data… ${elapsed}s`);
+      setStatusMsg(`Fetching ${platform} public data… ${elapsed}s`);
 
-      const poll = await pollApifyRunAction(runId, userId);
+      // platform is passed so TikTok runs don't default to instagram actor
+      const poll = await pollApifyRunAction(runId, platform);
 
-      if (poll.state === "running") return; // keep waiting
+      if (poll.state === "running") return;
 
       stopPolling();
       setSyncing(false);
 
       if (poll.state === "succeeded") {
         const { followerCount, averageEngagement } = poll.data;
-        setResult({ ok: true, message: `Synced — ${followerCount.toLocaleString()} followers, ${averageEngagement}% engagement.` });
-        toast({ title: "Analytics synced!", description: `Data updated from ${platform}.` });
+        setResult({ ok: true, message: `Updated — ${followerCount.toLocaleString()} followers, ${averageEngagement}% engagement.` });
+        toast({ title: "Public data updated!", description: `Stats refreshed from ${platform}.` });
         onSynced();
       } else {
         setResult({ ok: false, message: poll.error });
-        toast({ title: "Sync failed", description: poll.error, variant: "destructive" });
+        toast({ title: "Refresh failed", description: poll.error, variant: "destructive" });
       }
     }, 3_000);
   };
@@ -481,33 +485,35 @@ function SyncDataModal({
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
           <RefreshCw className="w-4 h-4 text-primary" />
-          Sync Analytics
+          Refresh Public Data
         </DialogTitle>
         <DialogDescription>
-          We'll verify your public account to sync your latest follower count, engagement stats, and content niches.
+          Pull the latest public follower count, engagement stats, and content from your profile.
         </DialogDescription>
       </DialogHeader>
 
       <div className="space-y-4 py-2">
-        <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Platform</label>
-          <div className="grid grid-cols-2 gap-2">
-            {SYNC_PLATFORMS.map((p) => (
-              <button
-                key={p}
-                onClick={() => setPlatform(p)}
-                className={cn(
-                  "h-9 rounded-lg border text-sm font-medium capitalize transition-all",
-                  platform === p
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-zinc-200 dark:border-zinc-700 text-muted-foreground hover:border-primary/50",
-                )}
-              >
-                {p}
-              </button>
-            ))}
+        {availablePlatforms.length > 1 && (
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Platform</label>
+            <div className="grid grid-cols-2 gap-2">
+              {availablePlatforms.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPlatform(p)}
+                  className={cn(
+                    "h-9 rounded-lg border text-sm font-medium capitalize transition-all",
+                    platform === p
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-zinc-200 dark:border-zinc-700 text-muted-foreground hover:border-primary/50",
+                  )}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
@@ -518,7 +524,7 @@ function SyncDataModal({
             <Input
               value={handle}
               onChange={(e) => setHandle(e.target.value.replace(/^@/, ""))}
-              placeholder={platform === "instagram" ? "username" : "username"}
+              placeholder="username"
               className="pl-7"
               disabled={syncing}
               onKeyDown={(e) => e.key === "Enter" && handleSync()}
@@ -555,9 +561,9 @@ function SyncDataModal({
           className="btn-gradient gap-2"
         >
           {syncing ? (
-            <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Syncing…</>
+            <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Refreshing…</>
           ) : (
-            <><RefreshCw className="w-3.5 h-3.5" /> Sync Now</>
+            <><RefreshCw className="w-3.5 h-3.5" /> Refresh</>
           )}
         </Button>
       </DialogFooter>
@@ -756,6 +762,9 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [proposalText, setProposalText] = useState("");
   const [sendingProposal, setSendingProposal] = useState(false);
+  // Official OAuth platforms for the signed-in creator. Public Apify data is not included.
+  const [ownOAuthPlatforms, setOwnOAuthPlatforms] = useState<Set<string>>(new Set());
+  const [oauthStatusLoaded, setOauthStatusLoaded] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -769,6 +778,20 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
       setConnId(info.connectionId);
     });
   }, [id]);
+
+  useEffect(() => {
+    if (!currentUser || !profileData) return;
+    const isOwnCreator =
+      currentUser.id === profileData.userId && profileData.user_type === "creator";
+    if (!isOwnCreator) {
+      setOauthStatusLoaded(true);
+      return;
+    }
+    getOAuthConnectedPlatformsAction().then((res) => {
+      if (!res.error) setOwnOAuthPlatforms(new Set(res.platforms));
+      setOauthStatusLoaded(true);
+    });
+  }, [currentUser, profileData]);
 
   const handleMessage = () => {
     if (!profileData || !currentUser) return;
@@ -969,9 +992,12 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                     </Button>
                     {isCreator && (
                       <>
-                        <Button size="sm" variant="outline" className="gap-2" onClick={() => setShowSyncModal(true)}>
-                          <RefreshCw className="w-3.5 h-3.5" /> Sync Data
-                        </Button>
+                        {oauthStatusLoaded &&
+                          SYNC_PLATFORMS.some((p) => !ownOAuthPlatforms.has(p)) && (
+                          <Button size="sm" variant="outline" className="gap-2" onClick={() => setShowSyncModal(true)}>
+                            <RefreshCw className="w-3.5 h-3.5" /> Refresh public data
+                          </Button>
+                        )}
                         <Button size="sm" asChild className="gap-2 btn-gradient">
                           <Link href="/creator/presence">
                             <Radio className="w-3.5 h-3.5" /> Manage Connections
@@ -1173,7 +1199,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="font-display font-bold">Rich Analytics</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Synced from your public profile</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Followers, engagement, and niches on this profile</p>
               </div>
               <div className="flex items-center gap-2">
               {profileData.lastSyncedAt ? (
@@ -1184,14 +1210,14 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-xs text-zinc-500 bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 px-2.5 py-1 rounded-full font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 shrink-0" />
-                  Not Connected
+                  No data yet
                 </span>
               )}
-              {isOwnProfile && (
+              {isOwnProfile && oauthStatusLoaded && SYNC_PLATFORMS.some((p) => !ownOAuthPlatforms.has(p)) && (
                 <button
                   onClick={() => setShowSyncModal(true)}
                   className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-                  title="Sync analytics"
+                  title="Refresh public data"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                 </button>
@@ -1212,7 +1238,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                         : profileData.followerCount.toLocaleString()}
                   </p>
                 ) : (
-                  <p className="text-sm text-zinc-500 font-medium mt-1">Not Connected</p>
+                  <p className="text-sm text-zinc-500 font-medium mt-1">No data yet</p>
                 )}
               </div>
 
@@ -1224,7 +1250,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                     {profileData.averageEngagement.toFixed(2)}%
                   </p>
                 ) : (
-                  <p className="text-sm text-zinc-500 font-medium mt-1">Not Connected</p>
+                  <p className="text-sm text-zinc-500 font-medium mt-1">No data yet</p>
                 )}
               </div>
             </div>
@@ -1244,7 +1270,7 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-zinc-500 font-medium">Not Connected</p>
+                <p className="text-sm text-zinc-500 font-medium">No data yet</p>
               )}
             </div>
           </div>
@@ -1290,11 +1316,11 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
         )}
       </div>
 
-      {/* Sync Analytics Modal */}
+      {/* Refresh public data — session user only; OAuth platforms are filtered out */}
       <Dialog open={showSyncModal} onOpenChange={setShowSyncModal}>
         {showSyncModal && (
           <SyncDataModal
-            userId={profileData.userId}
+            ownOAuthPlatforms={ownOAuthPlatforms}
             onSynced={() => {
               setShowSyncModal(false);
               if (id) getProfileAction(id).then((d) => { if (d) setProfileData(d); });

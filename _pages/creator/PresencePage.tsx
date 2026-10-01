@@ -4,14 +4,9 @@ import { useState, useEffect, useRef, useCallback, useId } from "react";
 import {
   Wifi, Zap, RefreshCw, TrendingUp, Users, BarChart3, Loader2,
   CheckCircle2, AlertCircle, Heart, MessageCircle, Eye, Pencil, Trash2,
-  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-  DialogDescription, DialogFooter,
-} from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -21,16 +16,12 @@ import MainLayout from "@/components/layout/MainLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import {
-  startVerifyAction,
-  pollVerifyAction,
-  confirmSyncAction,
   startPortfolioResyncAction,
   pollApifyRunAction,
   type Platform,
-  type AccountPreview,
 } from "@/app/actions/apify-sync";
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
-import { removePlatformAction } from "@/app/actions/social-connections";
+import { removePlatformAction, getConnectedAccountsAction } from "@/app/actions/social-connections";
 
 // ─── Platform SVG Icons ───────────────────────────────────────────────────────
 
@@ -165,287 +156,21 @@ const fmt = (n: number | null | undefined): string => {
   return n.toLocaleString();
 };
 
-// ─── Sync Modal (2-step: verify preview → confirm sync) ──────────────────────
-
-type SyncPhase =
-  | "idle"
-  | "verifying"
-  | "preview"
-  | "confirming"
-  | "done"
-  | "error_not_found"
-  | "error_private"
-  | "error_generic";
-
-function SyncModal({
-  userId,
-  platform,
-  onDone,
-  onClose,
-}: {
-  userId: string;
-  platform: Platform;
-  onDone: () => void;
-  onClose: () => void;
-}) {
-  const cfg = PLATFORMS.find((p) => p.id === platform)!;
-  const [handle, setHandle] = useState("");
-  const [phase, setPhase] = useState<SyncPhase>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [preview, setPreview] = useState<AccountPreview | null>(null);
-  const [datasetId, setDatasetId] = useState<string | null>(null);
-  const { toast } = useToast();
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const stop = () => {
-    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-  };
-  useEffect(() => () => stop(), []);
-
-  // ── Step 1: Start verify run ──────────────────────────────────────────────
-  const handlePreview = async () => {
-    if (!handle.trim()) return;
-    setPhase("verifying");
-    setErrorMsg("");
-
-    const start = await startVerifyAction(handle.trim(), platform);
-    if ("error" in start) {
-      setPhase("error_generic");
-      setErrorMsg(start.error);
-      return;
-    }
-
-    const { runId } = start;
-    pollRef.current = setInterval(async () => {
-      const result = await pollVerifyAction(runId, platform, handle.trim());
-      if (result.state === "running") return;
-      stop();
-
-      if (result.state === "found") {
-        setPreview(result.preview);
-        setDatasetId(result.datasetId);
-        setPhase("preview");
-      } else if (result.state === "not_found") {
-        setPhase("error_not_found");
-      } else if (result.state === "private") {
-        setPhase("error_private");
-      } else {
-        setPhase("error_generic");
-        setErrorMsg(result.error);
-      }
-    }, 3_000);
-  };
-
-  // ── Step 2: Confirm and save ──────────────────────────────────────────────
-  const handleConfirm = async () => {
-    if (!datasetId) return;
-    setPhase("confirming");
-
-    // Pass preview.handle so it gets stored in PlatformStats.raw for future re-syncs
-    const result = await confirmSyncAction(datasetId, userId, platform, preview?.handle);
-    if (result.success) {
-      setPhase("done");
-      toast({
-        title: `${cfg.label} connected!`,
-        description: `${fmt(result.platformFollowers)} followers imported.`,
-      });
-      onDone();
-    } else {
-      setPhase("error_generic");
-      setErrorMsg(result.error);
-    }
-  };
-
-  const handleReset = () => {
-    stop();
-    setPhase("idle");
-    setPreview(null);
-    setDatasetId(null);
-    setErrorMsg("");
-  };
-
-  const busy = phase === "verifying" || phase === "confirming";
-
-  return (
-    <DialogContent className="sm:max-w-sm bg-zinc-950 border-zinc-800 text-white">
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2">
-          <cfg.icon className="w-6 h-6" />
-          {phase === "preview" ? "Confirm Account" : `Connect ${cfg.label}`}
-        </DialogTitle>
-        <DialogDescription className="text-zinc-400 text-sm">
-          {phase === "preview"
-            ? "Is this your account?"
-            : "We'll verify your public account to import your stats and latest posts into your portfolio."}
-        </DialogDescription>
-      </DialogHeader>
-
-      <div className="space-y-4 py-1">
-
-        {/* ── Phase: idle — handle input + warning ── */}
-        {phase === "idle" && (
-          <>
-            <div className="flex items-start gap-2.5 rounded-lg bg-amber-950/40 border border-amber-700/40 px-3.5 py-3">
-              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-300/90 leading-relaxed">
-                Your <strong>{cfg.label}</strong> account must be <strong>public</strong>. Private accounts cannot be verified.
-              </p>
-            </div>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">@</span>
-              <Input
-                value={handle}
-                onChange={(e) => setHandle(e.target.value.replace(/^@/, ""))}
-                placeholder={cfg.placeholder}
-                className="pl-7 bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-violet-500 focus-visible:ring-0"
-                onKeyDown={(e) => e.key === "Enter" && handlePreview()}
-                autoFocus
-              />
-            </div>
-          </>
-        )}
-
-        {/* ── Phase: verifying ── */}
-        {phase === "verifying" && (
-          <div className="flex flex-col items-center gap-3 py-6">
-            <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
-            <p className="text-sm text-zinc-300">Looking up @{handle}…</p>
-            <p className="text-xs text-zinc-600">This takes 30–60 seconds</p>
-          </div>
-        )}
-
-        {/* ── Phase: preview — show account card ── */}
-        {phase === "preview" && preview && (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex items-center gap-4">
-            {preview.avatarUrl ? (
-              <img
-                src={preview.avatarUrl}
-                alt={preview.displayName ?? "avatar"}
-                className="w-14 h-14 rounded-full object-cover ring-2 ring-zinc-700 shrink-0"
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
-                <cfg.icon className="w-7 h-7" />
-              </div>
-            )}
-            <div className="min-w-0">
-              {preview.displayName && (
-                <p className="font-semibold text-white text-sm truncate">{preview.displayName}</p>
-              )}
-              <p className="text-zinc-400 text-xs">@{preview.handle}</p>
-              {preview.followerCount != null && (
-                <p className="text-zinc-500 text-xs mt-1">{fmt(preview.followerCount)} followers</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── Phase: confirming ── */}
-        {phase === "confirming" && (
-          <div className="flex flex-col items-center gap-3 py-6">
-            <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
-            <p className="text-sm text-zinc-300">Syncing your data…</p>
-          </div>
-        )}
-
-        {/* ── Phase: done ── */}
-        {phase === "done" && (
-          <div className="flex items-center gap-3 rounded-lg bg-emerald-950/50 border border-emerald-800/50 px-4 py-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <p className="text-sm text-emerald-300">Connected! Your data has been saved.</p>
-          </div>
-        )}
-
-        {/* ── Phase: account not found ── */}
-        {phase === "error_not_found" && (
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 rounded-lg bg-zinc-900 border border-zinc-700 px-4 py-3">
-              <AlertCircle className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-white font-medium">Account not found</p>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  No account was found for <strong>@{handle}</strong> on {cfg.label}. Please check the username and try again.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── Phase: account is private ── */}
-        {phase === "error_private" && (
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 rounded-lg bg-amber-950/40 border border-amber-700/40 px-4 py-3">
-              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-white font-medium">Account is private</p>
-                <p className="text-xs text-amber-300/80 mt-0.5">
-                  <strong>@{handle}</strong> is set to private. Please make your account public in your {cfg.label} settings and try again.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── Phase: generic error ── */}
-        {phase === "error_generic" && (
-          <div className="flex items-start gap-3 rounded-lg bg-red-950/50 border border-red-800/50 px-4 py-3">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-red-300 leading-relaxed">{errorMsg}</p>
-          </div>
-        )}
-      </div>
-
-      <DialogFooter className="gap-2">
-        {/* Cancel / Close */}
-        <Button
-          variant="outline"
-          onClick={phase === "done" ? onClose : phase === "preview" || phase.startsWith("error") ? handleReset : onClose}
-          disabled={busy}
-          className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-        >
-          {phase === "done" ? "Close" : phase === "preview" ? "That's not me" : phase.startsWith("error") ? "Try again" : "Cancel"}
-        </Button>
-
-        {/* Primary action */}
-        {phase === "idle" && (
-          <Button
-            onClick={handlePreview}
-            disabled={!handle.trim()}
-            className="gap-2 bg-violet-600 hover:bg-violet-500 text-white border-0"
-          >
-            <RefreshCw className="w-3.5 h-3.5" /> Preview Account
-          </Button>
-        )}
-        {phase === "preview" && (
-          <Button
-            onClick={handleConfirm}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white border-0"
-          >
-            <CheckCircle2 className="w-3.5 h-3.5" /> Yes, sync my data
-          </Button>
-        )}
-      </DialogFooter>
-    </DialogContent>
-  );
-}
-
 // ─── Resync Posts Button ──────────────────────────────────────────────────────
 
 /**
- * One-click "Refresh Posts" button for a connected platform.
+ * One-click "Refresh public data" button for platforms without an OAuth token.
  * Triggers a new Apify run using the stored handle and polls until done,
  * then calls onSuccess() so the parent can reload the post list.
  *
- * If the handle was never persisted (accounts connected before this feature),
- * it falls back to opening the full reconnect modal via onFallback().
+ * Only shown for Apify-supported platforms (Instagram, TikTok) that do NOT
+ * have a PlatformToken — OAuth-connected platforms are not eligible.
  */
 function ResyncPostsButton({
-  userId,
   platform,
   onSuccess,
   onFallback,
 }: {
-  userId: string;
   platform: Platform;
   onSuccess: () => Promise<void>;
   onFallback: () => void;
@@ -487,14 +212,14 @@ function ResyncPostsButton({
     const { runId } = start;
     pollRef.current = setInterval(async () => {
       try {
-        const result = await pollApifyRunAction(runId, userId, platform);
+        const result = await pollApifyRunAction(runId, platform);
         if (result.state === "running") return;
         stop();
         if (result.state === "succeeded") {
           setState("done");
           toast({
-            title: "Posts refreshed! ✓",
-            description: "Your latest posts have been updated.",
+            title: "Public data updated ✓",
+            description: "Your latest public posts have been refreshed.",
           });
           await onSuccess();
           setState("idle");
@@ -502,7 +227,7 @@ function ResyncPostsButton({
           setState("error");
           toast({
             variant: "destructive",
-            title: "Re-sync failed",
+            title: "Refresh failed",
             description: result.error,
           });
         }
@@ -511,7 +236,7 @@ function ResyncPostsButton({
         setState("error");
         toast({
           variant: "destructive",
-          title: "Re-sync failed",
+          title: "Refresh failed",
           description: err instanceof Error ? err.message : "Unexpected error",
         });
       }
@@ -519,10 +244,10 @@ function ResyncPostsButton({
   };
 
   const label =
-    state === "running" ? "Syncing…" :
-    state === "done"    ? "Refreshed!" :
+    state === "running" ? "Refreshing…" :
+    state === "done"    ? "Updated!" :
     state === "error"   ? "Retry" :
-    "Refresh Posts";
+    "Refresh public data";
 
   return (
     <Button
@@ -556,6 +281,7 @@ function PlatformCard({
   isConnected,
   followers,
   engagement,
+  dataSource,
   onSync,
   onRemove,
 }: {
@@ -563,6 +289,7 @@ function PlatformCard({
   isConnected: boolean;
   followers: number | null;
   engagement: number | null;
+  dataSource?: string | null;
   onSync: () => void;
   onRemove: () => void;
 }) {
@@ -590,19 +317,23 @@ function PlatformCard({
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               Connected
             </span>
+          ) : dataSource === "APIFY" || dataSource === "RAPIDAPI" ? (
+            <span className="text-[10px] font-medium text-sky-300 bg-sky-500/10 border border-sky-500/20 px-1.5 py-0.5 rounded-full">
+              Public data
+            </span>
           ) : (
             <span className="text-[10px] font-medium text-zinc-500 bg-white/[0.05] border border-white/[0.08] px-1.5 py-0.5 rounded-full">
               Not Connected
             </span>
           )}
         </div>
-        {isConnected && followers != null ? (
+        {followers != null ? (
           <p className="text-xs text-zinc-400">
             {fmt(followers)} followers{engagement ? ` · ${engagement}% eng` : ""}
           </p>
         ) : (
           <p className="text-xs text-zinc-600">
-            {platform.syncable ? "Sync to import your stats" : "Coming soon"}
+            {platform.syncable ? "Connect to authorize this account" : "Coming soon"}
           </p>
         )}
       </div>
@@ -749,14 +480,25 @@ const PresencePage = () => {
   const { profile, fullProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [posts, setPosts] = useState<SocialPostItem[]>([]);
-  const [syncTarget, setSyncTarget] = useState<Platform | null>(null);
   const [removeTarget, setRemoveTarget] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   const [loading, setLoading] = useState(true);
+  // OAuth-connected platform set — derived from PlatformToken. This is the sole
+  // source of truth for "Connected" state. Apify/public data is NOT "connected".
+  const [oauthPlatformSet, setOauthPlatformSet] = useState<Set<string>>(new Set());
 
   const reload = async () => {
-    const [, postsRes] = await Promise.all([refreshProfile(), getSocialPostsAction()]);
+    const [, postsRes, accountsRes] = await Promise.all([
+      refreshProfile(),
+      getSocialPostsAction(),
+      getConnectedAccountsAction(),
+    ]);
     if (!postsRes.error) setPosts(postsRes.data);
+    if (!accountsRes.error) {
+      setOauthPlatformSet(
+        new Set(accountsRes.data.filter((a) => a.connectedVia === "oauth").map((a) => a.platform)),
+      );
+    }
   };
 
   useEffect(() => {
@@ -941,16 +683,11 @@ const PresencePage = () => {
     return fullProfile?.platformStats?.find((s) => s.platform === platformId) ?? null;
   };
 
-  const connectedPlatforms = fullProfile?.connectedPlatforms ?? [];
   const totalFollowers = fullProfile?.followerCount ?? null;
   const avgEngagement = fullProfile?.averageEngagement ?? null;
   const niches = fullProfile?.topNiches ?? [];
   const lastSynced = fullProfile?.lastSyncedAt;
-
-  const handleSyncDone = async () => {
-    setSyncTarget(null);
-    await reload();
-  };
+  const hasAnyData = (fullProfile?.platformStats?.length ?? 0) > 0 || (totalFollowers ?? 0) > 0;
 
   const handleRemoveConfirm = async () => {
     if (!removeTarget) return;
@@ -1001,12 +738,12 @@ const PresencePage = () => {
         ) : (
           <div className="space-y-10">
             {/* ── Summary stats bar ── */}
-            {connectedPlatforms.length > 0 && (
+            {(oauthPlatformSet.size > 0 || hasAnyData) && (
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-2xl border border-white/[0.06] bg-zinc-950/80 backdrop-blur-sm p-4">
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500 mb-1.5">Connected</p>
                   <p className="text-2xl font-bold font-display text-violet-400">
-                    {connectedPlatforms.length}
+                    {oauthPlatformSet.size}
                     <span className="text-sm font-normal text-zinc-500 ml-1">platforms</span>
                   </p>
                 </div>
@@ -1044,9 +781,10 @@ const PresencePage = () => {
                     <PlatformCard
                       key={p.id}
                       platform={p}
-                      isConnected={connectedPlatforms.includes(p.id)}
+                      isConnected={oauthPlatformSet.has(p.id)}
                       followers={perPlatform?.followerCount ?? null}
                       engagement={perPlatform?.engagementRate ?? null}
+                      dataSource={perPlatform?.dataSource ?? null}
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
@@ -1054,9 +792,8 @@ const PresencePage = () => {
                           handleTikTokOAuth();
                         } else if (p.id === "youtube") {
                           handleYouTubeOAuth();
-                        } else if (p.syncable) {
-                          setSyncTarget(p.id as Platform);
                         }
+                        // Other platforms: no Apify actor available — onSync is a no-op
                       }}
                       onRemove={() => setRemoveTarget(p.id)}
                     />
@@ -1071,7 +808,7 @@ const PresencePage = () => {
                 Performance Snapshot
               </h2>
 
-              {connectedPlatforms.length === 0 ? (
+              {!hasAnyData ? (
                 <div className="rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 p-10 text-center">
                   <Zap className="w-10 h-10 text-zinc-400 dark:text-zinc-700 mx-auto mb-3" />
                   <p className="text-sm text-muted-foreground font-medium mb-1">No data yet</p>
@@ -1154,20 +891,16 @@ const PresencePage = () => {
                         <p className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                           <meta.Icon className="w-5 h-5" /> {meta.label}
                         </p>
-                        {connectedPlatforms.includes(key) && (
+                        {/* Apify public refresh: only for IG/TikTok without an OAuth token.
+                            YouTube has no Apify actor. OAuth-connected platforms use official API. */}
+                        {(key === "instagram" || key === "tiktok") && !oauthPlatformSet.has(key) && (
                           <ResyncPostsButton
-                            userId={profile?.id ?? ""}
                             platform={key as Platform}
                             onSuccess={reload}
-                            onFallback={() =>
-                              key === "instagram" || key === "facebook_page" || key === "threads"
-                                ? handleMetaOAuth(key as "instagram" | "facebook_page" | "threads")
-                                : key === "tiktok"
-                                ? handleTikTokOAuth()
-                                : key === "youtube"
-                                ? handleYouTubeOAuth()
-                                : setSyncTarget(key as Platform)
-                            }
+                            onFallback={() => {
+                              if (key === "instagram") handleMetaOAuth("instagram");
+                              else handleTikTokOAuth();
+                            }}
                           />
                         )}
                       </div>
@@ -1188,18 +921,6 @@ const PresencePage = () => {
           </div>
         )}
       </div>
-
-      {/* Sync Modal — not used for Instagram, TikTok, or YouTube (all use OAuth) */}
-      {syncTarget && syncTarget !== "instagram" && syncTarget !== "tiktok" && syncTarget !== "youtube" && (
-        <Dialog open onOpenChange={(open) => !open && setSyncTarget(null)}>
-          <SyncModal
-            userId={profile?.id ?? ""}
-            platform={syncTarget}
-            onDone={handleSyncDone}
-            onClose={() => setSyncTarget(null)}
-          />
-        </Dialog>
-      )}
 
       {/* Remove Confirm Dialog */}
       <AlertDialog open={!!removeTarget} onOpenChange={(open) => !open && setRemoveTarget(null)}>

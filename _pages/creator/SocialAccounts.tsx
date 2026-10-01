@@ -42,6 +42,33 @@ function fmt(n: number | null | undefined): string {
   return n.toLocaleString();
 }
 
+function AccountStatusBadge({ via }: { via?: ConnectedAccount["connectedVia"] }) {
+  if (via === "oauth") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+        Connected
+      </span>
+    );
+  }
+  if (via === "public_data") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-1.5 py-0.5 rounded-full">
+        Public data
+      </span>
+    );
+  }
+  return (
+    <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
+      Not connected
+    </span>
+  );
+}
+
+function hasVisibleStats(account: ConnectedAccount | undefined): account is ConnectedAccount {
+  return !!account;
+}
+
 // ─── Meta platform card (always visible, connect / connected state) ───────────
 
 function MetaPlatformCard({
@@ -56,7 +83,8 @@ function MetaPlatformCard({
   onConnected: () => void;
 }) {
   const display = PLATFORM_DISPLAY[platform]!;
-  const isConnected = !!account;
+  // Connected = creator authorized via official OAuth. Public-data accounts are NOT connected.
+  const isConnected = !!account && account.connectedVia === "oauth";
 
   const syncedAt = account?.lastSyncedAt
     ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
@@ -79,35 +107,25 @@ function MetaPlatformCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <p className="font-semibold text-sm">{display.label}</p>
-          {isConnected ? (
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              Connected
-            </span>
-          ) : (
-            <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
-              Not connected
-            </span>
-          )}
+          <AccountStatusBadge via={account?.connectedVia} />
         </div>
 
-        {isConnected && account?.username && (
+        {hasVisibleStats(account) && account.username ? (
           <p className="text-xs text-muted-foreground">@{account.username}</p>
-        )}
-        {!isConnected && display.description && (
+        ) : !isConnected && display.description ? (
           <p className="text-xs text-muted-foreground/60">{display.description}</p>
-        )}
-        {isConnected && syncedAt && (
+        ) : null}
+        {hasVisibleStats(account) && syncedAt && (
           <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
-            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+            <RefreshCw className="w-3 h-3" /> Updated {syncedAt}
           </p>
         )}
       </div>
 
-      {/* Followers stat */}
-      {isConnected && (
+      {/* Followers stay visible for public or unlabeled stats. Connection is separate. */}
+      {hasVisibleStats(account) && (
         <div className="hidden sm:block text-center shrink-0">
-          <p className="text-base font-bold font-display">{fmt(account?.followers)}</p>
+          <p className="text-base font-bold font-display">{fmt(account.followers)}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</p>
         </div>
       )}
@@ -122,7 +140,7 @@ function MetaPlatformCard({
             className="h-8 text-xs"
           />
         </Suspense>
-        {isConnected && (
+        {account && (
           <Button
             variant="ghost"
             size="icon"
@@ -150,7 +168,7 @@ function TikTokCard({
   onConnected: () => void;
 }) {
   const display = PLATFORM_DISPLAY["tiktok"]!;
-  const isConnected = !!account;
+  const isConnected = !!account && account.connectedVia === "oauth";
 
   const syncedAt = account?.lastSyncedAt
     ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
@@ -173,35 +191,25 @@ function TikTokCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <p className="font-semibold text-sm">{display.label}</p>
-          {isConnected ? (
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              Connected
-            </span>
-          ) : (
-            <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
-              Not connected
-            </span>
-          )}
+          <AccountStatusBadge via={account?.connectedVia} />
         </div>
 
-        {isConnected && account?.username && (
+        {hasVisibleStats(account) && account.username ? (
           <p className="text-xs text-muted-foreground">@{account.username}</p>
-        )}
-        {!isConnected && display.description && (
+        ) : !isConnected && display.description ? (
           <p className="text-xs text-muted-foreground/60">{display.description}</p>
-        )}
-        {isConnected && syncedAt && (
+        ) : null}
+        {hasVisibleStats(account) && syncedAt && (
           <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
-            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+            <RefreshCw className="w-3 h-3" /> Updated {syncedAt}
           </p>
         )}
       </div>
 
-      {/* Followers stat */}
-      {isConnected && (
+      {/* Followers stay visible for public or unlabeled stats. Connection is separate. */}
+      {hasVisibleStats(account) && (
         <div className="hidden sm:block text-center shrink-0">
-          <p className="text-base font-bold font-display">{fmt(account?.followers)}</p>
+          <p className="text-base font-bold font-display">{fmt(account.followers)}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Followers</p>
         </div>
       )}
@@ -215,7 +223,7 @@ function TikTokCard({
             className="h-8 text-xs"
           />
         </Suspense>
-        {isConnected && (
+        {account && (
           <Button
             variant="ghost"
             size="icon"
@@ -243,7 +251,7 @@ function YouTubeCard({
   onConnected: () => void;
 }) {
   const display = PLATFORM_DISPLAY["youtube"]!;
-  const isConnected = !!account;
+  const isConnected = !!account && account.connectedVia === "oauth";
 
   const syncedAt = account?.lastSyncedAt
     ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
@@ -266,37 +274,26 @@ function YouTubeCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <p className="font-semibold text-sm">{display.label}</p>
-          {isConnected ? (
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              Connected
-            </span>
-          ) : (
-            <span className="text-[10px] text-muted-foreground bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded-full">
-              Not connected
-            </span>
-          )}
+          <AccountStatusBadge via={account?.connectedVia} />
         </div>
 
-        {isConnected && account?.username && (
+        {hasVisibleStats(account) && account.username ? (
           <p className="text-xs text-muted-foreground">
             {account.username.startsWith("@") ? account.username : `@${account.username}`}
           </p>
-        )}
-        {!isConnected && display.description && (
+        ) : !isConnected && display.description ? (
           <p className="text-xs text-muted-foreground/60">{display.description}</p>
-        )}
-        {isConnected && syncedAt && (
+        ) : null}
+        {hasVisibleStats(account) && syncedAt && (
           <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
-            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+            <RefreshCw className="w-3 h-3" /> Updated {syncedAt}
           </p>
         )}
       </div>
 
-      {/* Subscribers stat */}
-      {isConnected && (
+      {hasVisibleStats(account) && (
         <div className="hidden sm:block text-center shrink-0">
-          <p className="text-base font-bold font-display">{fmt(account?.followers)}</p>
+          <p className="text-base font-bold font-display">{fmt(account.followers)}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Subscribers</p>
         </div>
       )}
@@ -310,7 +307,7 @@ function YouTubeCard({
             className="h-8 text-xs"
           />
         </Suspense>
-        {isConnected && (
+        {account && (
           <Button
             variant="ghost"
             size="icon"
@@ -326,7 +323,7 @@ function YouTubeCard({
   );
 }
 
-// ─── Other-platform row (Apify-connected, read-only disconnect) ───────────────
+// ─── Other-platform row (public-data only — no OAuth, read-only) ─────────────
 
 function OtherPlatformRow({
   account,
@@ -357,14 +354,16 @@ function OtherPlatformRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <p className="font-semibold text-sm">{display.label}</p>
-          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-1.5 py-0.5 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Connected
-          </span>
+          {account.connectedVia === "public_data" && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 px-1.5 py-0.5 rounded-full">
+              Public data
+            </span>
+          )}
         </div>
         {account.username && <p className="text-xs text-muted-foreground">@{account.username}</p>}
         {syncedAt && (
           <p className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-0.5">
-            <RefreshCw className="w-3 h-3" /> Synced {syncedAt}
+            <RefreshCw className="w-3 h-3" /> Updated {syncedAt}
           </p>
         )}
       </div>
@@ -431,13 +430,16 @@ const SocialAccounts = () => {
   // Build a lookup map for fast access in cards
   const accountByPlatform = new Map(accounts.map((a) => [a.platform, a]));
 
-  // Non-Meta, non-TikTok, non-YouTube platforms (Apify syncs, etc.)
+  // Platforms without a fixed OAuth card. Never treated as Connected.
   const otherAccounts = accounts.filter(
     (a) =>
       !META_PLATFORMS.includes(a.platform as MetaPlatform) &&
       a.platform !== "tiktok" &&
-      a.platform !== "youtube",
+      a.platform !== "youtube" &&
+      a.connectedVia !== "oauth",
   );
+  const otherPublicAccounts = otherAccounts.filter((a) => a.connectedVia === "public_data");
+  const otherUnknownAccounts = otherAccounts.filter((a) => a.connectedVia === "unknown");
 
   return (
     <MainLayout>
@@ -545,14 +547,37 @@ const SocialAccounts = () => {
           )}
         </section>
 
-        {/* ── Other Connected Platforms (Apify syncs) ── */}
-        {otherAccounts.length > 0 && (
+        {/* ── Public data platforms (no OAuth token) ── */}
+        {otherPublicAccounts.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                Public Data
+              </h2>
+              <span className="text-[10px] text-muted-foreground/60 bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400 px-1.5 py-0.5 rounded-full">
+                Not officially connected
+              </span>
+            </div>
+            <div className="space-y-3">
+              {otherPublicAccounts.map((account) => (
+                <OtherPlatformRow
+                  key={account.id}
+                  account={account}
+                  onRemove={(platform) => setConfirmRemove(platform)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Stats with no confirmed source. Not Connected, and not labeled public data. */}
+        {otherUnknownAccounts.length > 0 && (
           <section>
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-4">
-              Other Platforms
+              Other stats
             </h2>
             <div className="space-y-3">
-              {otherAccounts.map((account) => (
+              {otherUnknownAccounts.map((account) => (
                 <OtherPlatformRow
                   key={account.id}
                   account={account}

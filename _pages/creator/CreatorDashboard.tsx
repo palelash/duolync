@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Users, Eye, TrendingUp, ArrowRight, LayoutDashboard,
@@ -13,6 +13,7 @@ import { KpiCardsSkeleton, SocialConnectionsSkeleton } from "@/app/_components/d
 import { AIGrowthMentor } from "@/app/_components/dashboard/AIGrowthMentor";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { getOAuthConnectedPlatformsAction } from "@/app/actions/social-connections";
 
 const VIOLET = "var(--accent-violet-text)";
 const VIOLET_T = "var(--accent-violet-text)";
@@ -37,13 +38,22 @@ const fmt = (n: number) => {
 const CreatorDashboard = () => {
   const { profile, fullProfile, loading: profileLoading } = useAuth();
   const [stats] = useState({ totalViews: 0, savedBy: 0 });
+  // Official connections only. Public Apify/RapidAPI stats do not increment this.
+  const [oauthPlatformCount, setOauthPlatformCount] = useState(0);
+
+  useEffect(() => {
+    getOAuthConnectedPlatformsAction().then((res) => {
+      if (!res.error) setOauthPlatformCount(res.platforms.length);
+    });
+  }, []);
 
   const firstName = profile?.full_name?.split(" ")[0] || "Creator";
 
-  const connectedPlatforms = fullProfile?.connectedPlatforms ?? [];
   const followerCount = fullProfile?.followerCount ?? profile?.total_followers ?? 0;
   const engagementRate = fullProfile?.averageEngagement ?? profile?.avg_engagement_rate ?? 0;
-  const hasConnections = connectedPlatforms.length > 0 || followerCount > 0;
+  const platformStats = fullProfile?.platformStats ?? [];
+  // Data availability is independent of official OAuth connection state.
+  const hasData = platformStats.length > 0 || followerCount > 0;
 
   return (
     <MainLayout>
@@ -83,7 +93,7 @@ const CreatorDashboard = () => {
         {profile?.id && (
           <OnboardingChecklist
             userId={profile.id}
-            hasConnectedPlatform={hasConnections}
+            hasConnectedPlatform={hasData}
           />
         )}
 
@@ -109,7 +119,7 @@ const CreatorDashboard = () => {
             </div>
             <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 flex flex-col gap-2 transition-all hover:border-white/[0.10] hover:bg-white/[0.05]">
               <Wifi className="w-5 h-5 text-violet-400 mb-1" strokeWidth={1.5} />
-              <div className="text-2xl font-display font-bold text-zinc-100">{connectedPlatforms.length}</div>
+              <div className="text-2xl font-display font-bold text-zinc-100">{oauthPlatformCount}</div>
               <div className="text-xs text-zinc-500">Connected Platforms</div>
             </div>
           </div>
@@ -144,7 +154,7 @@ const CreatorDashboard = () => {
             </Link>
           </div>
 
-          {hasConnections ? (
+          {hasData ? (
             <div className="rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] p-6">
               <div className="flex items-start justify-between gap-6 flex-wrap">
                 {/* Aggregated stats */}
@@ -163,20 +173,22 @@ const CreatorDashboard = () => {
 
                 {/* Per-platform rows */}
                 <div className="flex flex-col gap-2 min-w-[180px]">
-                  {connectedPlatforms.map((p) => {
-                    const meta = PLATFORM_META[p] ?? { emoji: "📱", color: "#888" };
-                    const stat = fullProfile?.platformStats?.find((s) => s.platform === p);
+                  {platformStats.map((stat) => {
+                    const meta = PLATFORM_META[stat.platform] ?? { emoji: "📱", color: "#888" };
                     return (
                       <div
-                        key={p}
+                        key={stat.platform}
                         className="flex items-center justify-between gap-4 px-3 py-2 rounded-2xl bg-white/[0.04] border border-white/[0.07]"
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-base">{meta.emoji}</span>
-                          <span className="text-xs font-medium text-zinc-300 capitalize">{p}</span>
+                          <span className="text-xs font-medium text-zinc-300 capitalize">{stat.platform}</span>
+                          {(stat.dataSource === "APIFY" || stat.dataSource === "RAPIDAPI") && (
+                            <span className="text-[10px] text-sky-300/80">Public data</span>
+                          )}
                         </div>
                         <span className="text-xs font-semibold text-zinc-200 tabular-nums">
-                          {stat?.followerCount != null ? fmt(stat.followerCount) : "—"} followers
+                          {stat.followerCount != null ? fmt(stat.followerCount) : "—"} followers
                         </span>
                       </div>
                     );
@@ -224,7 +236,7 @@ const CreatorDashboard = () => {
             followerCount={followerCount}
             engagementRate={engagementRate}
             niche={fullProfile?.niche ?? profile?.niche ?? null}
-            platforms={connectedPlatforms}
+            platforms={platformStats.map((s) => s.platform)}
           />
         </div>
       </div>
