@@ -13,6 +13,8 @@ import {
   Check,
   X,
   Loader2,
+  Plus,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -22,6 +24,8 @@ import {
   unbanUser,
 } from "@/app/admin/actions";
 import { fromPrismaRole } from "@/lib/roles";
+import { AddImportedCreatorModal } from "./_components/AddImportedCreatorModal";
+import { EditImportedCreatorModal } from "./_components/EditImportedCreatorModal";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -35,6 +39,13 @@ export type AdminUser = {
   emailVerified: boolean;
   hasCompletedOnboarding: boolean;
   createdAt: Date;
+  // Imported creator builder fields
+  isImported: boolean;
+  creatorProfile: {
+    id: string;
+    claimStatus: string;
+    profileOrigin: string;
+  } | null;
 };
 
 type SortKey = "name" | "email" | "role" | "banned" | "emailVerified" | "createdAt";
@@ -205,6 +216,10 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
   // Per-row loading state (userId)
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
+  // ── Imported creator modals ──
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editCreatorProfileId, setEditCreatorProfileId] = useState<string | null>(null);
+
   // ── Sort helpers ──
   function toggleSort(key: SortKey) {
     setSort((prev) =>
@@ -316,6 +331,15 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
     <>
       {/* Modals */}
       {creds && <CredentialsModal creds={creds} onClose={() => setCreds(null)} />}
+      {addModalOpen && (
+        <AddImportedCreatorModal onClose={() => setAddModalOpen(false)} />
+      )}
+      {editCreatorProfileId && (
+        <EditImportedCreatorModal
+          creatorProfileId={editCreatorProfileId}
+          onClose={() => setEditCreatorProfileId(null)}
+        />
+      )}
       {confirm && (
         <ConfirmDialog
           title={
@@ -363,8 +387,8 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
           className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 placeholder-zinc-500 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 sm:max-w-xs transition-colors"
         />
 
-        {/* Generate button group */}
-        <div className="flex items-center gap-2">
+        {/* Generate button group + Add Imported Creator */}
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-zinc-500">Generate test user:</span>
           <button
             onClick={() => handleGenerate("creator")}
@@ -389,6 +413,14 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
               <UserPlus className="h-3.5 w-3.5" />
             )}
             Brand
+          </button>
+          {/* Add Imported Creator */}
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-2 text-xs font-medium text-violet-300 hover:bg-violet-500/20 hover:border-violet-500/60 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add Imported Creator
           </button>
         </div>
       </div>
@@ -492,6 +524,33 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
                     {/* Actions */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center justify-end gap-2">
+                        {/* Edit Imported Profile */}
+                        {user.isImported &&
+                          user.creatorProfile &&
+                          user.creatorProfile.claimStatus !== "CLAIMED" && (
+                            <button
+                              disabled={isLoading}
+                              onClick={() =>
+                                setEditCreatorProfileId(
+                                  user.creatorProfile!.id,
+                                )
+                              }
+                              title={
+                                user.creatorProfile.claimStatus ===
+                                "CLAIM_PENDING"
+                                  ? "Edit imported profile (restricted — claim pending)"
+                                  : "Edit imported profile"
+                              }
+                              className={`rounded-md p-1.5 transition-colors disabled:opacity-40 ${
+                                user.creatorProfile.claimStatus ===
+                                "CLAIM_PENDING"
+                                  ? "text-amber-400 hover:bg-amber-500/10"
+                                  : "text-violet-400 hover:bg-violet-500/10"
+                              }`}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
                         {/* Ban / Unban */}
                         {userType !== "admin" &&
                           (user.banned ? (

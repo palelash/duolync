@@ -5,7 +5,7 @@ import { Users } from "lucide-react";
 import { UsersClient, type AdminUser } from "./UsersClient";
 
 async function getUsers(): Promise<AdminUser[]> {
-  return db.user.findMany({
+  const rows = await db.user.findMany({
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
@@ -17,8 +17,28 @@ async function getUsers(): Promise<AdminUser[]> {
       emailVerified: true,
       hasCompletedOnboarding: true,
       createdAt: true,
+      isImported: true,
+      creatorProfile: {
+        select: {
+          id: true,
+          claimStatus: true,
+          profileOrigin: true,
+        },
+      },
     },
   });
+
+  // Map enum values to plain strings for the client component
+  return rows.map((r) => ({
+    ...r,
+    creatorProfile: r.creatorProfile
+      ? {
+          id: r.creatorProfile.id,
+          claimStatus: r.creatorProfile.claimStatus as string,
+          profileOrigin: r.creatorProfile.profileOrigin as string,
+        }
+      : null,
+  }));
 }
 
 export default async function AdminUsersPage() {
