@@ -132,6 +132,37 @@ export async function completeOnboarding(
     } else {
       const data = creatorOnboardingSchema.parse(input);
 
+      // ── Guard: PENDING claim blocks profile creation ───────────────────────
+      // If a PENDING claim exists and no CreatorProfile has been created yet,
+      // block onboarding to prevent accidentally creating a Scenario B state
+      // before the admin reviews the claim.
+      //
+      // After claim APPROVAL: CreatorProfile.userId = requesterUserId, so
+      // findUnique({ where: { userId } }) will find the claimed profile.
+      // The upsert fires the UPDATE path — no duplicate profile is created.
+      //
+      // After claim REJECTION: no PENDING claim exists → guard passes → fresh
+      // REGISTERED CreatorProfile is created normally.
+      const existingProfile = await db.creatorProfile.findUnique({
+        where: { userId },
+        select: { id: true, claimStatus: true },
+      });
+
+      if (!existingProfile) {
+        // No existing profile: check for a pending claim before creating one
+        const pendingClaim = await db.profileClaim.findFirst({
+          where: { requesterUserId: userId, status: "PENDING" },
+          select: { id: true },
+        });
+        if (pendingClaim) {
+          return {
+            success: false,
+            error:
+              "Your profile claim is under review. Onboarding will be available once your claim is resolved.",
+          };
+        }
+      }
+
       await db.$transaction(async (tx) => {
         await tx.user.update({
           where: { id: userId },
@@ -141,6 +172,12 @@ export async function completeOnboarding(
           },
         });
 
+        // The upsert update clause intentionally touches ONLY user-provided
+        // onboarding fields (bio, niche, primaryPlatform, location).
+        // It does NOT touch: profileOrigin, claimStatus, claimedByUserId,
+        // claimedAt, importedEmail, importedAt, importBatchId, socialLinks,
+        // followerCount, averageEngagement, moderationStatus, connectedPlatforms.
+        // These fields are preserved across onboarding for claimed profiles.
         await tx.creatorProfile.upsert({
           where: { userId },
           create: {
@@ -149,8 +186,11 @@ export async function completeOnboarding(
             niche: data.niche ?? null,
             primaryPlatform: data.primaryPlatform ?? null,
             location: data.location ?? null,
+            // profileOrigin and claimStatus default via @default in schema
           },
           update: {
+            // Only update user-provided onboarding fields; preserve all
+            // provenance, claim, import, and analytics data.
             bio: data.bio ?? null,
             niche: data.niche ?? null,
             primaryPlatform: data.primaryPlatform ?? null,

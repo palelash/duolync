@@ -1059,6 +1059,18 @@ const ProfileView = ({ profileId }: { profileId?: string }) => {
                 <Badge variant={isCreator ? "default" : "secondary"} className="capitalize text-xs">
                   {profileData.user_type}
                 </Badge>
+                {/* Claim CTA: shown for IMPORTED + UNCLAIMED profiles to non-owners */}
+                {isCreator &&
+                  profileData.profileOrigin === "IMPORTED" &&
+                  profileData.claimStatus === "UNCLAIMED" &&
+                  !isOwnProfile && (
+                    <Link
+                      href={`/claim/${profileData.id}`}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/30 hover:bg-violet-500/20 transition-colors"
+                    >
+                      Claim this profile
+                    </Link>
+                  )}
                 {isCreator && profileData.primary_platform && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
                     {PLATFORM_EMOJIS[profileData.primary_platform.toLowerCase()] ?? "🌐"}{" "}
