@@ -360,7 +360,7 @@ const CreatorCard = ({
         <div className="grid grid-cols-3 gap-0 border border-zinc-200/60 dark:border-zinc-800/80 rounded-xl overflow-hidden mb-4 mt-auto">
           <div className="flex flex-col items-center py-3 px-2">
             <div className="flex items-center gap-1 mb-0.5"><Users className="w-3 h-3 text-zinc-400 dark:text-muted-foreground" /><span className="text-sm font-display font-bold text-zinc-800 dark:text-zinc-200">{formatReach(creator.total_followers)}</span></div>
-            <span className="text-[9px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Reach</span>
+            <span className="text-[9px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Followers</span>
           </div>
           <div className="flex flex-col items-center py-3 px-2 border-x border-zinc-200/60 dark:border-zinc-800/80">
             <div className="flex items-center gap-1 mb-0.5"><TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /><span className="text-sm font-display font-bold text-emerald-600 dark:text-emerald-400">{creator.avg_engagement_rate}%</span></div>
@@ -680,7 +680,7 @@ const CreatorDiscover = () => {
                         </Select>
                       </div>
                       <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Audience Reach</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Follower Range</p>
                         <div className="flex flex-wrap gap-2">
                           {REACH_RANGES.map((r) => (
                             <button

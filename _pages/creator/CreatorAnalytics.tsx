@@ -311,7 +311,7 @@ const CreatorAnalytics = () => {
   // Show analytics whenever public or official stats exist. OAuth is not required.
   const hasData = platformStats.length > 0 || (profile?.followerCount ?? 0) > 0 || totalFollowers > 0;
 
-  const lastSynced = profile?.lastSyncedAt
+  const lastUpdated = profile?.lastSyncedAt
     ? new Date(profile.lastSyncedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : null;
 
@@ -329,10 +329,10 @@ const CreatorAnalytics = () => {
               Performance overview from your platform stats
             </p>
           </div>
-          {lastSynced && (
+          {lastUpdated && (
             <div className="flex items-center gap-1.5 shrink-0 mt-1 text-xs text-muted-foreground bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700">
               <RefreshCw className="w-3 h-3" />
-              Synced {lastSynced}
+              Updated {lastUpdated}
             </div>
           )}
         </div>
@@ -367,14 +367,14 @@ const CreatorAnalytics = () => {
               <KpiCard
                 icon={TrendingUp}
                 label="Avg Engagement"
-                value={analytics ? `${analytics.avgEngagementRate.toFixed(2)}%` : "—"}
-                sub={analytics ? engLabel(analytics.avgEngagementRate) : undefined}
-                accentClass={analytics ? engColor(analytics.avgEngagementRate) : undefined}
+                value={analytics?.avgEngagementRate != null ? `${analytics.avgEngagementRate.toFixed(2)}%` : "—"}
+                sub={analytics?.avgEngagementRate != null ? engLabel(analytics.avgEngagementRate) : undefined}
+                accentClass={analytics?.avgEngagementRate != null ? engColor(analytics.avgEngagementRate) : undefined}
               />
               <KpiCard
                 icon={Eye}
-                label="Avg Reach / Post"
-                value={analytics?.avgReach ? formatNum(analytics.avgReach) : "—"}
+                label="Avg Views / Post"
+                value={analytics?.avgViewsPerPost != null ? formatNum(analytics.avgViewsPerPost) : "—"}
                 sub="views per post"
                 accentClass="text-sky-600 dark:text-sky-400"
               />

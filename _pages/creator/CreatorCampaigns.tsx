@@ -33,7 +33,7 @@ import {
   getPublicCampaignsAction,
   applyToCampaignAction,
   withdrawApplicationAction,
-  getCreatorConnectedPlatformsAction,
+  getCreatorAvailablePlatformsAction,
   type PublicCampaign,
 } from "@/app/actions/creator-campaigns";
 
@@ -136,9 +136,9 @@ function ApplyModal({ campaign, onClose, onApplied }: ApplyModalProps) {
     setCoverLetter("");
     setSelectedPlatform("");
     setPlatformsLoading(true);
-    getCreatorConnectedPlatformsAction().then((res) => {
-      const platforms = res.connectedPlatforms.length > 0
-        ? res.connectedPlatforms
+    getCreatorAvailablePlatformsAction().then((res) => {
+      const platforms = res.availablePlatforms.length > 0
+        ? res.availablePlatforms
         : res.primaryPlatform
           ? [res.primaryPlatform]
           : [];

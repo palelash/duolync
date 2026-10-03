@@ -92,7 +92,7 @@ export interface GrowthTipsResult {
 
 export async function getCreatorGrowthTipsAction(stats: {
   followerCount: number;
-  engagementRate: number;
+  engagementRate: number | null;
   niche: string | null;
   platforms: string[];
 }): Promise<{ data: GrowthTipsResult | null; error: string | null }> {

@@ -7,6 +7,8 @@ import { computeIsMarketplaceApproved } from "@/lib/creator-approval";
 import { headers } from "next/headers";
 import type { Creator } from "@/app/_components/discovery/ProfileDrawer";
 import type { BrandProfile } from "@/app/_components/discovery/ProfilesContext";
+import { parseSocialLinks } from "@/lib/social-links";
+import { getNormalizedCreatorMetrics } from "@/lib/creator-metrics";
 
 async function getSession() {
   return auth.api.getSession({ headers: await headers() });
@@ -31,12 +33,15 @@ export async function getCreatorsAction(): Promise<Creator[]> {
       id: true,
       name: true,
       image: true,
+      platformTokens: { select: { platform: true } },
       platformStats: {
         orderBy: { fetchedAt: "desc" },
         select: {
           platform: true,
           followerCount: true,
           engagementRate: true,
+          dataSource: true,
+          fetchedAt: true,
         },
       },
       creatorProfile: {
@@ -54,6 +59,11 @@ export async function getCreatorsAction(): Promise<Creator[]> {
           moderationStatus: true,
           profileOrigin: true,
           claimStatus: true,
+          socialPosts: {
+            orderBy: { postedAt: "desc" },
+            take: 20,
+            select: { platform: true, likes: true, comments: true, views: true, postedAt: true },
+          },
         },
       },
     },
@@ -64,7 +74,38 @@ export async function getCreatorsAction(): Promise<Creator[]> {
   return users.map((u) => {
     const profile = u.creatorProfile!;
 
-    // Build per-platform follower map from real platformStats (de-duped by platform)
+    // §5 (normalized metrics): use helper for canonical totalFollowers + avgEngagementRate.
+    const metrics = getNormalizedCreatorMetrics({
+      platformStats: u.platformStats.map((s) => ({
+        platform: s.platform,
+        followerCount: s.followerCount,
+        dataSource: s.dataSource,
+        fetchedAt: s.fetchedAt,
+      })),
+      socialPosts: (profile.socialPosts ?? []).map((p) => ({
+        platform: p.platform,
+        likes: p.likes,
+        comments: p.comments,
+        views: p.views,
+        postedAt: p.postedAt,
+      })),
+      creatorProfile: {
+        followerCount: profile.followerCount,
+        totalFollowers: profile.totalFollowers,
+        averageEngagement: profile.averageEngagement,
+        avgEngagementRate: profile.avgEngagementRate,
+        lastSyncedAt: null,
+        lastStatsUpdate: null,
+        profileOrigin: profile.profileOrigin,
+      },
+      oauthPlatforms: u.platformTokens.map((t) => t.platform),
+    });
+
+    const totalFollowers = metrics.totalFollowers ?? 0;
+    const avgEngagement = metrics.averageEngagementRate ?? 0;
+
+    // Build per-platform follower display from real PlatformStats only.
+    // §2: No 65/25/10 synthetic splits. No primaryPlatform full-count fallback.
     const seenPlatforms = new Set<string>();
     const platforms: Record<string, string> = {};
     for (const stat of u.platformStats) {
@@ -73,47 +114,9 @@ export async function getCreatorsAction(): Promise<Creator[]> {
         seenPlatforms.add(stat.platform);
       }
     }
-    // Convert socialLinks JSON to Record<string, string>.
-    // Two storage formats exist:
-    //   - Legacy:  [{platform, url}, ...]  (array)
-    //   - Import:  { instagram: "url", tiktok: "url", ... }  (object)
-    const rawLinks = profile.socialLinks;
-    const social_links: Record<string, string> = {};
-    if (Array.isArray(rawLinks)) {
-      for (const link of rawLinks as { platform: string; url: string }[]) {
-        if (link?.platform && link?.url) {
-          social_links[link.platform.toLowerCase()] = link.url;
-        }
-      }
-    } else if (rawLinks && typeof rawLinks === "object") {
-      for (const [platform, url] of Object.entries(rawLinks as Record<string, unknown>)) {
-        if (typeof url === "string" && url) {
-          social_links[platform.toLowerCase()] = url;
-        }
-      }
-    }
 
-    const totalFollowers = profile.followerCount ?? profile.totalFollowers ?? 0;
-    const avgEngagement = profile.averageEngagement ?? profile.avgEngagementRate ?? 0;
-
-    // Build per-platform follower counts from social_links when platformStats
-    // is missing (e.g. creators imported via CSV who haven't connected OAuth).
-    // Distribute total followers: primary ~65 %, secondary ~25 %, rest ~10 %.
-    if (Object.keys(platforms).length === 0 && Object.keys(social_links).length > 0) {
-      const primaryPlatform = profile.primaryPlatform ?? "";
-      const linkedPlatforms = Object.keys(social_links);
-      // Put primary first so it always gets the dominant share
-      const ordered = primaryPlatform && linkedPlatforms.includes(primaryPlatform)
-        ? [primaryPlatform, ...linkedPlatforms.filter((p) => p !== primaryPlatform)]
-        : linkedPlatforms;
-      const shares = [0.65, 0.25, 0.1];
-      ordered.slice(0, 3).forEach((p, i) => {
-        platforms[p] = fmtFollowers(Math.round(totalFollowers * (shares[i] ?? 0.05)));
-      });
-    } else if (Object.keys(platforms).length === 0 && profile.primaryPlatform) {
-      // Final fallback: primary platform with full count
-      platforms[profile.primaryPlatform] = fmtFollowers(totalFollowers);
-    }
+    // Use shared socialLinks parser for the dual-format field.
+    const social_links = parseSocialLinks(profile.socialLinks);
 
     return {
       id: u.id,

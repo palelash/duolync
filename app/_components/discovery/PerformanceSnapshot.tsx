@@ -51,7 +51,7 @@ export function PerformanceSnapshot({
   }, [creatorUserId]);
 
   const engRate = data?.avgEngagementRate ?? fallbackEngRate;
-  const reach = data?.avgReach ?? fallbackFollowers;
+  const avgViewsPerPost = data?.avgViewsPerPost ?? null;
   const bestPlatform = data?.bestPlatform?.label ?? null;
 
   return (
@@ -100,16 +100,16 @@ export function PerformanceSnapshot({
             </span>
           </div>
 
-          {/* Avg Reach */}
+          {/* Avg Views / Post */}
           <div className="px-4 py-3.5 flex flex-col gap-1">
             <div className="flex items-center gap-1.5">
               <Eye className="w-3 h-3 text-violet-500 shrink-0" />
               <span className="text-[9px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-semibold">
-                Avg Reach
+                Avg Views / Post
               </span>
             </div>
             <span className="text-xl font-display font-bold leading-none text-zinc-900 dark:text-zinc-50">
-              {formatReach(reach)}
+              {avgViewsPerPost != null ? formatReach(avgViewsPerPost) : "—"}
             </span>
             <span className="text-[10px] text-zinc-500 dark:text-zinc-500">per post</span>
           </div>

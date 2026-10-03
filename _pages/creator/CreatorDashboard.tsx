@@ -50,7 +50,7 @@ const CreatorDashboard = () => {
   const firstName = profile?.full_name?.split(" ")[0] || "Creator";
 
   const followerCount = fullProfile?.followerCount ?? profile?.total_followers ?? 0;
-  const engagementRate = fullProfile?.averageEngagement ?? profile?.avg_engagement_rate ?? 0;
+  const engagementRate = fullProfile?.metrics?.averageEngagementRate ?? null;
   const platformStats = fullProfile?.platformStats ?? [];
   // Data availability is independent of official OAuth connection state.
   const hasData = platformStats.length > 0 || followerCount > 0;
@@ -114,7 +114,7 @@ const CreatorDashboard = () => {
             </div>
             <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 flex flex-col gap-2 transition-all hover:border-white/[0.10] hover:bg-white/[0.05]">
               <TrendingUp className="w-5 h-5 text-emerald-400 mb-1" strokeWidth={1.5} />
-              <div className="text-2xl font-display font-bold text-zinc-100">{engagementRate}%</div>
+              <div className="text-2xl font-display font-bold text-zinc-100">{engagementRate != null ? `${engagementRate}%` : "—"}</div>
               <div className="text-xs text-zinc-500">Engagement Rate</div>
             </div>
             <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 flex flex-col gap-2 transition-all hover:border-white/[0.10] hover:bg-white/[0.05]">
@@ -163,9 +163,9 @@ const CreatorDashboard = () => {
                     <p className="text-3xl font-display font-bold text-zinc-100">{fmt(followerCount)}</p>
                     <p className="text-xs text-zinc-500 mt-0.5">Total Followers</p>
                   </div>
-                  {engagementRate > 0 && (
+                  {engagementRate != null && engagementRate > 0 && (
                     <div>
-                      <p className="text-3xl font-display font-bold text-emerald-400">{engagementRate}%</p>
+                      <p className="text-3xl font-display font-bold text-emerald-400">{engagementRate != null ? `${engagementRate}%` : "—"}</p>
                       <p className="text-xs text-zinc-500 mt-0.5">Avg. Engagement</p>
                     </div>
                   )}

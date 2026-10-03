@@ -6,6 +6,10 @@ import { ConnectionStatus, Role } from "@/lib/generated/prisma";
 import { computeIsMarketplaceApproved } from "@/lib/creator-approval";
 import { fromPrismaRole } from "@/lib/roles";
 import { headers } from "next/headers";
+import {
+  getNormalizedCreatorMetrics,
+  type NormalizedCreatorMetrics,
+} from "@/lib/creator-metrics";
 
 export interface FullProfile {
   id: string;
@@ -30,7 +34,9 @@ export interface FullProfile {
     | null;
   location: string | null;
   languages: string[];
+  /** @deprecated Use metrics.totalFollowers instead */
   total_followers: number;
+  /** @deprecated Use metrics.averageEngagementRate instead */
   avg_engagement_rate: number;
   followerCount: number | null;
   averageEngagement: number | null;
@@ -44,6 +50,8 @@ export interface FullProfile {
     dataSource: "OFFICIAL_API" | "APIFY" | "RAPIDAPI" | "MANUAL_IMPORT" | "LEGACY_UNKNOWN";
   }[];
   hasCompletedOnboarding: boolean;
+  /** Normalized metrics — canonical source for UI. */
+  metrics: NormalizedCreatorMetrics;
 }
 
 async function getSessionOrNull() {
@@ -64,9 +72,10 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
       image: true,
       role: true,
       hasCompletedOnboarding: true,
+      platformTokens: { select: { platform: true } },
       platformStats: {
         orderBy: { fetchedAt: "desc" },
-        select: { platform: true, followerCount: true, engagementRate: true, dataSource: true },
+        select: { platform: true, followerCount: true, engagementRate: true, dataSource: true, fetchedAt: true },
       },
       brandProfile: {
         select: {
@@ -91,6 +100,12 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
           topNiches: true,
           lastSyncedAt: true,
           connectedPlatforms: true,
+          profileOrigin: true,
+          socialPosts: {
+            orderBy: { postedAt: "desc" },
+            take: 20,
+            select: { platform: true, likes: true, comments: true, views: true, postedAt: true },
+          },
         },
       },
     },
@@ -101,6 +116,47 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
   const userType = fromPrismaRole(user.role);
   const brand = user.brandProfile;
   const creator = user.creatorProfile;
+
+  const metrics = creator
+    ? getNormalizedCreatorMetrics({
+        platformStats: user.platformStats.map((s) => ({
+          platform: s.platform,
+          followerCount: s.followerCount,
+          dataSource: s.dataSource,
+          fetchedAt: s.fetchedAt,
+        })),
+        socialPosts: (creator.socialPosts ?? []).map((p) => ({
+          platform: p.platform,
+          likes: p.likes,
+          comments: p.comments,
+          views: p.views,
+          postedAt: p.postedAt,
+        })),
+        creatorProfile: {
+          followerCount: creator.followerCount,
+          totalFollowers: creator.totalFollowers,
+          averageEngagement: creator.averageEngagement,
+          avgEngagementRate: creator.avgEngagementRate,
+          lastSyncedAt: creator.lastSyncedAt,
+          lastStatsUpdate: null,
+          profileOrigin: creator.profileOrigin,
+        },
+        oauthPlatforms: user.platformTokens.map((t) => t.platform),
+      })
+    : getNormalizedCreatorMetrics({
+        platformStats: [],
+        socialPosts: [],
+        creatorProfile: {
+          followerCount: null,
+          totalFollowers: 0,
+          averageEngagement: null,
+          avgEngagementRate: 0,
+          lastSyncedAt: null,
+          lastStatsUpdate: null,
+          profileOrigin: "REGISTERED",
+        },
+        oauthPlatforms: [],
+      });
 
   return {
     id: user.id,
@@ -135,6 +191,7 @@ export async function getMyProfileAction(): Promise<FullProfile | null> {
       dataSource: s.dataSource,
     })),
     hasCompletedOnboarding: user.hasCompletedOnboarding,
+    metrics,
   };
   } catch (e) {
     console.error("[getMyProfileAction]", e);

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { Role, ApplicationStatus, CampaignStatus, CampaignEventType } from "@/lib/generated/prisma";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { socialLinksPlatforms } from "@/lib/social-links";
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
 
@@ -215,6 +216,36 @@ export async function applyToCampaignAction(input: {
   if (!creator) return { data: null, error: "Unauthorized" };
 
   if (input.proposedRate <= 0) return { data: null, error: "Rate must be positive." };
+
+  // §8: Server-side validation of selectedPlatform against the creator's actual available platforms.
+  // availablePlatforms = union(PlatformStats platforms, socialLinks platforms).
+  // This prevents applying with a platform the creator has no presence on.
+  if (input.selectedPlatform) {
+    const creatorData = await db.creatorProfile.findUnique({
+      where: { id: creator.profileId },
+      select: {
+        socialLinks: true,
+        user: {
+          select: {
+            platformStats: { select: { platform: true } },
+          },
+        },
+      },
+    });
+
+    const statsPlats = new Set(
+      (creatorData?.user.platformStats ?? []).map((s) => s.platform.toLowerCase()),
+    );
+    const linkPlats = new Set(socialLinksPlatforms(creatorData?.socialLinks));
+    const allAvailable = new Set([...statsPlats, ...linkPlats]);
+
+    if (!allAvailable.has(input.selectedPlatform.toLowerCase())) {
+      return {
+        data: null,
+        error: `Platform "${input.selectedPlatform}" is not associated with your account.`,
+      };
+    }
+  }
 
   const campaign = await db.campaign.findUnique({
     where: { id: input.campaignId },
@@ -427,22 +458,41 @@ export async function respondToCampaignAction(
   return { error: null };
 }
 
-export async function getCreatorConnectedPlatformsAction(): Promise<{
+/**
+ * §8: Returns the creator's available platforms for Campaign Apply.
+ * Derived from union(PlatformStats.platform, socialLinks platforms).
+ * This is NOT the OAuth-connected set — it represents all platforms
+ * where the creator has a presence (public stats OR a social link).
+ * Renamed from getCreatorConnectedPlatformsAction to avoid confusion with OAuth.
+ */
+export async function getCreatorAvailablePlatformsAction(): Promise<{
   primaryPlatform: string | null;
-  connectedPlatforms: string[];
+  availablePlatforms: string[];
   error: string | null;
 }> {
   const creator = await getCreatorProfile();
-  if (!creator) return { primaryPlatform: null, connectedPlatforms: [], error: "Unauthorized" };
+  if (!creator) return { primaryPlatform: null, availablePlatforms: [], error: "Unauthorized" };
 
   const profile = await db.creatorProfile.findUnique({
     where: { id: creator.profileId },
-    select: { primaryPlatform: true, connectedPlatforms: true },
+    select: {
+      primaryPlatform: true,
+      socialLinks: true,
+      user: {
+        select: {
+          platformStats: { select: { platform: true } },
+        },
+      },
+    },
   });
+
+  const statsPlats = (profile?.user.platformStats ?? []).map((s) => s.platform.toLowerCase());
+  const linkPlats = socialLinksPlatforms(profile?.socialLinks);
+  const availablePlatforms = Array.from(new Set([...statsPlats, ...linkPlats]));
 
   return {
     primaryPlatform: profile?.primaryPlatform ?? null,
-    connectedPlatforms: profile?.connectedPlatforms ?? [],
+    availablePlatforms,
     error: null,
   };
 }

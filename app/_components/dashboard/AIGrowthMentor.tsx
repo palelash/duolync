@@ -14,7 +14,7 @@ import {
 
 interface Props {
   followerCount: number;
-  engagementRate: number;
+  engagementRate: number | null;
   niche: string | null;
   platforms: string[];
 }
@@ -94,7 +94,7 @@ export function AIGrowthMentor({ followerCount, engagementRate, niche, platforms
               <p className="text-sm text-zinc-400 leading-relaxed">
                 Let the AI analyze your{" "}
                 <span className="font-medium text-zinc-200">
-                  {engagementRate > 0 ? `${engagementRate}% engagement rate` : "profile"}
+                  {engagementRate != null && engagementRate > 0 ? `${engagementRate}% engagement rate` : "profile"}
                 </span>{" "}
                 {niche ? (
                   <>
