@@ -96,9 +96,12 @@ export async function sendBrandInvitationAction(input: {
 
   const creatorUser = await db.user.findUnique({
     where: { id: input.creatorUserId },
-    select: { id: true, role: true },
+    select: { id: true, role: true, isImported: true },
   });
   if (!creatorUser || creatorUser.role !== Role.CREATOR) return { error: "Creator not found." };
+  if (creatorUser.isImported) {
+    return { error: "This creator hasn't joined Duolync yet." };
+  }
 
   const existing = await db.invitation.findUnique({
     where: { campaignId_creatorUserId: { campaignId: input.campaignId, creatorUserId: input.creatorUserId } },

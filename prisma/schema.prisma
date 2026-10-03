@@ -45,6 +45,9 @@ model User {
   creatorDisputes        Dispute[]       @relation("CreatorDisputes")
   reporterDisputes       Dispute[]       @relation("ReporterDisputes")
   targetedDisputes       Dispute[]       @relation("TargetedDisputes")
+  // ── Claim relations ──────────────────────────────────────────────────────────
+  submittedClaims        ProfileClaim[]  @relation("SubmittedClaims")
+  reviewedClaims         ProfileClaim[]  @relation("ReviewedClaims")
 
   @@index([isImported])
 }
@@ -105,6 +108,8 @@ model CreatorProfile {
   contracts          Contract[]
   campaignEvents     CampaignEvent[]
   socialPosts        SocialPost[]
+  profileClaims      ProfileClaim[]
+  profileAliases     ProfileAlias[]
   user               User             @relation("CreatorProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
   claimedBy          User?            @relation("ClaimedCreatorProfiles", fields: [claimedByUserId], references: [id], onDelete: SetNull)
 
@@ -675,6 +680,50 @@ enum ReportReason {
   UNPROFESSIONAL_BEHAVIOR
   SPAM
   OTHER
+}
+
+// ── Profile Claim ─────────────────────────────────────────────────────────────
+
+enum ProfileClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model ProfileClaim {
+  id               String             @id @default(cuid())
+  creatorProfileId String
+  requesterUserId  String?
+  status           ProfileClaimStatus @default(PENDING)
+  evidenceNote     String?
+  evidenceEmail    String?
+  evidencePlatform String?
+  evidenceHandle   String?
+  requiresMerge    Boolean            @default(false)
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  rejectionReason  String?
+  requestedAt      DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  creatorProfile   CreatorProfile     @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
+  requester        User?              @relation("SubmittedClaims", fields: [requesterUserId], references: [id], onDelete: SetNull)
+  reviewedBy       User?              @relation("ReviewedClaims", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([creatorProfileId, status])
+  @@index([requesterUserId, status])
+  @@index([status, requestedAt])
+}
+
+// ProfileAlias maps an old placeholder User.id to the current canonical CreatorProfile.
+// fromUserId is NOT a FK — it is a plain string so it survives placeholder User deletion.
+// creatorProfileId IS a FK with Cascade so stale aliases are cleaned up if the profile is deleted.
+model ProfileAlias {
+  id               String         @id @default(cuid())
+  fromUserId       String         @unique
+  creatorProfileId String
+  createdAt        DateTime       @default(now())
+  creatorProfile   CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
 }
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────

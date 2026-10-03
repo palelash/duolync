@@ -147,7 +147,47 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
       return { success: false, data: null, error: "Cannot delete an admin account" };
     }
 
-    await db.user.delete({ where: { id: userId } });
+    // ── Guard 1: Block if user owns a CLAIMED CreatorProfile ─────────────────
+    // Deleting this user triggers onDelete: Cascade on CreatorProfile.userId,
+    // which would destroy the claimed profile and cascade to Applications,
+    // Contracts, SocialPosts, etc. Use a dedicated admin ownership-transfer
+    // workflow instead (not yet implemented).
+    const claimedProfile = await db.creatorProfile.findFirst({
+      where: { userId, claimStatus: "CLAIMED" },
+      select: { id: true },
+    });
+    if (claimedProfile) {
+      return {
+        success: false,
+        data: null,
+        error:
+          "Cannot delete a user who owns a claimed creator profile. Use the ownership transfer workflow to reassign the profile first.",
+      };
+    }
+
+    // ── Guard 2: Cancel any PENDING claims before deleting ────────────────────
+    // Without this, ProfileClaim.requesterUserId would be set to NULL but
+    // CreatorProfile.claimStatus would remain CLAIM_PENDING — an orphaned state.
+    await db.$transaction(async (tx) => {
+      const pendingClaims = await tx.profileClaim.findMany({
+        where: { requesterUserId: userId, status: "PENDING" },
+        select: { id: true, creatorProfileId: true },
+      });
+
+      for (const claim of pendingClaims) {
+        await tx.profileClaim.update({
+          where: { id: claim.id },
+          data: { status: "CANCELLED" },
+        });
+        await tx.creatorProfile.updateMany({
+          where: { id: claim.creatorProfileId, claimStatus: "CLAIM_PENDING" },
+          data: { claimStatus: "UNCLAIMED" },
+        });
+      }
+
+      await tx.user.delete({ where: { id: userId } });
+    });
+
     revalidatePath("/admin/users");
     return { success: true, data: null, error: null };
   } catch (err) {

@@ -72,6 +72,16 @@ export async function sendMessageAction(
     const allowed = await rateLimit(`${senderId}:send-message`, 30, 60_000);
     if (!allowed) return { error: "You're sending messages too quickly. Please wait a moment." };
 
+    // Guard: do not create unreachable inbox records for imported users
+    const receiver = await db.user.findUnique({
+      where: { id: receiverId },
+      select: { id: true, isImported: true },
+    });
+    if (!receiver) return { error: "User not found." };
+    if (receiver.isImported) {
+      return { error: "This creator hasn't joined Duolync yet." };
+    }
+
     await db.message.create({
       data: { senderId, receiverId, text: trimmed },
     });

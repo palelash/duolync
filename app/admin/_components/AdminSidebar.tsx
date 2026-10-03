@@ -11,6 +11,7 @@ import {
   Scale,
   LogOut,
   DollarSign,
+  FileSearch,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/lib/auth-client";
@@ -46,6 +47,11 @@ const navItems = [
     label: "Finance",
     href: "/admin/finance",
     icon: DollarSign,
+  },
+  {
+    label: "Claims",
+    href: "/admin/claims",
+    icon: FileSearch,
   },
 ] as const;
 

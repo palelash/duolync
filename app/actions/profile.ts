@@ -223,6 +223,10 @@ export interface PublicProfile {
   avg_engagement_rate: number;
   /** True when the creator is marketplace-approved: moderationStatus=APPROVED AND (profileOrigin=REGISTERED OR claimStatus=CLAIMED). Does not imply identity verification. */
   isMarketplaceApproved: boolean;
+  /** Profile origin: REGISTERED (normal sign-up) or IMPORTED (synthetic profile). Used to decide whether to show the Claim CTA. */
+  profileOrigin: string | null;
+  /** Claim status of an imported profile: UNCLAIMED, CLAIM_PENDING, CLAIMED, NOT_APPLICABLE. */
+  claimStatus: string | null;
   // Apify analytics fields
   followerCount: number | null;
   averageEngagement: number | null;
@@ -389,6 +393,8 @@ export async function getProfileAction(
           claimStatus: creator.claimStatus,
         })
       : false,
+    profileOrigin: creator?.profileOrigin ?? null,
+    claimStatus: creator?.claimStatus ?? null,
     followerCount: creator?.followerCount ?? null,
     averageEngagement: creator?.averageEngagement ?? null,
     topNiches: creator?.topNiches ?? [],
@@ -514,6 +520,26 @@ export async function updateProfileAction(data: {
       },
     });
   } else {
+    // ── Defense-in-depth: block upsert CREATE for pending claimants ──────────
+    // If the user has no CreatorProfile AND has a PENDING ProfileClaim, the
+    // upsert would silently create a new REGISTERED profile, turning them into
+    // Scenario B before admin approval. Block this path.
+    // If the user already HAS a CreatorProfile, legitimate editing proceeds
+    // regardless of any pending claim (Scenario B users keep their profile).
+    const existingCreatorProfile = await db.creatorProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { id: true },
+    });
+    if (!existingCreatorProfile) {
+      const pendingClaim = await db.profileClaim.findFirst({
+        where: { requesterUserId: session.user.id, status: "PENDING" },
+        select: { id: true },
+      });
+      if (pendingClaim) {
+        return { error: "Your profile claim is under review. Profile editing will be available once your claim is resolved." };
+      }
+    }
+
     await db.creatorProfile.upsert({
       where: { userId: session.user.id },
       create: {

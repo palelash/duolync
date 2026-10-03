@@ -149,6 +149,16 @@ export type Invitation = $Result.DefaultSelection<Prisma.$InvitationPayload>
  */
 export type Dispute = $Result.DefaultSelection<Prisma.$DisputePayload>
 /**
+ * Model ProfileClaim
+ * 
+ */
+export type ProfileClaim = $Result.DefaultSelection<Prisma.$ProfileClaimPayload>
+/**
+ * Model ProfileAlias
+ * 
+ */
+export type ProfileAlias = $Result.DefaultSelection<Prisma.$ProfileAliasPayload>
+/**
  * Model RateLimitEvent
  * 
  */
@@ -361,6 +371,16 @@ export const ReportReason: {
 
 export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
 
+
+export const ProfileClaimStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type ProfileClaimStatus = (typeof ProfileClaimStatus)[keyof typeof ProfileClaimStatus]
+
 }
 
 export type DataSource = $Enums.DataSource
@@ -442,6 +462,10 @@ export const DisputeStatus: typeof $Enums.DisputeStatus
 export type ReportReason = $Enums.ReportReason
 
 export const ReportReason: typeof $Enums.ReportReason
+
+export type ProfileClaimStatus = $Enums.ProfileClaimStatus
+
+export const ProfileClaimStatus: typeof $Enums.ProfileClaimStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -833,6 +857,26 @@ export class PrismaClient<
     * ```
     */
   get dispute(): Prisma.DisputeDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.profileClaim`: Exposes CRUD operations for the **ProfileClaim** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProfileClaims
+    * const profileClaims = await prisma.profileClaim.findMany()
+    * ```
+    */
+  get profileClaim(): Prisma.ProfileClaimDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.profileAlias`: Exposes CRUD operations for the **ProfileAlias** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProfileAliases
+    * const profileAliases = await prisma.profileAlias.findMany()
+    * ```
+    */
+  get profileAlias(): Prisma.ProfileAliasDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.rateLimitEvent`: Exposes CRUD operations for the **RateLimitEvent** model.
@@ -1304,6 +1348,8 @@ export namespace Prisma {
     Application: 'Application',
     Invitation: 'Invitation',
     Dispute: 'Dispute',
+    ProfileClaim: 'ProfileClaim',
+    ProfileAlias: 'ProfileAlias',
     RateLimitEvent: 'RateLimitEvent'
   };
 
@@ -1320,7 +1366,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "rateLimitEvent"
+      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "profileClaim" | "profileAlias" | "rateLimitEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3322,6 +3368,154 @@ export namespace Prisma {
           }
         }
       }
+      ProfileClaim: {
+        payload: Prisma.$ProfileClaimPayload<ExtArgs>
+        fields: Prisma.ProfileClaimFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProfileClaimFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProfileClaimFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          findFirst: {
+            args: Prisma.ProfileClaimFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProfileClaimFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          findMany: {
+            args: Prisma.ProfileClaimFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>[]
+          }
+          create: {
+            args: Prisma.ProfileClaimCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          createMany: {
+            args: Prisma.ProfileClaimCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProfileClaimCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>[]
+          }
+          delete: {
+            args: Prisma.ProfileClaimDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          update: {
+            args: Prisma.ProfileClaimUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProfileClaimDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProfileClaimUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProfileClaimUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProfileClaimUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileClaimPayload>
+          }
+          aggregate: {
+            args: Prisma.ProfileClaimAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProfileClaim>
+          }
+          groupBy: {
+            args: Prisma.ProfileClaimGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProfileClaimGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProfileClaimCountArgs<ExtArgs>
+            result: $Utils.Optional<ProfileClaimCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProfileAlias: {
+        payload: Prisma.$ProfileAliasPayload<ExtArgs>
+        fields: Prisma.ProfileAliasFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProfileAliasFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProfileAliasFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          findFirst: {
+            args: Prisma.ProfileAliasFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProfileAliasFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          findMany: {
+            args: Prisma.ProfileAliasFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>[]
+          }
+          create: {
+            args: Prisma.ProfileAliasCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          createMany: {
+            args: Prisma.ProfileAliasCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProfileAliasCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>[]
+          }
+          delete: {
+            args: Prisma.ProfileAliasDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          update: {
+            args: Prisma.ProfileAliasUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProfileAliasDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProfileAliasUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProfileAliasUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProfileAliasUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfileAliasPayload>
+          }
+          aggregate: {
+            args: Prisma.ProfileAliasAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProfileAlias>
+          }
+          groupBy: {
+            args: Prisma.ProfileAliasGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProfileAliasGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProfileAliasCountArgs<ExtArgs>
+            result: $Utils.Optional<ProfileAliasCountAggregateOutputType> | number
+          }
+        }
+      }
       RateLimitEvent: {
         payload: Prisma.$RateLimitEventPayload<ExtArgs>
         fields: Prisma.RateLimitEventFieldRefs
@@ -3531,6 +3725,8 @@ export namespace Prisma {
     application?: ApplicationOmit
     invitation?: InvitationOmit
     dispute?: DisputeOmit
+    profileClaim?: ProfileClaimOmit
+    profileAlias?: ProfileAliasOmit
     rateLimitEvent?: RateLimitEventOmit
   }
 
@@ -3632,6 +3828,8 @@ export namespace Prisma {
     creatorDisputes: number
     reporterDisputes: number
     targetedDisputes: number
+    submittedClaims: number
+    reviewedClaims: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3655,6 +3853,8 @@ export namespace Prisma {
     creatorDisputes?: boolean | UserCountOutputTypeCountCreatorDisputesArgs
     reporterDisputes?: boolean | UserCountOutputTypeCountReporterDisputesArgs
     targetedDisputes?: boolean | UserCountOutputTypeCountTargetedDisputesArgs
+    submittedClaims?: boolean | UserCountOutputTypeCountSubmittedClaimsArgs
+    reviewedClaims?: boolean | UserCountOutputTypeCountReviewedClaimsArgs
   }
 
   // Custom InputTypes
@@ -3808,6 +4008,20 @@ export namespace Prisma {
     where?: DisputeWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSubmittedClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileClaimWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReviewedClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileClaimWhereInput
+  }
+
 
   /**
    * Count Type BrandProfileCountOutputType
@@ -3885,6 +4099,8 @@ export namespace Prisma {
     contracts: number
     campaignEvents: number
     socialPosts: number
+    profileClaims: number
+    profileAliases: number
   }
 
   export type CreatorProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3892,6 +4108,8 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfileCountOutputTypeCountContractsArgs
     campaignEvents?: boolean | CreatorProfileCountOutputTypeCountCampaignEventsArgs
     socialPosts?: boolean | CreatorProfileCountOutputTypeCountSocialPostsArgs
+    profileClaims?: boolean | CreatorProfileCountOutputTypeCountProfileClaimsArgs
+    profileAliases?: boolean | CreatorProfileCountOutputTypeCountProfileAliasesArgs
   }
 
   // Custom InputTypes
@@ -3931,6 +4149,20 @@ export namespace Prisma {
    */
   export type CreatorProfileCountOutputTypeCountSocialPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SocialPostWhereInput
+  }
+
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountProfileClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileClaimWhereInput
+  }
+
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountProfileAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileAliasWhereInput
   }
 
 
@@ -4358,6 +4590,8 @@ export namespace Prisma {
     creatorDisputes?: boolean | User$creatorDisputesArgs<ExtArgs>
     reporterDisputes?: boolean | User$reporterDisputesArgs<ExtArgs>
     targetedDisputes?: boolean | User$targetedDisputesArgs<ExtArgs>
+    submittedClaims?: boolean | User$submittedClaimsArgs<ExtArgs>
+    reviewedClaims?: boolean | User$reviewedClaimsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4434,6 +4668,8 @@ export namespace Prisma {
     creatorDisputes?: boolean | User$creatorDisputesArgs<ExtArgs>
     reporterDisputes?: boolean | User$reporterDisputesArgs<ExtArgs>
     targetedDisputes?: boolean | User$targetedDisputesArgs<ExtArgs>
+    submittedClaims?: boolean | User$submittedClaimsArgs<ExtArgs>
+    reviewedClaims?: boolean | User$reviewedClaimsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4465,6 +4701,8 @@ export namespace Prisma {
       creatorDisputes: Prisma.$DisputePayload<ExtArgs>[]
       reporterDisputes: Prisma.$DisputePayload<ExtArgs>[]
       targetedDisputes: Prisma.$DisputePayload<ExtArgs>[]
+      submittedClaims: Prisma.$ProfileClaimPayload<ExtArgs>[]
+      reviewedClaims: Prisma.$ProfileClaimPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4897,6 +5135,8 @@ export namespace Prisma {
     creatorDisputes<T extends User$creatorDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$creatorDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reporterDisputes<T extends User$reporterDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$reporterDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     targetedDisputes<T extends User$targetedDisputesArgs<ExtArgs> = {}>(args?: Subset<T, User$targetedDisputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    submittedClaims<T extends User$submittedClaimsArgs<ExtArgs> = {}>(args?: Subset<T, User$submittedClaimsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reviewedClaims<T extends User$reviewedClaimsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewedClaimsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5866,6 +6106,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * User.submittedClaims
+   */
+  export type User$submittedClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    where?: ProfileClaimWhereInput
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    cursor?: ProfileClaimWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
+  }
+
+  /**
+   * User.reviewedClaims
+   */
+  export type User$reviewedClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    where?: ProfileClaimWhereInput
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    cursor?: ProfileClaimWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
   }
 
   /**
@@ -7502,6 +7790,8 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
+    profileClaims?: boolean | CreatorProfile$profileClaimsArgs<ExtArgs>
+    profileAliases?: boolean | CreatorProfile$profileAliasesArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -7601,6 +7891,8 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
+    profileClaims?: boolean | CreatorProfile$profileClaimsArgs<ExtArgs>
+    profileAliases?: boolean | CreatorProfile$profileAliasesArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     claimedBy?: boolean | CreatorProfile$claimedByArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -7621,6 +7913,8 @@ export namespace Prisma {
       contracts: Prisma.$ContractPayload<ExtArgs>[]
       campaignEvents: Prisma.$CampaignEventPayload<ExtArgs>[]
       socialPosts: Prisma.$SocialPostPayload<ExtArgs>[]
+      profileClaims: Prisma.$ProfileClaimPayload<ExtArgs>[]
+      profileAliases: Prisma.$ProfileAliasPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
       claimedBy: Prisma.$UserPayload<ExtArgs> | null
     }
@@ -8048,6 +8342,8 @@ export namespace Prisma {
     contracts<T extends CreatorProfile$contractsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     campaignEvents<T extends CreatorProfile$campaignEventsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$campaignEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     socialPosts<T extends CreatorProfile$socialPostsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$socialPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SocialPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    profileClaims<T extends CreatorProfile$profileClaimsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$profileClaimsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    profileAliases<T extends CreatorProfile$profileAliasesArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$profileAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     claimedBy<T extends CreatorProfile$claimedByArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$claimedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -8598,6 +8894,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SocialPostScalarFieldEnum | SocialPostScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.profileClaims
+   */
+  export type CreatorProfile$profileClaimsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    where?: ProfileClaimWhereInput
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    cursor?: ProfileClaimWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.profileAliases
+   */
+  export type CreatorProfile$profileAliasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    where?: ProfileAliasWhereInput
+    orderBy?: ProfileAliasOrderByWithRelationInput | ProfileAliasOrderByWithRelationInput[]
+    cursor?: ProfileAliasWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfileAliasScalarFieldEnum | ProfileAliasScalarFieldEnum[]
   }
 
   /**
@@ -36156,6 +36500,2290 @@ export namespace Prisma {
 
 
   /**
+   * Model ProfileClaim
+   */
+
+  export type AggregateProfileClaim = {
+    _count: ProfileClaimCountAggregateOutputType | null
+    _min: ProfileClaimMinAggregateOutputType | null
+    _max: ProfileClaimMaxAggregateOutputType | null
+  }
+
+  export type ProfileClaimMinAggregateOutputType = {
+    id: string | null
+    creatorProfileId: string | null
+    requesterUserId: string | null
+    status: $Enums.ProfileClaimStatus | null
+    evidenceNote: string | null
+    evidenceEmail: string | null
+    evidencePlatform: string | null
+    evidenceHandle: string | null
+    requiresMerge: boolean | null
+    reviewedByUserId: string | null
+    reviewedAt: Date | null
+    rejectionReason: string | null
+    requestedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProfileClaimMaxAggregateOutputType = {
+    id: string | null
+    creatorProfileId: string | null
+    requesterUserId: string | null
+    status: $Enums.ProfileClaimStatus | null
+    evidenceNote: string | null
+    evidenceEmail: string | null
+    evidencePlatform: string | null
+    evidenceHandle: string | null
+    requiresMerge: boolean | null
+    reviewedByUserId: string | null
+    reviewedAt: Date | null
+    rejectionReason: string | null
+    requestedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProfileClaimCountAggregateOutputType = {
+    id: number
+    creatorProfileId: number
+    requesterUserId: number
+    status: number
+    evidenceNote: number
+    evidenceEmail: number
+    evidencePlatform: number
+    evidenceHandle: number
+    requiresMerge: number
+    reviewedByUserId: number
+    reviewedAt: number
+    rejectionReason: number
+    requestedAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProfileClaimMinAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    requesterUserId?: true
+    status?: true
+    evidenceNote?: true
+    evidenceEmail?: true
+    evidencePlatform?: true
+    evidenceHandle?: true
+    requiresMerge?: true
+    reviewedByUserId?: true
+    reviewedAt?: true
+    rejectionReason?: true
+    requestedAt?: true
+    updatedAt?: true
+  }
+
+  export type ProfileClaimMaxAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    requesterUserId?: true
+    status?: true
+    evidenceNote?: true
+    evidenceEmail?: true
+    evidencePlatform?: true
+    evidenceHandle?: true
+    requiresMerge?: true
+    reviewedByUserId?: true
+    reviewedAt?: true
+    rejectionReason?: true
+    requestedAt?: true
+    updatedAt?: true
+  }
+
+  export type ProfileClaimCountAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    requesterUserId?: true
+    status?: true
+    evidenceNote?: true
+    evidenceEmail?: true
+    evidencePlatform?: true
+    evidenceHandle?: true
+    requiresMerge?: true
+    reviewedByUserId?: true
+    reviewedAt?: true
+    rejectionReason?: true
+    requestedAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProfileClaimAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfileClaim to aggregate.
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileClaims to fetch.
+     */
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProfileClaimWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileClaims from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileClaims.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProfileClaims
+    **/
+    _count?: true | ProfileClaimCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProfileClaimMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProfileClaimMaxAggregateInputType
+  }
+
+  export type GetProfileClaimAggregateType<T extends ProfileClaimAggregateArgs> = {
+        [P in keyof T & keyof AggregateProfileClaim]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProfileClaim[P]>
+      : GetScalarType<T[P], AggregateProfileClaim[P]>
+  }
+
+
+
+
+  export type ProfileClaimGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileClaimWhereInput
+    orderBy?: ProfileClaimOrderByWithAggregationInput | ProfileClaimOrderByWithAggregationInput[]
+    by: ProfileClaimScalarFieldEnum[] | ProfileClaimScalarFieldEnum
+    having?: ProfileClaimScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProfileClaimCountAggregateInputType | true
+    _min?: ProfileClaimMinAggregateInputType
+    _max?: ProfileClaimMaxAggregateInputType
+  }
+
+  export type ProfileClaimGroupByOutputType = {
+    id: string
+    creatorProfileId: string
+    requesterUserId: string | null
+    status: $Enums.ProfileClaimStatus
+    evidenceNote: string | null
+    evidenceEmail: string | null
+    evidencePlatform: string | null
+    evidenceHandle: string | null
+    requiresMerge: boolean
+    reviewedByUserId: string | null
+    reviewedAt: Date | null
+    rejectionReason: string | null
+    requestedAt: Date
+    updatedAt: Date
+    _count: ProfileClaimCountAggregateOutputType | null
+    _min: ProfileClaimMinAggregateOutputType | null
+    _max: ProfileClaimMaxAggregateOutputType | null
+  }
+
+  type GetProfileClaimGroupByPayload<T extends ProfileClaimGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProfileClaimGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProfileClaimGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProfileClaimGroupByOutputType[P]>
+            : GetScalarType<T[P], ProfileClaimGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProfileClaimSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    requesterUserId?: boolean
+    status?: boolean
+    evidenceNote?: boolean
+    evidenceEmail?: boolean
+    evidencePlatform?: boolean
+    evidenceHandle?: boolean
+    requiresMerge?: boolean
+    reviewedByUserId?: boolean
+    reviewedAt?: boolean
+    rejectionReason?: boolean
+    requestedAt?: boolean
+    updatedAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["profileClaim"]>
+
+  export type ProfileClaimSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    requesterUserId?: boolean
+    status?: boolean
+    evidenceNote?: boolean
+    evidenceEmail?: boolean
+    evidencePlatform?: boolean
+    evidenceHandle?: boolean
+    requiresMerge?: boolean
+    reviewedByUserId?: boolean
+    reviewedAt?: boolean
+    rejectionReason?: boolean
+    requestedAt?: boolean
+    updatedAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["profileClaim"]>
+
+  export type ProfileClaimSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    requesterUserId?: boolean
+    status?: boolean
+    evidenceNote?: boolean
+    evidenceEmail?: boolean
+    evidencePlatform?: boolean
+    evidenceHandle?: boolean
+    requiresMerge?: boolean
+    reviewedByUserId?: boolean
+    reviewedAt?: boolean
+    rejectionReason?: boolean
+    requestedAt?: boolean
+    updatedAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }, ExtArgs["result"]["profileClaim"]>
+
+  export type ProfileClaimSelectScalar = {
+    id?: boolean
+    creatorProfileId?: boolean
+    requesterUserId?: boolean
+    status?: boolean
+    evidenceNote?: boolean
+    evidenceEmail?: boolean
+    evidencePlatform?: boolean
+    evidenceHandle?: boolean
+    requiresMerge?: boolean
+    reviewedByUserId?: boolean
+    reviewedAt?: boolean
+    rejectionReason?: boolean
+    requestedAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProfileClaimOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "requesterUserId" | "status" | "evidenceNote" | "evidenceEmail" | "evidencePlatform" | "evidenceHandle" | "requiresMerge" | "reviewedByUserId" | "reviewedAt" | "rejectionReason" | "requestedAt" | "updatedAt", ExtArgs["result"]["profileClaim"]>
+  export type ProfileClaimInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }
+  export type ProfileClaimIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }
+  export type ProfileClaimIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+    requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
+    reviewedBy?: boolean | ProfileClaim$reviewedByArgs<ExtArgs>
+  }
+
+  export type $ProfileClaimPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProfileClaim"
+    objects: {
+      creatorProfile: Prisma.$CreatorProfilePayload<ExtArgs>
+      requester: Prisma.$UserPayload<ExtArgs> | null
+      reviewedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      creatorProfileId: string
+      requesterUserId: string | null
+      status: $Enums.ProfileClaimStatus
+      evidenceNote: string | null
+      evidenceEmail: string | null
+      evidencePlatform: string | null
+      evidenceHandle: string | null
+      requiresMerge: boolean
+      reviewedByUserId: string | null
+      reviewedAt: Date | null
+      rejectionReason: string | null
+      requestedAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["profileClaim"]>
+    composites: {}
+  }
+
+  type ProfileClaimGetPayload<S extends boolean | null | undefined | ProfileClaimDefaultArgs> = $Result.GetResult<Prisma.$ProfileClaimPayload, S>
+
+  type ProfileClaimCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProfileClaimFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProfileClaimCountAggregateInputType | true
+    }
+
+  export interface ProfileClaimDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProfileClaim'], meta: { name: 'ProfileClaim' } }
+    /**
+     * Find zero or one ProfileClaim that matches the filter.
+     * @param {ProfileClaimFindUniqueArgs} args - Arguments to find a ProfileClaim
+     * @example
+     * // Get one ProfileClaim
+     * const profileClaim = await prisma.profileClaim.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProfileClaimFindUniqueArgs>(args: SelectSubset<T, ProfileClaimFindUniqueArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProfileClaim that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProfileClaimFindUniqueOrThrowArgs} args - Arguments to find a ProfileClaim
+     * @example
+     * // Get one ProfileClaim
+     * const profileClaim = await prisma.profileClaim.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProfileClaimFindUniqueOrThrowArgs>(args: SelectSubset<T, ProfileClaimFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProfileClaim that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimFindFirstArgs} args - Arguments to find a ProfileClaim
+     * @example
+     * // Get one ProfileClaim
+     * const profileClaim = await prisma.profileClaim.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProfileClaimFindFirstArgs>(args?: SelectSubset<T, ProfileClaimFindFirstArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProfileClaim that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimFindFirstOrThrowArgs} args - Arguments to find a ProfileClaim
+     * @example
+     * // Get one ProfileClaim
+     * const profileClaim = await prisma.profileClaim.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProfileClaimFindFirstOrThrowArgs>(args?: SelectSubset<T, ProfileClaimFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProfileClaims that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProfileClaims
+     * const profileClaims = await prisma.profileClaim.findMany()
+     * 
+     * // Get first 10 ProfileClaims
+     * const profileClaims = await prisma.profileClaim.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const profileClaimWithIdOnly = await prisma.profileClaim.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProfileClaimFindManyArgs>(args?: SelectSubset<T, ProfileClaimFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProfileClaim.
+     * @param {ProfileClaimCreateArgs} args - Arguments to create a ProfileClaim.
+     * @example
+     * // Create one ProfileClaim
+     * const ProfileClaim = await prisma.profileClaim.create({
+     *   data: {
+     *     // ... data to create a ProfileClaim
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProfileClaimCreateArgs>(args: SelectSubset<T, ProfileClaimCreateArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProfileClaims.
+     * @param {ProfileClaimCreateManyArgs} args - Arguments to create many ProfileClaims.
+     * @example
+     * // Create many ProfileClaims
+     * const profileClaim = await prisma.profileClaim.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProfileClaimCreateManyArgs>(args?: SelectSubset<T, ProfileClaimCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProfileClaims and returns the data saved in the database.
+     * @param {ProfileClaimCreateManyAndReturnArgs} args - Arguments to create many ProfileClaims.
+     * @example
+     * // Create many ProfileClaims
+     * const profileClaim = await prisma.profileClaim.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProfileClaims and only return the `id`
+     * const profileClaimWithIdOnly = await prisma.profileClaim.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProfileClaimCreateManyAndReturnArgs>(args?: SelectSubset<T, ProfileClaimCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProfileClaim.
+     * @param {ProfileClaimDeleteArgs} args - Arguments to delete one ProfileClaim.
+     * @example
+     * // Delete one ProfileClaim
+     * const ProfileClaim = await prisma.profileClaim.delete({
+     *   where: {
+     *     // ... filter to delete one ProfileClaim
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProfileClaimDeleteArgs>(args: SelectSubset<T, ProfileClaimDeleteArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProfileClaim.
+     * @param {ProfileClaimUpdateArgs} args - Arguments to update one ProfileClaim.
+     * @example
+     * // Update one ProfileClaim
+     * const profileClaim = await prisma.profileClaim.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProfileClaimUpdateArgs>(args: SelectSubset<T, ProfileClaimUpdateArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProfileClaims.
+     * @param {ProfileClaimDeleteManyArgs} args - Arguments to filter ProfileClaims to delete.
+     * @example
+     * // Delete a few ProfileClaims
+     * const { count } = await prisma.profileClaim.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProfileClaimDeleteManyArgs>(args?: SelectSubset<T, ProfileClaimDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProfileClaims.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProfileClaims
+     * const profileClaim = await prisma.profileClaim.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProfileClaimUpdateManyArgs>(args: SelectSubset<T, ProfileClaimUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProfileClaims and returns the data updated in the database.
+     * @param {ProfileClaimUpdateManyAndReturnArgs} args - Arguments to update many ProfileClaims.
+     * @example
+     * // Update many ProfileClaims
+     * const profileClaim = await prisma.profileClaim.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProfileClaims and only return the `id`
+     * const profileClaimWithIdOnly = await prisma.profileClaim.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProfileClaimUpdateManyAndReturnArgs>(args: SelectSubset<T, ProfileClaimUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProfileClaim.
+     * @param {ProfileClaimUpsertArgs} args - Arguments to update or create a ProfileClaim.
+     * @example
+     * // Update or create a ProfileClaim
+     * const profileClaim = await prisma.profileClaim.upsert({
+     *   create: {
+     *     // ... data to create a ProfileClaim
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProfileClaim we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProfileClaimUpsertArgs>(args: SelectSubset<T, ProfileClaimUpsertArgs<ExtArgs>>): Prisma__ProfileClaimClient<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProfileClaims.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimCountArgs} args - Arguments to filter ProfileClaims to count.
+     * @example
+     * // Count the number of ProfileClaims
+     * const count = await prisma.profileClaim.count({
+     *   where: {
+     *     // ... the filter for the ProfileClaims we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProfileClaimCountArgs>(
+      args?: Subset<T, ProfileClaimCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProfileClaimCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProfileClaim.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProfileClaimAggregateArgs>(args: Subset<T, ProfileClaimAggregateArgs>): Prisma.PrismaPromise<GetProfileClaimAggregateType<T>>
+
+    /**
+     * Group by ProfileClaim.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileClaimGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProfileClaimGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProfileClaimGroupByArgs['orderBy'] }
+        : { orderBy?: ProfileClaimGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProfileClaimGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfileClaimGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProfileClaim model
+   */
+  readonly fields: ProfileClaimFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProfileClaim.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProfileClaimClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creatorProfile<T extends CreatorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfileDefaultArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    requester<T extends ProfileClaim$requesterArgs<ExtArgs> = {}>(args?: Subset<T, ProfileClaim$requesterArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    reviewedBy<T extends ProfileClaim$reviewedByArgs<ExtArgs> = {}>(args?: Subset<T, ProfileClaim$reviewedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProfileClaim model
+   */
+  interface ProfileClaimFieldRefs {
+    readonly id: FieldRef<"ProfileClaim", 'String'>
+    readonly creatorProfileId: FieldRef<"ProfileClaim", 'String'>
+    readonly requesterUserId: FieldRef<"ProfileClaim", 'String'>
+    readonly status: FieldRef<"ProfileClaim", 'ProfileClaimStatus'>
+    readonly evidenceNote: FieldRef<"ProfileClaim", 'String'>
+    readonly evidenceEmail: FieldRef<"ProfileClaim", 'String'>
+    readonly evidencePlatform: FieldRef<"ProfileClaim", 'String'>
+    readonly evidenceHandle: FieldRef<"ProfileClaim", 'String'>
+    readonly requiresMerge: FieldRef<"ProfileClaim", 'Boolean'>
+    readonly reviewedByUserId: FieldRef<"ProfileClaim", 'String'>
+    readonly reviewedAt: FieldRef<"ProfileClaim", 'DateTime'>
+    readonly rejectionReason: FieldRef<"ProfileClaim", 'String'>
+    readonly requestedAt: FieldRef<"ProfileClaim", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProfileClaim", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProfileClaim findUnique
+   */
+  export type ProfileClaimFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileClaim to fetch.
+     */
+    where: ProfileClaimWhereUniqueInput
+  }
+
+  /**
+   * ProfileClaim findUniqueOrThrow
+   */
+  export type ProfileClaimFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileClaim to fetch.
+     */
+    where: ProfileClaimWhereUniqueInput
+  }
+
+  /**
+   * ProfileClaim findFirst
+   */
+  export type ProfileClaimFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileClaim to fetch.
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileClaims to fetch.
+     */
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfileClaims.
+     */
+    cursor?: ProfileClaimWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileClaims from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileClaims.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileClaims.
+     */
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileClaim findFirstOrThrow
+   */
+  export type ProfileClaimFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileClaim to fetch.
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileClaims to fetch.
+     */
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfileClaims.
+     */
+    cursor?: ProfileClaimWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileClaims from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileClaims.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileClaims.
+     */
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileClaim findMany
+   */
+  export type ProfileClaimFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileClaims to fetch.
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileClaims to fetch.
+     */
+    orderBy?: ProfileClaimOrderByWithRelationInput | ProfileClaimOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProfileClaims.
+     */
+    cursor?: ProfileClaimWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileClaims from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileClaims.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileClaims.
+     */
+    distinct?: ProfileClaimScalarFieldEnum | ProfileClaimScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileClaim create
+   */
+  export type ProfileClaimCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProfileClaim.
+     */
+    data: XOR<ProfileClaimCreateInput, ProfileClaimUncheckedCreateInput>
+  }
+
+  /**
+   * ProfileClaim createMany
+   */
+  export type ProfileClaimCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProfileClaims.
+     */
+    data: ProfileClaimCreateManyInput | ProfileClaimCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProfileClaim createManyAndReturn
+   */
+  export type ProfileClaimCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProfileClaims.
+     */
+    data: ProfileClaimCreateManyInput | ProfileClaimCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProfileClaim update
+   */
+  export type ProfileClaimUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProfileClaim.
+     */
+    data: XOR<ProfileClaimUpdateInput, ProfileClaimUncheckedUpdateInput>
+    /**
+     * Choose, which ProfileClaim to update.
+     */
+    where: ProfileClaimWhereUniqueInput
+  }
+
+  /**
+   * ProfileClaim updateMany
+   */
+  export type ProfileClaimUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProfileClaims.
+     */
+    data: XOR<ProfileClaimUpdateManyMutationInput, ProfileClaimUncheckedUpdateManyInput>
+    /**
+     * Filter which ProfileClaims to update
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * Limit how many ProfileClaims to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProfileClaim updateManyAndReturn
+   */
+  export type ProfileClaimUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * The data used to update ProfileClaims.
+     */
+    data: XOR<ProfileClaimUpdateManyMutationInput, ProfileClaimUncheckedUpdateManyInput>
+    /**
+     * Filter which ProfileClaims to update
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * Limit how many ProfileClaims to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProfileClaim upsert
+   */
+  export type ProfileClaimUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProfileClaim to update in case it exists.
+     */
+    where: ProfileClaimWhereUniqueInput
+    /**
+     * In case the ProfileClaim found by the `where` argument doesn't exist, create a new ProfileClaim with this data.
+     */
+    create: XOR<ProfileClaimCreateInput, ProfileClaimUncheckedCreateInput>
+    /**
+     * In case the ProfileClaim was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProfileClaimUpdateInput, ProfileClaimUncheckedUpdateInput>
+  }
+
+  /**
+   * ProfileClaim delete
+   */
+  export type ProfileClaimDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+    /**
+     * Filter which ProfileClaim to delete.
+     */
+    where: ProfileClaimWhereUniqueInput
+  }
+
+  /**
+   * ProfileClaim deleteMany
+   */
+  export type ProfileClaimDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfileClaims to delete
+     */
+    where?: ProfileClaimWhereInput
+    /**
+     * Limit how many ProfileClaims to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProfileClaim.requester
+   */
+  export type ProfileClaim$requesterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ProfileClaim.reviewedBy
+   */
+  export type ProfileClaim$reviewedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ProfileClaim without action
+   */
+  export type ProfileClaimDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileClaim
+     */
+    select?: ProfileClaimSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileClaim
+     */
+    omit?: ProfileClaimOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileClaimInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProfileAlias
+   */
+
+  export type AggregateProfileAlias = {
+    _count: ProfileAliasCountAggregateOutputType | null
+    _min: ProfileAliasMinAggregateOutputType | null
+    _max: ProfileAliasMaxAggregateOutputType | null
+  }
+
+  export type ProfileAliasMinAggregateOutputType = {
+    id: string | null
+    fromUserId: string | null
+    creatorProfileId: string | null
+    createdAt: Date | null
+  }
+
+  export type ProfileAliasMaxAggregateOutputType = {
+    id: string | null
+    fromUserId: string | null
+    creatorProfileId: string | null
+    createdAt: Date | null
+  }
+
+  export type ProfileAliasCountAggregateOutputType = {
+    id: number
+    fromUserId: number
+    creatorProfileId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ProfileAliasMinAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    creatorProfileId?: true
+    createdAt?: true
+  }
+
+  export type ProfileAliasMaxAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    creatorProfileId?: true
+    createdAt?: true
+  }
+
+  export type ProfileAliasCountAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    creatorProfileId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ProfileAliasAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfileAlias to aggregate.
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileAliases to fetch.
+     */
+    orderBy?: ProfileAliasOrderByWithRelationInput | ProfileAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProfileAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProfileAliases
+    **/
+    _count?: true | ProfileAliasCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProfileAliasMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProfileAliasMaxAggregateInputType
+  }
+
+  export type GetProfileAliasAggregateType<T extends ProfileAliasAggregateArgs> = {
+        [P in keyof T & keyof AggregateProfileAlias]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProfileAlias[P]>
+      : GetScalarType<T[P], AggregateProfileAlias[P]>
+  }
+
+
+
+
+  export type ProfileAliasGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileAliasWhereInput
+    orderBy?: ProfileAliasOrderByWithAggregationInput | ProfileAliasOrderByWithAggregationInput[]
+    by: ProfileAliasScalarFieldEnum[] | ProfileAliasScalarFieldEnum
+    having?: ProfileAliasScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProfileAliasCountAggregateInputType | true
+    _min?: ProfileAliasMinAggregateInputType
+    _max?: ProfileAliasMaxAggregateInputType
+  }
+
+  export type ProfileAliasGroupByOutputType = {
+    id: string
+    fromUserId: string
+    creatorProfileId: string
+    createdAt: Date
+    _count: ProfileAliasCountAggregateOutputType | null
+    _min: ProfileAliasMinAggregateOutputType | null
+    _max: ProfileAliasMaxAggregateOutputType | null
+  }
+
+  type GetProfileAliasGroupByPayload<T extends ProfileAliasGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProfileAliasGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProfileAliasGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProfileAliasGroupByOutputType[P]>
+            : GetScalarType<T[P], ProfileAliasGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProfileAliasSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    creatorProfileId?: boolean
+    createdAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profileAlias"]>
+
+  export type ProfileAliasSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    creatorProfileId?: boolean
+    createdAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profileAlias"]>
+
+  export type ProfileAliasSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    creatorProfileId?: boolean
+    createdAt?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profileAlias"]>
+
+  export type ProfileAliasSelectScalar = {
+    id?: boolean
+    fromUserId?: boolean
+    creatorProfileId?: boolean
+    createdAt?: boolean
+  }
+
+  export type ProfileAliasOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fromUserId" | "creatorProfileId" | "createdAt", ExtArgs["result"]["profileAlias"]>
+  export type ProfileAliasInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type ProfileAliasIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type ProfileAliasIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $ProfileAliasPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProfileAlias"
+    objects: {
+      creatorProfile: Prisma.$CreatorProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      fromUserId: string
+      creatorProfileId: string
+      createdAt: Date
+    }, ExtArgs["result"]["profileAlias"]>
+    composites: {}
+  }
+
+  type ProfileAliasGetPayload<S extends boolean | null | undefined | ProfileAliasDefaultArgs> = $Result.GetResult<Prisma.$ProfileAliasPayload, S>
+
+  type ProfileAliasCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProfileAliasFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProfileAliasCountAggregateInputType | true
+    }
+
+  export interface ProfileAliasDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProfileAlias'], meta: { name: 'ProfileAlias' } }
+    /**
+     * Find zero or one ProfileAlias that matches the filter.
+     * @param {ProfileAliasFindUniqueArgs} args - Arguments to find a ProfileAlias
+     * @example
+     * // Get one ProfileAlias
+     * const profileAlias = await prisma.profileAlias.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProfileAliasFindUniqueArgs>(args: SelectSubset<T, ProfileAliasFindUniqueArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProfileAlias that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProfileAliasFindUniqueOrThrowArgs} args - Arguments to find a ProfileAlias
+     * @example
+     * // Get one ProfileAlias
+     * const profileAlias = await prisma.profileAlias.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProfileAliasFindUniqueOrThrowArgs>(args: SelectSubset<T, ProfileAliasFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProfileAlias that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasFindFirstArgs} args - Arguments to find a ProfileAlias
+     * @example
+     * // Get one ProfileAlias
+     * const profileAlias = await prisma.profileAlias.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProfileAliasFindFirstArgs>(args?: SelectSubset<T, ProfileAliasFindFirstArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProfileAlias that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasFindFirstOrThrowArgs} args - Arguments to find a ProfileAlias
+     * @example
+     * // Get one ProfileAlias
+     * const profileAlias = await prisma.profileAlias.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProfileAliasFindFirstOrThrowArgs>(args?: SelectSubset<T, ProfileAliasFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProfileAliases that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProfileAliases
+     * const profileAliases = await prisma.profileAlias.findMany()
+     * 
+     * // Get first 10 ProfileAliases
+     * const profileAliases = await prisma.profileAlias.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const profileAliasWithIdOnly = await prisma.profileAlias.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProfileAliasFindManyArgs>(args?: SelectSubset<T, ProfileAliasFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProfileAlias.
+     * @param {ProfileAliasCreateArgs} args - Arguments to create a ProfileAlias.
+     * @example
+     * // Create one ProfileAlias
+     * const ProfileAlias = await prisma.profileAlias.create({
+     *   data: {
+     *     // ... data to create a ProfileAlias
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProfileAliasCreateArgs>(args: SelectSubset<T, ProfileAliasCreateArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProfileAliases.
+     * @param {ProfileAliasCreateManyArgs} args - Arguments to create many ProfileAliases.
+     * @example
+     * // Create many ProfileAliases
+     * const profileAlias = await prisma.profileAlias.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProfileAliasCreateManyArgs>(args?: SelectSubset<T, ProfileAliasCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProfileAliases and returns the data saved in the database.
+     * @param {ProfileAliasCreateManyAndReturnArgs} args - Arguments to create many ProfileAliases.
+     * @example
+     * // Create many ProfileAliases
+     * const profileAlias = await prisma.profileAlias.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProfileAliases and only return the `id`
+     * const profileAliasWithIdOnly = await prisma.profileAlias.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProfileAliasCreateManyAndReturnArgs>(args?: SelectSubset<T, ProfileAliasCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProfileAlias.
+     * @param {ProfileAliasDeleteArgs} args - Arguments to delete one ProfileAlias.
+     * @example
+     * // Delete one ProfileAlias
+     * const ProfileAlias = await prisma.profileAlias.delete({
+     *   where: {
+     *     // ... filter to delete one ProfileAlias
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProfileAliasDeleteArgs>(args: SelectSubset<T, ProfileAliasDeleteArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProfileAlias.
+     * @param {ProfileAliasUpdateArgs} args - Arguments to update one ProfileAlias.
+     * @example
+     * // Update one ProfileAlias
+     * const profileAlias = await prisma.profileAlias.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProfileAliasUpdateArgs>(args: SelectSubset<T, ProfileAliasUpdateArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProfileAliases.
+     * @param {ProfileAliasDeleteManyArgs} args - Arguments to filter ProfileAliases to delete.
+     * @example
+     * // Delete a few ProfileAliases
+     * const { count } = await prisma.profileAlias.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProfileAliasDeleteManyArgs>(args?: SelectSubset<T, ProfileAliasDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProfileAliases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProfileAliases
+     * const profileAlias = await prisma.profileAlias.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProfileAliasUpdateManyArgs>(args: SelectSubset<T, ProfileAliasUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProfileAliases and returns the data updated in the database.
+     * @param {ProfileAliasUpdateManyAndReturnArgs} args - Arguments to update many ProfileAliases.
+     * @example
+     * // Update many ProfileAliases
+     * const profileAlias = await prisma.profileAlias.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProfileAliases and only return the `id`
+     * const profileAliasWithIdOnly = await prisma.profileAlias.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProfileAliasUpdateManyAndReturnArgs>(args: SelectSubset<T, ProfileAliasUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProfileAlias.
+     * @param {ProfileAliasUpsertArgs} args - Arguments to update or create a ProfileAlias.
+     * @example
+     * // Update or create a ProfileAlias
+     * const profileAlias = await prisma.profileAlias.upsert({
+     *   create: {
+     *     // ... data to create a ProfileAlias
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProfileAlias we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProfileAliasUpsertArgs>(args: SelectSubset<T, ProfileAliasUpsertArgs<ExtArgs>>): Prisma__ProfileAliasClient<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProfileAliases.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasCountArgs} args - Arguments to filter ProfileAliases to count.
+     * @example
+     * // Count the number of ProfileAliases
+     * const count = await prisma.profileAlias.count({
+     *   where: {
+     *     // ... the filter for the ProfileAliases we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProfileAliasCountArgs>(
+      args?: Subset<T, ProfileAliasCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProfileAliasCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProfileAlias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProfileAliasAggregateArgs>(args: Subset<T, ProfileAliasAggregateArgs>): Prisma.PrismaPromise<GetProfileAliasAggregateType<T>>
+
+    /**
+     * Group by ProfileAlias.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileAliasGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProfileAliasGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProfileAliasGroupByArgs['orderBy'] }
+        : { orderBy?: ProfileAliasGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProfileAliasGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfileAliasGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProfileAlias model
+   */
+  readonly fields: ProfileAliasFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProfileAlias.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProfileAliasClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creatorProfile<T extends CreatorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfileDefaultArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProfileAlias model
+   */
+  interface ProfileAliasFieldRefs {
+    readonly id: FieldRef<"ProfileAlias", 'String'>
+    readonly fromUserId: FieldRef<"ProfileAlias", 'String'>
+    readonly creatorProfileId: FieldRef<"ProfileAlias", 'String'>
+    readonly createdAt: FieldRef<"ProfileAlias", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProfileAlias findUnique
+   */
+  export type ProfileAliasFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileAlias to fetch.
+     */
+    where: ProfileAliasWhereUniqueInput
+  }
+
+  /**
+   * ProfileAlias findUniqueOrThrow
+   */
+  export type ProfileAliasFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileAlias to fetch.
+     */
+    where: ProfileAliasWhereUniqueInput
+  }
+
+  /**
+   * ProfileAlias findFirst
+   */
+  export type ProfileAliasFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileAlias to fetch.
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileAliases to fetch.
+     */
+    orderBy?: ProfileAliasOrderByWithRelationInput | ProfileAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfileAliases.
+     */
+    cursor?: ProfileAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileAliases.
+     */
+    distinct?: ProfileAliasScalarFieldEnum | ProfileAliasScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileAlias findFirstOrThrow
+   */
+  export type ProfileAliasFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileAlias to fetch.
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileAliases to fetch.
+     */
+    orderBy?: ProfileAliasOrderByWithRelationInput | ProfileAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfileAliases.
+     */
+    cursor?: ProfileAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileAliases.
+     */
+    distinct?: ProfileAliasScalarFieldEnum | ProfileAliasScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileAlias findMany
+   */
+  export type ProfileAliasFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfileAliases to fetch.
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfileAliases to fetch.
+     */
+    orderBy?: ProfileAliasOrderByWithRelationInput | ProfileAliasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProfileAliases.
+     */
+    cursor?: ProfileAliasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfileAliases from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfileAliases.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfileAliases.
+     */
+    distinct?: ProfileAliasScalarFieldEnum | ProfileAliasScalarFieldEnum[]
+  }
+
+  /**
+   * ProfileAlias create
+   */
+  export type ProfileAliasCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProfileAlias.
+     */
+    data: XOR<ProfileAliasCreateInput, ProfileAliasUncheckedCreateInput>
+  }
+
+  /**
+   * ProfileAlias createMany
+   */
+  export type ProfileAliasCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProfileAliases.
+     */
+    data: ProfileAliasCreateManyInput | ProfileAliasCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProfileAlias createManyAndReturn
+   */
+  export type ProfileAliasCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProfileAliases.
+     */
+    data: ProfileAliasCreateManyInput | ProfileAliasCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProfileAlias update
+   */
+  export type ProfileAliasUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProfileAlias.
+     */
+    data: XOR<ProfileAliasUpdateInput, ProfileAliasUncheckedUpdateInput>
+    /**
+     * Choose, which ProfileAlias to update.
+     */
+    where: ProfileAliasWhereUniqueInput
+  }
+
+  /**
+   * ProfileAlias updateMany
+   */
+  export type ProfileAliasUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProfileAliases.
+     */
+    data: XOR<ProfileAliasUpdateManyMutationInput, ProfileAliasUncheckedUpdateManyInput>
+    /**
+     * Filter which ProfileAliases to update
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * Limit how many ProfileAliases to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProfileAlias updateManyAndReturn
+   */
+  export type ProfileAliasUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * The data used to update ProfileAliases.
+     */
+    data: XOR<ProfileAliasUpdateManyMutationInput, ProfileAliasUncheckedUpdateManyInput>
+    /**
+     * Filter which ProfileAliases to update
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * Limit how many ProfileAliases to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProfileAlias upsert
+   */
+  export type ProfileAliasUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProfileAlias to update in case it exists.
+     */
+    where: ProfileAliasWhereUniqueInput
+    /**
+     * In case the ProfileAlias found by the `where` argument doesn't exist, create a new ProfileAlias with this data.
+     */
+    create: XOR<ProfileAliasCreateInput, ProfileAliasUncheckedCreateInput>
+    /**
+     * In case the ProfileAlias was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProfileAliasUpdateInput, ProfileAliasUncheckedUpdateInput>
+  }
+
+  /**
+   * ProfileAlias delete
+   */
+  export type ProfileAliasDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+    /**
+     * Filter which ProfileAlias to delete.
+     */
+    where: ProfileAliasWhereUniqueInput
+  }
+
+  /**
+   * ProfileAlias deleteMany
+   */
+  export type ProfileAliasDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfileAliases to delete
+     */
+    where?: ProfileAliasWhereInput
+    /**
+     * Limit how many ProfileAliases to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProfileAlias without action
+   */
+  export type ProfileAliasDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfileAlias
+     */
+    select?: ProfileAliasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProfileAlias
+     */
+    omit?: ProfileAliasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileAliasInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model RateLimitEvent
    */
 
@@ -37569,6 +40197,36 @@ export namespace Prisma {
   export type DisputeScalarFieldEnum = (typeof DisputeScalarFieldEnum)[keyof typeof DisputeScalarFieldEnum]
 
 
+  export const ProfileClaimScalarFieldEnum: {
+    id: 'id',
+    creatorProfileId: 'creatorProfileId',
+    requesterUserId: 'requesterUserId',
+    status: 'status',
+    evidenceNote: 'evidenceNote',
+    evidenceEmail: 'evidenceEmail',
+    evidencePlatform: 'evidencePlatform',
+    evidenceHandle: 'evidenceHandle',
+    requiresMerge: 'requiresMerge',
+    reviewedByUserId: 'reviewedByUserId',
+    reviewedAt: 'reviewedAt',
+    rejectionReason: 'rejectionReason',
+    requestedAt: 'requestedAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProfileClaimScalarFieldEnum = (typeof ProfileClaimScalarFieldEnum)[keyof typeof ProfileClaimScalarFieldEnum]
+
+
+  export const ProfileAliasScalarFieldEnum: {
+    id: 'id',
+    fromUserId: 'fromUserId',
+    creatorProfileId: 'creatorProfileId',
+    createdAt: 'createdAt'
+  };
+
+  export type ProfileAliasScalarFieldEnum = (typeof ProfileAliasScalarFieldEnum)[keyof typeof ProfileAliasScalarFieldEnum]
+
+
   export const RateLimitEventScalarFieldEnum: {
     id: 'id',
     identifier: 'identifier',
@@ -37965,6 +40623,20 @@ export namespace Prisma {
    */
   export type ListEnumReportReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportReason[]'>
     
+
+
+  /**
+   * Reference to a field of type 'ProfileClaimStatus'
+   */
+  export type EnumProfileClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProfileClaimStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProfileClaimStatus[]'
+   */
+  export type ListEnumProfileClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProfileClaimStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -38010,6 +40682,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeListRelationFilter
     reporterDisputes?: DisputeListRelationFilter
     targetedDisputes?: DisputeListRelationFilter
+    submittedClaims?: ProfileClaimListRelationFilter
+    reviewedClaims?: ProfileClaimListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -38049,6 +40723,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeOrderByRelationAggregateInput
     reporterDisputes?: DisputeOrderByRelationAggregateInput
     targetedDisputes?: DisputeOrderByRelationAggregateInput
+    submittedClaims?: ProfileClaimOrderByRelationAggregateInput
+    reviewedClaims?: ProfileClaimOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -38091,6 +40767,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeListRelationFilter
     reporterDisputes?: DisputeListRelationFilter
     targetedDisputes?: DisputeListRelationFilter
+    submittedClaims?: ProfileClaimListRelationFilter
+    reviewedClaims?: ProfileClaimListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -38254,6 +40932,8 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
+    profileClaims?: ProfileClaimListRelationFilter
+    profileAliases?: ProfileAliasListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     claimedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
@@ -38288,6 +40968,8 @@ export namespace Prisma {
     contracts?: ContractOrderByRelationAggregateInput
     campaignEvents?: CampaignEventOrderByRelationAggregateInput
     socialPosts?: SocialPostOrderByRelationAggregateInput
+    profileClaims?: ProfileClaimOrderByRelationAggregateInput
+    profileAliases?: ProfileAliasOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
     claimedBy?: UserOrderByWithRelationInput
   }
@@ -38325,6 +41007,8 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
+    profileClaims?: ProfileClaimListRelationFilter
+    profileAliases?: ProfileAliasListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     claimedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id" | "userId" | "claimedByUserId">
@@ -40293,6 +42977,162 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Dispute"> | Date | string
   }
 
+  export type ProfileClaimWhereInput = {
+    AND?: ProfileClaimWhereInput | ProfileClaimWhereInput[]
+    OR?: ProfileClaimWhereInput[]
+    NOT?: ProfileClaimWhereInput | ProfileClaimWhereInput[]
+    id?: StringFilter<"ProfileClaim"> | string
+    creatorProfileId?: StringFilter<"ProfileClaim"> | string
+    requesterUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    status?: EnumProfileClaimStatusFilter<"ProfileClaim"> | $Enums.ProfileClaimStatus
+    evidenceNote?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceEmail?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidencePlatform?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceHandle?: StringNullableFilter<"ProfileClaim"> | string | null
+    requiresMerge?: BoolFilter<"ProfileClaim"> | boolean
+    reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
+    rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+    requester?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type ProfileClaimOrderByWithRelationInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    requesterUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    evidenceNote?: SortOrderInput | SortOrder
+    evidenceEmail?: SortOrderInput | SortOrder
+    evidencePlatform?: SortOrderInput | SortOrder
+    evidenceHandle?: SortOrderInput | SortOrder
+    requiresMerge?: SortOrder
+    reviewedByUserId?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    requestedAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorProfile?: CreatorProfileOrderByWithRelationInput
+    requester?: UserOrderByWithRelationInput
+    reviewedBy?: UserOrderByWithRelationInput
+  }
+
+  export type ProfileClaimWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProfileClaimWhereInput | ProfileClaimWhereInput[]
+    OR?: ProfileClaimWhereInput[]
+    NOT?: ProfileClaimWhereInput | ProfileClaimWhereInput[]
+    creatorProfileId?: StringFilter<"ProfileClaim"> | string
+    requesterUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    status?: EnumProfileClaimStatusFilter<"ProfileClaim"> | $Enums.ProfileClaimStatus
+    evidenceNote?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceEmail?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidencePlatform?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceHandle?: StringNullableFilter<"ProfileClaim"> | string | null
+    requiresMerge?: BoolFilter<"ProfileClaim"> | boolean
+    reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
+    rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+    requester?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    reviewedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type ProfileClaimOrderByWithAggregationInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    requesterUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    evidenceNote?: SortOrderInput | SortOrder
+    evidenceEmail?: SortOrderInput | SortOrder
+    evidencePlatform?: SortOrderInput | SortOrder
+    evidenceHandle?: SortOrderInput | SortOrder
+    requiresMerge?: SortOrder
+    reviewedByUserId?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    requestedAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProfileClaimCountOrderByAggregateInput
+    _max?: ProfileClaimMaxOrderByAggregateInput
+    _min?: ProfileClaimMinOrderByAggregateInput
+  }
+
+  export type ProfileClaimScalarWhereWithAggregatesInput = {
+    AND?: ProfileClaimScalarWhereWithAggregatesInput | ProfileClaimScalarWhereWithAggregatesInput[]
+    OR?: ProfileClaimScalarWhereWithAggregatesInput[]
+    NOT?: ProfileClaimScalarWhereWithAggregatesInput | ProfileClaimScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProfileClaim"> | string
+    creatorProfileId?: StringWithAggregatesFilter<"ProfileClaim"> | string
+    requesterUserId?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    status?: EnumProfileClaimStatusWithAggregatesFilter<"ProfileClaim"> | $Enums.ProfileClaimStatus
+    evidenceNote?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    evidenceEmail?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    evidencePlatform?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    evidenceHandle?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    requiresMerge?: BoolWithAggregatesFilter<"ProfileClaim"> | boolean
+    reviewedByUserId?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"ProfileClaim"> | Date | string | null
+    rejectionReason?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    requestedAt?: DateTimeWithAggregatesFilter<"ProfileClaim"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProfileClaim"> | Date | string
+  }
+
+  export type ProfileAliasWhereInput = {
+    AND?: ProfileAliasWhereInput | ProfileAliasWhereInput[]
+    OR?: ProfileAliasWhereInput[]
+    NOT?: ProfileAliasWhereInput | ProfileAliasWhereInput[]
+    id?: StringFilter<"ProfileAlias"> | string
+    fromUserId?: StringFilter<"ProfileAlias"> | string
+    creatorProfileId?: StringFilter<"ProfileAlias"> | string
+    createdAt?: DateTimeFilter<"ProfileAlias"> | Date | string
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }
+
+  export type ProfileAliasOrderByWithRelationInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    creatorProfileId?: SortOrder
+    createdAt?: SortOrder
+    creatorProfile?: CreatorProfileOrderByWithRelationInput
+  }
+
+  export type ProfileAliasWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    fromUserId?: string
+    AND?: ProfileAliasWhereInput | ProfileAliasWhereInput[]
+    OR?: ProfileAliasWhereInput[]
+    NOT?: ProfileAliasWhereInput | ProfileAliasWhereInput[]
+    creatorProfileId?: StringFilter<"ProfileAlias"> | string
+    createdAt?: DateTimeFilter<"ProfileAlias"> | Date | string
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }, "id" | "fromUserId">
+
+  export type ProfileAliasOrderByWithAggregationInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    creatorProfileId?: SortOrder
+    createdAt?: SortOrder
+    _count?: ProfileAliasCountOrderByAggregateInput
+    _max?: ProfileAliasMaxOrderByAggregateInput
+    _min?: ProfileAliasMinOrderByAggregateInput
+  }
+
+  export type ProfileAliasScalarWhereWithAggregatesInput = {
+    AND?: ProfileAliasScalarWhereWithAggregatesInput | ProfileAliasScalarWhereWithAggregatesInput[]
+    OR?: ProfileAliasScalarWhereWithAggregatesInput[]
+    NOT?: ProfileAliasScalarWhereWithAggregatesInput | ProfileAliasScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProfileAlias"> | string
+    fromUserId?: StringWithAggregatesFilter<"ProfileAlias"> | string
+    creatorProfileId?: StringWithAggregatesFilter<"ProfileAlias"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ProfileAlias"> | Date | string
+  }
+
   export type RateLimitEventWhereInput = {
     AND?: RateLimitEventWhereInput | RateLimitEventWhereInput[]
     OR?: RateLimitEventWhereInput[]
@@ -40372,6 +43212,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -40411,6 +43253,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUpdateInput = {
@@ -40450,6 +43294,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -40489,6 +43335,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -40670,6 +43518,8 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
@@ -40704,6 +43554,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileUpdateInput = {
@@ -40734,6 +43586,8 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
@@ -40768,6 +43622,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type CreatorProfileCreateManyInput = {
@@ -42873,6 +45729,170 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProfileClaimCreateInput = {
+    id?: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+    creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
+    requester?: UserCreateNestedOneWithoutSubmittedClaimsInput
+    reviewedBy?: UserCreateNestedOneWithoutReviewedClaimsInput
+  }
+
+  export type ProfileClaimUncheckedCreateInput = {
+    id?: string
+    creatorProfileId: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
+    requester?: UserUpdateOneWithoutSubmittedClaimsNestedInput
+    reviewedBy?: UserUpdateOneWithoutReviewedClaimsNestedInput
+  }
+
+  export type ProfileClaimUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimCreateManyInput = {
+    id?: string
+    creatorProfileId: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasCreateInput = {
+    id?: string
+    fromUserId: string
+    createdAt?: Date | string
+    creatorProfile: CreatorProfileCreateNestedOneWithoutProfileAliasesInput
+  }
+
+  export type ProfileAliasUncheckedCreateInput = {
+    id?: string
+    fromUserId: string
+    creatorProfileId: string
+    createdAt?: Date | string
+  }
+
+  export type ProfileAliasUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileAliasesNestedInput
+  }
+
+  export type ProfileAliasUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasCreateManyInput = {
+    id?: string
+    fromUserId: string
+    creatorProfileId: string
+    createdAt?: Date | string
+  }
+
+  export type ProfileAliasUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RateLimitEventCreateInput = {
     id?: string
     identifier: string
@@ -43067,6 +46087,12 @@ export namespace Prisma {
     none?: DisputeWhereInput
   }
 
+  export type ProfileClaimListRelationFilter = {
+    every?: ProfileClaimWhereInput
+    some?: ProfileClaimWhereInput
+    none?: ProfileClaimWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -43125,6 +46151,10 @@ export namespace Prisma {
   }
 
   export type DisputeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProfileClaimOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -43468,6 +46498,12 @@ export namespace Prisma {
     none?: SocialPostWhereInput
   }
 
+  export type ProfileAliasListRelationFilter = {
+    every?: ProfileAliasWhereInput
+    some?: ProfileAliasWhereInput
+    none?: ProfileAliasWhereInput
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -43478,6 +46514,10 @@ export namespace Prisma {
   }
 
   export type SocialPostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProfileAliasOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -44988,6 +48028,95 @@ export namespace Prisma {
     _max?: NestedEnumReportReasonFilter<$PrismaModel>
   }
 
+  export type EnumProfileClaimStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileClaimStatus | EnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileClaimStatusFilter<$PrismaModel> | $Enums.ProfileClaimStatus
+  }
+
+  export type ProfileClaimCountOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    requesterUserId?: SortOrder
+    status?: SortOrder
+    evidenceNote?: SortOrder
+    evidenceEmail?: SortOrder
+    evidencePlatform?: SortOrder
+    evidenceHandle?: SortOrder
+    requiresMerge?: SortOrder
+    reviewedByUserId?: SortOrder
+    reviewedAt?: SortOrder
+    rejectionReason?: SortOrder
+    requestedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProfileClaimMaxOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    requesterUserId?: SortOrder
+    status?: SortOrder
+    evidenceNote?: SortOrder
+    evidenceEmail?: SortOrder
+    evidencePlatform?: SortOrder
+    evidenceHandle?: SortOrder
+    requiresMerge?: SortOrder
+    reviewedByUserId?: SortOrder
+    reviewedAt?: SortOrder
+    rejectionReason?: SortOrder
+    requestedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProfileClaimMinOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    requesterUserId?: SortOrder
+    status?: SortOrder
+    evidenceNote?: SortOrder
+    evidenceEmail?: SortOrder
+    evidencePlatform?: SortOrder
+    evidenceHandle?: SortOrder
+    requiresMerge?: SortOrder
+    reviewedByUserId?: SortOrder
+    reviewedAt?: SortOrder
+    rejectionReason?: SortOrder
+    requestedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumProfileClaimStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileClaimStatus | EnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileClaimStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProfileClaimStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProfileClaimStatusFilter<$PrismaModel>
+    _max?: NestedEnumProfileClaimStatusFilter<$PrismaModel>
+  }
+
+  export type ProfileAliasCountOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    creatorProfileId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ProfileAliasMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    creatorProfileId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ProfileAliasMinOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    creatorProfileId?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type RateLimitEventCountOrderByAggregateInput = {
     id?: SortOrder
     identifier?: SortOrder
@@ -45164,6 +48293,20 @@ export namespace Prisma {
     connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
+  export type ProfileClaimCreateNestedManyWithoutRequesterInput = {
+    create?: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput> | ProfileClaimCreateWithoutRequesterInput[] | ProfileClaimUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutRequesterInput | ProfileClaimCreateOrConnectWithoutRequesterInput[]
+    createMany?: ProfileClaimCreateManyRequesterInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+  }
+
+  export type ProfileClaimCreateNestedManyWithoutReviewedByInput = {
+    create?: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput> | ProfileClaimCreateWithoutReviewedByInput[] | ProfileClaimUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutReviewedByInput | ProfileClaimCreateOrConnectWithoutReviewedByInput[]
+    createMany?: ProfileClaimCreateManyReviewedByInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -45320,6 +48463,20 @@ export namespace Prisma {
     connectOrCreate?: DisputeCreateOrConnectWithoutTargetUserInput | DisputeCreateOrConnectWithoutTargetUserInput[]
     createMany?: DisputeCreateManyTargetUserInputEnvelope
     connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput = {
+    create?: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput> | ProfileClaimCreateWithoutRequesterInput[] | ProfileClaimUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutRequesterInput | ProfileClaimCreateOrConnectWithoutRequesterInput[]
+    createMany?: ProfileClaimCreateManyRequesterInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+  }
+
+  export type ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput = {
+    create?: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput> | ProfileClaimCreateWithoutReviewedByInput[] | ProfileClaimUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutReviewedByInput | ProfileClaimCreateOrConnectWithoutReviewedByInput[]
+    createMany?: ProfileClaimCreateManyReviewedByInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -45652,6 +48809,34 @@ export namespace Prisma {
     deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
+  export type ProfileClaimUpdateManyWithoutRequesterNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput> | ProfileClaimCreateWithoutRequesterInput[] | ProfileClaimUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutRequesterInput | ProfileClaimCreateOrConnectWithoutRequesterInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutRequesterInput | ProfileClaimUpsertWithWhereUniqueWithoutRequesterInput[]
+    createMany?: ProfileClaimCreateManyRequesterInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutRequesterInput | ProfileClaimUpdateWithWhereUniqueWithoutRequesterInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutRequesterInput | ProfileClaimUpdateManyWithWhereWithoutRequesterInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
+  export type ProfileClaimUpdateManyWithoutReviewedByNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput> | ProfileClaimCreateWithoutReviewedByInput[] | ProfileClaimUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutReviewedByInput | ProfileClaimCreateOrConnectWithoutReviewedByInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutReviewedByInput | ProfileClaimUpsertWithWhereUniqueWithoutReviewedByInput[]
+    createMany?: ProfileClaimCreateManyReviewedByInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutReviewedByInput | ProfileClaimUpdateWithWhereUniqueWithoutReviewedByInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutReviewedByInput | ProfileClaimUpdateManyWithWhereWithoutReviewedByInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -45962,6 +49147,34 @@ export namespace Prisma {
     deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
+  export type ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput> | ProfileClaimCreateWithoutRequesterInput[] | ProfileClaimUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutRequesterInput | ProfileClaimCreateOrConnectWithoutRequesterInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutRequesterInput | ProfileClaimUpsertWithWhereUniqueWithoutRequesterInput[]
+    createMany?: ProfileClaimCreateManyRequesterInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutRequesterInput | ProfileClaimUpdateWithWhereUniqueWithoutRequesterInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutRequesterInput | ProfileClaimUpdateManyWithWhereWithoutRequesterInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
+  export type ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput> | ProfileClaimCreateWithoutReviewedByInput[] | ProfileClaimUncheckedCreateWithoutReviewedByInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutReviewedByInput | ProfileClaimCreateOrConnectWithoutReviewedByInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutReviewedByInput | ProfileClaimUpsertWithWhereUniqueWithoutReviewedByInput[]
+    createMany?: ProfileClaimCreateManyReviewedByInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutReviewedByInput | ProfileClaimUpdateWithWhereUniqueWithoutReviewedByInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutReviewedByInput | ProfileClaimUpdateManyWithWhereWithoutReviewedByInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutBrandProfileInput = {
     create?: XOR<UserCreateWithoutBrandProfileInput, UserUncheckedCreateWithoutBrandProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutBrandProfileInput
@@ -46222,6 +49435,20 @@ export namespace Prisma {
     connect?: SocialPostWhereUniqueInput | SocialPostWhereUniqueInput[]
   }
 
+  export type ProfileClaimCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: ProfileClaimCreateManyCreatorProfileInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+  }
+
+  export type ProfileAliasCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput> | ProfileAliasCreateWithoutCreatorProfileInput[] | ProfileAliasUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileAliasCreateOrConnectWithoutCreatorProfileInput | ProfileAliasCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: ProfileAliasCreateManyCreatorProfileInputEnvelope
+    connect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutCreatorProfileInput = {
     create?: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatorProfileInput
@@ -46260,6 +49487,20 @@ export namespace Prisma {
     connectOrCreate?: SocialPostCreateOrConnectWithoutCreatorProfileInput | SocialPostCreateOrConnectWithoutCreatorProfileInput[]
     createMany?: SocialPostCreateManyCreatorProfileInputEnvelope
     connect?: SocialPostWhereUniqueInput | SocialPostWhereUniqueInput[]
+  }
+
+  export type ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: ProfileClaimCreateManyCreatorProfileInputEnvelope
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+  }
+
+  export type ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput> | ProfileAliasCreateWithoutCreatorProfileInput[] | ProfileAliasUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileAliasCreateOrConnectWithoutCreatorProfileInput | ProfileAliasCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: ProfileAliasCreateManyCreatorProfileInputEnvelope
+    connect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -46376,6 +49617,34 @@ export namespace Prisma {
     deleteMany?: SocialPostScalarWhereInput | SocialPostScalarWhereInput[]
   }
 
+  export type ProfileClaimUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput | ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: ProfileClaimCreateManyCreatorProfileInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutCreatorProfileInput | ProfileClaimUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutCreatorProfileInput | ProfileClaimUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
+  export type ProfileAliasUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput> | ProfileAliasCreateWithoutCreatorProfileInput[] | ProfileAliasUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileAliasCreateOrConnectWithoutCreatorProfileInput | ProfileAliasCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: ProfileAliasUpsertWithWhereUniqueWithoutCreatorProfileInput | ProfileAliasUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: ProfileAliasCreateManyCreatorProfileInputEnvelope
+    set?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    disconnect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    delete?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    connect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    update?: ProfileAliasUpdateWithWhereUniqueWithoutCreatorProfileInput | ProfileAliasUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: ProfileAliasUpdateManyWithWhereWithoutCreatorProfileInput | ProfileAliasUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: ProfileAliasScalarWhereInput | ProfileAliasScalarWhereInput[]
+  }
+
   export type UserUpdateOneRequiredWithoutCreatorProfileNestedInput = {
     create?: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatorProfileInput
@@ -46448,6 +49717,34 @@ export namespace Prisma {
     update?: SocialPostUpdateWithWhereUniqueWithoutCreatorProfileInput | SocialPostUpdateWithWhereUniqueWithoutCreatorProfileInput[]
     updateMany?: SocialPostUpdateManyWithWhereWithoutCreatorProfileInput | SocialPostUpdateManyWithWhereWithoutCreatorProfileInput[]
     deleteMany?: SocialPostScalarWhereInput | SocialPostScalarWhereInput[]
+  }
+
+  export type ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput | ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: ProfileClaimCreateManyCreatorProfileInputEnvelope
+    set?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    disconnect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    delete?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    connect?: ProfileClaimWhereUniqueInput | ProfileClaimWhereUniqueInput[]
+    update?: ProfileClaimUpdateWithWhereUniqueWithoutCreatorProfileInput | ProfileClaimUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: ProfileClaimUpdateManyWithWhereWithoutCreatorProfileInput | ProfileClaimUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+  }
+
+  export type ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput> | ProfileAliasCreateWithoutCreatorProfileInput[] | ProfileAliasUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: ProfileAliasCreateOrConnectWithoutCreatorProfileInput | ProfileAliasCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: ProfileAliasUpsertWithWhereUniqueWithoutCreatorProfileInput | ProfileAliasUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: ProfileAliasCreateManyCreatorProfileInputEnvelope
+    set?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    disconnect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    delete?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    connect?: ProfileAliasWhereUniqueInput | ProfileAliasWhereUniqueInput[]
+    update?: ProfileAliasUpdateWithWhereUniqueWithoutCreatorProfileInput | ProfileAliasUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: ProfileAliasUpdateManyWithWhereWithoutCreatorProfileInput | ProfileAliasUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: ProfileAliasScalarWhereInput | ProfileAliasScalarWhereInput[]
   }
 
   export type CreatorProfileCreateNestedOneWithoutSocialPostsInput = {
@@ -47463,6 +50760,70 @@ export namespace Prisma {
     update?: XOR<XOR<CampaignUpdateToOneWithWhereWithoutDisputesInput, CampaignUpdateWithoutDisputesInput>, CampaignUncheckedUpdateWithoutDisputesInput>
   }
 
+  export type CreatorProfileCreateNestedOneWithoutProfileClaimsInput = {
+    create?: XOR<CreatorProfileCreateWithoutProfileClaimsInput, CreatorProfileUncheckedCreateWithoutProfileClaimsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutProfileClaimsInput
+    connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutSubmittedClaimsInput = {
+    create?: XOR<UserCreateWithoutSubmittedClaimsInput, UserUncheckedCreateWithoutSubmittedClaimsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubmittedClaimsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutReviewedClaimsInput = {
+    create?: XOR<UserCreateWithoutReviewedClaimsInput, UserUncheckedCreateWithoutReviewedClaimsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReviewedClaimsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumProfileClaimStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ProfileClaimStatus
+  }
+
+  export type CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutProfileClaimsInput, CreatorProfileUncheckedCreateWithoutProfileClaimsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutProfileClaimsInput
+    upsert?: CreatorProfileUpsertWithoutProfileClaimsInput
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutProfileClaimsInput, CreatorProfileUpdateWithoutProfileClaimsInput>, CreatorProfileUncheckedUpdateWithoutProfileClaimsInput>
+  }
+
+  export type UserUpdateOneWithoutSubmittedClaimsNestedInput = {
+    create?: XOR<UserCreateWithoutSubmittedClaimsInput, UserUncheckedCreateWithoutSubmittedClaimsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubmittedClaimsInput
+    upsert?: UserUpsertWithoutSubmittedClaimsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSubmittedClaimsInput, UserUpdateWithoutSubmittedClaimsInput>, UserUncheckedUpdateWithoutSubmittedClaimsInput>
+  }
+
+  export type UserUpdateOneWithoutReviewedClaimsNestedInput = {
+    create?: XOR<UserCreateWithoutReviewedClaimsInput, UserUncheckedCreateWithoutReviewedClaimsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReviewedClaimsInput
+    upsert?: UserUpsertWithoutReviewedClaimsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReviewedClaimsInput, UserUpdateWithoutReviewedClaimsInput>, UserUncheckedUpdateWithoutReviewedClaimsInput>
+  }
+
+  export type CreatorProfileCreateNestedOneWithoutProfileAliasesInput = {
+    create?: XOR<CreatorProfileCreateWithoutProfileAliasesInput, CreatorProfileUncheckedCreateWithoutProfileAliasesInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutProfileAliasesInput
+    connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type CreatorProfileUpdateOneRequiredWithoutProfileAliasesNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutProfileAliasesInput, CreatorProfileUncheckedCreateWithoutProfileAliasesInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutProfileAliasesInput
+    upsert?: CreatorProfileUpsertWithoutProfileAliasesInput
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutProfileAliasesInput, CreatorProfileUpdateWithoutProfileAliasesInput>, CreatorProfileUncheckedUpdateWithoutProfileAliasesInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -48042,6 +51403,23 @@ export namespace Prisma {
     _max?: NestedEnumReportReasonFilter<$PrismaModel>
   }
 
+  export type NestedEnumProfileClaimStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileClaimStatus | EnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileClaimStatusFilter<$PrismaModel> | $Enums.ProfileClaimStatus
+  }
+
+  export type NestedEnumProfileClaimStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProfileClaimStatus | EnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProfileClaimStatus[] | ListEnumProfileClaimStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProfileClaimStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProfileClaimStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProfileClaimStatusFilter<$PrismaModel>
+    _max?: NestedEnumProfileClaimStatusFilter<$PrismaModel>
+  }
+
   export type AccountCreateWithoutUserInput = {
     id?: string
     accountId: string
@@ -48218,6 +51596,8 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
 
@@ -48250,6 +51630,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutUserInput = {
@@ -48285,6 +51667,8 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
   }
 
@@ -48317,6 +51701,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutClaimedByInput = {
@@ -48867,6 +52253,90 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProfileClaimCreateWithoutRequesterInput = {
+    id?: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+    creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
+    reviewedBy?: UserCreateNestedOneWithoutReviewedClaimsInput
+  }
+
+  export type ProfileClaimUncheckedCreateWithoutRequesterInput = {
+    id?: string
+    creatorProfileId: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimCreateOrConnectWithoutRequesterInput = {
+    where: ProfileClaimWhereUniqueInput
+    create: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput>
+  }
+
+  export type ProfileClaimCreateManyRequesterInputEnvelope = {
+    data: ProfileClaimCreateManyRequesterInput | ProfileClaimCreateManyRequesterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProfileClaimCreateWithoutReviewedByInput = {
+    id?: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+    creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
+    requester?: UserCreateNestedOneWithoutSubmittedClaimsInput
+  }
+
+  export type ProfileClaimUncheckedCreateWithoutReviewedByInput = {
+    id?: string
+    creatorProfileId: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimCreateOrConnectWithoutReviewedByInput = {
+    where: ProfileClaimWhereUniqueInput
+    create: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput>
+  }
+
+  export type ProfileClaimCreateManyReviewedByInputEnvelope = {
+    data: ProfileClaimCreateManyReviewedByInput | ProfileClaimCreateManyReviewedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -49053,6 +52523,8 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
 
@@ -49085,6 +52557,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type CreatorProfileUpsertWithWhereUniqueWithoutClaimedByInput = {
@@ -49560,6 +53034,58 @@ export namespace Prisma {
     data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutTargetUserInput>
   }
 
+  export type ProfileClaimUpsertWithWhereUniqueWithoutRequesterInput = {
+    where: ProfileClaimWhereUniqueInput
+    update: XOR<ProfileClaimUpdateWithoutRequesterInput, ProfileClaimUncheckedUpdateWithoutRequesterInput>
+    create: XOR<ProfileClaimCreateWithoutRequesterInput, ProfileClaimUncheckedCreateWithoutRequesterInput>
+  }
+
+  export type ProfileClaimUpdateWithWhereUniqueWithoutRequesterInput = {
+    where: ProfileClaimWhereUniqueInput
+    data: XOR<ProfileClaimUpdateWithoutRequesterInput, ProfileClaimUncheckedUpdateWithoutRequesterInput>
+  }
+
+  export type ProfileClaimUpdateManyWithWhereWithoutRequesterInput = {
+    where: ProfileClaimScalarWhereInput
+    data: XOR<ProfileClaimUpdateManyMutationInput, ProfileClaimUncheckedUpdateManyWithoutRequesterInput>
+  }
+
+  export type ProfileClaimScalarWhereInput = {
+    AND?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+    OR?: ProfileClaimScalarWhereInput[]
+    NOT?: ProfileClaimScalarWhereInput | ProfileClaimScalarWhereInput[]
+    id?: StringFilter<"ProfileClaim"> | string
+    creatorProfileId?: StringFilter<"ProfileClaim"> | string
+    requesterUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    status?: EnumProfileClaimStatusFilter<"ProfileClaim"> | $Enums.ProfileClaimStatus
+    evidenceNote?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceEmail?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidencePlatform?: StringNullableFilter<"ProfileClaim"> | string | null
+    evidenceHandle?: StringNullableFilter<"ProfileClaim"> | string | null
+    requiresMerge?: BoolFilter<"ProfileClaim"> | boolean
+    reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
+    rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
+  }
+
+  export type ProfileClaimUpsertWithWhereUniqueWithoutReviewedByInput = {
+    where: ProfileClaimWhereUniqueInput
+    update: XOR<ProfileClaimUpdateWithoutReviewedByInput, ProfileClaimUncheckedUpdateWithoutReviewedByInput>
+    create: XOR<ProfileClaimCreateWithoutReviewedByInput, ProfileClaimUncheckedCreateWithoutReviewedByInput>
+  }
+
+  export type ProfileClaimUpdateWithWhereUniqueWithoutReviewedByInput = {
+    where: ProfileClaimWhereUniqueInput
+    data: XOR<ProfileClaimUpdateWithoutReviewedByInput, ProfileClaimUncheckedUpdateWithoutReviewedByInput>
+  }
+
+  export type ProfileClaimUpdateManyWithWhereWithoutReviewedByInput = {
+    where: ProfileClaimScalarWhereInput
+    data: XOR<ProfileClaimUpdateManyMutationInput, ProfileClaimUncheckedUpdateManyWithoutReviewedByInput>
+  }
+
   export type UserCreateWithoutBrandProfileInput = {
     id?: string
     email: string
@@ -49596,6 +53122,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutBrandProfileInput = {
@@ -49634,6 +53162,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutBrandProfileInput = {
@@ -49872,6 +53402,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBrandProfileInput = {
@@ -49910,6 +53442,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CRMLeadUpsertWithWhereUniqueWithoutBrandInput = {
@@ -50206,6 +53740,70 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProfileClaimCreateWithoutCreatorProfileInput = {
+    id?: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+    requester?: UserCreateNestedOneWithoutSubmittedClaimsInput
+    reviewedBy?: UserCreateNestedOneWithoutReviewedClaimsInput
+  }
+
+  export type ProfileClaimUncheckedCreateWithoutCreatorProfileInput = {
+    id?: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimCreateOrConnectWithoutCreatorProfileInput = {
+    where: ProfileClaimWhereUniqueInput
+    create: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileClaimCreateManyCreatorProfileInputEnvelope = {
+    data: ProfileClaimCreateManyCreatorProfileInput | ProfileClaimCreateManyCreatorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProfileAliasCreateWithoutCreatorProfileInput = {
+    id?: string
+    fromUserId: string
+    createdAt?: Date | string
+  }
+
+  export type ProfileAliasUncheckedCreateWithoutCreatorProfileInput = {
+    id?: string
+    fromUserId: string
+    createdAt?: Date | string
+  }
+
+  export type ProfileAliasCreateOrConnectWithoutCreatorProfileInput = {
+    where: ProfileAliasWhereUniqueInput
+    create: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileAliasCreateManyCreatorProfileInputEnvelope = {
+    data: ProfileAliasCreateManyCreatorProfileInput | ProfileAliasCreateManyCreatorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutCreatorProfileInput = {
     id?: string
     email: string
@@ -50242,6 +53840,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatorProfileInput = {
@@ -50280,6 +53880,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatorProfileInput = {
@@ -50323,6 +53925,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutClaimedCreatorProfilesInput = {
@@ -50361,6 +53965,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutClaimedCreatorProfilesInput = {
@@ -50470,6 +54076,48 @@ export namespace Prisma {
     providerPostId?: StringNullableFilter<"SocialPost"> | string | null
   }
 
+  export type ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput = {
+    where: ProfileClaimWhereUniqueInput
+    update: XOR<ProfileClaimUpdateWithoutCreatorProfileInput, ProfileClaimUncheckedUpdateWithoutCreatorProfileInput>
+    create: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileClaimUpdateWithWhereUniqueWithoutCreatorProfileInput = {
+    where: ProfileClaimWhereUniqueInput
+    data: XOR<ProfileClaimUpdateWithoutCreatorProfileInput, ProfileClaimUncheckedUpdateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileClaimUpdateManyWithWhereWithoutCreatorProfileInput = {
+    where: ProfileClaimScalarWhereInput
+    data: XOR<ProfileClaimUpdateManyMutationInput, ProfileClaimUncheckedUpdateManyWithoutCreatorProfileInput>
+  }
+
+  export type ProfileAliasUpsertWithWhereUniqueWithoutCreatorProfileInput = {
+    where: ProfileAliasWhereUniqueInput
+    update: XOR<ProfileAliasUpdateWithoutCreatorProfileInput, ProfileAliasUncheckedUpdateWithoutCreatorProfileInput>
+    create: XOR<ProfileAliasCreateWithoutCreatorProfileInput, ProfileAliasUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileAliasUpdateWithWhereUniqueWithoutCreatorProfileInput = {
+    where: ProfileAliasWhereUniqueInput
+    data: XOR<ProfileAliasUpdateWithoutCreatorProfileInput, ProfileAliasUncheckedUpdateWithoutCreatorProfileInput>
+  }
+
+  export type ProfileAliasUpdateManyWithWhereWithoutCreatorProfileInput = {
+    where: ProfileAliasScalarWhereInput
+    data: XOR<ProfileAliasUpdateManyMutationInput, ProfileAliasUncheckedUpdateManyWithoutCreatorProfileInput>
+  }
+
+  export type ProfileAliasScalarWhereInput = {
+    AND?: ProfileAliasScalarWhereInput | ProfileAliasScalarWhereInput[]
+    OR?: ProfileAliasScalarWhereInput[]
+    NOT?: ProfileAliasScalarWhereInput | ProfileAliasScalarWhereInput[]
+    id?: StringFilter<"ProfileAlias"> | string
+    fromUserId?: StringFilter<"ProfileAlias"> | string
+    creatorProfileId?: StringFilter<"ProfileAlias"> | string
+    createdAt?: DateTimeFilter<"ProfileAlias"> | Date | string
+  }
+
   export type UserUpsertWithoutCreatorProfileInput = {
     update: XOR<UserUpdateWithoutCreatorProfileInput, UserUncheckedUpdateWithoutCreatorProfileInput>
     create: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
@@ -50517,6 +54165,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatorProfileInput = {
@@ -50555,6 +54205,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutClaimedCreatorProfilesInput = {
@@ -50604,6 +54256,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClaimedCreatorProfilesInput = {
@@ -50642,6 +54296,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CreatorProfileCreateWithoutSocialPostsInput = {
@@ -50671,6 +54327,8 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
@@ -50704,6 +54362,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutSocialPostsInput = {
@@ -50749,6 +54409,8 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
@@ -50782,6 +54444,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -50820,6 +54484,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -50858,6 +54524,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -50912,6 +54580,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -50950,6 +54620,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -50988,6 +54660,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -51026,6 +54700,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -51080,6 +54756,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -51118,6 +54796,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutTwoFactorInput = {
@@ -51156,6 +54836,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTwoFactorInput = {
@@ -51194,6 +54876,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTwoFactorInput = {
@@ -51248,6 +54932,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTwoFactorInput = {
@@ -51286,6 +54972,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutPlatformTokensInput = {
@@ -51324,6 +55012,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutPlatformTokensInput = {
@@ -51362,6 +55052,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutPlatformTokensInput = {
@@ -51416,6 +55108,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPlatformTokensInput = {
@@ -51454,6 +55148,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutPlatformStatsInput = {
@@ -51492,6 +55188,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutPlatformStatsInput = {
@@ -51530,6 +55228,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutPlatformStatsInput = {
@@ -51584,6 +55284,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPlatformStatsInput = {
@@ -51622,6 +55324,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutReceivedMessagesInput = {
@@ -51660,6 +55364,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutReceivedMessagesInput = {
@@ -51698,6 +55404,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutReceivedMessagesInput = {
@@ -51741,6 +55449,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutSentMessagesInput = {
@@ -51779,6 +55489,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutSentMessagesInput = {
@@ -51833,6 +55545,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedMessagesInput = {
@@ -51871,6 +55585,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutSentMessagesInput = {
@@ -51920,6 +55636,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentMessagesInput = {
@@ -51958,6 +55676,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ApplicationCreateWithoutCampaignInput = {
@@ -52384,6 +56104,8 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
@@ -52417,6 +56139,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutCampaignEventsInput = {
@@ -52460,6 +56184,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedCampaignEventsInput = {
@@ -52498,6 +56224,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedCampaignEventsInput = {
@@ -52644,6 +56372,8 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
@@ -52677,6 +56407,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type UserUpsertWithoutCreatedCampaignEventsInput = {
@@ -52726,6 +56458,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedCampaignEventsInput = {
@@ -52764,6 +56498,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CampaignEventUpdateUpsertWithWhereUniqueWithoutEventInput = {
@@ -52851,6 +56587,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutRequestedEventUpdatesInput = {
@@ -52889,6 +56627,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutRequestedEventUpdatesInput = {
@@ -52932,6 +56672,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutReviewedEventUpdatesInput = {
@@ -52970,6 +56712,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutReviewedEventUpdatesInput = {
@@ -53063,6 +56807,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRequestedEventUpdatesInput = {
@@ -53101,6 +56847,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutReviewedEventUpdatesInput = {
@@ -53150,6 +56898,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewedEventUpdatesInput = {
@@ -53188,6 +56938,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CampaignCreateWithoutContractsInput = {
@@ -53276,6 +57028,8 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
@@ -53309,6 +57063,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutContractsInput = {
@@ -53510,6 +57266,8 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
@@ -53543,6 +57301,8 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type BrandProfileUpsertWithoutContractsInput = {
@@ -53821,6 +57581,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutSavedCreatorsInput = {
@@ -53859,6 +57621,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutSavedCreatorsInput = {
@@ -53913,6 +57677,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSavedCreatorsInput = {
@@ -53951,6 +57717,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type ContractCreateWithoutTasksInput = {
@@ -54049,6 +57817,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutReceivedConnectionsInput = {
@@ -54087,6 +57857,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutReceivedConnectionsInput = {
@@ -54130,6 +57902,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutSentConnectionsInput = {
@@ -54168,6 +57942,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutSentConnectionsInput = {
@@ -54222,6 +57998,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedConnectionsInput = {
@@ -54260,6 +58038,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutSentConnectionsInput = {
@@ -54309,6 +58089,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentConnectionsInput = {
@@ -54347,6 +58129,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type BrandProfileCreateWithoutCommunityListsInput = {
@@ -54522,6 +58306,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutCommunityMembershipsInput = {
@@ -54560,6 +58346,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutCommunityMembershipsInput = {
@@ -54639,6 +58427,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommunityMembershipsInput = {
@@ -54677,6 +58467,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -54715,6 +58507,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -54753,6 +58547,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -54807,6 +58603,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -54845,6 +58643,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CampaignCreateWithoutApplicationsInput = {
@@ -54933,6 +58733,8 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
   }
@@ -54966,6 +58768,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutApplicationsInput = {
@@ -55076,6 +58880,8 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
   }
@@ -55109,6 +58915,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type CampaignCreateWithoutInvitationsInput = {
@@ -55243,6 +59051,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutReceivedInvitationsInput = {
@@ -55281,6 +59091,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutReceivedInvitationsInput = {
@@ -55443,6 +59255,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedInvitationsInput = {
@@ -55481,6 +59295,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserCreateWithoutReporterDisputesInput = {
@@ -55519,6 +59335,8 @@ export namespace Prisma {
     brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutReporterDisputesInput = {
@@ -55557,6 +59375,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutReporterDisputesInput = {
@@ -55600,6 +59420,8 @@ export namespace Prisma {
     brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutTargetedDisputesInput = {
@@ -55638,6 +59460,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutTargetedDisputesInput = {
@@ -55681,6 +59505,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutBrandDisputesInput = {
@@ -55719,6 +59545,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutBrandDisputesInput = {
@@ -55762,6 +59590,8 @@ export namespace Prisma {
     brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
     reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatorDisputesInput = {
@@ -55800,6 +59630,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
     reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
     targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatorDisputesInput = {
@@ -55913,6 +59745,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReporterDisputesInput = {
@@ -55951,6 +59785,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutTargetedDisputesInput = {
@@ -56000,6 +59836,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTargetedDisputesInput = {
@@ -56038,6 +59876,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutBrandDisputesInput = {
@@ -56087,6 +59927,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBrandDisputesInput = {
@@ -56125,6 +59967,8 @@ export namespace Prisma {
     creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUpsertWithoutCreatorDisputesInput = {
@@ -56174,6 +60018,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
     reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatorDisputesInput = {
@@ -56212,6 +60058,8 @@ export namespace Prisma {
     brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
     reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
     targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type CampaignUpsertWithoutDisputesInput = {
@@ -56277,6 +60125,654 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCampaignNestedInput
     events?: CampaignEventUncheckedUpdateManyWithoutCampaignNestedInput
     invitations?: InvitationUncheckedUpdateManyWithoutCampaignNestedInput
+  }
+
+  export type CreatorProfileCreateWithoutProfileClaimsInput = {
+    id?: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationCreateNestedManyWithoutCreatorInput
+    contracts?: ContractCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutProfileClaimsInput = {
+    id?: string
+    userId: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutProfileClaimsInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutProfileClaimsInput, CreatorProfileUncheckedCreateWithoutProfileClaimsInput>
+  }
+
+  export type UserCreateWithoutSubmittedClaimsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserUncheckedCreateWithoutSubmittedClaimsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserCreateOrConnectWithoutSubmittedClaimsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSubmittedClaimsInput, UserUncheckedCreateWithoutSubmittedClaimsInput>
+  }
+
+  export type UserCreateWithoutReviewedClaimsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+  }
+
+  export type UserUncheckedCreateWithoutReviewedClaimsInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+  }
+
+  export type UserCreateOrConnectWithoutReviewedClaimsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReviewedClaimsInput, UserUncheckedCreateWithoutReviewedClaimsInput>
+  }
+
+  export type CreatorProfileUpsertWithoutProfileClaimsInput = {
+    update: XOR<CreatorProfileUpdateWithoutProfileClaimsInput, CreatorProfileUncheckedUpdateWithoutProfileClaimsInput>
+    create: XOR<CreatorProfileCreateWithoutProfileClaimsInput, CreatorProfileUncheckedCreateWithoutProfileClaimsInput>
+    where?: CreatorProfileWhereInput
+  }
+
+  export type CreatorProfileUpdateToOneWithWhereWithoutProfileClaimsInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutProfileClaimsInput, CreatorProfileUncheckedUpdateWithoutProfileClaimsInput>
+  }
+
+  export type CreatorProfileUpdateWithoutProfileClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutProfileClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
+  }
+
+  export type UserUpsertWithoutSubmittedClaimsInput = {
+    update: XOR<UserUpdateWithoutSubmittedClaimsInput, UserUncheckedUpdateWithoutSubmittedClaimsInput>
+    create: XOR<UserCreateWithoutSubmittedClaimsInput, UserUncheckedCreateWithoutSubmittedClaimsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSubmittedClaimsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSubmittedClaimsInput, UserUncheckedUpdateWithoutSubmittedClaimsInput>
+  }
+
+  export type UserUpdateWithoutSubmittedClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSubmittedClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUpsertWithoutReviewedClaimsInput = {
+    update: XOR<UserUpdateWithoutReviewedClaimsInput, UserUncheckedUpdateWithoutReviewedClaimsInput>
+    create: XOR<UserCreateWithoutReviewedClaimsInput, UserUncheckedCreateWithoutReviewedClaimsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReviewedClaimsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReviewedClaimsInput, UserUncheckedUpdateWithoutReviewedClaimsInput>
+  }
+
+  export type UserUpdateWithoutReviewedClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReviewedClaimsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+  }
+
+  export type CreatorProfileCreateWithoutProfileAliasesInput = {
+    id?: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationCreateNestedManyWithoutCreatorInput
+    contracts?: ContractCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutProfileAliasesInput = {
+    id?: string
+    userId: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutProfileAliasesInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutProfileAliasesInput, CreatorProfileUncheckedCreateWithoutProfileAliasesInput>
+  }
+
+  export type CreatorProfileUpsertWithoutProfileAliasesInput = {
+    update: XOR<CreatorProfileUpdateWithoutProfileAliasesInput, CreatorProfileUncheckedUpdateWithoutProfileAliasesInput>
+    create: XOR<CreatorProfileCreateWithoutProfileAliasesInput, CreatorProfileUncheckedCreateWithoutProfileAliasesInput>
+    where?: CreatorProfileWhereInput
+  }
+
+  export type CreatorProfileUpdateToOneWithWhereWithoutProfileAliasesInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutProfileAliasesInput, CreatorProfileUncheckedUpdateWithoutProfileAliasesInput>
+  }
+
+  export type CreatorProfileUpdateWithoutProfileAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutProfileAliasesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -56525,6 +61021,38 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ProfileClaimCreateManyRequesterInput = {
+    id?: string
+    creatorProfileId: string
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileClaimCreateManyReviewedByInput = {
+    id?: string
+    creatorProfileId: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     accountId?: StringFieldUpdateOperationsInput | string
@@ -56646,6 +61174,8 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
   }
 
@@ -56678,6 +61208,8 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateManyWithoutClaimedByInput = {
@@ -57273,6 +61805,102 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProfileClaimUpdateWithoutRequesterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
+    reviewedBy?: UserUpdateOneWithoutReviewedClaimsNestedInput
+  }
+
+  export type ProfileClaimUncheckedUpdateWithoutRequesterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimUncheckedUpdateManyWithoutRequesterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimUpdateWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
+    requester?: UserUpdateOneWithoutSubmittedClaimsNestedInput
+  }
+
+  export type ProfileClaimUncheckedUpdateWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimUncheckedUpdateManyWithoutReviewedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CRMLeadCreateManyBrandInput = {
     id?: string
     handle: string
@@ -57577,6 +62205,28 @@ export namespace Prisma {
     providerPostId?: string | null
   }
 
+  export type ProfileClaimCreateManyCreatorProfileInput = {
+    id?: string
+    requesterUserId?: string | null
+    status?: $Enums.ProfileClaimStatus
+    evidenceNote?: string | null
+    evidenceEmail?: string | null
+    evidencePlatform?: string | null
+    evidenceHandle?: string | null
+    requiresMerge?: boolean
+    reviewedByUserId?: string | null
+    reviewedAt?: Date | string | null
+    rejectionReason?: string | null
+    requestedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileAliasCreateManyCreatorProfileInput = {
+    id?: string
+    fromUserId: string
+    createdAt?: Date | string
+  }
+
   export type ApplicationUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     coverLetter?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57737,6 +62387,72 @@ export namespace Prisma {
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
     providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProfileClaimUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requester?: UserUpdateOneWithoutSubmittedClaimsNestedInput
+    reviewedBy?: UserUpdateOneWithoutReviewedClaimsNestedInput
+  }
+
+  export type ProfileClaimUncheckedUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileClaimUncheckedUpdateManyWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProfileClaimStatusFieldUpdateOperationsInput | $Enums.ProfileClaimStatus
+    evidenceNote?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    evidencePlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    evidenceHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    requiresMerge?: BoolFieldUpdateOperationsInput | boolean
+    reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasUncheckedUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileAliasUncheckedUpdateManyWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ApplicationCreateManyCampaignInput = {
