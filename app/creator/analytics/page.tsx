@@ -66,32 +66,36 @@ function AnalyticsContent({ userId }: { userId: string }) {
   if (!data) return null;
 
   const noData =
-    data.totalFollowers <= 1 &&
-    data.avgEngagementRate === 0 &&
+    (data.totalFollowers ?? 0) <= 1 &&
+    (data.avgEngagementRate ?? 0) === 0 &&
     data.engagementTrend.every((p) => p.rate === 0);
 
   const statCards = [
     {
       label: "Total Followers",
-      value: data.totalFollowers >= 1000
-        ? `${(data.totalFollowers / 1000).toFixed(1)}K`
-        : data.totalFollowers.toString(),
+      value: data.totalFollowers != null
+        ? (data.totalFollowers >= 1000
+            ? `${(data.totalFollowers / 1000).toFixed(1)}K`
+            : data.totalFollowers.toString())
+        : "—",
       icon: Users,
       color: "text-violet-600 dark:text-violet-400",
       bg: "bg-violet-100 dark:bg-violet-900/30",
     },
     {
       label: "Avg Engagement",
-      value: `${data.avgEngagementRate.toFixed(1)}%`,
+      value: data.avgEngagementRate != null ? `${data.avgEngagementRate.toFixed(1)}%` : "—",
       icon: TrendingUp,
       color: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-100 dark:bg-emerald-900/30",
     },
     {
-      label: "Avg Reach",
-      value: data.avgReach >= 1000
-        ? `${(data.avgReach / 1000).toFixed(1)}K`
-        : data.avgReach.toString(),
+      label: "Avg Views / Post",
+      value: data.avgViewsPerPost != null
+        ? (data.avgViewsPerPost >= 1000
+            ? `${(data.avgViewsPerPost / 1000).toFixed(1)}K`
+            : data.avgViewsPerPost.toString())
+        : "—",
       icon: Eye,
       color: "text-cyan-600 dark:text-cyan-400",
       bg: "bg-cyan-100 dark:bg-cyan-900/30",

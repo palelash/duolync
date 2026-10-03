@@ -11,11 +11,21 @@ export interface EngagementDataPoint {
 
 export interface CreatorAnalytics {
   engagementTrend: EngagementDataPoint[];
-  avgReach: number;
+  /**
+   * Mean of SocialPost.views for recent posts.
+   * null when no posts carry view data.
+   * NEVER substitutes followerCount (§6 rename avgReach → avgViewsPerPost).
+   */
+  avgViewsPerPost: number | null;
   bestPlatform: { name: string; label: string } | null;
   peakHour: number | null;
-  avgEngagementRate: number;
-  totalFollowers: number;
+  /**
+   * Creator-level average ER.
+   * null when no eligible posts exist.
+   * Each post uses its own platform's followerCount as denominator (§3).
+   */
+  avgEngagementRate: number | null;
+  totalFollowers: number | null;
 }
 
 export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<{
@@ -26,7 +36,7 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
   if (!session) return { data: null, error: "Unauthorized" };
 
   // Creators can always see their own analytics.
-  // Brands may only see analytics for creators they are working with (accepted/under-review application).
+  // Brands may only see analytics for creators they are working with.
   const isSelf = session.user.id === creatorUserId;
   if (!isSelf) {
     const isConnectedBrand = await db.application.findFirst({
@@ -41,38 +51,70 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
   }
 
   try {
-    const profile = await db.creatorProfile.findUnique({
-      where: { userId: creatorUserId },
-      include: {
-        socialPosts: {
-          orderBy: { postedAt: "desc" },
-          take: 100,
+    const userWithData = await db.user.findUnique({
+      where: { id: creatorUserId },
+      select: {
+        platformStats: {
+          select: { platform: true, followerCount: true },
+        },
+        creatorProfile: {
+          include: {
+            socialPosts: {
+              orderBy: { postedAt: "desc" },
+              take: 100,
+            },
+          },
         },
       },
     });
+
+    const profile = userWithData?.creatorProfile ?? null;
 
     if (!profile) {
       return { data: null, error: "Creator not found" };
     }
 
     const posts = profile.socialPosts.filter((p) => p.postedAt !== null);
-    const totalFollowers = Math.max(profile.totalFollowers || profile.followerCount || 1, 1);
 
-    const postsWithEng = posts.map((p) => ({
-      ...p,
-      computedEngRate:
-        p.engagementRate ??
-        (((p.likes ?? 0) + (p.comments ?? 0)) / totalFollowers) * 100,
-    }));
+    // §3: Build per-platform follower map for engagement denominator.
+    // Each post's ER must use ITS OWN platform's followerCount.
+    const platformFollowerMap = new Map<string, number>();
+    for (const stat of (userWithData?.platformStats ?? [])) {
+      if (stat.followerCount !== null && stat.followerCount > 0) {
+        platformFollowerMap.set(stat.platform.toLowerCase(), stat.followerCount);
+      }
+    }
 
-    // Average engagement over last 10 posts
+    // §2: Total followers from PlatformStats SUM when possible.
+    const statsWithFollowers = (userWithData?.platformStats ?? []).filter((s) => s.followerCount !== null);
+    const totalFollowers: number | null =
+      statsWithFollowers.length > 0
+        ? statsWithFollowers.reduce((sum, s) => sum + (s.followerCount as number), 0)
+        : (profile.followerCount ?? (profile.totalFollowers > 0 ? profile.totalFollowers : null));
+
+    // §3: Map each post to its per-platform ER.
+    const postsWithEng = posts
+      .filter(
+        (p) =>
+          p.likes !== null &&
+          platformFollowerMap.has(p.platform.toLowerCase()),
+      )
+      .map((p) => {
+        const denom = platformFollowerMap.get(p.platform.toLowerCase())!;
+        const computedEngRate = (((p.likes as number) + (p.comments ?? 0)) / denom) * 100;
+        return { ...p, computedEngRate };
+      });
+
+    // Average engagement over last 10 eligible posts.
     const last10 = postsWithEng.slice(0, 10);
-    const avgEngagementRate =
+    const avgEngagementRate: number | null =
       last10.length > 0
-        ? last10.reduce((s, p) => s + p.computedEngRate, 0) / last10.length
-        : profile.avgEngagementRate || profile.averageEngagement || 0;
+        ? parseFloat(
+            (last10.reduce((s, p) => s + p.computedEngRate, 0) / last10.length).toFixed(2),
+          )
+        : null; // null means genuinely unknown — never fake 0
 
-    // Growth trend: last 3 calendar months
+    // Engagement trend: last 3 calendar months.
     const now = new Date();
     const engagementTrend: EngagementDataPoint[] = [];
     for (let i = 2; i >= 0; i--) {
@@ -90,17 +132,18 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
       engagementTrend.push({ month: label, rate: parseFloat(rate.toFixed(2)) });
     }
 
-    // Average reach from post views
+    // §6: avgViewsPerPost — mean of post views only. null when no view data.
+    // NEVER falls back to followerCount.
     const postsWithViews = posts.filter((p) => p.views != null);
-    const avgReach =
+    const avgViewsPerPost: number | null =
       postsWithViews.length > 0
         ? Math.round(
-            postsWithViews.reduce((s, p) => s + (p.views ?? 0), 0) /
-              postsWithViews.length
+            postsWithViews.reduce((s, p) => s + (p.views as number), 0) /
+              postsWithViews.length,
           )
-        : profile.followerCount ?? profile.totalFollowers ?? 0;
+        : null;
 
-    // Best platform by engagement rate
+    // Best platform by engagement rate.
     const platformGroups: Record<string, number[]> = {};
     postsWithEng.forEach((p) => {
       if (!platformGroups[p.platform]) platformGroups[p.platform] = [];
@@ -129,7 +172,7 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
       }
     }
 
-    // Audience activity peak hour
+    // Audience activity peak hour.
     const hourCounts: Record<number, number> = {};
     posts.forEach((p) => {
       if (!p.postedAt) return;
@@ -149,10 +192,10 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
     return {
       data: {
         engagementTrend,
-        avgReach,
+        avgViewsPerPost,
         bestPlatform,
         peakHour,
-        avgEngagementRate: parseFloat(avgEngagementRate.toFixed(2)),
+        avgEngagementRate,
         totalFollowers,
       },
       error: null,

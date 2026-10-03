@@ -414,9 +414,9 @@ async function importCreator(
   if (youtubeNorm) socialLinks["youtube"] = youtubeNorm;
 
   // Connected platforms array
-  const connectedPlatforms = Object.keys(socialLinks);
-  if (!connectedPlatforms.includes("youtube") && row.notes.toLowerCase().includes("youtube")) connectedPlatforms.push("youtube");
-  if (!connectedPlatforms.includes("twitch") && row.notes.toLowerCase().includes("twitch")) connectedPlatforms.push("twitch");
+  // §9: Do NOT write connectedPlatforms from socialLinks.
+  // connectedPlatforms is managed exclusively by OAuth callbacks.
+  // Imported creators have no OAuth tokens — the field must remain empty.
 
   // ── Upsert User ────────────────────────────────────────────────────────────
   const isNew = !(await db.user.findUnique({ where: { email } }));
@@ -460,7 +460,8 @@ async function importCreator(
     avgEngagementRate: avgEngagement,
     averageEngagement: avgEngagement,
     topNiches,
-    connectedPlatforms,
+    // connectedPlatforms: intentionally omitted — OAuth callbacks are the sole
+    // writer of this field. Import script must not fabricate OAuth connections.
     socialLinks: Object.keys(socialLinks).length > 0 ? socialLinks : undefined,
     moderationStatus: "APPROVED" as const,
     moderatedAt: new Date(),

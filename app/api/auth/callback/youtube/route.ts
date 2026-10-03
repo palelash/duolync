@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 // Google OAuth + YouTube Data API v3 endpoints
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -432,13 +433,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // 4. Update CreatorProfile.connectedPlatforms
+    // 4. Update CreatorProfile.connectedPlatforms + re-aggregate follower cache
     const creator = await db.creatorProfile.findUnique({
       where: { userId },
       select: { connectedPlatforms: true },
     });
 
     if (creator) {
+      // Re-aggregate canonical follower cache after PlatformStats write.
+      // YouTube was previously missing this step — now consistent with Instagram/Facebook.
+      const allStats = await db.platformStats.findMany({
+        where: { userId },
+        select: { followerCount: true },
+      });
+      const cachedFollowers = computeFollowerCache(allStats);
+
       await db.creatorProfile.update({
         where: { userId },
         data: {
@@ -446,6 +455,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             new Set([...creator.connectedPlatforms, "youtube"]),
           ),
           lastSyncedAt: new Date(),
+          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
         },
       });
     }

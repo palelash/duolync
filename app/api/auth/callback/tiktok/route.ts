@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 // TikTok Login Kit v2 endpoints
 const TIKTOK_TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/";
@@ -242,6 +243,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     });
 
     if (creator) {
+      // Re-aggregate canonical follower cache after PlatformStats write.
+      // TikTok was previously missing this step — now consistent with Instagram/Facebook.
+      const allStats = await db.platformStats.findMany({
+        where: { userId },
+        select: { followerCount: true },
+      });
+      const cachedFollowers = computeFollowerCache(allStats);
+
       await db.creatorProfile.update({
         where: { userId },
         data: {
@@ -249,6 +258,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             new Set([...creator.connectedPlatforms, "tiktok"]),
           ),
           lastSyncedAt: new Date(),
+          // Only update cache when we have a computable value.
+          // Avoids overwriting a valid legacy/import aggregate with null.
+          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
         },
       });
     }

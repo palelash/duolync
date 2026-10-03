@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { canOverwrite } from "@/lib/platform-stats-policy";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 async function getSession() {
   return auth.api.getSession({ headers: await headers() });
@@ -103,25 +104,18 @@ export async function fetchCreatorStatsAction(
       // Also update aggregated totals on CreatorProfile
       const allStats = await db.platformStats.findMany({
         where: { userId: session.user.id },
-        select: { followerCount: true, engagementRate: true },
+        select: { followerCount: true },
       });
-      const totalFollowers = allStats.reduce(
-        (sum, s) => sum + (s.followerCount ?? 0),
-        0,
-      );
-      const ratedPlatforms = allStats.filter((s) => s.engagementRate !== null);
-      const avgEngagement =
-        ratedPlatforms.length > 0
-          ? ratedPlatforms.reduce((sum, s) => sum + (s.engagementRate ?? 0), 0) /
-            ratedPlatforms.length
-          : 0;
+      // §7: Stop writing legacy totalFollowers/avgEngagementRate/lastStatsUpdate.
+      // Converge only to the canonical followerCount + lastSyncedAt fields.
+      // Engagement is computed at read time from SocialPosts — not stored here.
+      const cachedFollowers = computeFollowerCache(allStats);
 
       await db.creatorProfile.updateMany({
         where: { userId: session.user.id },
         data: {
-          totalFollowers,
-          avgEngagementRate: avgEngagement,
-          lastStatsUpdate: new Date(),
+          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
+          lastSyncedAt: new Date(),
         },
       });
 

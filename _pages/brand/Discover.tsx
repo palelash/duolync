@@ -567,7 +567,7 @@ const CreatorCard = ({
               <Users className="w-3 h-3 text-zinc-400 dark:text-muted-foreground" />
               <span className="text-sm font-display font-bold text-zinc-800 dark:text-zinc-200">{formatReach(creator.total_followers)}</span>
             </div>
-            <span className="text-[9px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Reach</span>
+            <span className="text-[9px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Followers</span>
           </div>
           <div className="flex flex-col items-center py-3 px-2 border-x border-zinc-200/60 dark:border-zinc-800/80">
             <div className="flex items-center gap-1 mb-0.5">
@@ -1100,9 +1100,9 @@ const Discover = () => {
                       </Select>
                     </div>
 
-                    {/* Audience Reach */}
+                    {/* Follower Range */}
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Audience Reach</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">Follower Range</p>
                       <div className="flex flex-wrap gap-2">
                         {REACH_RANGES.map((r) => (
                           <button

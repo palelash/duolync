@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { canOverwrite } from "@/lib/platform-stats-policy";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 // ─── Apify actor IDs ──────────────────────────────────────────────────────────
 const ACTOR_IDS = {
@@ -203,14 +204,13 @@ function extractInstagramSync(item: InstagramProfileItem) {
 }
 
 function extractTikTokSync(items: TikTokVideoItem[]) {
-  if (!items.length) return { followerCount: 0, engagementRate: 0, posts: [], niches: [] };
+  if (!items.length) return { followerCount: 0, engagementRate: null, posts: [], niches: [] };
 
   const meta = items[0].authorMeta ?? {};
   const fans = meta.fans ?? 0;
-  const hearts = meta.heart ?? 0;
-  const engagementRate = fans > 0 && hearts > 0
-    ? Math.min(100, parseFloat(((hearts / fans) * 100).toFixed(2)))
-    : 0;
+  // §5: Remove lifetime likes / followers formula — it is not a valid engagement metric.
+  // Engagement is derived from SocialPost data at read time via getNormalizedCreatorMetrics.
+  const engagementRate = null;
 
   console.info(`[apify] TikTok raw item count: ${items.length}`);
 
@@ -482,22 +482,22 @@ export async function confirmSyncAction(
     // Aggregate totals across all platforms for this user
     const allStats = await db.platformStats.findMany({
       where: { userId },
-      select: { followerCount: true, engagementRate: true },
+      select: { followerCount: true },
     });
-    const totalFollowers = allStats.reduce((s, r) => s + (r.followerCount ?? 0), 0);
-    const ratedStats = allStats.filter((r) => r.engagementRate !== null);
-    const avgEng = ratedStats.length
-      ? ratedStats.reduce((s, r) => s + (r.engagementRate ?? 0), 0) / ratedStats.length
-      : (engagementRate ?? 0);
+    // §6: Use computeFollowerCache for canonical follower cache.
+    // A Threads-only creator (all null followerCount) returns null here so we
+    // don't accidentally zero out a valid legacy/import aggregate.
+    const cachedFollowers = computeFollowerCache(allStats);
 
     await db.creatorProfile.update({
       where: { userId },
       data: {
-        followerCount: totalFollowers,
-        averageEngagement: parseFloat(avgEng.toFixed(2)),
+        ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
         topNiches: niches,
         lastSyncedAt,
-        // connectedPlatforms is written ONLY by OAuth callbacks — Apify never touches it
+        // averageEngagement: intentionally NOT written here.
+        // Real engagement is derived from SocialPost data at read time.
+        // connectedPlatforms is written ONLY by OAuth callbacks — Apify never touches it.
       },
     });
 

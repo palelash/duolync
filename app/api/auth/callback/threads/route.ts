@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 const THREADS_GRAPH = "https://graph.threads.net/v1.0";
 // Threads token exchange uses a different base than the Facebook Graph API
@@ -145,11 +146,22 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     });
 
     if (creator) {
+      // Re-aggregate canonical follower cache after PlatformStats write.
+      // Threads followerCount is null (threads_basic scope), so this mostly
+      // ensures other platforms' cached values remain correct after this callback.
+      const allStats = await db.platformStats.findMany({
+        where: { userId },
+        select: { followerCount: true },
+      });
+      const cachedFollowers = computeFollowerCache(allStats);
+
       await db.creatorProfile.update({
         where: { userId },
         data: {
           connectedPlatforms: Array.from(new Set([...creator.connectedPlatforms, "threads"])),
           lastSyncedAt: new Date(),
+          // Only update cache when a non-null sum exists from other platforms.
+          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
         },
       });
     }

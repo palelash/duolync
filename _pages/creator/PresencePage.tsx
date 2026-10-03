@@ -686,7 +686,7 @@ const PresencePage = () => {
   const totalFollowers = fullProfile?.followerCount ?? null;
   const avgEngagement = fullProfile?.averageEngagement ?? null;
   const niches = fullProfile?.topNiches ?? [];
-  const lastSynced = fullProfile?.lastSyncedAt;
+  const lastUpdated = fullProfile?.lastSyncedAt;
   const hasAnyData = (fullProfile?.platformStats?.length ?? 0) > 0 || (totalFollowers ?? 0) > 0;
 
   const handleRemoveConfirm = async () => {
@@ -767,10 +767,10 @@ const PresencePage = () => {
                 <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
                   Connect Accounts
                 </h2>
-                {lastSynced && (
+                {lastUpdated && (
                   <span className="inline-flex items-center gap-1.5 text-xs text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-full">
                     <RefreshCw className="w-3 h-3" />
-                    Last synced {new Date(lastSynced).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    Last updated {new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
                 )}
               </div>

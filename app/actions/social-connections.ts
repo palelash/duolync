@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { computeFollowerCache } from "@/lib/creator-metrics";
 
 // ─── Connected account shape returned to the UI ───────────────────────────────
 
@@ -158,21 +159,22 @@ export async function removePlatformAction(
     // Re-aggregate total followers from remaining platforms
     const remaining = await db.platformStats.findMany({
       where: { userId: session.user.id },
-      select: { followerCount: true, engagementRate: true },
+      select: { followerCount: true },
     });
-    const totalFollowers = remaining.reduce((sum, s) => sum + (s.followerCount ?? 0), 0);
-    const avgEng =
-      remaining.length > 0
-        ? remaining.reduce((sum, s) => sum + (s.engagementRate ?? 0), 0) / remaining.length
-        : 0;
+    // §8: Fix 0→null antipattern (totalFollowers || null turned real 0 into null).
+    // Fix averageEngagement write-time cache (removed — computed at read time).
+    const cachedFollowers = computeFollowerCache(remaining);
 
     await db.creatorProfile.update({
       where: { userId: session.user.id },
       data: {
         connectedPlatforms: updated,
-        followerCount: totalFollowers || null,
-        averageEngagement: remaining.length > 0 ? parseFloat(avgEng.toFixed(2)) : null,
+        // Preserve real 0 (computeFollowerCache returns 0 when a genuine 0 exists).
+        // Set to null only when NO non-null followerCounts remain.
+        ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : { followerCount: null }),
         lastSyncedAt: updated.length === 0 ? null : undefined,
+        // averageEngagement: intentionally NOT written here.
+        // Real engagement is derived from SocialPost data at read time.
       },
     });
 

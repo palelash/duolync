@@ -784,7 +784,7 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                     <Users className="w-3.5 h-3.5 text-zinc-400 dark:text-muted-foreground" />
                     <span className="text-xl font-display font-bold text-zinc-800 dark:text-zinc-200">{formatReach(creator.total_followers)}</span>
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Total Reach</span>
+                  <span className="text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-medium">Total Followers</span>
                 </div>
                 <div className="py-4 flex flex-col items-center gap-1 border-x border-zinc-200/60 dark:border-zinc-800">
                   <div className="flex items-center gap-1.5">
@@ -1006,10 +1006,10 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-3.5 flex flex-col gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <Eye className="w-3.5 h-3.5 text-violet-500 shrink-0" />
-                        <span className="text-[9px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-semibold">Avg Reach</span>
+                        <span className="text-[9px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-semibold">Avg Views / Post</span>
                       </div>
                       <span className="text-lg font-display font-bold text-zinc-900 dark:text-zinc-50 leading-none">
-                        {analytics ? formatReach(analytics.avgReach) : formatReach(creator.total_followers)}
+                        {analytics?.avgViewsPerPost != null ? formatReach(analytics.avgViewsPerPost) : "—"}
                       </span>
                       <span className="text-[10px] text-zinc-500 dark:text-zinc-500">per post</span>
                     </div>
@@ -1106,11 +1106,11 @@ const ProfileDrawer = ({ creator, isOpen, onClose, onMessage }: ProfileDrawerPro
                     </div>
                   </div>
 
-                  {/* 3. Platform Reach Breakdown */}
+                  {/* 3. Followers by Platform */}
                   {platformEntries.length > 0 && (
                     <div>
                       <h3 className="text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-semibold mb-4">
-                        Platform Reach Breakdown
+                        Followers by Platform
                       </h3>
                       <div className="rounded-xl bg-zinc-950 border border-zinc-800 p-4">
                         <ResponsiveContainer width="100%" height={110}>
