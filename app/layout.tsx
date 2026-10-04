@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Duolync - Connect Brands with Influencers",
   description:
     "Connect brands with content creators across TikTok, YouTube, and Instagram.",
+  icons: {
+    icon: "/icon.svg",
+  },
   openGraph: {
     title: "Duolync - Connect Brands with Influencers",
     description: "The influencer and brand collaboration marketplace.",
