@@ -7,7 +7,10 @@ import {
   AlertCircle,
   CheckCircle2,
   Lock,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   getImportedCreatorForEditAction,
   updateImportedCreatorAction,
@@ -100,9 +103,13 @@ function FormTextarea({
 
 export function EditImportedCreatorModal({
   creatorProfileId,
+  userId,
+  initialClaimStatus,
   onClose,
 }: {
   creatorProfileId: string;
+  userId: string;
+  initialClaimStatus: string;
   onClose: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>("loading");
@@ -175,9 +182,10 @@ export function EditImportedCreatorModal({
     };
   }, [creatorProfileId]);
 
-  const claimStatus = profileData?.claimStatus ?? "";
+  const claimStatus = profileData?.claimStatus ?? initialClaimStatus;
   const isClaimPending = claimStatus === "CLAIM_PENDING";
   const isClaimed = claimStatus === "CLAIMED";
+  const isUnclaimed = claimStatus === "UNCLAIMED";
 
   function handleSubmit() {
     if (!profileData) return;
@@ -272,6 +280,59 @@ export function EditImportedCreatorModal({
               className="rounded-lg p-1 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
             >
               <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Quick Links — persistent access to claim/profile actions */}
+        <div className="px-6 py-3 border-b border-zinc-800 flex-shrink-0 flex items-center gap-2 flex-wrap">
+          {!isClaimed && (
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${window.location.origin}/claim/${creatorProfileId}`,
+                );
+                toast.success("Claim link copied!");
+              }}
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-800/60 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <Copy className="h-3 w-3" />
+              Copy Claim Link
+            </button>
+          )}
+          {!isClaimed && (
+            <a
+              href={`/claim/${creatorProfileId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-800/60 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Open Claim Page
+            </a>
+          )}
+          <a
+            href={`/profile/${userId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-800/60 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View Profile
+          </a>
+          {isUnclaimed && (
+            <button
+              onClick={() => {
+                const url = `${window.location.origin}/claim/${creatorProfileId}`;
+                const name = profileData?.name ?? "there";
+                const msg = `Hi ${name}, we've prepared a public creator profile for you on Duolync using publicly available information. You can review, claim, and customize it here: ${url}`;
+                navigator.clipboard.writeText(msg);
+                toast.success("Outreach message copied!");
+              }}
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-800/60 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              <Copy className="h-3 w-3" />
+              Copy Outreach Message
             </button>
           )}
         </div>
