@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   ChevronUp,
   ChevronDown,
@@ -15,6 +16,8 @@ import {
   Loader2,
   Plus,
   Pencil,
+  MoreHorizontal,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -48,7 +51,18 @@ export type AdminUser = {
   } | null;
 };
 
-type SortKey = "name" | "email" | "role" | "banned" | "emailVerified" | "createdAt";
+export type SummaryStats = {
+  total: number;
+  creators: number;
+  brands: number;
+  importedCreators: number;
+  registeredCreators: number;
+};
+
+type RoleFilter = "all" | "creator" | "brand";
+type OriginFilter = "all" | "registered" | "imported";
+
+type SortKey = "name" | "email" | "role" | "origin" | "banned" | "emailVerified" | "createdAt";
 type SortDir = "asc" | "desc";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -64,6 +78,64 @@ function SortIcon({ col, sort }: { col: SortKey; sort: { key: SortKey; dir: Sort
   return sort.dir === "asc"
     ? <ChevronUp className="h-3 w-3 ml-1 inline-block text-violet-400" />
     : <ChevronDown className="h-3 w-3 ml-1 inline-block text-violet-400" />;
+}
+
+// Origin badge
+const originBadge = {
+  imported: {
+    label: "Imported",
+    classes: "bg-violet-500/20 text-violet-300 border border-violet-500/30",
+  },
+  registered: {
+    label: "Registered",
+    classes: "bg-teal-500/15 text-teal-300 border border-teal-500/25",
+  },
+} as const;
+
+// Summary stat card
+function StatCard({ label, value, accent = false }: { label: string; value: number; accent?: boolean }) {
+  return (
+    <div className="flex flex-col gap-0.5 rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 min-w-[110px]">
+      <span className={`text-xl font-bold tabular-nums ${accent ? "text-violet-300" : "text-zinc-100"}`}>
+        {value}
+      </span>
+      <span className="text-xs text-zinc-500 leading-tight">{label}</span>
+    </div>
+  );
+}
+
+// Filter button group
+function FilterGroup<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { id: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-xs font-medium text-zinc-500 shrink-0">{label}:</span>
+      <div className="flex items-center gap-1">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            onClick={() => onChange(o.id)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              value === o.id
+                ? "bg-violet-500/20 text-violet-300 border border-violet-500/40"
+                : "border border-zinc-700 bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ── Credentials modal ─────────────────────────────────────────────────────────
@@ -194,14 +266,161 @@ function ConfirmDialog({
   );
 }
 
+// ── Imported creator overflow menu ────────────────────────────────────────────
+
+function ImportedCreatorMenu({
+  user,
+  onEdit,
+}: {
+  user: AdminUser;
+  onEdit: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(e: MouseEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        btnRef.current &&
+        !btnRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [open]);
+
+  const cp = user.creatorProfile!;
+  const isUnclaimed = cp.claimStatus === "UNCLAIMED";
+  const isPending = cp.claimStatus === "CLAIM_PENDING";
+
+  const claimPath = `/claim/${cp.id}`;
+  const profilePath = `/profile/${user.id}`;
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setMenuPos({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+      });
+    }
+    setOpen((p) => !p);
+  }
+
+  function copyText(text: string, label: string) {
+    navigator.clipboard.writeText(text);
+    toast.success(label);
+    setOpen(false);
+  }
+
+  const menu = (
+    <div
+      ref={menuRef}
+      style={menuPos ? { top: menuPos.top, right: menuPos.right } : {}}
+      className="fixed z-[9999] w-56 rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl py-1 text-sm"
+    >
+      {/* Edit — UNCLAIMED or CLAIM_PENDING */}
+      {(isUnclaimed || isPending) && (
+        <button
+          onClick={() => { onEdit(); setOpen(false); }}
+          className="flex w-full items-center gap-2.5 px-3 py-2 text-zinc-300 hover:bg-zinc-800 transition-colors"
+        >
+          <Pencil className="h-3.5 w-3.5 text-zinc-500" />
+          Edit Imported Profile
+        </button>
+      )}
+
+      {/* Copy Claim Link — UNCLAIMED or CLAIM_PENDING */}
+      {(isUnclaimed || isPending) && (
+        <button
+          onClick={() =>
+            copyText(`${window.location.origin}${claimPath}`, "Claim link copied!")
+          }
+          className="flex w-full items-center gap-2.5 px-3 py-2 text-zinc-300 hover:bg-zinc-800 transition-colors"
+        >
+          <Copy className="h-3.5 w-3.5 text-zinc-500" />
+          Copy Claim Link
+        </button>
+      )}
+
+      {/* Open Claim Page — UNCLAIMED or CLAIM_PENDING */}
+      {(isUnclaimed || isPending) && (
+        <a
+          href={claimPath}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          className="flex w-full items-center gap-2.5 px-3 py-2 text-zinc-300 hover:bg-zinc-800 transition-colors"
+        >
+          <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
+          Open Claim Page
+        </a>
+      )}
+
+      {/* Copy Outreach Message — UNCLAIMED only */}
+      {isUnclaimed && (
+        <button
+          onClick={() => {
+            const url = `${window.location.origin}${claimPath}`;
+            const msg = `Hi ${user.name ?? "there"}, we've prepared a public creator profile for you on Duolync using publicly available information. You can review, claim, and customize it here: ${url}`;
+            copyText(msg, "Outreach message copied!");
+          }}
+          className="flex w-full items-center gap-2.5 px-3 py-2 text-zinc-300 hover:bg-zinc-800 transition-colors"
+        >
+          <Copy className="h-3.5 w-3.5 text-zinc-500" />
+          Copy Outreach Message
+        </button>
+      )}
+
+      {/* Divider before View Profile */}
+      <div className="mx-3 my-1 border-t border-zinc-800" />
+
+      {/* View Profile — always */}
+      <a
+        href={profilePath}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => setOpen(false)}
+        className="flex w-full items-center gap-2.5 px-3 py-2 text-zinc-300 hover:bg-zinc-800 transition-colors"
+      >
+        <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
+        View Profile
+      </a>
+    </div>
+  );
+
+  return (
+    <div className="relative">
+      <button
+        ref={btnRef}
+        onClick={handleOpen}
+        className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
+        title="Imported creator actions"
+      >
+        <MoreHorizontal className="h-4 w-4" />
+      </button>
+      {open && createPortal(menu, document.body)}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
-export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
+export function UsersClient({ initialUsers, summary }: { initialUsers: AdminUser[]; summary: SummaryStats }) {
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
     key: "createdAt",
     dir: "desc",
   });
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
+  const [originFilter, setOriginFilter] = useState<OriginFilter>("all");
   const [generating, startGenerating] = useTransition();
   const [creds, setCreds] = useState<Credentials | null>(null);
 
@@ -218,7 +437,11 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
 
   // ── Imported creator modals ──
   const [addModalOpen, setAddModalOpen] = useState(false);
-  const [editCreatorProfileId, setEditCreatorProfileId] = useState<string | null>(null);
+  const [editProfile, setEditProfile] = useState<{
+    creatorProfileId: string;
+    userId: string;
+    claimStatus: string;
+  } | null>(null);
 
   // ── Sort helpers ──
   function toggleSort(key: SortKey) {
@@ -232,14 +455,30 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
   // ── Filtered & sorted list ──
   const users = useMemo(() => {
     const q = search.toLowerCase().trim();
-    const filtered = q
-      ? initialUsers.filter(
-          (u) =>
-            u.name?.toLowerCase().includes(q) ||
-            u.email.toLowerCase().includes(q) ||
-            fromPrismaRole(u.role).includes(q),
-        )
-      : initialUsers;
+
+    const filtered = initialUsers.filter((u) => {
+      // Role filter
+      if (roleFilter !== "all") {
+        const userRole = String(u.role).toUpperCase();
+        if (roleFilter === "creator" && userRole !== "CREATOR") return false;
+        if (roleFilter === "brand" && userRole !== "BRAND") return false;
+      }
+
+      // Origin filter (authoritative: isImported)
+      if (originFilter === "imported" && !u.isImported) return false;
+      if (originFilter === "registered" && u.isImported) return false;
+
+      // Search
+      if (q) {
+        return (
+          u.name?.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q) ||
+          fromPrismaRole(u.role).includes(q)
+        );
+      }
+
+      return true;
+    });
 
     return [...filtered].sort((a, b) => {
       let cmp = 0;
@@ -253,6 +492,9 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
         case "role":
           cmp = a.role.localeCompare(b.role);
           break;
+        case "origin":
+          cmp = Number(a.isImported) - Number(b.isImported);
+          break;
         case "banned":
           cmp = Number(a.banned) - Number(b.banned);
           break;
@@ -265,7 +507,7 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
       }
       return sort.dir === "asc" ? cmp : -cmp;
     });
-  }, [initialUsers, sort, search]);
+  }, [initialUsers, sort, search, roleFilter, originFilter]);
 
   // ── Generate test user ──
   function handleGenerate(type: "brand" | "creator") {
@@ -334,10 +576,12 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
       {addModalOpen && (
         <AddImportedCreatorModal onClose={() => setAddModalOpen(false)} />
       )}
-      {editCreatorProfileId && (
+      {editProfile && (
         <EditImportedCreatorModal
-          creatorProfileId={editCreatorProfileId}
-          onClose={() => setEditCreatorProfileId(null)}
+          creatorProfileId={editProfile.creatorProfileId}
+          userId={editProfile.userId}
+          initialClaimStatus={editProfile.claimStatus}
+          onClose={() => setEditProfile(null)}
         />
       )}
       {confirm && (
@@ -375,6 +619,15 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
           loading={actionPending}
         />
       )}
+
+      {/* ── Summary metric cards ── */}
+      <div className="flex flex-wrap gap-3">
+        <StatCard label="Total Accounts" value={summary.total} />
+        <StatCard label="Creators" value={summary.creators} />
+        <StatCard label="Brands" value={summary.brands} />
+        <StatCard label="Imported Creators" value={summary.importedCreators} accent />
+        <StatCard label="Registered Creators" value={summary.registeredCreators} />
+      </div>
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -425,6 +678,34 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
         </div>
       </div>
 
+      {/* ── Role + Origin filters ── */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <FilterGroup<RoleFilter>
+          label="Role"
+          value={roleFilter}
+          onChange={setRoleFilter}
+          options={[
+            { id: "all", label: "All" },
+            { id: "creator", label: "Creators" },
+            { id: "brand", label: "Brands" },
+          ]}
+        />
+        <FilterGroup<OriginFilter>
+          label="Origin"
+          value={originFilter}
+          onChange={setOriginFilter}
+          options={[
+            { id: "all", label: "All" },
+            { id: "registered", label: "Registered" },
+            { id: "imported", label: "Imported" },
+          ]}
+        />
+        {/* Filtered result count */}
+        <span className="ml-auto text-xs text-zinc-500 tabular-nums">
+          {users.length} {users.length === 1 ? "user" : "users"}
+        </span>
+      </div>
+
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
         <div className="overflow-x-auto">
@@ -434,6 +715,7 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
                 <Th col="name">Name</Th>
                 <Th col="email">Email</Th>
                 <Th col="role">Role</Th>
+                <Th col="origin">Origin</Th>
                 <Th col="banned">Status</Th>
                 <Th col="emailVerified">Verified</Th>
                 <th className="px-5 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
@@ -474,6 +756,18 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
                       >
                         {badge.label}
                       </span>
+                    </td>
+
+                    {/* Origin */}
+                    <td className="px-5 py-3.5">
+                      {(() => {
+                        const ob = user.isImported ? originBadge.imported : originBadge.registered;
+                        return (
+                          <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${ob.classes}`}>
+                            {ob.label}
+                          </span>
+                        );
+                      })()}
                     </td>
 
                     {/* Status */}
@@ -524,33 +818,19 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
                     {/* Actions */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center justify-end gap-2">
-                        {/* Edit Imported Profile */}
-                        {user.isImported &&
-                          user.creatorProfile &&
-                          user.creatorProfile.claimStatus !== "CLAIMED" && (
-                            <button
-                              disabled={isLoading}
-                              onClick={() =>
-                                setEditCreatorProfileId(
-                                  user.creatorProfile!.id,
-                                )
-                              }
-                              title={
-                                user.creatorProfile.claimStatus ===
-                                "CLAIM_PENDING"
-                                  ? "Edit imported profile (restricted — claim pending)"
-                                  : "Edit imported profile"
-                              }
-                              className={`rounded-md p-1.5 transition-colors disabled:opacity-40 ${
-                                user.creatorProfile.claimStatus ===
-                                "CLAIM_PENDING"
-                                  ? "text-amber-400 hover:bg-amber-500/10"
-                                  : "text-violet-400 hover:bg-violet-500/10"
-                              }`}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                          )}
+                        {/* Imported creator overflow menu */}
+                        {user.isImported && user.creatorProfile && (
+                          <ImportedCreatorMenu
+                            user={user}
+                            onEdit={() =>
+                              setEditProfile({
+                                creatorProfileId: user.creatorProfile!.id,
+                                userId: user.id,
+                                claimStatus: user.creatorProfile!.claimStatus,
+                              })
+                            }
+                          />
+                        )}
                         {/* Ban / Unban */}
                         {userType !== "admin" &&
                           (user.banned ? (
@@ -617,7 +897,9 @@ export function UsersClient({ initialUsers }: { initialUsers: AdminUser[] }) {
 
         {users.length === 0 && (
           <p className="py-12 text-center text-zinc-500">
-            {search ? `No users match "${search}"` : "No users found."}
+            {search || roleFilter !== "all" || originFilter !== "all"
+              ? "No users match the current filters."
+              : "No users found."}
           </p>
         )}
       </div>

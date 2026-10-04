@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { db } from "@/lib/db";
 import { Users } from "lucide-react";
-import { UsersClient, type AdminUser } from "./UsersClient";
+import { UsersClient, type AdminUser, type SummaryStats } from "./UsersClient";
 
 async function getUsers(): Promise<AdminUser[]> {
   const rows = await db.user.findMany({
@@ -41,8 +41,35 @@ async function getUsers(): Promise<AdminUser[]> {
   }));
 }
 
+function computeSummary(users: AdminUser[]): SummaryStats {
+  let creators = 0;
+  let brands = 0;
+  let importedCreators = 0;
+  let registeredCreators = 0;
+
+  for (const u of users) {
+    const role = String(u.role).toUpperCase();
+    if (role === "CREATOR") {
+      creators++;
+      if (u.isImported) importedCreators++;
+      else registeredCreators++;
+    } else if (role === "BRAND") {
+      brands++;
+    }
+  }
+
+  return {
+    total: users.length,
+    creators,
+    brands,
+    importedCreators,
+    registeredCreators,
+  };
+}
+
 export default async function AdminUsersPage() {
   const users = await getUsers();
+  const summary = computeSummary(users);
 
   return (
     <div className="space-y-6">
@@ -56,7 +83,7 @@ export default async function AdminUsersPage() {
       </div>
 
       {/* Interactive table */}
-      <UsersClient initialUsers={users} />
+      <UsersClient initialUsers={users} summary={summary} />
     </div>
   );
 }
