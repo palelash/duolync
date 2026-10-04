@@ -692,23 +692,29 @@ enum ProfileClaimStatus {
 }
 
 model ProfileClaim {
-  id               String             @id @default(cuid())
-  creatorProfileId String
-  requesterUserId  String?
-  status           ProfileClaimStatus @default(PENDING)
-  evidenceNote     String?
-  evidenceEmail    String?
-  evidencePlatform String?
-  evidenceHandle   String?
-  requiresMerge    Boolean            @default(false)
-  reviewedByUserId String?
-  reviewedAt       DateTime?
-  rejectionReason  String?
-  requestedAt      DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  creatorProfile   CreatorProfile     @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
-  requester        User?              @relation("SubmittedClaims", fields: [requesterUserId], references: [id], onDelete: SetNull)
-  reviewedBy       User?              @relation("ReviewedClaims", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  id                  String             @id @default(cuid())
+  creatorProfileId    String
+  requesterUserId     String?
+  status              ProfileClaimStatus @default(PENDING)
+  evidenceNote        String?
+  evidenceEmail       String?
+  evidencePlatform    String?
+  evidenceHandle      String?
+  requiresMerge       Boolean            @default(false)
+  reviewedByUserId    String?
+  reviewedAt          DateTime?
+  rejectionReason     String?
+  // ── Scenario B merge audit (plain fields, NO FK — RP is deleted after merge) ─
+  // mergedFromProfileId records the id of the registered CreatorProfile (RP) that
+  // was consumed during a Scenario B merge. RP no longer exists after the merge.
+  // Non-null on this field is the durable evidence that a Scenario B merge occurred.
+  mergedFromProfileId String?
+  mergeCompletedAt    DateTime?
+  requestedAt         DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  creatorProfile      CreatorProfile     @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
+  requester           User?              @relation("SubmittedClaims", fields: [requesterUserId], references: [id], onDelete: SetNull)
+  reviewedBy          User?              @relation("ReviewedClaims", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
 
   @@index([creatorProfileId, status])
   @@index([requesterUserId, status])
