@@ -369,13 +369,15 @@ function buildMockPosts(
       posts.push({
         id: `mock-${creatorId}-${platform}-${i}`,
         platform,
-        postUrl:  null,
-        imageUrl: MOCK_POST_POOL[imgIdx],
-        caption:  null,
-        likes:    likeBase,
-        comments: commBase,
-        views:    hasViews ? viewBase : null,
-        postedAt: null,
+        postUrl:       null,
+        imageUrl:      MOCK_POST_POOL[imgIdx],
+        caption:       null,
+        likes:         likeBase,
+        comments:      commBase,
+        views:         hasViews ? viewBase : null,
+        postedAt:      null,
+        dataSource:    "LEGACY_UNKNOWN",
+        providerPostId: null,
       });
     }
   });

@@ -15,6 +15,10 @@ export interface SocialPostItem {
   comments: number | null;
   views: number | null;
   postedAt: string | null;
+  /** Provenance of this post — distinguishes OFFICIAL_API from APIFY/public-data rows. */
+  dataSource: string;
+  /** Stable platform post ID; non-null for OFFICIAL_API rows. */
+  providerPostId: string | null;
 }
 
 export async function getSocialPostsAction(): Promise<{
@@ -41,6 +45,8 @@ export async function getSocialPostsAction(): Promise<{
             comments: true,
             views: true,
             postedAt: true,
+            dataSource: true,
+            providerPostId: true,
           },
         },
       },
@@ -52,6 +58,8 @@ export async function getSocialPostsAction(): Promise<{
       data: creator.socialPosts.map((p) => ({
         ...p,
         postedAt: p.postedAt?.toISOString() ?? null,
+        dataSource: p.dataSource as string,
+        providerPostId: p.providerPostId ?? null,
       })),
       error: null,
     };
@@ -115,6 +123,8 @@ export async function getCreatorPostsByUserIdAction(
             comments: true,
             views: true,
             postedAt: true,
+            dataSource: true,
+            providerPostId: true,
           },
         },
       },
@@ -126,6 +136,8 @@ export async function getCreatorPostsByUserIdAction(
       data: creator.socialPosts.map((p) => ({
         ...p,
         postedAt: p.postedAt?.toISOString() ?? null,
+        dataSource: p.dataSource as string,
+        providerPostId: p.providerPostId ?? null,
       })),
       error: null,
     };

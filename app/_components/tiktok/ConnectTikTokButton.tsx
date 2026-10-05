@@ -17,6 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   network_error:           "A network error occurred. Please try again.",
   db_error:                "Could not save your token. Please try again.",
   no_tiktok_account:       "No TikTok account was returned from the API.",
+  access_denied:           "Access was denied. Please try again.",
 };
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -32,8 +33,11 @@ interface ConnectTikTokButtonProps {
 }
 
 /**
- * Triggers the TikTok Login Kit v2 OAuth flow.
- * Scopes: user.info.basic, user.info.stats
+ * Triggers the TikTok Login Kit v2 OAuth flow via the server-side start route.
+ *
+ * The OAuth URL is constructed server-side at /api/auth/tiktok/start.
+ * No client-side state generation or redirect URI construction is performed here.
+ * The CSRF state cookie is set HttpOnly by the start route.
  *
  * Wrap this in <Suspense fallback={null}> because it uses useSearchParams().
  */
@@ -52,6 +56,7 @@ export default function ConnectTikTokButton({
     const error = searchParams.get("tiktok_error");
 
     if (connected) {
+      // connected is the real TikTok username when available, else "1"
       const name = connected === "1" ? "TikTok" : connected;
       toast({
         title: "TikTok connected! 🎉",
@@ -80,40 +85,11 @@ export default function ConnectTikTokButton({
     }
   }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Redirect to TikTok OAuth dialog ──────────────────────────────────────
+  // ── Redirect to server-side TikTok OAuth start ────────────────────────────
+  // All OAuth URL construction, CSRF state generation, and cookie setting
+  // happens server-side in /api/auth/tiktok/start — never in client code.
   function handleClick() {
-    const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-    if (!clientKey) {
-      toast({
-        title: "TikTok integration not configured",
-        description: "NEXT_PUBLIC_TIKTOK_CLIENT_KEY is missing.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Prefer the explicit public URL env-var; fall back to the browser's own origin
-    const origin =
-      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-      window.location.origin;
-
-    const redirectUri = `${origin}/api/auth/callback/tiktok`;
-
-    // Cryptographically random state for CSRF protection
-    const state = crypto.randomUUID();
-    document.cookie = `__tiktok_state=${state}; path=/; max-age=300; SameSite=Lax`;
-
-    // Build params with an explicit URLSearchParams object — no URL mutation
-    const params = new URLSearchParams({
-      client_key: clientKey,
-      redirect_uri: redirectUri,
-      scope: "user.info.basic,user.info.stats",
-      response_type: "code",
-      state,
-    });
-
-    window.location.href =
-      `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
+    window.location.href = "/api/auth/tiktok/start";
   }
 
   const buttonLabel =

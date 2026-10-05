@@ -623,40 +623,11 @@ const PresencePage = () => {
   }, [toast]);
 
   // ── TikTok OAuth redirect ─────────────────────────────────────────────────
+  // All OAuth URL construction, CSRF state generation, and HttpOnly cookie
+  // setting happens server-side at /api/auth/tiktok/start.
   const handleTikTokOAuth = useCallback(() => {
-    const clientKey = process.env.NEXT_PUBLIC_TIKTOK_CLIENT_KEY;
-    if (!clientKey) {
-      toast({
-        title: "TikTok connection unavailable",
-        description: "TikTok sign-in is not available right now. Please try again later or contact support.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Prefer the explicit public URL env-var; fall back to the browser's own origin
-    const origin =
-      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-      window.location.origin;
-
-    const redirectUri = `${origin}/api/auth/callback/tiktok`;
-
-    // CSRF state stored in a short-lived cookie so the server callback can verify it
-    const state = crypto.randomUUID();
-    document.cookie = `__tiktok_state=${state}; path=/; max-age=300; SameSite=Lax`;
-
-    // Build params with an explicit URLSearchParams object — no URL mutation
-    const params = new URLSearchParams({
-      client_key: clientKey,
-      redirect_uri: redirectUri,
-      scope: "user.info.basic,user.info.stats",
-      response_type: "code",
-      state,
-    });
-
-    window.location.href =
-      `https://www.tiktok.com/v2/auth/authorize/?${params.toString()}`;
-  }, [toast]);
+    window.location.href = "/api/auth/tiktok/start";
+  }, []);
 
   // ── YouTube OAuth redirect ────────────────────────────────────────────────
   const handleYouTubeOAuth = useCallback(() => {
