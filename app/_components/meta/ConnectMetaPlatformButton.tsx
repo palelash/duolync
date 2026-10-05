@@ -26,7 +26,9 @@ const PLATFORM_CONFIG: Record<
   instagram: {
     defaultLabel: "Connect Instagram",
     callbackPath: "/api/auth/callback/instagram",
-    scope: "instagram_basic,instagram_manage_messages,pages_read_engagement,pages_show_list,business_management",
+    // Scopes for direct Instagram Business Login (documentation only —
+    // the authorization URL is built server-side in /api/auth/instagram/start).
+    scope: "instagram_business_basic,instagram_business_manage_insights",
     connectedParam: "instagram_connected",
     errorParam: "instagram_error",
     displayName: "Instagram",
@@ -60,6 +62,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   no_pages_found:          "No Facebook Pages were found on your account.",
   no_threads_account:      "No Threads account was found for this profile.",
   profile_fetch_failed:    "Could not load your Threads profile.",
+  // Instagram direct login
+  oauth_error:             "Instagram authorisation failed. Please try again.",
+  invalid_state:           "Invalid authorisation state. Please try again.",
+  no_instagram_account:    "No Instagram Professional account was found.",
+  not_professional_account:"A Creator or Business Instagram account is required.",
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -125,6 +132,14 @@ export default function ConnectMetaPlatformButton({
 
   // ── Redirect to the correct OAuth dialog ─────────────────────────────────
   function handleClick() {
+    // Instagram uses the server-side start route which handles CSRF state,
+    // HttpOnly cookies, and the direct Instagram authorization URL.
+    // No client-side state generation or redirect URI construction needed here.
+    if (platform === "instagram") {
+      window.location.href = "/api/auth/instagram/start";
+      return;
+    }
+
     const appBase =
       process.env.NEXT_PUBLIC_APP_URL ??
       `${window.location.protocol}//${window.location.host}`;
