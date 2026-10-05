@@ -536,6 +536,10 @@ const PresencePage = () => {
       no_tiktok_account:       "No TikTok account was returned from the API.",
       no_youtube_channel:      "No YouTube channel was found on this Google account.",
       access_denied:           "Access was denied. Please grant the required permissions.",
+      // Instagram direct login
+      oauth_error:             "Instagram authorisation failed. Please try again.",
+      no_instagram_account:    "No Instagram Professional account was found.",
+      not_professional_account:"A Creator or Business Instagram account is required.",
     };
 
     let reloadNeeded = false;
@@ -567,6 +571,14 @@ const PresencePage = () => {
 
   // ── Per-platform Meta OAuth redirect ─────────────────────────────────────
   const handleMetaOAuth = useCallback((platform: "instagram" | "facebook_page" | "threads") => {
+    // Instagram uses the server-side start route. The start route handles
+    // session check, CSRF state generation, HttpOnly cookie, and the direct
+    // Instagram authorization URL. No client-side logic required here.
+    if (platform === "instagram") {
+      window.location.href = "/api/auth/instagram/start";
+      return;
+    }
+
     const appBase = process.env.NEXT_PUBLIC_APP_URL ?? `${window.location.protocol}//${window.location.host}`;
 
     const configs = {
