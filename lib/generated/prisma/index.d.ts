@@ -36522,6 +36522,8 @@ export namespace Prisma {
     reviewedByUserId: string | null
     reviewedAt: Date | null
     rejectionReason: string | null
+    mergedFromProfileId: string | null
+    mergeCompletedAt: Date | null
     requestedAt: Date | null
     updatedAt: Date | null
   }
@@ -36539,6 +36541,8 @@ export namespace Prisma {
     reviewedByUserId: string | null
     reviewedAt: Date | null
     rejectionReason: string | null
+    mergedFromProfileId: string | null
+    mergeCompletedAt: Date | null
     requestedAt: Date | null
     updatedAt: Date | null
   }
@@ -36556,6 +36560,8 @@ export namespace Prisma {
     reviewedByUserId: number
     reviewedAt: number
     rejectionReason: number
+    mergedFromProfileId: number
+    mergeCompletedAt: number
     requestedAt: number
     updatedAt: number
     _all: number
@@ -36575,6 +36581,8 @@ export namespace Prisma {
     reviewedByUserId?: true
     reviewedAt?: true
     rejectionReason?: true
+    mergedFromProfileId?: true
+    mergeCompletedAt?: true
     requestedAt?: true
     updatedAt?: true
   }
@@ -36592,6 +36600,8 @@ export namespace Prisma {
     reviewedByUserId?: true
     reviewedAt?: true
     rejectionReason?: true
+    mergedFromProfileId?: true
+    mergeCompletedAt?: true
     requestedAt?: true
     updatedAt?: true
   }
@@ -36609,6 +36619,8 @@ export namespace Prisma {
     reviewedByUserId?: true
     reviewedAt?: true
     rejectionReason?: true
+    mergedFromProfileId?: true
+    mergeCompletedAt?: true
     requestedAt?: true
     updatedAt?: true
     _all?: true
@@ -36699,6 +36711,8 @@ export namespace Prisma {
     reviewedByUserId: string | null
     reviewedAt: Date | null
     rejectionReason: string | null
+    mergedFromProfileId: string | null
+    mergeCompletedAt: Date | null
     requestedAt: Date
     updatedAt: Date
     _count: ProfileClaimCountAggregateOutputType | null
@@ -36733,6 +36747,8 @@ export namespace Prisma {
     reviewedByUserId?: boolean
     reviewedAt?: boolean
     rejectionReason?: boolean
+    mergedFromProfileId?: boolean
+    mergeCompletedAt?: boolean
     requestedAt?: boolean
     updatedAt?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
@@ -36753,6 +36769,8 @@ export namespace Prisma {
     reviewedByUserId?: boolean
     reviewedAt?: boolean
     rejectionReason?: boolean
+    mergedFromProfileId?: boolean
+    mergeCompletedAt?: boolean
     requestedAt?: boolean
     updatedAt?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
@@ -36773,6 +36791,8 @@ export namespace Prisma {
     reviewedByUserId?: boolean
     reviewedAt?: boolean
     rejectionReason?: boolean
+    mergedFromProfileId?: boolean
+    mergeCompletedAt?: boolean
     requestedAt?: boolean
     updatedAt?: boolean
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
@@ -36793,11 +36813,13 @@ export namespace Prisma {
     reviewedByUserId?: boolean
     reviewedAt?: boolean
     rejectionReason?: boolean
+    mergedFromProfileId?: boolean
+    mergeCompletedAt?: boolean
     requestedAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProfileClaimOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "requesterUserId" | "status" | "evidenceNote" | "evidenceEmail" | "evidencePlatform" | "evidenceHandle" | "requiresMerge" | "reviewedByUserId" | "reviewedAt" | "rejectionReason" | "requestedAt" | "updatedAt", ExtArgs["result"]["profileClaim"]>
+  export type ProfileClaimOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "requesterUserId" | "status" | "evidenceNote" | "evidenceEmail" | "evidencePlatform" | "evidenceHandle" | "requiresMerge" | "reviewedByUserId" | "reviewedAt" | "rejectionReason" | "mergedFromProfileId" | "mergeCompletedAt" | "requestedAt" | "updatedAt", ExtArgs["result"]["profileClaim"]>
   export type ProfileClaimInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
     requester?: boolean | ProfileClaim$requesterArgs<ExtArgs>
@@ -36834,6 +36856,8 @@ export namespace Prisma {
       reviewedByUserId: string | null
       reviewedAt: Date | null
       rejectionReason: string | null
+      mergedFromProfileId: string | null
+      mergeCompletedAt: Date | null
       requestedAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["profileClaim"]>
@@ -37274,6 +37298,8 @@ export namespace Prisma {
     readonly reviewedByUserId: FieldRef<"ProfileClaim", 'String'>
     readonly reviewedAt: FieldRef<"ProfileClaim", 'DateTime'>
     readonly rejectionReason: FieldRef<"ProfileClaim", 'String'>
+    readonly mergedFromProfileId: FieldRef<"ProfileClaim", 'String'>
+    readonly mergeCompletedAt: FieldRef<"ProfileClaim", 'DateTime'>
     readonly requestedAt: FieldRef<"ProfileClaim", 'DateTime'>
     readonly updatedAt: FieldRef<"ProfileClaim", 'DateTime'>
   }
@@ -40210,6 +40236,8 @@ export namespace Prisma {
     reviewedByUserId: 'reviewedByUserId',
     reviewedAt: 'reviewedAt',
     rejectionReason: 'rejectionReason',
+    mergedFromProfileId: 'mergedFromProfileId',
+    mergeCompletedAt: 'mergeCompletedAt',
     requestedAt: 'requestedAt',
     updatedAt: 'updatedAt'
   };
@@ -42993,6 +43021,8 @@ export namespace Prisma {
     reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergedFromProfileId?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergeCompletedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
     updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
     creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
@@ -43013,6 +43043,8 @@ export namespace Prisma {
     reviewedByUserId?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    mergedFromProfileId?: SortOrderInput | SortOrder
+    mergeCompletedAt?: SortOrderInput | SortOrder
     requestedAt?: SortOrder
     updatedAt?: SortOrder
     creatorProfile?: CreatorProfileOrderByWithRelationInput
@@ -43036,6 +43068,8 @@ export namespace Prisma {
     reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergedFromProfileId?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergeCompletedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
     updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
     creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
@@ -43056,6 +43090,8 @@ export namespace Prisma {
     reviewedByUserId?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
     rejectionReason?: SortOrderInput | SortOrder
+    mergedFromProfileId?: SortOrderInput | SortOrder
+    mergeCompletedAt?: SortOrderInput | SortOrder
     requestedAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ProfileClaimCountOrderByAggregateInput
@@ -43079,6 +43115,8 @@ export namespace Prisma {
     reviewedByUserId?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
     reviewedAt?: DateTimeNullableWithAggregatesFilter<"ProfileClaim"> | Date | string | null
     rejectionReason?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    mergedFromProfileId?: StringNullableWithAggregatesFilter<"ProfileClaim"> | string | null
+    mergeCompletedAt?: DateTimeNullableWithAggregatesFilter<"ProfileClaim"> | Date | string | null
     requestedAt?: DateTimeWithAggregatesFilter<"ProfileClaim"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProfileClaim"> | Date | string
   }
@@ -45739,6 +45777,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
     creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
@@ -45759,6 +45799,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45773,6 +45815,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
@@ -45793,6 +45837,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45810,6 +45856,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45824,6 +45872,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45841,6 +45891,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -48048,6 +48100,8 @@ export namespace Prisma {
     reviewedByUserId?: SortOrder
     reviewedAt?: SortOrder
     rejectionReason?: SortOrder
+    mergedFromProfileId?: SortOrder
+    mergeCompletedAt?: SortOrder
     requestedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -48065,6 +48119,8 @@ export namespace Prisma {
     reviewedByUserId?: SortOrder
     reviewedAt?: SortOrder
     rejectionReason?: SortOrder
+    mergedFromProfileId?: SortOrder
+    mergeCompletedAt?: SortOrder
     requestedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -48082,6 +48138,8 @@ export namespace Prisma {
     reviewedByUserId?: SortOrder
     reviewedAt?: SortOrder
     rejectionReason?: SortOrder
+    mergedFromProfileId?: SortOrder
+    mergeCompletedAt?: SortOrder
     requestedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -52263,6 +52321,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
     creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
@@ -52281,6 +52341,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -52305,6 +52367,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
     creatorProfile: CreatorProfileCreateNestedOneWithoutProfileClaimsInput
@@ -52323,6 +52387,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -53066,6 +53132,8 @@ export namespace Prisma {
     reviewedByUserId?: StringNullableFilter<"ProfileClaim"> | string | null
     reviewedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     rejectionReason?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergedFromProfileId?: StringNullableFilter<"ProfileClaim"> | string | null
+    mergeCompletedAt?: DateTimeNullableFilter<"ProfileClaim"> | Date | string | null
     requestedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
     updatedAt?: DateTimeFilter<"ProfileClaim"> | Date | string
   }
@@ -53750,6 +53818,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
     requester?: UserCreateNestedOneWithoutSubmittedClaimsInput
@@ -53768,6 +53838,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -61033,6 +61105,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -61049,6 +61123,8 @@ export namespace Prisma {
     requiresMerge?: boolean
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -61815,6 +61891,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
@@ -61833,6 +61911,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -61849,6 +61929,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -61863,6 +61945,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorProfile?: CreatorProfileUpdateOneRequiredWithoutProfileClaimsNestedInput
@@ -61881,6 +61965,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -61897,6 +61983,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -62217,6 +62305,8 @@ export namespace Prisma {
     reviewedByUserId?: string | null
     reviewedAt?: Date | string | null
     rejectionReason?: string | null
+    mergedFromProfileId?: string | null
+    mergeCompletedAt?: Date | string | null
     requestedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -62399,6 +62489,8 @@ export namespace Prisma {
     requiresMerge?: BoolFieldUpdateOperationsInput | boolean
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     requester?: UserUpdateOneWithoutSubmittedClaimsNestedInput
@@ -62417,6 +62509,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -62433,6 +62527,8 @@ export namespace Prisma {
     reviewedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    mergedFromProfileId?: NullableStringFieldUpdateOperationsInput | string | null
+    mergeCompletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
