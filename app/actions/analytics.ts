@@ -3,10 +3,36 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import type { AccountInsightsSnapshot } from "@/lib/instagram-insights";
 
 export interface EngagementDataPoint {
   month: string;
   rate: number;
+}
+
+/**
+ * Normalized Instagram Insights V1 shape returned to the Analytics page.
+ *
+ * The client MUST NOT parse PlatformStats.raw directly —
+ * this typed shape is the only sanctioned way to consume insights data.
+ *
+ * available:          true when at least one fetch succeeded (or was tried).
+ * permissionGranted:  true = confirmed granted; false = confirmed missing; null = unknown.
+ * windowDays:         always 28 when available.
+ * All metric fields:  number (including 0) when the provider returned a value,
+ *                     null when absent or not enough data.
+ * fetchedAt:          ISO 8601 string of when the snapshot was captured.
+ */
+export interface InstagramInsights {
+  available: boolean;
+  permissionGranted: boolean | null;
+  windowDays: 28 | null;
+  reach: number | null;
+  views: number | null;
+  profileViews: number | null;
+  accountsEngaged: number | null;
+  totalInteractions: number | null;
+  fetchedAt: string | null;
 }
 
 export interface CreatorAnalytics {
@@ -26,6 +52,11 @@ export interface CreatorAnalytics {
    */
   avgEngagementRate: number | null;
   totalFollowers: number | null;
+  /**
+   * Instagram Insights V1 — 28-day account metrics.
+   * null when the creator has no Instagram PlatformStats row.
+   */
+  instagramInsights: InstagramInsights | null;
 }
 
 export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<{
@@ -55,7 +86,11 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
       where: { id: creatorUserId },
       select: {
         platformStats: {
-          select: { platform: true, followerCount: true },
+          select: { platform: true, followerCount: true, raw: true },
+        },
+        platformTokens: {
+          where: { platform: "instagram" },
+          select: { scopes: true },
         },
         creatorProfile: {
           include: {
@@ -189,6 +224,77 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
       }
     }
 
+    // ── Instagram Insights V1 ──────────────────────────────────────────────
+    // Extract from PlatformStats.raw.insights.account — never from raw provider JSON directly.
+    // The client receives a typed InstagramInsights shape, not raw JSON.
+    const igStats = (userWithData?.platformStats ?? []).find(
+      (s) => s.platform === "instagram",
+    );
+    const igToken = (userWithData?.platformTokens ?? [])[0] ?? null;
+
+    let instagramInsights: InstagramInsights | null = null;
+
+    if (igStats) {
+      // Determine permission state from stored scopes.
+      // null scopes = unknown; explicit scope string without insights = missing.
+      const igScopes = igToken?.scopes ?? null;
+      let permissionGranted: boolean | null = null;
+      if (igScopes !== null) {
+        permissionGranted = igScopes
+          .split(",")
+          .map((s) => s.trim())
+          .includes("instagram_business_manage_insights");
+      }
+
+      // Parse raw.insights.account safely.
+      const rawObj =
+        typeof igStats.raw === "object" && igStats.raw !== null
+          ? (igStats.raw as Record<string, unknown>)
+          : {};
+      const insightsObj =
+        typeof rawObj["insights"] === "object" && rawObj["insights"] !== null
+          ? (rawObj["insights"] as Record<string, unknown>)
+          : null;
+      const accountObj =
+        insightsObj &&
+        typeof insightsObj["account"] === "object" &&
+        insightsObj["account"] !== null
+          ? (insightsObj["account"] as Partial<AccountInsightsSnapshot>)
+          : null;
+
+      if (accountObj) {
+        // Extract each metric safely — provider 0 stays 0, absent stays null.
+        const safeNum = (v: unknown): number | null =>
+          typeof v === "number" ? v : null;
+
+        instagramInsights = {
+          available: true,
+          permissionGranted,
+          windowDays: 28,
+          reach: safeNum(accountObj.reach),
+          views: safeNum(accountObj.views),
+          profileViews: safeNum(accountObj.profileViews),
+          accountsEngaged: safeNum(accountObj.accountsEngaged),
+          totalInteractions: safeNum(accountObj.totalInteractions),
+          fetchedAt:
+            typeof accountObj.fetchedAt === "string" ? accountObj.fetchedAt : null,
+        };
+      } else {
+        // PlatformStats row exists but no account snapshot yet.
+        instagramInsights = {
+          available: false,
+          permissionGranted,
+          windowDays: null,
+          reach: null,
+          views: null,
+          profileViews: null,
+          accountsEngaged: null,
+          totalInteractions: null,
+          fetchedAt: null,
+        };
+      }
+    }
+
     return {
       data: {
         engagementTrend,
@@ -197,6 +303,7 @@ export async function getCreatorAnalyticsAction(creatorUserId: string): Promise<
         peakHour,
         avgEngagementRate,
         totalFollowers,
+        instagramInsights,
       },
       error: null,
     };

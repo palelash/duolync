@@ -4,10 +4,31 @@ import { useState, useEffect, useTransition } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import MainLayout from "@/components/layout/MainLayout";
-import { getCreatorAnalyticsAction, type CreatorAnalytics } from "@/app/actions/analytics";
+import { getCreatorAnalyticsAction, type CreatorAnalytics, type InstagramInsights } from "@/app/actions/analytics";
 import {
   BarChart3, TrendingUp, Users, Eye, Zap, Clock, Star,
 } from "lucide-react";
+
+/** Minimal Instagram glyph — lucide-react does not include this icon. */
+function IgIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 import {
   ResponsiveContainer,
   LineChart,
@@ -32,6 +53,150 @@ function AnalyticsSkeleton() {
         <div className="h-28 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         <div className="h-28 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
       </div>
+    </div>
+  );
+}
+
+// ─── Instagram Insights section ───────────────────────────────────────────────
+
+/**
+ * Formats a metric value for display following existing UI convention:
+ *   number (including 0)  → display the number
+ *   null (no data)        → "—"
+ */
+function fmtInsightMetric(value: number | null): string {
+  if (value === null) return "—";
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+  return value.toString();
+}
+
+function InstagramInsightsSection({ insights }: { insights: InstagramInsights }) {
+  // Case C: permission clearly missing
+  if (insights.permissionGranted === false) {
+    return (
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <IgIcon className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm">Instagram Insights</h2>
+            <p className="text-xs text-muted-foreground">Last 28 days</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 mt-2">
+          <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+              Analytics access not granted
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+              Reconnect Instagram and grant analytics permission to see reach, views,
+              and profile activity.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Case B / D: connected but no snapshot yet (available === false, permission not missing)
+  if (!insights.available) {
+    return (
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <IgIcon className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm">Instagram Insights</h2>
+            <p className="text-xs text-muted-foreground">Last 28 days</p>
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Insights will appear here after the first sync completes.
+        </p>
+      </div>
+    );
+  }
+
+  // Case A / B: available — show metrics (including explicit 0; null → "—")
+  const v1Metrics = [
+    { label: "Reach", value: fmtInsightMetric(insights.reach) },
+    { label: "Views", value: fmtInsightMetric(insights.views) },
+    { label: "Profile Views", value: fmtInsightMetric(insights.profileViews) },
+  ];
+
+  const supplemental = [
+    insights.accountsEngaged !== null
+      ? { label: "Accounts Engaged", value: fmtInsightMetric(insights.accountsEngaged) }
+      : null,
+    insights.totalInteractions !== null
+      ? { label: "Total Interactions", value: fmtInsightMetric(insights.totalInteractions) }
+      : null,
+  ].filter(Boolean) as { label: string; value: string }[];
+
+  const fetchedLabel = insights.fetchedAt
+    ? new Date(insights.fetchedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <IgIcon className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-sm">Instagram Insights</h2>
+            <p className="text-xs text-muted-foreground">Last 28 days</p>
+          </div>
+        </div>
+        {fetchedLabel && (
+          <p className="text-xs text-muted-foreground hidden sm:block">
+            Updated {fetchedLabel}
+          </p>
+        )}
+      </div>
+
+      {/* V1 primary metrics */}
+      <div className="grid grid-cols-3 gap-3 mb-3">
+        {v1Metrics.map((m) => (
+          <div
+            key={m.label}
+            className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 text-center"
+          >
+            <p className="text-lg font-bold tabular-nums">{m.value}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{m.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Supplemental metrics (accounts_engaged + total_interactions) */}
+      {supplemental.length > 0 && (
+        <div className={cn("grid gap-3", supplemental.length === 1 ? "grid-cols-1" : "grid-cols-2")}>
+          {supplemental.map((m) => (
+            <div
+              key={m.label}
+              className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 text-center"
+            >
+              <p className="text-lg font-bold tabular-nums">{m.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{m.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Provenance note — distinguishes from canonical Engagement / Followers */}
+      <p className="text-xs text-muted-foreground mt-3">
+        Instagram platform insights · not engagement rate
+      </p>
     </div>
   );
 }
@@ -184,6 +349,11 @@ function AnalyticsContent({ userId }: { userId: string }) {
           </ResponsiveContainer>
         )}
       </div>
+
+      {/* Instagram Insights V1 — shown only when an Instagram PlatformStats row exists */}
+      {data.instagramInsights && (
+        <InstagramInsightsSection insights={data.instagramInsights} />
+      )}
 
       {/* Best platform + peak insights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
