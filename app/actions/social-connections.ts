@@ -27,6 +27,16 @@ export interface ConnectedAccount {
   connectedVia: "oauth" | "public_data" | "unknown";
   /** ISO timestamp of last data refresh */
   lastSyncedAt: string | null;
+  /**
+   * The DataSource of the underlying PlatformStats row (e.g. "OFFICIAL_API",
+   * "APIFY", "RAPIDAPI", "LEGACY_UNKNOWN").
+   *
+   * Useful for distinguishing a previously-OAuth-connected account
+   * (connectedVia !== "oauth" but dataSource === "OFFICIAL_API") from a
+   * never-connected public-data account. Used to show "Reconnect" UX when the
+   * PlatformToken no longer exists but historical OFFICIAL_API data remains.
+   */
+  dataSource?: string | null;
 }
 
 /**
@@ -68,6 +78,7 @@ export async function getConnectedAccountsAction(): Promise<{
         engagementRate: stat?.engagementRate ?? null,
         connectedVia: "oauth",
         lastSyncedAt: (stat?.fetchedAt ?? token.updatedAt).toISOString(),
+        dataSource: stat?.dataSource ?? null,
       });
     }
 
@@ -85,6 +96,7 @@ export async function getConnectedAccountsAction(): Promise<{
         engagementRate: stat.engagementRate ?? null,
         connectedVia: isPublicSource ? "public_data" : "unknown",
         lastSyncedAt: stat.fetchedAt.toISOString(),
+        dataSource: stat.dataSource,
       });
     }
 

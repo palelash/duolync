@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { computeFollowerCache } from "@/lib/creator-metrics";
+import { saveTikTokToken } from "@/lib/tiktok-token";
 
 // ── TikTok Login Kit v2 endpoints ─────────────────────────────────────────────
 const TIKTOK_TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/";
@@ -191,7 +192,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1_000) : null;
 
   // Parse granted scopes into a Set for efficient lookup
   const grantedScopeSet = new Set(
@@ -327,42 +327,18 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // ── Persist ────────────────────────────────────────────────────────────────
   try {
-    // Preserve existing refresh token if the new token exchange response
-    // did not return one. TikTok should always return a refresh token on initial
-    // authorization_code exchange, but be conservative on reconnect.
-    // Never erase a valid existing refresh token merely because a response omits one.
-    const existingToken = await db.platformToken.findUnique({
-      where: { userId_platform: { userId, platform: "tiktok" } },
-      select: { refreshToken: true },
-    });
-    const effectiveRefreshToken =
-      newRefreshToken ?? existingToken?.refreshToken ?? null;
-
     // ── PlatformToken ───────────────────────────────────────────────────────
-    await db.platformToken.upsert({
-      where: { userId_platform: { userId, platform: "tiktok" } },
-      create: {
-        userId,
-        platform: "tiktok",
-        accessToken,
-        refreshToken: effectiveRefreshToken,
-        expiresAt,
-        // Truthful granted scopes from the token response — never hardcoded.
-        scopes: grantedScopes,
-        platformUserId: openId,
-        // Real TikTok @handle (user.info.profile scope). Null if scope not granted.
-        // Do NOT use display_name here.
-        username,
-      },
-      update: {
-        accessToken,
-        refreshToken: effectiveRefreshToken,
-        expiresAt,
-        scopes: grantedScopes,
-        platformUserId: openId,
-        username,
-        updatedAt: new Date(),
-      },
+    // saveTikTokToken centralises all preserve rules:
+    //  - refreshToken omitted → existing value preserved (safe on reconnect)
+    //  - grantedScopes null   → existing value preserved
+    //  - openId null          → existing platformUserId preserved
+    await saveTikTokToken(userId, {
+      accessToken,
+      refreshToken: newRefreshToken,   // null → preserve existing
+      expiresIn: expiresIn,            // null → expiresAt stored as null
+      scope: grantedScopes,            // null → preserve existing scopes
+      openId,
+      username,
     });
 
     // ── PlatformStats ────────────────────────────────────────────────────────
@@ -508,8 +484,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     revalidatePath("/creator/accounts");
     revalidatePath("/creator/presence");
-  } catch (err) {
-    console.error("[tiktok/callback] db error:", err);
+  } catch {
+    // Do not log the raw error — a Prisma error during token persistence may
+    // contain query parameters or token payload data.
+    const safeLine = "[tiktok/callback] db persistence error (details omitted for security)";
+    console.error(safeLine);
     return withClearedStateCookie(
       redir(req, "/creator/accounts", { tiktok_error: "db_error" }),
       req,

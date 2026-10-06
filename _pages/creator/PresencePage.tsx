@@ -284,6 +284,7 @@ function PlatformCard({
   dataSource,
   onSync,
   onRemove,
+  reconnect,
 }: {
   platform: PlatformConfig;
   isConnected: boolean;
@@ -292,6 +293,8 @@ function PlatformCard({
   dataSource?: string | null;
   onSync: () => void;
   onRemove: () => void;
+  /** When true and !isConnected, shows "Reconnect" instead of "Connect" */
+  reconnect?: boolean;
 }) {
   const IconComp = platform.icon;
   return (
@@ -370,7 +373,7 @@ function PlatformCard({
               className="gap-1.5 bg-gradient-to-r from-violet-600/20 to-pink-600/10 border border-violet-500/30 text-violet-300 hover:from-violet-600/30 hover:to-pink-600/20 hover:border-violet-400/40"
               variant="outline"
             >
-              <Zap className="w-3.5 h-3.5" /> Connect
+              <Zap className="w-3.5 h-3.5" /> {reconnect ? "Reconnect" : "Connect"}
             </Button>
           )}
         </div>
@@ -486,6 +489,10 @@ const PresencePage = () => {
   // OAuth-connected platform set — derived from PlatformToken. This is the sole
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
   const [oauthPlatformSet, setOauthPlatformSet] = useState<Set<string>>(new Set());
+  // Platforms that were previously OAuth-connected (have OFFICIAL_API PlatformStats)
+  // but no longer have a PlatformToken — their authorization has been revoked/expired.
+  // Used to show "Reconnect" instead of "Connect" in the platform cards.
+  const [previouslyConnectedPlatformSet, setPreviouslyConnectedPlatformSet] = useState<Set<string>>(new Set());
 
   // ── Request-generation counter: only the newest reload may write state ──
   // Each call to reload() captures the generation at call time. When the
@@ -506,6 +513,22 @@ const PresencePage = () => {
     if (!accountsRes.error) {
       setOauthPlatformSet(
         new Set(accountsRes.data.filter((a) => a.connectedVia === "oauth").map((a) => a.platform)),
+      );
+      // Detect TikTok with OFFICIAL_API history but no current oauth token —
+      // show "Reconnect" rather than "Connect" for TikTok only.
+      // Other providers (Instagram, YouTube, etc.) use their own pre-existing
+      // OAuth reconnect flow and must not be affected by this logic.
+      setPreviouslyConnectedPlatformSet(
+        new Set(
+          accountsRes.data
+            .filter(
+              (a) =>
+                a.platform === "tiktok" &&
+                a.connectedVia !== "oauth" &&
+                a.dataSource === "OFFICIAL_API",
+            )
+            .map((a) => a.platform),
+        ),
       );
     }
   };
@@ -793,6 +816,10 @@ const PresencePage = () => {
                       followers={perPlatform?.followerCount ?? null}
                       engagement={perPlatform?.engagementRate ?? null}
                       dataSource={perPlatform?.dataSource ?? null}
+                      reconnect={
+                        !oauthPlatformSet.has(p.id) &&
+                        previouslyConnectedPlatformSet.has(p.id)
+                      }
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
