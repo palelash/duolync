@@ -521,7 +521,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // Fall back to "1" so the UI shows the generic "TikTok connected" message.
   const connectedValue = username ?? "1";
   return withClearedStateCookie(
-    redir(req, "/creator/accounts", { tiktok_connected: connectedValue }),
+    redir(req, "/creator/presence", { tiktok_connected: connectedValue }),
     req,
   );
 }

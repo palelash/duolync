@@ -487,12 +487,21 @@ const PresencePage = () => {
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
   const [oauthPlatformSet, setOauthPlatformSet] = useState<Set<string>>(new Set());
 
+  // ── Request-generation counter: only the newest reload may write state ──
+  // Each call to reload() captures the generation at call time. When the
+  // awaited work finishes, it checks whether a newer reload has since been
+  // started; if so, the stale result is discarded without updating state.
+  const reloadGenRef = useRef(0);
+
   const reload = async () => {
+    const gen = ++reloadGenRef.current;
     const [, postsRes, accountsRes] = await Promise.all([
       refreshProfile(),
       getSocialPostsAction(),
       getConnectedAccountsAction(),
     ]);
+    // Discard if a newer reload was started while we were awaiting.
+    if (gen !== reloadGenRef.current) return;
     if (!postsRes.error) setPosts(postsRes.data);
     if (!accountsRes.error) {
       setOauthPlatformSet(
@@ -501,15 +510,17 @@ const PresencePage = () => {
     }
   };
 
+  // ── Single mount effect: OAuth feedback toasts + initial reload + BFCache ─
+  //
+  // Consolidating the former two separate effects into one ensures that the
+  // page fires exactly ONE reload() on mount regardless of whether OAuth
+  // success params are present. The previous split (two effects both calling
+  // reload()) caused two concurrent overlapping reloads on every OAuth return.
   useEffect(() => {
     // Silently clear any posts with broken image URLs from a previous code version
     clearBrokenPostImagesAction().catch(() => {});
-    reload().finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  // ── Show feedback toasts after Meta OAuth callback ───────────────────────
-  useEffect(() => {
+    // ── OAuth success / error feedback ─────────────────────────────────────
     const params = new URLSearchParams(window.location.search);
 
     const checks: Array<{ connectedParam: string; errorParam: string; displayName: string }> = [
@@ -542,7 +553,6 @@ const PresencePage = () => {
       not_professional_account:"A Creator or Business Instagram account is required.",
     };
 
-    let reloadNeeded = false;
     const clean = new URL(window.location.href);
 
     for (const { connectedParam, errorParam, displayName } of checks) {
@@ -552,7 +562,6 @@ const PresencePage = () => {
       if (connected) {
         const name = connected === "1" ? displayName : connected;
         toast({ title: `${name} connected! 🎉` });
-        reloadNeeded = true;
         clean.searchParams.delete(connectedParam);
       } else if (error) {
         toast({
@@ -564,8 +573,24 @@ const PresencePage = () => {
       }
     }
 
-    if (reloadNeeded) reload();
+    // Clean OAuth params from the URL before the reload so a page refresh
+    // doesn't re-show the toast.
     window.history.replaceState({}, "", clean.toString());
+
+    // Single reload covers both initial mount and any OAuth success case.
+    // The generation counter in reload() ensures that if multiple calls are
+    // somehow initiated, only the most recent result updates React state.
+    reload().finally(() => setLoading(false));
+
+    // ── BFCache restoration ─────────────────────────────────────────────────
+    // When the browser restores this page from the back-forward cache, React
+    // state reflects the pre-navigation snapshot. Re-fetch all Presence data
+    // so connected accounts, stats, and posts are current.
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) reload();
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
