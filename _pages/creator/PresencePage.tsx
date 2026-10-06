@@ -22,6 +22,7 @@ import {
 } from "@/app/actions/apify-sync";
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
 import { removePlatformAction, getConnectedAccountsAction } from "@/app/actions/social-connections";
+import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 
 // ─── Platform SVG Icons ───────────────────────────────────────────────────────
 
@@ -285,6 +286,8 @@ function PlatformCard({
   onSync,
   onRemove,
   reconnect,
+  onRefresh,
+  refreshing,
 }: {
   platform: PlatformConfig;
   isConnected: boolean;
@@ -295,6 +298,13 @@ function PlatformCard({
   onRemove: () => void;
   /** When true and !isConnected, shows "Reconnect" instead of "Connect" */
   reconnect?: boolean;
+  /**
+   * When provided the connected sync button calls this instead of onSync.
+   * Intended for TikTok: triggers a data refresh without starting OAuth.
+   */
+  onRefresh?: () => void;
+  /** When true the sync/refresh button shows a loading spinner. */
+  refreshing?: boolean;
 }) {
   const IconComp = platform.icon;
   return (
@@ -349,16 +359,24 @@ function PlatformCard({
               <Button
                 size="icon"
                 variant="ghost"
-                onClick={onSync}
+                onClick={onRefresh ?? onSync}
+                disabled={refreshing}
                 className="w-8 h-8 text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06]"
-                title={`Re-sync ${platform.label}`}
+                title={onRefresh ? `Refresh ${platform.label} data` : `Re-sync ${platform.label}`}
               >
-                <Pencil className="w-3.5 h-3.5" />
+                {refreshing ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : onRefresh ? (
+                  <RefreshCw className="w-3.5 h-3.5" />
+                ) : (
+                  <Pencil className="w-3.5 h-3.5" />
+                )}
               </Button>
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={onRemove}
+                disabled={refreshing}
                 className="w-8 h-8 text-zinc-600 hover:text-red-400 hover:bg-red-500/10"
                 title={`Remove ${platform.label}`}
               >
@@ -486,6 +504,8 @@ const PresencePage = () => {
   const [removeTarget, setRemoveTarget] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   const [loading, setLoading] = useState(true);
+  // Per-button loading state for TikTok manual refresh (does not trigger page skeleton)
+  const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
   // OAuth-connected platform set — derived from PlatformToken. This is the sole
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
   const [oauthPlatformSet, setOauthPlatformSet] = useState<Set<string>>(new Set());
@@ -677,6 +697,51 @@ const PresencePage = () => {
     window.location.href = "/api/auth/tiktok/start";
   }, []);
 
+  // ── TikTok manual data Refresh (no OAuth) ────────────────────────────────
+  // Called when TikTok is already OAuth-connected. Fetches fresh stats and
+  // videos without starting a new OAuth flow.
+  const handleTikTokRefresh = useCallback(async () => {
+    if (tiktokRefreshing) return;
+    setTiktokRefreshing(true);
+    try {
+      const result = await refreshTikTokDataAction();
+      if (result.ok) {
+        toast({ title: "TikTok refreshed ✓", description: "Your TikTok data has been updated." });
+        await reload();
+      } else if (result.reason === "reauth_required") {
+        toast({
+          title: "Reconnect required",
+          description: "Your TikTok authorization has expired. Please reconnect TikTok.",
+          variant: "destructive",
+        });
+        await reload();
+      } else if (result.reason === "identity_mismatch") {
+        toast({
+          title: "Identity mismatch",
+          description: "TikTok returned a different account. Please reconnect TikTok to resolve this.",
+          variant: "destructive",
+        });
+        // Keep connection/data — do not redirect.
+      } else {
+        // temporary_failure, configuration_error, unauthorized, not_connected
+        toast({
+          title: "Refresh failed",
+          description: "Could not update TikTok data right now. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Refresh failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setTiktokRefreshing(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tiktokRefreshing, toast]);
+
   // ── YouTube OAuth redirect ────────────────────────────────────────────────
   const handleYouTubeOAuth = useCallback(() => {
     const clientId = process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID;
@@ -808,6 +873,7 @@ const PresencePage = () => {
               <div className="space-y-3">
                 {PLATFORMS.map((p) => {
                   const perPlatform = getPerPlatformStats(p.id);
+                  const isTikTokConnected = p.id === "tiktok" && oauthPlatformSet.has("tiktok");
                   return (
                     <PlatformCard
                       key={p.id}
@@ -820,6 +886,10 @@ const PresencePage = () => {
                         !oauthPlatformSet.has(p.id) &&
                         previouslyConnectedPlatformSet.has(p.id)
                       }
+                      // TikTok refresh: when connected, use the Refresh action (no OAuth).
+                      // When not connected, onSync starts OAuth for reconnect/first connect.
+                      onRefresh={isTikTokConnected ? handleTikTokRefresh : undefined}
+                      refreshing={isTikTokConnected ? tiktokRefreshing : undefined}
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
@@ -920,7 +990,17 @@ const PresencePage = () => {
                   <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">
                     Latest Posts
                   </h2>
-                  {groups.map(({ key, meta, items }) => (
+                  {groups.map(({ key, meta, items }) => {
+                    // Sort this platform's posts by postedAt descending before slicing.
+                    // NOTE: getSocialPostsAction loads only 9 creator posts globally;
+                    // a platform with many posts may still have some omitted from this widget.
+                    const sorted = [...items].sort((a, b) => {
+                      if (!a.postedAt && !b.postedAt) return 0;
+                      if (!a.postedAt) return 1;
+                      if (!b.postedAt) return -1;
+                      return new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime();
+                    });
+                    return (
                     <div key={key}>
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
@@ -940,7 +1020,7 @@ const PresencePage = () => {
                         )}
                       </div>
                       <div className="grid grid-cols-3 gap-3">
-                        {items.slice(0, 3).map((post) => (
+                        {sorted.slice(0, 3).map((post) => (
                           <PostCard
                             key={post.id}
                             post={post}
@@ -949,7 +1029,8 @@ const PresencePage = () => {
                         ))}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </section>
               );
             })()}

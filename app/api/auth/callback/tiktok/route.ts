@@ -3,13 +3,12 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { computeFollowerCache } from "@/lib/creator-metrics";
 import { saveTikTokToken } from "@/lib/tiktok-token";
+import { syncTikTokOfficialData } from "@/lib/tiktok-sync";
 
 // ── TikTok Login Kit v2 endpoints ─────────────────────────────────────────────
 const TIKTOK_TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/";
 const TIKTOK_USER_INFO_URL = "https://open.tiktokapis.com/v2/user/info/";
-const TIKTOK_VIDEO_LIST_URL = "https://open.tiktokapis.com/v2/video/list/";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -25,46 +24,13 @@ interface TikTokTokenResponse {
   error_description?: string;
 }
 
-interface TikTokUserInfo {
+interface TikTokUserInfoBasic {
   open_id?: string;
-  union_id?: string;
-  display_name?: string;
-  avatar_url?: string;
-  username?: string;
-  bio_description?: string;
-  profile_deep_link?: string;
-  is_verified?: boolean;
-  follower_count?: number;
-  following_count?: number;
-  likes_count?: number;
-  video_count?: number;
 }
 
-interface TikTokUserInfoResponse {
-  data?: { user?: TikTokUserInfo };
-  error?: { code?: string; message?: string; log_id?: string };
-}
-
-interface TikTokVideo {
-  id?: string;
-  create_time?: number;
-  cover_image_url?: string;
-  share_url?: string;
-  video_description?: string;
-  title?: string;
-  like_count?: number;
-  comment_count?: number;
-  view_count?: number;
-  embed_link?: string;
-}
-
-interface TikTokVideoListResponse {
-  data?: {
-    videos?: TikTokVideo[];
-    cursor?: number;
-    has_more?: boolean;
-  };
-  error?: { code?: string; message?: string; log_id?: string };
+interface TikTokUserInfoBasicResponse {
+  data?: { user?: TikTokUserInfoBasic };
+  error?: { code?: string };
 }
 
 /**
@@ -79,8 +45,14 @@ interface TikTokVideoListResponse {
  *  - Provider error_description is never forwarded to the user.
  *  - Tokens, auth codes, and client secret are never logged.
  *
- * Saves: PlatformToken("tiktok") + PlatformStats("tiktok") + SocialPost rows
- * Redirects to /creator/accounts?tiktok_connected=<username|1>
+ * OAuth-only responsibilities kept here:
+ *  - state validation (CSRF)
+ *  - authorization code exchange
+ *  - initial open_id validation
+ *  - saveTikTokToken
+ *  - redirect / cookies / error flow
+ *
+ * Stats, videos, and CreatorProfile sync are delegated to syncTikTokOfficialData().
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
@@ -183,7 +155,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     openId = json.open_id ?? null;
     expiresIn = json.expires_in ?? null;
     // Ground truth for granted scopes: token response `scope` field.
-    // Do NOT hardcode the requested scopes as granted.
     grantedScopes = json.scope ?? null;
   } catch {
     return withClearedStateCookie(
@@ -192,59 +163,28 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-
-  // Parse granted scopes into a Set for efficient lookup
-  const grantedScopeSet = new Set(
-    (grantedScopes ?? "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean),
-  );
-
-  // ── Build user info field list based on granted scopes ────────────────────
-  // Only request fields for scopes the user actually granted to avoid API errors.
-  // user.info.basic fields are always requested — it is the minimal required scope.
-  const userInfoFields: string[] = ["open_id", "union_id", "avatar_url", "display_name"];
-  if (grantedScopeSet.has("user.info.profile")) {
-    userInfoFields.push("username", "bio_description", "profile_deep_link", "is_verified");
-  }
-  if (grantedScopeSet.has("user.info.stats")) {
-    userInfoFields.push("follower_count", "following_count", "likes_count", "video_count");
-  }
-
-  // ── Fetch TikTok user info ─────────────────────────────────────────────────
-  let userInfoFetched = false;
-  let userInfo: TikTokUserInfo | null = null;
-
-  try {
-    const url = new URL(TIKTOK_USER_INFO_URL);
-    url.searchParams.set("fields", userInfoFields.join(","));
-
-    const res = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    if (res.ok) {
-      const json = (await res.json()) as TikTokUserInfoResponse;
-      const user = json.data?.user;
-      if (user && (!json.error || json.error.code === "ok")) {
-        userInfoFetched = true;
-        userInfo = user;
-        // openId from token response is preferred; fall back to user info
-        if (!openId && user.open_id) openId = user.open_id;
-      } else if (json.error && json.error.code !== "ok") {
-        console.warn("[tiktok/callback] user info error code:", json.error.code);
+  // ── Obtain initial open_id (OAuth callback responsibility) ─────────────────
+  // open_id from token response is preferred. Fall back to a minimal user.info
+  // request when the token response omits it (rare but possible).
+  if (!openId) {
+    try {
+      const url = new URL(TIKTOK_USER_INFO_URL);
+      url.searchParams.set("fields", "open_id");
+      const res = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res.ok) {
+        const json = (await res.json()) as TikTokUserInfoBasicResponse;
+        const uid = json.data?.user?.open_id;
+        if (uid) openId = uid;
       }
-    } else {
-      console.warn("[tiktok/callback] user info HTTP error:", res.status);
+    } catch {
+      // Ignore — if open_id is still null below, we return an error.
     }
-  } catch {
-    console.warn("[tiktok/callback] user info fetch threw");
   }
 
-  // ── Identity check ────────────────────────────────────────────────────────
-  // A real open_id is required for a successful first connection.
-  // Without it we cannot safely identify the TikTok account.
+  // A real open_id is required for first connection — without it we cannot
+  // safely identify the TikTok account.
   if (!openId) {
     return withClearedStateCookie(
       redir(req, "/creator/accounts", { tiktok_error: "no_tiktok_account" }),
@@ -252,253 +192,63 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // ── Extract user info fields (null = not granted or not returned) ──────────
-  // Missing != zero. Fields not in granted scopes or not returned are null.
-  const displayName = userInfo?.display_name ?? null;
-  // username is the real TikTok @handle — requires user.info.profile scope.
-  // Do NOT store display_name as the @handle.
-  const username = userInfo?.username ?? null;
-  const followerCount = userInfo?.follower_count ?? null;
-  const followingCount = userInfo?.following_count ?? null;
-  const likesCount = userInfo?.likes_count ?? null;
-  const videoCount = userInfo?.video_count ?? null;
-  const avatarUrl = userInfo?.avatar_url ?? null;
-  const unionId = userInfo?.union_id ?? null;
-  const bioDescription = userInfo?.bio_description ?? null;
-  const profileDeepLink = userInfo?.profile_deep_link ?? null;
-  const isVerified = userInfo?.is_verified ?? null;
-
-  // ── Fetch video.list when scope was granted ────────────────────────────────
-  // cover_image_url has a ~6h TTL — stored for immediate rendering only.
-  // A future refresh/query task should renew these URLs; do not treat as permanent.
-  let officialVideos: TikTokVideo[] = [];
-  // Tracks whether video.list returned a well-formed success response.
-  // Distinguishes a legitimate empty list (0 videos, still a success → stale posts
-  // should be cleared) from a failed/malformed response (stale posts must be kept).
-  let videoListFetchedSuccessfully = false;
-
-  if (grantedScopeSet.has("video.list")) {
-    try {
-      const videoFields = [
-        "id",
-        "create_time",
-        "cover_image_url",
-        "share_url",
-        "video_description",
-        "title",
-        "like_count",
-        "comment_count",
-        "view_count",
-        "embed_link",
-      ].join(",");
-
-      const videoUrl = new URL(TIKTOK_VIDEO_LIST_URL);
-      videoUrl.searchParams.set("fields", videoFields);
-
-      const res = await fetch(videoUrl.toString(), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ max_count: 10 }),
-      });
-
-      if (res.ok) {
-        const json = (await res.json()) as TikTokVideoListResponse;
-        // Use Array.isArray — NOT a truthy check — so an empty [] is treated as
-        // a legitimate success, not a missing/failed response.
-        if (
-          Array.isArray(json.data?.videos) &&
-          (!json.error || json.error.code === "ok")
-        ) {
-          officialVideos = json.data!.videos!;
-          videoListFetchedSuccessfully = true;
-        } else if (json.error && json.error.code !== "ok") {
-          console.warn("[tiktok/callback] video.list error code:", json.error.code);
-        }
-      } else {
-        console.warn("[tiktok/callback] video.list HTTP error:", res.status);
-      }
-    } catch {
-      console.warn("[tiktok/callback] video.list fetch threw");
-    }
-  }
-
-  // ── Persist ────────────────────────────────────────────────────────────────
+  // ── Persist token ──────────────────────────────────────────────────────────
+  // saveTikTokToken centralises all preserve rules with row-level locking.
+  // username is omitted here — the shared sync helper will set it from user.info.
   try {
-    // ── PlatformToken ───────────────────────────────────────────────────────
-    // saveTikTokToken centralises all preserve rules:
-    //  - refreshToken omitted → existing value preserved (safe on reconnect)
-    //  - grantedScopes null   → existing value preserved
-    //  - openId null          → existing platformUserId preserved
     await saveTikTokToken(userId, {
       accessToken,
-      refreshToken: newRefreshToken,   // null → preserve existing
-      expiresIn: expiresIn,            // null → expiresAt stored as null
-      scope: grantedScopes,            // null → preserve existing scopes
+      refreshToken: newRefreshToken,  // null → preserve existing
+      expiresIn: expiresIn,           // null → expiresAt stored as null
+      scope: grantedScopes,           // null → preserve existing scopes
       openId,
-      username,
     });
-
-    // ── PlatformStats ────────────────────────────────────────────────────────
-    // Only write if user info was successfully fetched — to avoid overwriting
-    // a valid existing row with all-null values when user info fails.
-    // When user info succeeds but a field was not granted, store null truthfully.
-    // Do NOT carry forward engagementRate; canonical engagement is computed read-time.
-    if (userInfoFetched) {
-      await db.platformStats.upsert({
-        where: { userId_platform: { userId, platform: "tiktok" } },
-        create: {
-          userId,
-          platform: "tiktok",
-          followerCount,
-          followingCount,
-          postCount: videoCount,           // official video_count → postCount
-          // engagementRate intentionally omitted — computed read-time from SocialPost
-          fetchedAt: new Date(),
-          raw: {
-            display_name: displayName,     // kept separately in raw; NOT the @handle
-            username,
-            avatar_url: avatarUrl,
-            union_id: unionId,
-            bio_description: bioDescription,
-            profile_deep_link: profileDeepLink,
-            is_verified: isVerified,
-            likes_count: likesCount,
-            video_count: videoCount,
-          },
-          dataSource: "OFFICIAL_API",
-          providerAccountId: openId,
-        },
-        update: {
-          followerCount,
-          followingCount,
-          postCount: videoCount,
-          // engagementRate intentionally omitted
-          fetchedAt: new Date(),
-          raw: {
-            display_name: displayName,
-            username,
-            avatar_url: avatarUrl,
-            union_id: unionId,
-            bio_description: bioDescription,
-            profile_deep_link: profileDeepLink,
-            is_verified: isVerified,
-            likes_count: likesCount,
-            video_count: videoCount,
-          },
-          dataSource: "OFFICIAL_API",
-          providerAccountId: openId,
-        },
-      });
-    }
-
-    // ── SocialPost rows from official video.list ───────────────────────────
-    const creator = await db.creatorProfile.findUnique({
-      where: { userId },
-      select: { id: true, connectedPlatforms: true },
-    });
-
-    // Only act on SocialPost rows when video.list returned a well-formed
-    // success response (videoListFetchedSuccessfully = true).
-    //
-    // • Failed/malformed/HTTP-error fetch → videoListFetchedSuccessfully = false
-    //   → no deletion, existing posts are preserved.
-    // • Scope not granted → videoListFetchedSuccessfully = false
-    //   → no deletion.
-    // • Successful response with 0 videos (legitimate empty public-video list)
-    //   → videoListFetchedSuccessfully = true, officialVideos = []
-    //   → stale public-data posts are cleared (no official content exists).
-    // • Successful response with ≥1 videos
-    //   → delete all existing TikTok posts and replace atomically.
-    if (creator && videoListFetchedSuccessfully) {
-      // Filter to videos with a non-null id (providerPostId required for official rows)
-      const validVideos = officialVideos.filter((v): v is TikTokVideo & { id: string } =>
-        typeof v.id === "string" && v.id.length > 0,
-      );
-
-      if (validVideos.length > 0) {
-        // Atomic replace: delete + insert inside a single Prisma transaction.
-        // A failed createMany cannot leave the creator with zero TikTok posts.
-        // Scoped strictly to {creatorProfileId, platform:"tiktok"} — other
-        // creators and other platforms are never touched.
-        await db.$transaction([
-          db.socialPost.deleteMany({
-            where: {
-              creatorProfileId: creator.id,
-              platform: "tiktok",
-            },
-          }),
-          db.socialPost.createMany({
-            data: validVideos.map((v) => ({
-              creatorProfileId: creator.id,
-              platform: "tiktok",
-              providerPostId: v.id,                                         // non-null guaranteed by filter
-              caption: v.video_description ?? v.title ?? null,
-              imageUrl: v.cover_image_url ?? null,                          // TTL ~6h — immediate rendering only
-              postUrl: v.share_url ?? null,
-              postedAt: typeof v.create_time === "number"
-                ? new Date(v.create_time * 1_000)                           // Unix seconds → Date
-                : null,
-              likes: v.like_count ?? null,
-              comments: v.comment_count ?? null,
-              views: v.view_count ?? null,
-              dataSource: "OFFICIAL_API",
-              fetchedAt: new Date(),
-            })),
-            skipDuplicates: true,
-          }),
-        ]);
-      } else {
-        // Successful fetch returned 0 valid videos (e.g., all videos are private).
-        // Clear stale lower-authority posts — no official content exists to show.
-        await db.socialPost.deleteMany({
-          where: {
-            creatorProfileId: creator.id,
-            platform: "tiktok",
-          },
-        });
-      }
-    }
-
-    // ── CreatorProfile side-write (connectedPlatforms + follower cache) ─────
-    if (creator) {
-      const allStats = await db.platformStats.findMany({
-        where: { userId },
-        select: { followerCount: true },
-      });
-      const cachedFollowers = computeFollowerCache(allStats);
-
-      await db.creatorProfile.update({
-        where: { userId },
-        data: {
-          connectedPlatforms: Array.from(
-            new Set([...creator.connectedPlatforms, "tiktok"]),
-          ),
-          lastSyncedAt: new Date(),
-          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}),
-        },
-      });
-    }
-
-    revalidatePath("/creator/accounts");
-    revalidatePath("/creator/presence");
   } catch {
-    // Do not log the raw error — a Prisma error during token persistence may
-    // contain query parameters or token payload data.
-    const safeLine = "[tiktok/callback] db persistence error (details omitted for security)";
-    console.error(safeLine);
+    console.error("[tiktok/callback] token persistence error (details omitted for security)");
     return withClearedStateCookie(
       redir(req, "/creator/accounts", { tiktok_error: "db_error" }),
       req,
     );
   }
 
-  // ── Success ────────────────────────────────────────────────────────────────
-  // Use real username (the TikTok @handle) when available.
+  // ── Sync profile data using shared helper ──────────────────────────────────
+  // This replaces the inline user-info / video.list / PlatformStats / SocialPost
+  // / CreatorProfile blocks from the previous implementation.
+  //
+  // Failure policy:
+  //   temporary_failure / configuration_error → keep connection; user can Refresh later.
+  //   identity_mismatch → keep connection; no data overwrite.
+  //   reauth_required → unexpected after a just-saved fresh token, but keep connection.
+  try {
+    const syncResult = await syncTikTokOfficialData(userId);
+    if (!syncResult.ok) {
+      // Log a fixed safe message — never log provider details or token values.
+      console.warn("[tiktok/callback] post-connect sync returned:", syncResult.reason);
+    }
+  } catch {
+    console.warn("[tiktok/callback] post-connect sync threw unexpectedly after token save");
+  }
+
+  // ── Revalidate affected pages ──────────────────────────────────────────────
+  revalidatePath("/creator/accounts");
+  revalidatePath("/creator/presence");
+
+  // ── Success redirect ───────────────────────────────────────────────────────
+  // Read the username written by syncTikTokOfficialData (if sync succeeded).
   // Fall back to "1" so the UI shows the generic "TikTok connected" message.
-  const connectedValue = username ?? "1";
+  let connectedValue = "1";
+  try {
+    const savedToken = await db.platformToken.findUnique({
+      where: { userId_platform: { userId, platform: "tiktok" } },
+      select: { username: true },
+    });
+    if (savedToken?.username) {
+      connectedValue = savedToken.username;
+    }
+  } catch {
+    // Non-fatal — "1" fallback is fine.
+  }
+
   return withClearedStateCookie(
     redir(req, "/creator/presence", { tiktok_connected: connectedValue }),
     req,

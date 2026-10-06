@@ -18,6 +18,7 @@ import {
   removePlatformAction,
   type ConnectedAccount,
 } from "@/app/actions/social-connections";
+import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 
 // ─── Static platform display config ──────────────────────────────────────────
 
@@ -162,10 +163,16 @@ function TikTokCard({
   account,
   onRemove,
   onConnected,
+  onRefresh,
+  refreshing,
 }: {
   account: ConnectedAccount | undefined;
   onRemove: (platform: string) => void;
   onConnected: () => void;
+  /** Called when the Refresh data button is clicked (OAuth-connected only). */
+  onRefresh?: () => void;
+  /** When true shows a spinner on the Refresh button. */
+  refreshing?: boolean;
 }) {
   const display = PLATFORM_DISPLAY["tiktok"]!;
   const isConnected = !!account && account.connectedVia === "oauth";
@@ -220,6 +227,24 @@ function TikTokCard({
 
       {/* Actions */}
       <div className="flex items-center gap-1.5 shrink-0">
+        {/* Refresh data button — shown only when OAuth-connected, beside ConnectTikTokButton */}
+        {isConnected && onRefresh && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRefresh}
+            disabled={refreshing}
+            className="h-8 text-xs gap-1.5"
+            title="Refresh TikTok data"
+          >
+            {refreshing ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <RefreshCw className="w-3 h-3" />
+            )}
+            {refreshing ? "Refreshing…" : "Refresh data"}
+          </Button>
+        )}
         <Suspense fallback={null}>
           <ConnectTikTokButton
             isConnected={isConnected || wasOfficiallyConnected}
@@ -398,6 +423,8 @@ const SocialAccounts = () => {
   const [loading, setLoading] = useState(true);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
+  // Per-button loading state for TikTok manual refresh
+  const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
 
   // ── Load from DB ────────────────────────────────────────────────────────
   const loadAccounts = useCallback(async () => {
@@ -410,6 +437,46 @@ const SocialAccounts = () => {
     }
     setLoading(false);
   }, [toast]);
+
+  // ── TikTok manual data Refresh ──────────────────────────────────────────
+  const handleTikTokRefresh = useCallback(async () => {
+    if (tiktokRefreshing) return;
+    setTiktokRefreshing(true);
+    try {
+      const result = await refreshTikTokDataAction();
+      if (result.ok) {
+        toast({ title: "TikTok refreshed ✓", description: "Your TikTok data has been updated." });
+        await loadAccounts();
+      } else if (result.reason === "reauth_required") {
+        toast({
+          title: "Reconnect required",
+          description: "Your TikTok authorization has expired. Please reconnect TikTok.",
+          variant: "destructive",
+        });
+        await loadAccounts();
+      } else if (result.reason === "identity_mismatch") {
+        toast({
+          title: "Identity mismatch",
+          description: "TikTok returned a different account. Please reconnect TikTok to resolve this.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Refresh failed",
+          description: "Could not update TikTok data right now. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch {
+      toast({
+        title: "Refresh failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setTiktokRefreshing(false);
+    }
+  }, [tiktokRefreshing, toast, loadAccounts]);
 
   useEffect(() => {
     loadAccounts();
@@ -519,6 +586,8 @@ const SocialAccounts = () => {
               account={accountByPlatform.get("tiktok")}
               onRemove={(platform) => setConfirmRemove(platform)}
               onConnected={loadAccounts}
+              onRefresh={handleTikTokRefresh}
+              refreshing={tiktokRefreshing}
             />
           )}
         </section>
