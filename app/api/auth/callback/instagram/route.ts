@@ -594,7 +594,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   // ── Success ───────────────────────────────────────────────────────────────
-  const successDest = new URL("/creator/accounts", appUrl);
+  const successDest = new URL("/creator/presence", appUrl);
   successDest.searchParams.set("instagram_connected", igUsername ?? "1");
   const successRes = NextResponse.redirect(successDest);
   clearStateCookie(successRes);
