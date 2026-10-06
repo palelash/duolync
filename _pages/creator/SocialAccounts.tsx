@@ -169,6 +169,10 @@ function TikTokCard({
 }) {
   const display = PLATFORM_DISPLAY["tiktok"]!;
   const isConnected = !!account && account.connectedVia === "oauth";
+  // Previously connected: PlatformToken gone but OFFICIAL_API historical data remains.
+  // Shows "Reconnect TikTok" so the user knows this isn't a fresh first-time connect.
+  const wasOfficiallyConnected =
+    !isConnected && account?.dataSource === "OFFICIAL_API";
 
   const syncedAt = account?.lastSyncedAt
     ? new Date(account.lastSyncedAt).toLocaleDateString("en-US", {
@@ -218,7 +222,7 @@ function TikTokCard({
       <div className="flex items-center gap-1.5 shrink-0">
         <Suspense fallback={null}>
           <ConnectTikTokButton
-            isConnected={isConnected}
+            isConnected={isConnected || wasOfficiallyConnected}
             onConnected={onConnected}
             className="h-8 text-xs"
           />
