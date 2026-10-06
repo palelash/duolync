@@ -140,6 +140,18 @@ export async function getOAuthConnectedPlatformsAction(): Promise<{
 export async function removePlatformAction(
   platform: string,
 ): Promise<{ error: string | null }> {
+  // ── TikTok guard ────────────────────────────────────────────────────────────
+  // TikTok requires provider-level OAuth revoke before local data deletion.
+  // The generic path bypasses that step. Any caller that passes "tiktok" here
+  // (including stale clients) must be redirected to the dedicated action.
+  // Nothing is deleted.
+  if (platform === "tiktok") {
+    return {
+      error:
+        "TikTok must be disconnected using the dedicated TikTok disconnect action. Use disconnectTikTokAction() instead.",
+    };
+  }
+
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Unauthorized" };
