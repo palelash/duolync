@@ -23,6 +23,7 @@ import {
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
 import { removePlatformAction, getConnectedAccountsAction } from "@/app/actions/social-connections";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
+import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
 // ─── Platform SVG Icons ───────────────────────────────────────────────────────
 
@@ -288,6 +289,7 @@ function PlatformCard({
   reconnect,
   onRefresh,
   refreshing,
+  onRemoveHistory,
 }: {
   platform: PlatformConfig;
   isConnected: boolean;
@@ -305,6 +307,12 @@ function PlatformCard({
   onRefresh?: () => void;
   /** When true the sync/refresh button shows a loading spinner. */
   refreshing?: boolean;
+  /**
+   * TikTok history-only state: called when the user wants to remove leftover
+   * OFFICIAL_API data after the PlatformToken has already been revoked/expired.
+   * Only pass this for TikTok when previouslyConnectedPlatformSet contains "tiktok".
+   */
+  onRemoveHistory?: () => void;
 }) {
   const IconComp = platform.icon;
   return (
@@ -385,14 +393,29 @@ function PlatformCard({
             </>
           )}
           {!isConnected && (
-            <Button
-              size="sm"
-              onClick={onSync}
-              className="gap-1.5 bg-gradient-to-r from-violet-600/20 to-pink-600/10 border border-violet-500/30 text-violet-300 hover:from-violet-600/30 hover:to-pink-600/20 hover:border-violet-400/40"
-              variant="outline"
-            >
-              <Zap className="w-3.5 h-3.5" /> {reconnect ? "Reconnect" : "Connect"}
-            </Button>
+            <>
+              <Button
+                size="sm"
+                onClick={onSync}
+                className="gap-1.5 bg-gradient-to-r from-violet-600/20 to-pink-600/10 border border-violet-500/30 text-violet-300 hover:from-violet-600/30 hover:to-pink-600/20 hover:border-violet-400/40"
+                variant="outline"
+              >
+                <Zap className="w-3.5 h-3.5" /> {reconnect ? "Reconnect" : "Connect"}
+              </Button>
+              {/* History-only TikTok: secondary destructive action to remove leftover data */}
+              {onRemoveHistory && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={onRemoveHistory}
+                  className="w-8 h-8 text-zinc-600 hover:text-red-400 hover:bg-red-500/10"
+                  title="Remove TikTok data"
+                  aria-label="Remove previously synced TikTok data"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              )}
+            </>
           )}
         </div>
       )}
@@ -788,6 +811,36 @@ const PresencePage = () => {
   const handleRemoveConfirm = async () => {
     if (!removeTarget) return;
     setRemoving(true);
+
+    // Both "tiktok" (connected) and "tiktok_history" (dead-auth, history-only) use the
+    // dedicated action. disconnectTikTokAction() automatically skips provider revoke when
+    // no PlatformToken exists, so the history-only path is safe and correct.
+    if (removeTarget === "tiktok" || removeTarget === "tiktok_history") {
+      const res = await disconnectTikTokAction();
+      setRemoving(false);
+      if (!res.ok) {
+        // Revoke failed transiently — keep dialog open so the user can retry.
+        // Local TikTok data is preserved.
+        const description =
+          res.reason === "temporary_failure"
+            ? "TikTok is temporarily unavailable. Please try again shortly."
+            : res.reason === "configuration_error"
+              ? "TikTok connection is misconfigured. Please contact support."
+              : "Please try again.";
+        toast({
+          title: "Could not disconnect TikTok",
+          description,
+          variant: "destructive",
+        });
+        return; // Keep dialog open; do NOT reload (connection remains)
+      }
+      setRemoveTarget(null);
+      toast({ title: "TikTok disconnected ✓", description: "Your TikTok data has been removed." });
+      await reload();
+      return;
+    }
+
+    // All other platforms use the generic action.
     const res = await removePlatformAction(removeTarget);
     setRemoving(false);
     setRemoveTarget(null);
@@ -901,6 +954,16 @@ const PresencePage = () => {
                         // Other platforms: no Apify actor available — onSync is a no-op
                       }}
                       onRemove={() => setRemoveTarget(p.id)}
+                      // TikTok history-only: secondary destructive "Remove data" control.
+                      // Only shown when TikTok is NOT currently OAuth-connected but has
+                      // residual OFFICIAL_API PlatformStats/SocialPost history.
+                      onRemoveHistory={
+                        p.id === "tiktok" &&
+                        !oauthPlatformSet.has("tiktok") &&
+                        previouslyConnectedPlatformSet.has("tiktok")
+                          ? () => setRemoveTarget("tiktok_history")
+                          : undefined
+                      }
                     />
                   );
                 })}
@@ -1039,27 +1102,60 @@ const PresencePage = () => {
       </div>
 
       {/* Remove Confirm Dialog */}
-      <AlertDialog open={!!removeTarget} onOpenChange={(open) => !open && setRemoveTarget(null)}>
+      <AlertDialog open={!!removeTarget} onOpenChange={(open) => !open && !removing && setRemoveTarget(null)}>
         <AlertDialogContent className="bg-zinc-950 border-zinc-800 text-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove {removeTarget}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {removeTarget === "tiktok"
+                ? "Disconnect TikTok?"
+                : removeTarget === "tiktok_history"
+                  ? "Remove TikTok data?"
+                  : `Remove ${removeTarget}?`}
+            </AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              This will delete all synced data and posts for{" "}
-              <span className="capitalize font-medium text-white">{removeTarget}</span>. This action cannot be undone.
+              {removeTarget === "tiktok" ? (
+                <>
+                  Disconnecting TikTok will revoke Duolync&apos;s access to your TikTok account
+                  and delete synced TikTok stats and videos from Duolync.
+                </>
+              ) : removeTarget === "tiktok_history" ? (
+                <>
+                  Remove previously synced TikTok stats and videos from Duolync? This cannot be
+                  undone.
+                </>
+              ) : (
+                <>
+                  This will delete all synced data and posts for{" "}
+                  <span className="capitalize font-medium text-white">{removeTarget}</span>. This action cannot be undone.
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 bg-transparent">
+            <AlertDialogCancel
+              disabled={removing}
+              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 bg-transparent"
+            >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction
+            {/*
+              Use a plain Button instead of AlertDialogAction so that the dialog
+              stays open when a TikTok revoke fails transiently — AlertDialogAction
+              would auto-close the Radix dialog on every click regardless of the
+              async result.
+            */}
+            <Button
               onClick={handleRemoveConfirm}
               disabled={removing}
               className="bg-red-600 hover:bg-red-500 text-white border-0 gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              Remove
-            </AlertDialogAction>
+              {removeTarget === "tiktok"
+                ? "Disconnect"
+                : removeTarget === "tiktok_history"
+                  ? "Remove data"
+                  : "Remove"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

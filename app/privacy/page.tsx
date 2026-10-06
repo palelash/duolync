@@ -222,18 +222,43 @@ export default function PrivacyPage() {
             <p>
               We request only the minimum OAuth scopes necessary to display the data listed above. We do not access,
               read, or store your private direct messages, drafts, payment information, or any content that is not
-              publicly visible on your social profile. You may revoke Duolync&apos;s access to any connected social account
-              at any time from your Duolync account settings or directly from the respective social platform&apos;s
-              security settings.
+              publicly visible on your social profile. You may disconnect any connected social account at any time
+              from <strong>Social Connections</strong> in your Duolync account settings, or revoke Duolync&apos;s
+              access directly from the respective social platform&apos;s security settings.
             </p>
 
             <h3>Data Refresh</h3>
             <p>
-              Social account data is periodically refreshed (typically every 24–72 hours) for as long as the OAuth
-              connection remains active. Refreshing ensures your portfolio metrics stay current. If you disconnect a
-              social account, we will stop collecting new data from that platform. Cached data (follower counts,
-              post thumbnails) may be retained for up to 30 days before being removed from your profile.
+              Social account data is periodically refreshed for as long as the OAuth
+              connection remains active. Refreshing ensures your portfolio metrics stay current.
             </p>
+
+            <h3>Disconnecting Social Accounts</h3>
+            <p>
+              You can disconnect any social account at any time from{" "}
+              <strong>Social Connections</strong>.
+            </p>
+            <ul>
+              <li>
+                <strong>Disconnecting TikTok inside Duolync:</strong> Duolync revokes its TikTok
+                authorization at TikTok&apos;s servers and immediately stops future data collection.
+                As part of the same disconnect action, Duolync also deletes your locally synced
+                TikTok stats and videos from its database.
+              </li>
+              <li>
+                <strong>Revoking Duolync from TikTok directly</strong> (via TikTok&apos;s own App
+                Permissions settings): Duolync can no longer access or refresh your TikTok data.
+                Previously synced TikTok stats and videos may remain stored in Duolync. To remove
+                that stored data, go to <strong>Social Connections</strong> in Duolync and
+                disconnect TikTok there. Deleting your Duolync account also removes all locally
+                stored social account data.
+              </li>
+              <li>
+                <strong>Other platforms (Instagram, YouTube, etc.):</strong> Disconnecting stops
+                future collection. Cached data may be retained until you remove it or delete your
+                Duolync account.
+              </li>
+            </ul>
 
             {/* 5. Data Usage */}
             <h2 id="data-usage">How We Use Your Data</h2>
@@ -386,7 +411,7 @@ export default function PrivacyPage() {
             <p>We retain different categories of data for different periods:</p>
             <ul>
               <li><strong>Account &amp; profile data</strong> — retained for the duration of your active account plus up to 24 months after deletion.</li>
-              <li><strong>Connected social account data</strong> — refreshed data is removed within 30 days of disconnecting a social account; cached metrics may be retained up to 30 days.</li>
+              <li><strong>Connected social account data</strong> — for TikTok, locally synced stats and videos are deleted as part of the disconnect action inside Duolync. For other platforms, cached data may be retained until you remove it or delete your account.</li>
               <li><strong>Campaign &amp; collaboration records</strong> — retained for up to 48 months for financial, legal, and dispute resolution purposes.</li>
               <li><strong>Dispute &amp; moderation logs</strong> — retained for up to 48 months to support appeals and enforcement consistency.</li>
               <li><strong>In-platform messages</strong> — retained for up to 36 months, or longer if referenced in an active dispute.</li>
@@ -485,7 +510,12 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <strong>Disconnect social accounts:</strong> Go to{" "}
-                <strong>Settings → Connected Accounts</strong> to revoke Duolync&apos;s OAuth access to any social platform.
+                <strong>Social Connections</strong> to disconnect your social accounts and remove locally
+                synced data. For TikTok specifically, disconnecting inside Duolync also revokes
+                Duolync&apos;s authorization at TikTok&apos;s servers and immediately deletes your locally
+                synced TikTok stats and videos from Duolync as part of the same action. For other
+                platforms (Instagram, YouTube, etc.), disconnecting stops future data collection and
+                removes cached data from Duolync.
               </li>
               <li>
                 <strong>Delete your account:</strong> Go to{" "}

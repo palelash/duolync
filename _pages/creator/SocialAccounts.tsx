@@ -19,6 +19,7 @@ import {
   type ConnectedAccount,
 } from "@/app/actions/social-connections";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
+import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
 // ─── Static platform display config ──────────────────────────────────────────
 
@@ -257,8 +258,10 @@ function TikTokCard({
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
-            title="Disconnect TikTok"
-            onClick={() => onRemove("tiktok")}
+            // History-only: no live token, so no provider revoke is needed.
+            // Use "tiktok_history" sentinel so the dialog shows truthful copy.
+            title={wasOfficiallyConnected ? "Remove TikTok data" : "Disconnect TikTok"}
+            onClick={() => onRemove(wasOfficiallyConnected ? "tiktok_history" : "tiktok")}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
@@ -486,6 +489,36 @@ const SocialAccounts = () => {
   const handleRemoveConfirm = async () => {
     if (!confirmRemove) return;
     setRemoving(true);
+
+    // Both "tiktok" (connected) and "tiktok_history" (dead-auth, history-only) use the
+    // dedicated action. disconnectTikTokAction() automatically skips provider revoke when
+    // no PlatformToken exists, so the history-only path is safe and correct.
+    if (confirmRemove === "tiktok" || confirmRemove === "tiktok_history") {
+      const res = await disconnectTikTokAction();
+      setRemoving(false);
+      if (!res.ok) {
+        // Revoke failed transiently — keep dialog open so the user can retry.
+        // Local TikTok data is preserved.
+        const description =
+          res.reason === "temporary_failure"
+            ? "TikTok is temporarily unavailable. Please try again shortly."
+            : res.reason === "configuration_error"
+              ? "TikTok connection is misconfigured. Please contact support."
+              : "Please try again.";
+        toast({
+          title: "Could not disconnect TikTok",
+          description,
+          variant: "destructive",
+        });
+        return; // Keep dialog open; do NOT reload (connection remains)
+      }
+      setConfirmRemove(null);
+      toast({ title: "TikTok disconnected ✓", description: "Your TikTok data has been removed." });
+      loadAccounts();
+      return;
+    }
+
+    // All other platforms use the generic action.
     const { error } = await removePlatformAction(confirmRemove);
     setRemoving(false);
     setConfirmRemove(null);
@@ -684,27 +717,49 @@ const SocialAccounts = () => {
       {/* Disconnect confirmation */}
       <AlertDialog
         open={confirmRemove !== null}
-        onOpenChange={(open) => { if (!open) setConfirmRemove(null); }}
+        onOpenChange={(open) => { if (!open && !removing) setConfirmRemove(null); }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Disconnect {confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?
+              {confirmRemove === "tiktok"
+                ? "Disconnect TikTok?"
+                : confirmRemove === "tiktok_history"
+                  ? "Remove TikTok data?"
+                  : `Disconnect ${confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove all synced data for this account. You can reconnect at any time.
+              {confirmRemove === "tiktok" ? (
+                <>
+                  Disconnecting TikTok will revoke Duolync&apos;s access to your TikTok account
+                  and delete synced TikTok stats and videos from Duolync.
+                </>
+              ) : confirmRemove === "tiktok_history" ? (
+                <>
+                  Remove previously synced TikTok stats and videos from Duolync? This cannot be
+                  undone.
+                </>
+              ) : (
+                "This will remove all synced data for this account. You can reconnect at any time."
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            {/*
+              Use a plain Button instead of AlertDialogAction so that the dialog
+              stays open when a TikTok revoke fails transiently — AlertDialogAction
+              would auto-close the Radix dialog on every click regardless of the
+              async result.
+            */}
+            <Button
               onClick={handleRemoveConfirm}
               disabled={removing}
               className="bg-red-600 hover:bg-red-700 text-white gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              Disconnect
-            </AlertDialogAction>
+              {confirmRemove === "tiktok_history" ? "Remove data" : "Disconnect"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
