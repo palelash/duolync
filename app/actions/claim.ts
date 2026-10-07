@@ -1660,6 +1660,134 @@ export async function mergeAndApproveClaimAction(
         });
 
         // ────────────────────────────────────────────────────────────────────
+        // STEP 17b — Migrate CreatorContentCuration from RP to IP
+        //
+        // RP is the requester's registered profile (being deleted).
+        // IP is the surviving imported profile (destination).
+        //
+        // Curation mutations lock CreatorProfile FOR UPDATE. Lock both profiles
+        // here, in sorted id order, before any curation read or write so this
+        // merge serializes with those mutations and two merges cannot deadlock.
+        //
+        // Rules:
+        //   - Same durable-key conflict: requester (RP) state wins.
+        //   - Requester featured choices outrank pre-existing IP featured choices.
+        //   - Requester relative featured order is preserved.
+        //   - Remaining slots up to 6 are filled with IP-only featured items
+        //     in their prior order.
+        //   - Featured rows beyond those 6 become unfeatured.
+        //   - Hidden rows never remain featured.
+        //
+        // Capture RP featured identity BEFORE creatorProfileId is rewritten.
+        // On a key conflict the surviving row is the IP row; otherwise the RP row moves.
+        // ────────────────────────────────────────────────────────────────────
+        const curationLockIds = [...new Set([rp.id, ip.id])].sort();
+        for (const profileId of curationLockIds) {
+          await tx.$queryRaw`
+            SELECT id FROM "CreatorProfile"
+            WHERE id = ${profileId}
+            FOR UPDATE
+          `;
+        }
+
+        const [rpCurations, ipCurations] = await Promise.all([
+          tx.creatorContentCuration.findMany({
+            where: { creatorProfileId: rp.id },
+            select: { id: true, platform: true, providerPostId: true, isHidden: true, isFeatured: true, featuredOrder: true },
+          }),
+          tx.creatorContentCuration.findMany({
+            where: { creatorProfileId: ip.id },
+            select: { id: true, platform: true, providerPostId: true, isHidden: true, isFeatured: true, featuredOrder: true },
+          }),
+        ]);
+
+        const curationKey = (row: { platform: string; providerPostId: string }) =>
+          `${row.platform}::${row.providerPostId}`;
+
+        const ipCurationByKey = new Map(
+          ipCurations.map((r) => [curationKey(r), r]),
+        );
+
+        const byFeaturedOrder = (
+          a: { featuredOrder: number | null },
+          b: { featuredOrder: number | null },
+        ) =>
+          (a.featuredOrder ?? Number.POSITIVE_INFINITY) -
+          (b.featuredOrder ?? Number.POSITIVE_INFINITY);
+
+        const requesterFeatured = rpCurations
+          .filter((row) => row.isFeatured && !row.isHidden)
+          .sort(byFeaturedOrder);
+
+        const requesterFeaturedKeys = new Set(requesterFeatured.map(curationKey));
+
+        // Surviving row ids, in requester relative order, recorded before the move.
+        const requesterFeaturedSurvivingIds = requesterFeatured.map((rpRow) => {
+          const ipRow = ipCurationByKey.get(curationKey(rpRow));
+          return ipRow ? ipRow.id : rpRow.id;
+        });
+
+        // IP featured rows the requester did not also feature. Their ids do not change.
+        const ipOnlyFeaturedIds = ipCurations
+          .filter((row) => row.isFeatured && !row.isHidden && !requesterFeaturedKeys.has(curationKey(row)))
+          .sort(byFeaturedOrder)
+          .map((row) => row.id);
+
+        for (const rpRow of rpCurations) {
+          const ipRow = ipCurationByKey.get(curationKey(rpRow));
+
+          if (!ipRow) {
+            await tx.creatorContentCuration.update({
+              where: { id: rpRow.id },
+              data: { creatorProfileId: ip.id },
+            });
+          } else {
+            // Conflict: requester's (RP) choice wins. RP row is cascade-deleted with RP.
+            await tx.creatorContentCuration.update({
+              where: { id: ipRow.id },
+              data: {
+                isHidden: rpRow.isHidden,
+                isFeatured: rpRow.isFeatured,
+                featuredOrder: rpRow.featuredOrder,
+              },
+            });
+          }
+        }
+
+        const mergedRows = await tx.creatorContentCuration.findMany({
+          where: { creatorProfileId: ip.id },
+          select: { id: true, isHidden: true, isFeatured: true, featuredOrder: true },
+        });
+        const mergedById = new Map(mergedRows.map((row) => [row.id, row]));
+
+        const chosenIds: string[] = [];
+        const consider = (id: string) => {
+          if (chosenIds.length >= 6 || chosenIds.includes(id)) return;
+          const row = mergedById.get(id);
+          if (!row || row.isHidden || !row.isFeatured) return;
+          chosenIds.push(id);
+        };
+        for (const id of requesterFeaturedSurvivingIds) consider(id);
+        for (const id of ipOnlyFeaturedIds) consider(id);
+
+        const chosenSet = new Set(chosenIds);
+        for (const row of mergedRows) {
+          if (chosenSet.has(row.id)) continue;
+          if (row.isFeatured || row.featuredOrder != null) {
+            await tx.creatorContentCuration.update({
+              where: { id: row.id },
+              data: { isFeatured: false, featuredOrder: null },
+            });
+          }
+        }
+        for (let idx = 0; idx < chosenIds.length; idx++) {
+          await tx.creatorContentCuration.update({
+            where: { id: chosenIds[idx] },
+            data: { isFeatured: true, featuredOrder: idx },
+          });
+        }
+
+        // ────────────────────────────────────────────────────────────────────
         // STEP 18 — Pre-deletion final re-verification of RP
         // ────────────────────────────────────────────────────────────────────
         const rpFinal = await tx.creatorProfile.findUnique({

@@ -71,31 +71,31 @@ model BrandProfile {
 }
 
 model CreatorProfile {
-  id                 String           @id @default(cuid())
-  userId             String           @unique
+  id                 String                   @id @default(cuid())
+  userId             String                   @unique
   bio                String?
   niche              String?
   primaryPlatform    String?
   location           String?
-  totalFollowers     Int              @default(0)
-  avgEngagementRate  Float            @default(0)
+  totalFollowers     Int                      @default(0)
+  avgEngagementRate  Float                    @default(0)
   lastStatsUpdate    DateTime?
   socialLinks        Json?
   followerCount      Int?
   averageEngagement  Float?
-  topNiches          String[]         @default([])
+  topNiches          String[]                 @default([])
   lastSyncedAt       DateTime?
-  connectedPlatforms String[]         @default([])
-  moderationStatus   ModerationStatus @default(PENDING)
+  connectedPlatforms String[]                 @default([])
+  moderationStatus   ModerationStatus         @default(PENDING)
   moderationNote     String?
   moderatedAt        DateTime?
   // ── Provenance / claim fields ─────────────────────────────────────────────
   // REGISTERED = normal sign-up; IMPORTED = synthetic profile from import script
-  profileOrigin      ProfileOrigin    @default(REGISTERED)
+  profileOrigin      ProfileOrigin            @default(REGISTERED)
   // NOT_APPLICABLE for real registered creators; UNCLAIMED/CLAIM_PENDING/CLAIMED for imported
-  claimStatus        ClaimStatus      @default(NOT_APPLICABLE)
+  claimStatus        ClaimStatus              @default(NOT_APPLICABLE)
   // The real Duolync User who claimed this imported profile (future claim flow)
-  claimedByUserId    String?          @unique
+  claimedByUserId    String?                  @unique
   claimedAt          DateTime?
   // Original email from the import source row (may be placeholder or real email from CSV)
   importedEmail      String?
@@ -108,10 +108,11 @@ model CreatorProfile {
   contracts          Contract[]
   campaignEvents     CampaignEvent[]
   socialPosts        SocialPost[]
+  contentCurations   CreatorContentCuration[]
   profileClaims      ProfileClaim[]
   profileAliases     ProfileAlias[]
-  user               User             @relation("CreatorProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
-  claimedBy          User?            @relation("ClaimedCreatorProfiles", fields: [claimedByUserId], references: [id], onDelete: SetNull)
+  user               User                     @relation("CreatorProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
+  claimedBy          User?                    @relation("ClaimedCreatorProfiles", fields: [claimedByUserId], references: [id], onDelete: SetNull)
   // claimedByUserId is covered by @unique above
 
   @@index([profileOrigin])
@@ -139,6 +140,26 @@ model SocialPost {
   @@index([creatorProfileId, platform])
   @@index([creatorProfileId, platform, dataSource])
   @@index([creatorProfileId, platform, providerPostId])
+}
+
+// ── Content Curation ─────────────────────────────────────────────────────────
+// Durable curation state keyed by (creatorProfileId + platform + providerPostId).
+// NOT a foreign key to SocialPost.id — SocialPost rows are deleted/recreated by
+// provider sync, but curation choices survive.
+// Missing row → visible=true, featured=false (V1 backward compat).
+
+model CreatorContentCuration {
+  id               String         @id @default(cuid())
+  creatorProfileId String
+  platform         String
+  providerPostId   String
+  isHidden         Boolean        @default(false)
+  isFeatured       Boolean        @default(false)
+  featuredOrder    Int?
+  creatorProfile   CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorProfileId, platform, providerPostId], map: "cc_curation_identity_key")
+  @@index([creatorProfileId, isFeatured, featuredOrder], map: "cc_featured_order_idx")
 }
 
 model Account {

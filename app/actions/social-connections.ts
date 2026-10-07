@@ -162,44 +162,57 @@ export async function removePlatformAction(
     });
     if (!creatorProfile) return { error: "Profile not found" };
 
-    // Remove OAuth token (if any)
-    await db.platformToken.deleteMany({
-      where: { userId: session.user.id, platform },
-    });
+    // Local platform cleanup commits together. SocialPost and curation deletes
+    // for this platform roll back together if either fails. Provider refresh
+    // and TikTok disconnect are unchanged.
+    await db.$transaction(async (tx) => {
+      // Remove OAuth token (if any)
+      await tx.platformToken.deleteMany({
+        where: { userId: session.user.id, platform },
+      });
 
-    // Remove PlatformStats rows for this platform
-    await db.platformStats.deleteMany({
-      where: { userId: session.user.id, platform },
-    });
+      // Remove PlatformStats rows for this platform
+      await tx.platformStats.deleteMany({
+        where: { userId: session.user.id, platform },
+      });
 
-    // Remove SocialPosts for this platform
-    await db.socialPost.deleteMany({
-      where: { creatorProfileId: creatorProfile.id, platform },
-    });
+      // Remove SocialPosts for this platform
+      await tx.socialPost.deleteMany({
+        where: { creatorProfileId: creatorProfile.id, platform },
+      });
 
-    // Remove from connectedPlatforms array
-    const updated = creatorProfile.connectedPlatforms.filter((p) => p !== platform);
+      // Explicit platform disconnect: remove curation rows for this platform.
+      // The creator asked to remove this platform's data; reconnect must not
+      // silently restore the old curated portfolio for this platform.
+      // (Normal sync/refresh MUST NOT delete curation — only explicit disconnect does.)
+      await tx.creatorContentCuration.deleteMany({
+        where: { creatorProfileId: creatorProfile.id, platform },
+      });
 
-    // Re-aggregate total followers from remaining platforms
-    const remaining = await db.platformStats.findMany({
-      where: { userId: session.user.id },
-      select: { followerCount: true },
-    });
-    // §8: Fix 0→null antipattern (totalFollowers || null turned real 0 into null).
-    // Fix averageEngagement write-time cache (removed — computed at read time).
-    const cachedFollowers = computeFollowerCache(remaining);
+      // Remove from connectedPlatforms array
+      const updated = creatorProfile.connectedPlatforms.filter((p) => p !== platform);
 
-    await db.creatorProfile.update({
-      where: { userId: session.user.id },
-      data: {
-        connectedPlatforms: updated,
-        // Preserve real 0 (computeFollowerCache returns 0 when a genuine 0 exists).
-        // Set to null only when NO non-null followerCounts remain.
-        ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : { followerCount: null }),
-        lastSyncedAt: updated.length === 0 ? null : undefined,
-        // averageEngagement: intentionally NOT written here.
-        // Real engagement is derived from SocialPost data at read time.
-      },
+      // Re-aggregate total followers from remaining platforms
+      const remaining = await tx.platformStats.findMany({
+        where: { userId: session.user.id },
+        select: { followerCount: true },
+      });
+      // §8: Fix 0→null antipattern (totalFollowers || null turned real 0 into null).
+      // Fix averageEngagement write-time cache (removed — computed at read time).
+      const cachedFollowers = computeFollowerCache(remaining);
+
+      await tx.creatorProfile.update({
+        where: { userId: session.user.id },
+        data: {
+          connectedPlatforms: updated,
+          // Preserve real 0 (computeFollowerCache returns 0 when a genuine 0 exists).
+          // Set to null only when NO non-null followerCounts remain.
+          ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : { followerCount: null }),
+          lastSyncedAt: updated.length === 0 ? null : undefined,
+          // averageEngagement: intentionally NOT written here.
+          // Real engagement is derived from SocialPost data at read time.
+        },
+      });
     });
 
     revalidatePath("/creator/presence");

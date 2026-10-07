@@ -10,6 +10,7 @@ import {
   getNormalizedCreatorMetrics,
   type NormalizedCreatorMetrics,
 } from "@/lib/creator-metrics";
+import { buildPortfolio } from "@/lib/content-curation";
 
 export interface FullProfile {
   id: string;
@@ -336,21 +337,6 @@ export async function getProfileAction(
             moderationStatus: true,
             profileOrigin: true,
             claimStatus: true,
-            socialPosts: {
-              orderBy: { fetchedAt: "desc" },
-              take: 9,
-              select: {
-                id: true,
-                platform: true,
-                postUrl: true,
-                imageUrl: true,
-                caption: true,
-                likes: true,
-                comments: true,
-                views: true,
-                postedAt: true,
-              },
-            },
           },
         },
       },
@@ -370,6 +356,62 @@ export async function getProfileAction(
   const creator = user.creatorProfile;
   const rawLinks = (userType === "brand" ? brand?.socialLinks : creator?.socialLinks) ?? [];
   const socialLinks = Array.isArray(rawLinks) ? (rawLinks as unknown as SocialLink[]) : [];
+
+  // ── Curated portfolio (creator only) ──────────────────────────────────────
+  let curatedSocialPosts: PublicProfile["socialPosts"] = [];
+  if (creator) {
+    const [rawPosts, curationRows] = await Promise.all([
+      db.socialPost.findMany({
+        where: { creatorProfileId: creator.id },
+        orderBy: [
+          { postedAt: { sort: "desc", nulls: "last" } },
+          { fetchedAt: "desc" },
+        ],
+        take: 200,
+        select: {
+          id: true,
+          platform: true,
+          providerPostId: true,
+          postUrl: true,
+          imageUrl: true,
+          caption: true,
+          likes: true,
+          comments: true,
+          views: true,
+          postedAt: true,
+          fetchedAt: true,
+          dataSource: true,
+        },
+      }),
+      db.creatorContentCuration.findMany({
+        where: { creatorProfileId: creator.id },
+        select: {
+          platform: true,
+          providerPostId: true,
+          isHidden: true,
+          isFeatured: true,
+          featuredOrder: true,
+        },
+      }),
+    ]);
+
+    const portfolio = buildPortfolio(
+      rawPosts,
+      curationRows.map((r, i) => ({ ...r, id: String(i) })),
+    );
+
+    curatedSocialPosts = portfolio.map((p) => ({
+      id: p.id,
+      platform: p.platform,
+      postUrl: p.postUrl,
+      imageUrl: p.imageUrl,
+      caption: p.caption,
+      likes: p.likes,
+      comments: p.comments,
+      views: p.views,
+      postedAt: p.postedAt,
+    }));
+  }
 
   return {
     id: brand?.id ?? creator?.id ?? user.id,
@@ -400,17 +442,7 @@ export async function getProfileAction(
     topNiches: creator?.topNiches ?? [],
     lastSyncedAt: creator?.lastSyncedAt?.toISOString() ?? null,
     connectedPlatforms: creator?.connectedPlatforms ?? [],
-    socialPosts: (creator?.socialPosts ?? []).map((p) => ({
-      id: p.id,
-      platform: p.platform,
-      postUrl: p.postUrl,
-      imageUrl: p.imageUrl,
-      caption: p.caption,
-      likes: p.likes,
-      comments: p.comments,
-      views: p.views,
-      postedAt: p.postedAt?.toISOString() ?? null,
-    })),
+    socialPosts: curatedSocialPosts,
     platformStats: user.platformStats.map((s) => ({
       platform: s.platform,
       followerCount: s.followerCount,
