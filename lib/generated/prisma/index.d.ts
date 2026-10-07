@@ -34,6 +34,11 @@ export type CreatorProfile = $Result.DefaultSelection<Prisma.$CreatorProfilePayl
  */
 export type SocialPost = $Result.DefaultSelection<Prisma.$SocialPostPayload>
 /**
+ * Model CreatorContentCuration
+ * 
+ */
+export type CreatorContentCuration = $Result.DefaultSelection<Prisma.$CreatorContentCurationPayload>
+/**
  * Model Account
  * 
  */
@@ -627,6 +632,16 @@ export class PrismaClient<
     * ```
     */
   get socialPost(): Prisma.SocialPostDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.creatorContentCuration`: Exposes CRUD operations for the **CreatorContentCuration** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CreatorContentCurations
+    * const creatorContentCurations = await prisma.creatorContentCuration.findMany()
+    * ```
+    */
+  get creatorContentCuration(): Prisma.CreatorContentCurationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.account`: Exposes CRUD operations for the **Account** model.
@@ -1325,6 +1340,7 @@ export namespace Prisma {
     BrandProfile: 'BrandProfile',
     CreatorProfile: 'CreatorProfile',
     SocialPost: 'SocialPost',
+    CreatorContentCuration: 'CreatorContentCuration',
     Account: 'Account',
     Session: 'Session',
     Verification: 'Verification',
@@ -1366,7 +1382,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "profileClaim" | "profileAlias" | "rateLimitEvent"
+      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "creatorContentCuration" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "profileClaim" | "profileAlias" | "rateLimitEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1663,6 +1679,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SocialPostCountArgs<ExtArgs>
             result: $Utils.Optional<SocialPostCountAggregateOutputType> | number
+          }
+        }
+      }
+      CreatorContentCuration: {
+        payload: Prisma.$CreatorContentCurationPayload<ExtArgs>
+        fields: Prisma.CreatorContentCurationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CreatorContentCurationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CreatorContentCurationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          findFirst: {
+            args: Prisma.CreatorContentCurationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CreatorContentCurationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          findMany: {
+            args: Prisma.CreatorContentCurationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>[]
+          }
+          create: {
+            args: Prisma.CreatorContentCurationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          createMany: {
+            args: Prisma.CreatorContentCurationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CreatorContentCurationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>[]
+          }
+          delete: {
+            args: Prisma.CreatorContentCurationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          update: {
+            args: Prisma.CreatorContentCurationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          deleteMany: {
+            args: Prisma.CreatorContentCurationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CreatorContentCurationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CreatorContentCurationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>[]
+          }
+          upsert: {
+            args: Prisma.CreatorContentCurationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreatorContentCurationPayload>
+          }
+          aggregate: {
+            args: Prisma.CreatorContentCurationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCreatorContentCuration>
+          }
+          groupBy: {
+            args: Prisma.CreatorContentCurationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CreatorContentCurationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CreatorContentCurationCountArgs<ExtArgs>
+            result: $Utils.Optional<CreatorContentCurationCountAggregateOutputType> | number
           }
         }
       }
@@ -3702,6 +3792,7 @@ export namespace Prisma {
     brandProfile?: BrandProfileOmit
     creatorProfile?: CreatorProfileOmit
     socialPost?: SocialPostOmit
+    creatorContentCuration?: CreatorContentCurationOmit
     account?: AccountOmit
     session?: SessionOmit
     verification?: VerificationOmit
@@ -4099,6 +4190,7 @@ export namespace Prisma {
     contracts: number
     campaignEvents: number
     socialPosts: number
+    contentCurations: number
     profileClaims: number
     profileAliases: number
   }
@@ -4108,6 +4200,7 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfileCountOutputTypeCountContractsArgs
     campaignEvents?: boolean | CreatorProfileCountOutputTypeCountCampaignEventsArgs
     socialPosts?: boolean | CreatorProfileCountOutputTypeCountSocialPostsArgs
+    contentCurations?: boolean | CreatorProfileCountOutputTypeCountContentCurationsArgs
     profileClaims?: boolean | CreatorProfileCountOutputTypeCountProfileClaimsArgs
     profileAliases?: boolean | CreatorProfileCountOutputTypeCountProfileAliasesArgs
   }
@@ -4149,6 +4242,13 @@ export namespace Prisma {
    */
   export type CreatorProfileCountOutputTypeCountSocialPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SocialPostWhereInput
+  }
+
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountContentCurationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreatorContentCurationWhereInput
   }
 
   /**
@@ -7790,6 +7890,7 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
+    contentCurations?: boolean | CreatorProfile$contentCurationsArgs<ExtArgs>
     profileClaims?: boolean | CreatorProfile$profileClaimsArgs<ExtArgs>
     profileAliases?: boolean | CreatorProfile$profileAliasesArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -7891,6 +7992,7 @@ export namespace Prisma {
     contracts?: boolean | CreatorProfile$contractsArgs<ExtArgs>
     campaignEvents?: boolean | CreatorProfile$campaignEventsArgs<ExtArgs>
     socialPosts?: boolean | CreatorProfile$socialPostsArgs<ExtArgs>
+    contentCurations?: boolean | CreatorProfile$contentCurationsArgs<ExtArgs>
     profileClaims?: boolean | CreatorProfile$profileClaimsArgs<ExtArgs>
     profileAliases?: boolean | CreatorProfile$profileAliasesArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -7913,6 +8015,7 @@ export namespace Prisma {
       contracts: Prisma.$ContractPayload<ExtArgs>[]
       campaignEvents: Prisma.$CampaignEventPayload<ExtArgs>[]
       socialPosts: Prisma.$SocialPostPayload<ExtArgs>[]
+      contentCurations: Prisma.$CreatorContentCurationPayload<ExtArgs>[]
       profileClaims: Prisma.$ProfileClaimPayload<ExtArgs>[]
       profileAliases: Prisma.$ProfileAliasPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
@@ -8342,6 +8445,7 @@ export namespace Prisma {
     contracts<T extends CreatorProfile$contractsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     campaignEvents<T extends CreatorProfile$campaignEventsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$campaignEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CampaignEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     socialPosts<T extends CreatorProfile$socialPostsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$socialPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SocialPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    contentCurations<T extends CreatorProfile$contentCurationsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$contentCurationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileClaims<T extends CreatorProfile$profileClaimsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$profileClaimsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileClaimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileAliases<T extends CreatorProfile$profileAliasesArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$profileAliasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileAliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -8894,6 +8998,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SocialPostScalarFieldEnum | SocialPostScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.contentCurations
+   */
+  export type CreatorProfile$contentCurationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    where?: CreatorContentCurationWhereInput
+    orderBy?: CreatorContentCurationOrderByWithRelationInput | CreatorContentCurationOrderByWithRelationInput[]
+    cursor?: CreatorContentCurationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CreatorContentCurationScalarFieldEnum | CreatorContentCurationScalarFieldEnum[]
   }
 
   /**
@@ -10205,6 +10333,1129 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SocialPostInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CreatorContentCuration
+   */
+
+  export type AggregateCreatorContentCuration = {
+    _count: CreatorContentCurationCountAggregateOutputType | null
+    _avg: CreatorContentCurationAvgAggregateOutputType | null
+    _sum: CreatorContentCurationSumAggregateOutputType | null
+    _min: CreatorContentCurationMinAggregateOutputType | null
+    _max: CreatorContentCurationMaxAggregateOutputType | null
+  }
+
+  export type CreatorContentCurationAvgAggregateOutputType = {
+    featuredOrder: number | null
+  }
+
+  export type CreatorContentCurationSumAggregateOutputType = {
+    featuredOrder: number | null
+  }
+
+  export type CreatorContentCurationMinAggregateOutputType = {
+    id: string | null
+    creatorProfileId: string | null
+    platform: string | null
+    providerPostId: string | null
+    isHidden: boolean | null
+    isFeatured: boolean | null
+    featuredOrder: number | null
+  }
+
+  export type CreatorContentCurationMaxAggregateOutputType = {
+    id: string | null
+    creatorProfileId: string | null
+    platform: string | null
+    providerPostId: string | null
+    isHidden: boolean | null
+    isFeatured: boolean | null
+    featuredOrder: number | null
+  }
+
+  export type CreatorContentCurationCountAggregateOutputType = {
+    id: number
+    creatorProfileId: number
+    platform: number
+    providerPostId: number
+    isHidden: number
+    isFeatured: number
+    featuredOrder: number
+    _all: number
+  }
+
+
+  export type CreatorContentCurationAvgAggregateInputType = {
+    featuredOrder?: true
+  }
+
+  export type CreatorContentCurationSumAggregateInputType = {
+    featuredOrder?: true
+  }
+
+  export type CreatorContentCurationMinAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    platform?: true
+    providerPostId?: true
+    isHidden?: true
+    isFeatured?: true
+    featuredOrder?: true
+  }
+
+  export type CreatorContentCurationMaxAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    platform?: true
+    providerPostId?: true
+    isHidden?: true
+    isFeatured?: true
+    featuredOrder?: true
+  }
+
+  export type CreatorContentCurationCountAggregateInputType = {
+    id?: true
+    creatorProfileId?: true
+    platform?: true
+    providerPostId?: true
+    isHidden?: true
+    isFeatured?: true
+    featuredOrder?: true
+    _all?: true
+  }
+
+  export type CreatorContentCurationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CreatorContentCuration to aggregate.
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreatorContentCurations to fetch.
+     */
+    orderBy?: CreatorContentCurationOrderByWithRelationInput | CreatorContentCurationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CreatorContentCurationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreatorContentCurations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreatorContentCurations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CreatorContentCurations
+    **/
+    _count?: true | CreatorContentCurationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CreatorContentCurationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CreatorContentCurationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CreatorContentCurationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CreatorContentCurationMaxAggregateInputType
+  }
+
+  export type GetCreatorContentCurationAggregateType<T extends CreatorContentCurationAggregateArgs> = {
+        [P in keyof T & keyof AggregateCreatorContentCuration]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCreatorContentCuration[P]>
+      : GetScalarType<T[P], AggregateCreatorContentCuration[P]>
+  }
+
+
+
+
+  export type CreatorContentCurationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreatorContentCurationWhereInput
+    orderBy?: CreatorContentCurationOrderByWithAggregationInput | CreatorContentCurationOrderByWithAggregationInput[]
+    by: CreatorContentCurationScalarFieldEnum[] | CreatorContentCurationScalarFieldEnum
+    having?: CreatorContentCurationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CreatorContentCurationCountAggregateInputType | true
+    _avg?: CreatorContentCurationAvgAggregateInputType
+    _sum?: CreatorContentCurationSumAggregateInputType
+    _min?: CreatorContentCurationMinAggregateInputType
+    _max?: CreatorContentCurationMaxAggregateInputType
+  }
+
+  export type CreatorContentCurationGroupByOutputType = {
+    id: string
+    creatorProfileId: string
+    platform: string
+    providerPostId: string
+    isHidden: boolean
+    isFeatured: boolean
+    featuredOrder: number | null
+    _count: CreatorContentCurationCountAggregateOutputType | null
+    _avg: CreatorContentCurationAvgAggregateOutputType | null
+    _sum: CreatorContentCurationSumAggregateOutputType | null
+    _min: CreatorContentCurationMinAggregateOutputType | null
+    _max: CreatorContentCurationMaxAggregateOutputType | null
+  }
+
+  type GetCreatorContentCurationGroupByPayload<T extends CreatorContentCurationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CreatorContentCurationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CreatorContentCurationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CreatorContentCurationGroupByOutputType[P]>
+            : GetScalarType<T[P], CreatorContentCurationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CreatorContentCurationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    platform?: boolean
+    providerPostId?: boolean
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creatorContentCuration"]>
+
+  export type CreatorContentCurationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    platform?: boolean
+    providerPostId?: boolean
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creatorContentCuration"]>
+
+  export type CreatorContentCurationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    creatorProfileId?: boolean
+    platform?: boolean
+    providerPostId?: boolean
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: boolean
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creatorContentCuration"]>
+
+  export type CreatorContentCurationSelectScalar = {
+    id?: boolean
+    creatorProfileId?: boolean
+    platform?: boolean
+    providerPostId?: boolean
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: boolean
+  }
+
+  export type CreatorContentCurationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "creatorProfileId" | "platform" | "providerPostId" | "isHidden" | "isFeatured" | "featuredOrder", ExtArgs["result"]["creatorContentCuration"]>
+  export type CreatorContentCurationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type CreatorContentCurationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type CreatorContentCurationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorProfile?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $CreatorContentCurationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CreatorContentCuration"
+    objects: {
+      creatorProfile: Prisma.$CreatorProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      creatorProfileId: string
+      platform: string
+      providerPostId: string
+      isHidden: boolean
+      isFeatured: boolean
+      featuredOrder: number | null
+    }, ExtArgs["result"]["creatorContentCuration"]>
+    composites: {}
+  }
+
+  type CreatorContentCurationGetPayload<S extends boolean | null | undefined | CreatorContentCurationDefaultArgs> = $Result.GetResult<Prisma.$CreatorContentCurationPayload, S>
+
+  type CreatorContentCurationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CreatorContentCurationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CreatorContentCurationCountAggregateInputType | true
+    }
+
+  export interface CreatorContentCurationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CreatorContentCuration'], meta: { name: 'CreatorContentCuration' } }
+    /**
+     * Find zero or one CreatorContentCuration that matches the filter.
+     * @param {CreatorContentCurationFindUniqueArgs} args - Arguments to find a CreatorContentCuration
+     * @example
+     * // Get one CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CreatorContentCurationFindUniqueArgs>(args: SelectSubset<T, CreatorContentCurationFindUniqueArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CreatorContentCuration that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CreatorContentCurationFindUniqueOrThrowArgs} args - Arguments to find a CreatorContentCuration
+     * @example
+     * // Get one CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CreatorContentCurationFindUniqueOrThrowArgs>(args: SelectSubset<T, CreatorContentCurationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CreatorContentCuration that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationFindFirstArgs} args - Arguments to find a CreatorContentCuration
+     * @example
+     * // Get one CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CreatorContentCurationFindFirstArgs>(args?: SelectSubset<T, CreatorContentCurationFindFirstArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CreatorContentCuration that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationFindFirstOrThrowArgs} args - Arguments to find a CreatorContentCuration
+     * @example
+     * // Get one CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CreatorContentCurationFindFirstOrThrowArgs>(args?: SelectSubset<T, CreatorContentCurationFindFirstOrThrowArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CreatorContentCurations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CreatorContentCurations
+     * const creatorContentCurations = await prisma.creatorContentCuration.findMany()
+     * 
+     * // Get first 10 CreatorContentCurations
+     * const creatorContentCurations = await prisma.creatorContentCuration.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const creatorContentCurationWithIdOnly = await prisma.creatorContentCuration.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CreatorContentCurationFindManyArgs>(args?: SelectSubset<T, CreatorContentCurationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CreatorContentCuration.
+     * @param {CreatorContentCurationCreateArgs} args - Arguments to create a CreatorContentCuration.
+     * @example
+     * // Create one CreatorContentCuration
+     * const CreatorContentCuration = await prisma.creatorContentCuration.create({
+     *   data: {
+     *     // ... data to create a CreatorContentCuration
+     *   }
+     * })
+     * 
+     */
+    create<T extends CreatorContentCurationCreateArgs>(args: SelectSubset<T, CreatorContentCurationCreateArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CreatorContentCurations.
+     * @param {CreatorContentCurationCreateManyArgs} args - Arguments to create many CreatorContentCurations.
+     * @example
+     * // Create many CreatorContentCurations
+     * const creatorContentCuration = await prisma.creatorContentCuration.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CreatorContentCurationCreateManyArgs>(args?: SelectSubset<T, CreatorContentCurationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CreatorContentCurations and returns the data saved in the database.
+     * @param {CreatorContentCurationCreateManyAndReturnArgs} args - Arguments to create many CreatorContentCurations.
+     * @example
+     * // Create many CreatorContentCurations
+     * const creatorContentCuration = await prisma.creatorContentCuration.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CreatorContentCurations and only return the `id`
+     * const creatorContentCurationWithIdOnly = await prisma.creatorContentCuration.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CreatorContentCurationCreateManyAndReturnArgs>(args?: SelectSubset<T, CreatorContentCurationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CreatorContentCuration.
+     * @param {CreatorContentCurationDeleteArgs} args - Arguments to delete one CreatorContentCuration.
+     * @example
+     * // Delete one CreatorContentCuration
+     * const CreatorContentCuration = await prisma.creatorContentCuration.delete({
+     *   where: {
+     *     // ... filter to delete one CreatorContentCuration
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CreatorContentCurationDeleteArgs>(args: SelectSubset<T, CreatorContentCurationDeleteArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CreatorContentCuration.
+     * @param {CreatorContentCurationUpdateArgs} args - Arguments to update one CreatorContentCuration.
+     * @example
+     * // Update one CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CreatorContentCurationUpdateArgs>(args: SelectSubset<T, CreatorContentCurationUpdateArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CreatorContentCurations.
+     * @param {CreatorContentCurationDeleteManyArgs} args - Arguments to filter CreatorContentCurations to delete.
+     * @example
+     * // Delete a few CreatorContentCurations
+     * const { count } = await prisma.creatorContentCuration.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CreatorContentCurationDeleteManyArgs>(args?: SelectSubset<T, CreatorContentCurationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CreatorContentCurations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CreatorContentCurations
+     * const creatorContentCuration = await prisma.creatorContentCuration.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CreatorContentCurationUpdateManyArgs>(args: SelectSubset<T, CreatorContentCurationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CreatorContentCurations and returns the data updated in the database.
+     * @param {CreatorContentCurationUpdateManyAndReturnArgs} args - Arguments to update many CreatorContentCurations.
+     * @example
+     * // Update many CreatorContentCurations
+     * const creatorContentCuration = await prisma.creatorContentCuration.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CreatorContentCurations and only return the `id`
+     * const creatorContentCurationWithIdOnly = await prisma.creatorContentCuration.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CreatorContentCurationUpdateManyAndReturnArgs>(args: SelectSubset<T, CreatorContentCurationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CreatorContentCuration.
+     * @param {CreatorContentCurationUpsertArgs} args - Arguments to update or create a CreatorContentCuration.
+     * @example
+     * // Update or create a CreatorContentCuration
+     * const creatorContentCuration = await prisma.creatorContentCuration.upsert({
+     *   create: {
+     *     // ... data to create a CreatorContentCuration
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CreatorContentCuration we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CreatorContentCurationUpsertArgs>(args: SelectSubset<T, CreatorContentCurationUpsertArgs<ExtArgs>>): Prisma__CreatorContentCurationClient<$Result.GetResult<Prisma.$CreatorContentCurationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CreatorContentCurations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationCountArgs} args - Arguments to filter CreatorContentCurations to count.
+     * @example
+     * // Count the number of CreatorContentCurations
+     * const count = await prisma.creatorContentCuration.count({
+     *   where: {
+     *     // ... the filter for the CreatorContentCurations we want to count
+     *   }
+     * })
+    **/
+    count<T extends CreatorContentCurationCountArgs>(
+      args?: Subset<T, CreatorContentCurationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CreatorContentCurationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CreatorContentCuration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CreatorContentCurationAggregateArgs>(args: Subset<T, CreatorContentCurationAggregateArgs>): Prisma.PrismaPromise<GetCreatorContentCurationAggregateType<T>>
+
+    /**
+     * Group by CreatorContentCuration.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreatorContentCurationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CreatorContentCurationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CreatorContentCurationGroupByArgs['orderBy'] }
+        : { orderBy?: CreatorContentCurationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CreatorContentCurationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCreatorContentCurationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CreatorContentCuration model
+   */
+  readonly fields: CreatorContentCurationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CreatorContentCuration.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CreatorContentCurationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creatorProfile<T extends CreatorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfileDefaultArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CreatorContentCuration model
+   */
+  interface CreatorContentCurationFieldRefs {
+    readonly id: FieldRef<"CreatorContentCuration", 'String'>
+    readonly creatorProfileId: FieldRef<"CreatorContentCuration", 'String'>
+    readonly platform: FieldRef<"CreatorContentCuration", 'String'>
+    readonly providerPostId: FieldRef<"CreatorContentCuration", 'String'>
+    readonly isHidden: FieldRef<"CreatorContentCuration", 'Boolean'>
+    readonly isFeatured: FieldRef<"CreatorContentCuration", 'Boolean'>
+    readonly featuredOrder: FieldRef<"CreatorContentCuration", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CreatorContentCuration findUnique
+   */
+  export type CreatorContentCurationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter, which CreatorContentCuration to fetch.
+     */
+    where: CreatorContentCurationWhereUniqueInput
+  }
+
+  /**
+   * CreatorContentCuration findUniqueOrThrow
+   */
+  export type CreatorContentCurationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter, which CreatorContentCuration to fetch.
+     */
+    where: CreatorContentCurationWhereUniqueInput
+  }
+
+  /**
+   * CreatorContentCuration findFirst
+   */
+  export type CreatorContentCurationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter, which CreatorContentCuration to fetch.
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreatorContentCurations to fetch.
+     */
+    orderBy?: CreatorContentCurationOrderByWithRelationInput | CreatorContentCurationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CreatorContentCurations.
+     */
+    cursor?: CreatorContentCurationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreatorContentCurations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreatorContentCurations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CreatorContentCurations.
+     */
+    distinct?: CreatorContentCurationScalarFieldEnum | CreatorContentCurationScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorContentCuration findFirstOrThrow
+   */
+  export type CreatorContentCurationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter, which CreatorContentCuration to fetch.
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreatorContentCurations to fetch.
+     */
+    orderBy?: CreatorContentCurationOrderByWithRelationInput | CreatorContentCurationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CreatorContentCurations.
+     */
+    cursor?: CreatorContentCurationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreatorContentCurations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreatorContentCurations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CreatorContentCurations.
+     */
+    distinct?: CreatorContentCurationScalarFieldEnum | CreatorContentCurationScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorContentCuration findMany
+   */
+  export type CreatorContentCurationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter, which CreatorContentCurations to fetch.
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreatorContentCurations to fetch.
+     */
+    orderBy?: CreatorContentCurationOrderByWithRelationInput | CreatorContentCurationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CreatorContentCurations.
+     */
+    cursor?: CreatorContentCurationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreatorContentCurations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreatorContentCurations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CreatorContentCurations.
+     */
+    distinct?: CreatorContentCurationScalarFieldEnum | CreatorContentCurationScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorContentCuration create
+   */
+  export type CreatorContentCurationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CreatorContentCuration.
+     */
+    data: XOR<CreatorContentCurationCreateInput, CreatorContentCurationUncheckedCreateInput>
+  }
+
+  /**
+   * CreatorContentCuration createMany
+   */
+  export type CreatorContentCurationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CreatorContentCurations.
+     */
+    data: CreatorContentCurationCreateManyInput | CreatorContentCurationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CreatorContentCuration createManyAndReturn
+   */
+  export type CreatorContentCurationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * The data used to create many CreatorContentCurations.
+     */
+    data: CreatorContentCurationCreateManyInput | CreatorContentCurationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CreatorContentCuration update
+   */
+  export type CreatorContentCurationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CreatorContentCuration.
+     */
+    data: XOR<CreatorContentCurationUpdateInput, CreatorContentCurationUncheckedUpdateInput>
+    /**
+     * Choose, which CreatorContentCuration to update.
+     */
+    where: CreatorContentCurationWhereUniqueInput
+  }
+
+  /**
+   * CreatorContentCuration updateMany
+   */
+  export type CreatorContentCurationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CreatorContentCurations.
+     */
+    data: XOR<CreatorContentCurationUpdateManyMutationInput, CreatorContentCurationUncheckedUpdateManyInput>
+    /**
+     * Filter which CreatorContentCurations to update
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * Limit how many CreatorContentCurations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CreatorContentCuration updateManyAndReturn
+   */
+  export type CreatorContentCurationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * The data used to update CreatorContentCurations.
+     */
+    data: XOR<CreatorContentCurationUpdateManyMutationInput, CreatorContentCurationUncheckedUpdateManyInput>
+    /**
+     * Filter which CreatorContentCurations to update
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * Limit how many CreatorContentCurations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CreatorContentCuration upsert
+   */
+  export type CreatorContentCurationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CreatorContentCuration to update in case it exists.
+     */
+    where: CreatorContentCurationWhereUniqueInput
+    /**
+     * In case the CreatorContentCuration found by the `where` argument doesn't exist, create a new CreatorContentCuration with this data.
+     */
+    create: XOR<CreatorContentCurationCreateInput, CreatorContentCurationUncheckedCreateInput>
+    /**
+     * In case the CreatorContentCuration was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CreatorContentCurationUpdateInput, CreatorContentCurationUncheckedUpdateInput>
+  }
+
+  /**
+   * CreatorContentCuration delete
+   */
+  export type CreatorContentCurationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
+    /**
+     * Filter which CreatorContentCuration to delete.
+     */
+    where: CreatorContentCurationWhereUniqueInput
+  }
+
+  /**
+   * CreatorContentCuration deleteMany
+   */
+  export type CreatorContentCurationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CreatorContentCurations to delete
+     */
+    where?: CreatorContentCurationWhereInput
+    /**
+     * Limit how many CreatorContentCurations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CreatorContentCuration without action
+   */
+  export type CreatorContentCurationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorContentCuration
+     */
+    select?: CreatorContentCurationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorContentCuration
+     */
+    omit?: CreatorContentCurationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorContentCurationInclude<ExtArgs> | null
   }
 
 
@@ -39882,6 +41133,19 @@ export namespace Prisma {
   export type SocialPostScalarFieldEnum = (typeof SocialPostScalarFieldEnum)[keyof typeof SocialPostScalarFieldEnum]
 
 
+  export const CreatorContentCurationScalarFieldEnum: {
+    id: 'id',
+    creatorProfileId: 'creatorProfileId',
+    platform: 'platform',
+    providerPostId: 'providerPostId',
+    isHidden: 'isHidden',
+    isFeatured: 'isFeatured',
+    featuredOrder: 'featuredOrder'
+  };
+
+  export type CreatorContentCurationScalarFieldEnum = (typeof CreatorContentCurationScalarFieldEnum)[keyof typeof CreatorContentCurationScalarFieldEnum]
+
+
   export const AccountScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -40960,6 +42224,7 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
+    contentCurations?: CreatorContentCurationListRelationFilter
     profileClaims?: ProfileClaimListRelationFilter
     profileAliases?: ProfileAliasListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -40996,6 +42261,7 @@ export namespace Prisma {
     contracts?: ContractOrderByRelationAggregateInput
     campaignEvents?: CampaignEventOrderByRelationAggregateInput
     socialPosts?: SocialPostOrderByRelationAggregateInput
+    contentCurations?: CreatorContentCurationOrderByRelationAggregateInput
     profileClaims?: ProfileClaimOrderByRelationAggregateInput
     profileAliases?: ProfileAliasOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
@@ -41035,6 +42301,7 @@ export namespace Prisma {
     contracts?: ContractListRelationFilter
     campaignEvents?: CampaignEventListRelationFilter
     socialPosts?: SocialPostListRelationFilter
+    contentCurations?: CreatorContentCurationListRelationFilter
     profileClaims?: ProfileClaimListRelationFilter
     profileAliases?: ProfileAliasListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -41205,6 +42472,74 @@ export namespace Prisma {
     fetchedAt?: DateTimeWithAggregatesFilter<"SocialPost"> | Date | string
     dataSource?: EnumDataSourceWithAggregatesFilter<"SocialPost"> | $Enums.DataSource
     providerPostId?: StringNullableWithAggregatesFilter<"SocialPost"> | string | null
+  }
+
+  export type CreatorContentCurationWhereInput = {
+    AND?: CreatorContentCurationWhereInput | CreatorContentCurationWhereInput[]
+    OR?: CreatorContentCurationWhereInput[]
+    NOT?: CreatorContentCurationWhereInput | CreatorContentCurationWhereInput[]
+    id?: StringFilter<"CreatorContentCuration"> | string
+    creatorProfileId?: StringFilter<"CreatorContentCuration"> | string
+    platform?: StringFilter<"CreatorContentCuration"> | string
+    providerPostId?: StringFilter<"CreatorContentCuration"> | string
+    isHidden?: BoolFilter<"CreatorContentCuration"> | boolean
+    isFeatured?: BoolFilter<"CreatorContentCuration"> | boolean
+    featuredOrder?: IntNullableFilter<"CreatorContentCuration"> | number | null
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }
+
+  export type CreatorContentCurationOrderByWithRelationInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    platform?: SortOrder
+    providerPostId?: SortOrder
+    isHidden?: SortOrder
+    isFeatured?: SortOrder
+    featuredOrder?: SortOrderInput | SortOrder
+    creatorProfile?: CreatorProfileOrderByWithRelationInput
+  }
+
+  export type CreatorContentCurationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    creatorProfileId_platform_providerPostId?: CreatorContentCurationCreatorProfileIdPlatformProviderPostIdCompoundUniqueInput
+    AND?: CreatorContentCurationWhereInput | CreatorContentCurationWhereInput[]
+    OR?: CreatorContentCurationWhereInput[]
+    NOT?: CreatorContentCurationWhereInput | CreatorContentCurationWhereInput[]
+    creatorProfileId?: StringFilter<"CreatorContentCuration"> | string
+    platform?: StringFilter<"CreatorContentCuration"> | string
+    providerPostId?: StringFilter<"CreatorContentCuration"> | string
+    isHidden?: BoolFilter<"CreatorContentCuration"> | boolean
+    isFeatured?: BoolFilter<"CreatorContentCuration"> | boolean
+    featuredOrder?: IntNullableFilter<"CreatorContentCuration"> | number | null
+    creatorProfile?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }, "id" | "creatorProfileId_platform_providerPostId">
+
+  export type CreatorContentCurationOrderByWithAggregationInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    platform?: SortOrder
+    providerPostId?: SortOrder
+    isHidden?: SortOrder
+    isFeatured?: SortOrder
+    featuredOrder?: SortOrderInput | SortOrder
+    _count?: CreatorContentCurationCountOrderByAggregateInput
+    _avg?: CreatorContentCurationAvgOrderByAggregateInput
+    _max?: CreatorContentCurationMaxOrderByAggregateInput
+    _min?: CreatorContentCurationMinOrderByAggregateInput
+    _sum?: CreatorContentCurationSumOrderByAggregateInput
+  }
+
+  export type CreatorContentCurationScalarWhereWithAggregatesInput = {
+    AND?: CreatorContentCurationScalarWhereWithAggregatesInput | CreatorContentCurationScalarWhereWithAggregatesInput[]
+    OR?: CreatorContentCurationScalarWhereWithAggregatesInput[]
+    NOT?: CreatorContentCurationScalarWhereWithAggregatesInput | CreatorContentCurationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CreatorContentCuration"> | string
+    creatorProfileId?: StringWithAggregatesFilter<"CreatorContentCuration"> | string
+    platform?: StringWithAggregatesFilter<"CreatorContentCuration"> | string
+    providerPostId?: StringWithAggregatesFilter<"CreatorContentCuration"> | string
+    isHidden?: BoolWithAggregatesFilter<"CreatorContentCuration"> | boolean
+    isFeatured?: BoolWithAggregatesFilter<"CreatorContentCuration"> | boolean
+    featuredOrder?: IntNullableWithAggregatesFilter<"CreatorContentCuration"> | number | null
   }
 
   export type AccountWhereInput = {
@@ -43556,6 +44891,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -43592,6 +44928,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -43624,6 +44961,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -43660,6 +44998,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -43862,6 +45201,75 @@ export namespace Prisma {
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
     providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CreatorContentCurationCreateInput = {
+    id?: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+    creatorProfile: CreatorProfileCreateNestedOneWithoutContentCurationsInput
+  }
+
+  export type CreatorContentCurationUncheckedCreateInput = {
+    id?: string
+    creatorProfileId: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+  }
+
+  export type CreatorContentCurationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
+    creatorProfile?: CreatorProfileUpdateOneRequiredWithoutContentCurationsNestedInput
+  }
+
+  export type CreatorContentCurationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type CreatorContentCurationCreateManyInput = {
+    id?: string
+    creatorProfileId: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+  }
+
+  export type CreatorContentCurationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type CreatorContentCurationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorProfileId?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type AccountCreateInput = {
@@ -46550,6 +47958,12 @@ export namespace Prisma {
     none?: SocialPostWhereInput
   }
 
+  export type CreatorContentCurationListRelationFilter = {
+    every?: CreatorContentCurationWhereInput
+    some?: CreatorContentCurationWhereInput
+    none?: CreatorContentCurationWhereInput
+  }
+
   export type ProfileAliasListRelationFilter = {
     every?: ProfileAliasWhereInput
     some?: ProfileAliasWhereInput
@@ -46566,6 +47980,10 @@ export namespace Prisma {
   }
 
   export type SocialPostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CreatorContentCurationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -46858,6 +48276,50 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDataSourceFilter<$PrismaModel>
     _max?: NestedEnumDataSourceFilter<$PrismaModel>
+  }
+
+  export type CreatorContentCurationCreatorProfileIdPlatformProviderPostIdCompoundUniqueInput = {
+    creatorProfileId: string
+    platform: string
+    providerPostId: string
+  }
+
+  export type CreatorContentCurationCountOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    platform?: SortOrder
+    providerPostId?: SortOrder
+    isHidden?: SortOrder
+    isFeatured?: SortOrder
+    featuredOrder?: SortOrder
+  }
+
+  export type CreatorContentCurationAvgOrderByAggregateInput = {
+    featuredOrder?: SortOrder
+  }
+
+  export type CreatorContentCurationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    platform?: SortOrder
+    providerPostId?: SortOrder
+    isHidden?: SortOrder
+    isFeatured?: SortOrder
+    featuredOrder?: SortOrder
+  }
+
+  export type CreatorContentCurationMinOrderByAggregateInput = {
+    id?: SortOrder
+    creatorProfileId?: SortOrder
+    platform?: SortOrder
+    providerPostId?: SortOrder
+    isHidden?: SortOrder
+    isFeatured?: SortOrder
+    featuredOrder?: SortOrder
+  }
+
+  export type CreatorContentCurationSumOrderByAggregateInput = {
+    featuredOrder?: SortOrder
   }
 
   export type AccountProviderIdAccountIdCompoundUniqueInput = {
@@ -49493,6 +50955,13 @@ export namespace Prisma {
     connect?: SocialPostWhereUniqueInput | SocialPostWhereUniqueInput[]
   }
 
+  export type CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput> | CreatorContentCurationCreateWithoutCreatorProfileInput[] | CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput | CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: CreatorContentCurationCreateManyCreatorProfileInputEnvelope
+    connect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+  }
+
   export type ProfileClaimCreateNestedManyWithoutCreatorProfileInput = {
     create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
     connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
@@ -49545,6 +51014,13 @@ export namespace Prisma {
     connectOrCreate?: SocialPostCreateOrConnectWithoutCreatorProfileInput | SocialPostCreateOrConnectWithoutCreatorProfileInput[]
     createMany?: SocialPostCreateManyCreatorProfileInputEnvelope
     connect?: SocialPostWhereUniqueInput | SocialPostWhereUniqueInput[]
+  }
+
+  export type CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput = {
+    create?: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput> | CreatorContentCurationCreateWithoutCreatorProfileInput[] | CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput | CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput[]
+    createMany?: CreatorContentCurationCreateManyCreatorProfileInputEnvelope
+    connect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
   }
 
   export type ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput = {
@@ -49675,6 +51151,20 @@ export namespace Prisma {
     deleteMany?: SocialPostScalarWhereInput | SocialPostScalarWhereInput[]
   }
 
+  export type CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput> | CreatorContentCurationCreateWithoutCreatorProfileInput[] | CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput | CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: CreatorContentCurationUpsertWithWhereUniqueWithoutCreatorProfileInput | CreatorContentCurationUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: CreatorContentCurationCreateManyCreatorProfileInputEnvelope
+    set?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    disconnect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    delete?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    connect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    update?: CreatorContentCurationUpdateWithWhereUniqueWithoutCreatorProfileInput | CreatorContentCurationUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: CreatorContentCurationUpdateManyWithWhereWithoutCreatorProfileInput | CreatorContentCurationUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: CreatorContentCurationScalarWhereInput | CreatorContentCurationScalarWhereInput[]
+  }
+
   export type ProfileClaimUpdateManyWithoutCreatorProfileNestedInput = {
     create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
     connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
@@ -49777,6 +51267,20 @@ export namespace Prisma {
     deleteMany?: SocialPostScalarWhereInput | SocialPostScalarWhereInput[]
   }
 
+  export type CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput = {
+    create?: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput> | CreatorContentCurationCreateWithoutCreatorProfileInput[] | CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput[]
+    connectOrCreate?: CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput | CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput[]
+    upsert?: CreatorContentCurationUpsertWithWhereUniqueWithoutCreatorProfileInput | CreatorContentCurationUpsertWithWhereUniqueWithoutCreatorProfileInput[]
+    createMany?: CreatorContentCurationCreateManyCreatorProfileInputEnvelope
+    set?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    disconnect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    delete?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    connect?: CreatorContentCurationWhereUniqueInput | CreatorContentCurationWhereUniqueInput[]
+    update?: CreatorContentCurationUpdateWithWhereUniqueWithoutCreatorProfileInput | CreatorContentCurationUpdateWithWhereUniqueWithoutCreatorProfileInput[]
+    updateMany?: CreatorContentCurationUpdateManyWithWhereWithoutCreatorProfileInput | CreatorContentCurationUpdateManyWithWhereWithoutCreatorProfileInput[]
+    deleteMany?: CreatorContentCurationScalarWhereInput | CreatorContentCurationScalarWhereInput[]
+  }
+
   export type ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput = {
     create?: XOR<ProfileClaimCreateWithoutCreatorProfileInput, ProfileClaimUncheckedCreateWithoutCreatorProfileInput> | ProfileClaimCreateWithoutCreatorProfileInput[] | ProfileClaimUncheckedCreateWithoutCreatorProfileInput[]
     connectOrCreate?: ProfileClaimCreateOrConnectWithoutCreatorProfileInput | ProfileClaimCreateOrConnectWithoutCreatorProfileInput[]
@@ -49821,6 +51325,20 @@ export namespace Prisma {
     upsert?: CreatorProfileUpsertWithoutSocialPostsInput
     connect?: CreatorProfileWhereUniqueInput
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutSocialPostsInput, CreatorProfileUpdateWithoutSocialPostsInput>, CreatorProfileUncheckedUpdateWithoutSocialPostsInput>
+  }
+
+  export type CreatorProfileCreateNestedOneWithoutContentCurationsInput = {
+    create?: XOR<CreatorProfileCreateWithoutContentCurationsInput, CreatorProfileUncheckedCreateWithoutContentCurationsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutContentCurationsInput
+    connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type CreatorProfileUpdateOneRequiredWithoutContentCurationsNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutContentCurationsInput, CreatorProfileUncheckedCreateWithoutContentCurationsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutContentCurationsInput
+    upsert?: CreatorProfileUpsertWithoutContentCurationsInput
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutContentCurationsInput, CreatorProfileUpdateWithoutContentCurationsInput>, CreatorProfileUncheckedUpdateWithoutContentCurationsInput>
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -51654,6 +53172,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
@@ -51688,6 +53207,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -51725,6 +53245,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -51759,6 +53280,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -52589,6 +54111,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
@@ -52623,6 +54146,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -53808,6 +55332,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CreatorContentCurationCreateWithoutCreatorProfileInput = {
+    id?: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+  }
+
+  export type CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput = {
+    id?: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+  }
+
+  export type CreatorContentCurationCreateOrConnectWithoutCreatorProfileInput = {
+    where: CreatorContentCurationWhereUniqueInput
+    create: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type CreatorContentCurationCreateManyCreatorProfileInputEnvelope = {
+    data: CreatorContentCurationCreateManyCreatorProfileInput | CreatorContentCurationCreateManyCreatorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProfileClaimCreateWithoutCreatorProfileInput = {
     id?: string
     status?: $Enums.ProfileClaimStatus
@@ -54148,6 +55700,35 @@ export namespace Prisma {
     providerPostId?: StringNullableFilter<"SocialPost"> | string | null
   }
 
+  export type CreatorContentCurationUpsertWithWhereUniqueWithoutCreatorProfileInput = {
+    where: CreatorContentCurationWhereUniqueInput
+    update: XOR<CreatorContentCurationUpdateWithoutCreatorProfileInput, CreatorContentCurationUncheckedUpdateWithoutCreatorProfileInput>
+    create: XOR<CreatorContentCurationCreateWithoutCreatorProfileInput, CreatorContentCurationUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type CreatorContentCurationUpdateWithWhereUniqueWithoutCreatorProfileInput = {
+    where: CreatorContentCurationWhereUniqueInput
+    data: XOR<CreatorContentCurationUpdateWithoutCreatorProfileInput, CreatorContentCurationUncheckedUpdateWithoutCreatorProfileInput>
+  }
+
+  export type CreatorContentCurationUpdateManyWithWhereWithoutCreatorProfileInput = {
+    where: CreatorContentCurationScalarWhereInput
+    data: XOR<CreatorContentCurationUpdateManyMutationInput, CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileInput>
+  }
+
+  export type CreatorContentCurationScalarWhereInput = {
+    AND?: CreatorContentCurationScalarWhereInput | CreatorContentCurationScalarWhereInput[]
+    OR?: CreatorContentCurationScalarWhereInput[]
+    NOT?: CreatorContentCurationScalarWhereInput | CreatorContentCurationScalarWhereInput[]
+    id?: StringFilter<"CreatorContentCuration"> | string
+    creatorProfileId?: StringFilter<"CreatorContentCuration"> | string
+    platform?: StringFilter<"CreatorContentCuration"> | string
+    providerPostId?: StringFilter<"CreatorContentCuration"> | string
+    isHidden?: BoolFilter<"CreatorContentCuration"> | boolean
+    isFeatured?: BoolFilter<"CreatorContentCuration"> | boolean
+    featuredOrder?: IntNullableFilter<"CreatorContentCuration"> | number | null
+  }
+
   export type ProfileClaimUpsertWithWhereUniqueWithoutCreatorProfileInput = {
     where: ProfileClaimWhereUniqueInput
     update: XOR<ProfileClaimUpdateWithoutCreatorProfileInput, ProfileClaimUncheckedUpdateWithoutCreatorProfileInput>
@@ -54399,6 +55980,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -54434,6 +56016,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -54481,6 +56064,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -54516,6 +56100,159 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
+  }
+
+  export type CreatorProfileCreateWithoutContentCurationsInput = {
+    id?: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationCreateNestedManyWithoutCreatorInput
+    contracts?: ContractCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+    claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutContentCurationsInput = {
+    id?: string
+    userId: string
+    bio?: string | null
+    niche?: string | null
+    primaryPlatform?: string | null
+    location?: string | null
+    totalFollowers?: number
+    avgEngagementRate?: number
+    lastStatsUpdate?: Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: number | null
+    averageEngagement?: number | null
+    topNiches?: CreatorProfileCreatetopNichesInput | string[]
+    lastSyncedAt?: Date | string | null
+    connectedPlatforms?: CreatorProfileCreateconnectedPlatformsInput | string[]
+    moderationStatus?: $Enums.ModerationStatus
+    moderationNote?: string | null
+    moderatedAt?: Date | string | null
+    profileOrigin?: $Enums.ProfileOrigin
+    claimStatus?: $Enums.ClaimStatus
+    claimedByUserId?: string | null
+    claimedAt?: Date | string | null
+    importedEmail?: string | null
+    importedAt?: Date | string | null
+    importBatchId?: string | null
+    applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
+    campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
+    socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
+    profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutContentCurationsInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutContentCurationsInput, CreatorProfileUncheckedCreateWithoutContentCurationsInput>
+  }
+
+  export type CreatorProfileUpsertWithoutContentCurationsInput = {
+    update: XOR<CreatorProfileUpdateWithoutContentCurationsInput, CreatorProfileUncheckedUpdateWithoutContentCurationsInput>
+    create: XOR<CreatorProfileCreateWithoutContentCurationsInput, CreatorProfileUncheckedCreateWithoutContentCurationsInput>
+    where?: CreatorProfileWhereInput
+  }
+
+  export type CreatorProfileUpdateToOneWithWhereWithoutContentCurationsInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutContentCurationsInput, CreatorProfileUncheckedUpdateWithoutContentCurationsInput>
+  }
+
+  export type CreatorProfileUpdateWithoutContentCurationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
+    profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutContentCurationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    niche?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    totalFollowers?: IntFieldUpdateOperationsInput | number
+    avgEngagementRate?: FloatFieldUpdateOperationsInput | number
+    lastStatsUpdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    followerCount?: NullableIntFieldUpdateOperationsInput | number | null
+    averageEngagement?: NullableFloatFieldUpdateOperationsInput | number | null
+    topNiches?: CreatorProfileUpdatetopNichesInput | string[]
+    lastSyncedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    connectedPlatforms?: CreatorProfileUpdateconnectedPlatformsInput | string[]
+    moderationStatus?: EnumModerationStatusFieldUpdateOperationsInput | $Enums.ModerationStatus
+    moderationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    moderatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileOrigin?: EnumProfileOriginFieldUpdateOperationsInput | $Enums.ProfileOrigin
+    claimStatus?: EnumClaimStatusFieldUpdateOperationsInput | $Enums.ClaimStatus
+    claimedByUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    claimedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    importedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    importBatchId?: NullableStringFieldUpdateOperationsInput | string | null
+    applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
+    campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
+    socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -56176,6 +57913,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -56211,6 +57949,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -56444,6 +58183,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -56479,6 +58219,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -57100,6 +58841,7 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -57135,6 +58877,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -57338,6 +59081,7 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -57373,6 +59117,7 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -58805,6 +60550,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
@@ -58840,6 +60586,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
@@ -58952,6 +60699,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -58987,6 +60735,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -60227,6 +61976,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
@@ -60262,6 +62012,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileAliases?: ProfileAliasUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
@@ -60479,6 +62230,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
@@ -60514,6 +62266,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
@@ -60727,6 +62480,7 @@ export namespace Prisma {
     contracts?: ContractCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimCreateNestedManyWithoutCreatorProfileInput
     user: UserCreateNestedOneWithoutCreatorProfileInput
     claimedBy?: UserCreateNestedOneWithoutClaimedCreatorProfilesInput
@@ -60762,6 +62516,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedCreateNestedManyWithoutCreatorInput
     campaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatorInput
     socialPosts?: SocialPostUncheckedCreateNestedManyWithoutCreatorProfileInput
+    contentCurations?: CreatorContentCurationUncheckedCreateNestedManyWithoutCreatorProfileInput
     profileClaims?: ProfileClaimUncheckedCreateNestedManyWithoutCreatorProfileInput
   }
 
@@ -60809,6 +62564,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     claimedBy?: UserUpdateOneWithoutClaimedCreatorProfilesNestedInput
@@ -60844,6 +62600,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
 
@@ -61250,6 +63007,7 @@ export namespace Prisma {
     contracts?: ContractUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUpdateManyWithoutCreatorProfileNestedInput
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
@@ -61284,6 +63042,7 @@ export namespace Prisma {
     contracts?: ContractUncheckedUpdateManyWithoutCreatorNestedInput
     campaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatorNestedInput
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
+    contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileAliases?: ProfileAliasUncheckedUpdateManyWithoutCreatorProfileNestedInput
   }
@@ -62293,6 +64052,15 @@ export namespace Prisma {
     providerPostId?: string | null
   }
 
+  export type CreatorContentCurationCreateManyCreatorProfileInput = {
+    id?: string
+    platform: string
+    providerPostId: string
+    isHidden?: boolean
+    isFeatured?: boolean
+    featuredOrder?: number | null
+  }
+
   export type ProfileClaimCreateManyCreatorProfileInput = {
     id?: string
     requesterUserId?: string | null
@@ -62477,6 +64245,33 @@ export namespace Prisma {
     fetchedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     dataSource?: EnumDataSourceFieldUpdateOperationsInput | $Enums.DataSource
     providerPostId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CreatorContentCurationUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type CreatorContentCurationUncheckedUpdateWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    platform?: StringFieldUpdateOperationsInput | string
+    providerPostId?: StringFieldUpdateOperationsInput | string
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredOrder?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ProfileClaimUpdateWithoutCreatorProfileInput = {

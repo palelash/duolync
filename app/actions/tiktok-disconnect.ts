@@ -136,6 +136,14 @@ export async function disconnectTikTokAction(): Promise<TikTokDisconnectResult> 
         await tx.socialPost.deleteMany({
           where: { creatorProfileId: creator.id, platform: "tiktok" },
         });
+
+        // C2. Delete TikTok CreatorContentCuration rows.
+        //     Explicit disconnect means the creator asked to remove TikTok local data.
+        //     Reconnect must NOT silently restore the old curated TikTok portfolio.
+        //     Background dead-auth MUST NOT call this action — it preserves curation.
+        await tx.creatorContentCuration.deleteMany({
+          where: { creatorProfileId: creator.id, platform: "tiktok" },
+        });
       }
 
       // D. Atomically remove "tiktok" from connectedPlatforms using PostgreSQL

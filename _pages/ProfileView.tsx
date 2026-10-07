@@ -578,6 +578,7 @@ type PostItem = NonNullable<PublicProfile["socialPosts"]>[number];
 const PLATFORM_META_POSTS: Record<string, { label: string; emoji: string }> = {
   instagram: { label: "Instagram Posts", emoji: "📷" },
   tiktok: { label: "TikTok Posts", emoji: "📱" },
+  youtube: { label: "YouTube Videos", emoji: "▶️" },
 };
 
 function PostThumbnail({
@@ -610,6 +611,12 @@ function PostThumbnail({
 
   const card = (
     <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 group relative cursor-pointer">
+      <span
+        className="absolute top-2 left-2 z-10 inline-flex items-center justify-center w-6 h-6 rounded-md bg-black/70 text-sm"
+        title={PLATFORM_META_POSTS[post.platform]?.label ?? post.platform}
+      >
+        {emoji}
+      </span>
       {/* Delete button (own profile) */}
       {isOwn && (
         <button
@@ -678,12 +685,7 @@ function LatestPostsSection({
   isOwn: boolean;
   onPostDeleted: (id: string) => void;
 }) {
-  const groups = Object.entries(PLATFORM_META_POSTS).map(([key, meta]) => ({
-    key,
-    meta,
-    items: posts.filter((p) => p.platform === key).slice(0, 6),
-  })).filter((g) => g.items.length > 0);
-
+  // Selector order is global across platforms. Do not regroup or re-slice.
   return (
     <div className="bg-white dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-5">
@@ -700,24 +702,15 @@ function LatestPostsSection({
         )}
       </div>
 
-      {groups.length > 0 ? (
-        <div className="space-y-6">
-          {groups.map(({ key, meta, items }) => (
-            <div key={key}>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-1.5">
-                <span>{meta.emoji}</span> {meta.label}
-              </p>
-              <div className="grid grid-cols-3 gap-3">
-                {items.map((post) => (
-                  <PostThumbnail
-                    key={post.id}
-                    post={post}
-                    isOwn={isOwn}
-                    onDeleted={onPostDeleted}
-                  />
-                ))}
-              </div>
-            </div>
+      {posts.length > 0 ? (
+        <div className="grid grid-cols-3 gap-3">
+          {posts.map((post) => (
+            <PostThumbnail
+              key={post.id}
+              post={post}
+              isOwn={isOwn}
+              onDeleted={onPostDeleted}
+            />
           ))}
         </div>
       ) : (
@@ -725,9 +718,9 @@ function LatestPostsSection({
           <div className="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-3">
             <Radio className="w-7 h-7 text-violet-600 dark:text-violet-400" />
           </div>
-          <p className="font-semibold text-sm mb-1">No posts yet</p>
+          <p className="font-semibold text-sm mb-1">No posts to show</p>
           <p className="text-xs text-muted-foreground mb-4 max-w-xs">
-            Connect and sync your social accounts to display your latest content here.
+            Nothing from this profile is public right now.
           </p>
           {isOwn && (
             <Button size="sm" asChild className="gap-2 btn-gradient">

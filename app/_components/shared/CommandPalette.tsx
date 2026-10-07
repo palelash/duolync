@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Search, Home, Megaphone, Compass, MessageSquare, Heart,
   FileText, Mail, Radio, Settings, LogOut, Users, Sparkles,
-  CornerDownLeft, X,
+  CornerDownLeft, X, Library,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ const CREATOR_NAV: NavItem[] = [
   { id: "c-dashboard",   label: "Dashboard",        description: "Your command center",               icon: Home,           group: "Navigate", path: "/creator/dashboard",    keywords: ["home", "overview"] },
   { id: "c-campaigns",   label: "Browse Campaigns", description: "Find brand campaigns to apply to",  icon: Megaphone,      group: "Navigate", path: "/creator/campaigns",    keywords: ["jobs", "deals", "work"] },
   { id: "c-discover",    label: "Discover",          description: "Find brands and fellow creators",   icon: Compass,        group: "Navigate", path: "/creator/discover",     keywords: ["search", "brands", "network"] },
+  { id: "c-content",     label: "Content",           description: "Manage and curate your content portfolio", icon: Library, group: "Navigate", path: "/creator/content",     keywords: ["portfolio", "featured", "hidden", "posts", "curation", "library"] },
   { id: "c-applications",label: "My Applications",  description: "Track all your campaign applications", icon: FileText,    group: "Navigate", path: "/creator/applications", keywords: ["applied", "status", "pending"] },
   { id: "c-invitations", label: "Invitations",       description: "Review brand collaboration invites", icon: Mail,          group: "Navigate", path: "/creator/invitations",  keywords: ["offers", "invited", "brand"] },
   { id: "c-social",      label: "Social Accounts",  description: "Connect and sync your platforms",   icon: Radio,          group: "Navigate", path: "/creator/presence",     keywords: ["instagram", "tiktok", "youtube", "platforms", "connect"] },

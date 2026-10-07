@@ -108,6 +108,7 @@ model CreatorProfile {
   contracts          Contract[]
   campaignEvents     CampaignEvent[]
   socialPosts        SocialPost[]
+  contentCurations   CreatorContentCuration[]
   profileClaims      ProfileClaim[]
   profileAliases     ProfileAlias[]
   user               User             @relation("CreatorProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
@@ -139,6 +140,26 @@ model SocialPost {
   @@index([creatorProfileId, platform])
   @@index([creatorProfileId, platform, dataSource])
   @@index([creatorProfileId, platform, providerPostId])
+}
+
+// ── Content Curation ─────────────────────────────────────────────────────────
+// Durable curation state keyed by (creatorProfileId + platform + providerPostId).
+// NOT a foreign key to SocialPost.id — SocialPost rows are deleted/recreated by
+// provider sync, but curation choices survive.
+// Missing row → visible=true, featured=false (V1 backward compat).
+
+model CreatorContentCuration {
+  id               String         @id @default(cuid())
+  creatorProfileId String
+  platform         String
+  providerPostId   String
+  isHidden         Boolean        @default(false)
+  isFeatured       Boolean        @default(false)
+  featuredOrder    Int?
+  creatorProfile   CreatorProfile @relation(fields: [creatorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorProfileId, platform, providerPostId], map: "cc_curation_identity_key")
+  @@index([creatorProfileId, isFeatured, featuredOrder], map: "cc_featured_order_idx")
 }
 
 model Account {
