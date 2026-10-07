@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { isAdmin } from "@/lib/roles";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { revokeTikTokAuthorization } from "@/lib/tiktok-revoke";
 import {
   normaliseUrl,
   isValidAvatarUrl,
@@ -172,6 +173,53 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
         error:
           "Cannot delete a user who owns a claimed creator profile. Use the ownership transfer workflow to reassign the profile first.",
       };
+    }
+
+    // ── TikTok revoke (OUTSIDE delete transaction) ────────────────────────────
+    // All existing admin/security guards and the claimed-profile guard have
+    // already run. Revoke only the already-authorized target userId.
+    const revokeResult = await revokeTikTokAuthorization(userId);
+
+    switch (revokeResult) {
+      case "temporary_failure":
+        return {
+          success: false,
+          data: null,
+          error:
+            "Account was not deleted because TikTok authorization could not be revoked. Please try again.",
+        };
+
+      case "configuration_error":
+        return {
+          success: false,
+          data: null,
+          error:
+            "Account was not deleted because TikTok authorization could not be revoked. Please contact support.",
+        };
+
+      case "revoked": {
+        // TikTok authorization is now dead at TikTok's end but the local
+        // PlatformToken row still exists. Remove it in its own committed
+        // operation BEFORE the user-delete transaction so that a later retry
+        // sees not_connected and can proceed safely.
+        try {
+          await db.platformToken.deleteMany({
+            where: { userId, platform: "tiktok" },
+          });
+        } catch (tokenErr) {
+          console.error(
+            "[deleteUser] Failed to delete TikTok PlatformToken after revoke",
+            tokenErr,
+          );
+          return { success: false, data: null, error: "Failed to delete user" };
+        }
+        break;
+      }
+
+      // already_revoked / not_connected — safe to proceed.
+      case "already_revoked":
+      case "not_connected":
+        break;
     }
 
     // ── Guard 2: Cancel any PENDING claims before deleting ────────────────────

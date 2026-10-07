@@ -521,7 +521,9 @@ export default function PrivacyPage() {
                 <strong>Delete your account:</strong> Go to{" "}
                 <strong>Settings → Account → Delete Account</strong>. Deleting your account initiates permanent removal
                 of your profile, social connections, and portfolio data. Active campaign obligations should be
-                resolved before deletion.
+                resolved before deletion. If TikTok is actively connected, Duolync attempts to revoke its TikTok
+                authorization before deleting the account. If that revocation cannot be completed, account deletion
+                does not proceed.
               </li>
               <li>
                 <strong>Data requests:</strong> For access, portability, or erasure requests that cannot be fulfilled
