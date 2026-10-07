@@ -339,6 +339,7 @@ import {
   selectPlatformSource,
   filterPostsBySource,
   calcAvgEngagementRate,
+  calcEngagementSampleSize,
   calcAvgViews,
   calcAvgLikes,
   calcAvgComments,
@@ -455,6 +456,10 @@ function buildPlatformSlice(
     platform !== "facebook_page"
       ? calcAvgEngagementRate(recentRawPosts, followers)
       : null;
+  const engagementSampleSize =
+    platform !== "facebook_page"
+      ? calcEngagementSampleSize(recentRawPosts, followers)
+      : null;
   const avgViews =
     platform !== "facebook_page" ? calcAvgViews(recentRawPosts) : null;
   const avgLikes =
@@ -534,6 +539,7 @@ function buildPlatformSlice(
     avgLikes,
     avgComments,
     syncedPostCount: selectedPosts.length,
+    engagementSampleSize,
     statsUpdatedAt,
     postsUpdatedAt,
     lifetimeLikes,

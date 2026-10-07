@@ -1,10 +1,16 @@
 "use client";
 
-import { Wifi, WifiOff } from "lucide-react";
+import { Wifi, WifiOff, Info } from "lucide-react";
 import type { PlatformAnalyticsSlice } from "@/lib/analytics-v2";
 import { fmtMetric, fmtPercent, fmtDate } from "@/lib/analytics-v2";
 import { PlatformSourceBadge } from "./PlatformSourceBadge";
 import { RecentContentList } from "./RecentContentList";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/_components/ui/tooltip";
 
 function IgIcon({ className }: { className?: string }) {
   return (
@@ -148,15 +154,33 @@ export function InstagramAnalytics({ slice }: InstagramAnalyticsProps) {
       {/* ── Content Averages ────────────────────────────────────────────── */}
       {(slice.avgEngagementRate !== null || slice.avgViews !== null) && (
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Avg Engagement</p>
-            <p className="text-2xl font-bold tabular-nums">
-              {fmtPercent(slice.avgEngagementRate)}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Based on recent posts
-            </p>
-          </div>
+          <TooltipProvider>
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
+              <div className="flex items-center gap-1 mb-1">
+                <p className="text-xs text-muted-foreground">Avg Engagement</p>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-3 h-3 text-muted-foreground cursor-help shrink-0" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[220px] text-xs">
+                    Average likes and comments per post relative to the
+                    platform&apos;s current follower count.
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <p className="text-2xl font-bold tabular-nums">
+                {fmtPercent(slice.avgEngagementRate)}
+              </p>
+              {slice.avgEngagementRate !== null &&
+                slice.engagementSampleSize !== null &&
+                slice.engagementSampleSize > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Based on {slice.engagementSampleSize} post
+                    {slice.engagementSampleSize !== 1 ? "s" : ""}
+                  </p>
+                )}
+            </div>
+          </TooltipProvider>
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
             <p className="text-xs text-muted-foreground mb-1">Avg Views</p>
             <p className="text-2xl font-bold tabular-nums">

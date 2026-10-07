@@ -1,10 +1,16 @@
 "use client";
 
-import { Wifi, WifiOff } from "lucide-react";
+import { Wifi, WifiOff, Info } from "lucide-react";
 import type { PlatformAnalyticsSlice } from "@/lib/analytics-v2";
 import { fmtMetric, fmtPercent, fmtDate } from "@/lib/analytics-v2";
 import { PlatformSourceBadge } from "./PlatformSourceBadge";
 import { RecentContentList } from "./RecentContentList";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/_components/ui/tooltip";
 
 function YouTubeIcon({ className }: { className?: string }) {
   return (
@@ -95,27 +101,51 @@ export function YouTubeAnalytics({ slice }: YouTubeAnalyticsProps) {
         slice.avgEngagementRate !== null) && (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
           <h3 className="text-sm font-semibold mb-3">Video Performance</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: "Avg Views", value: fmtMetric(slice.avgViews) },
-              { label: "Avg Likes", value: fmtMetric(slice.avgLikes) },
-              { label: "Avg Comments", value: fmtMetric(slice.avgComments) },
-              {
-                label: "Avg Engagement",
-                value: fmtPercent(slice.avgEngagementRate),
-              },
-            ].map((m) => (
-              <div
-                key={m.label}
-                className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 text-center"
-              >
-                <p className="text-lg font-bold tabular-nums">{m.value}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {m.label}
+          <TooltipProvider>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Avg Views", value: fmtMetric(slice.avgViews) },
+                { label: "Avg Likes", value: fmtMetric(slice.avgLikes) },
+                { label: "Avg Comments", value: fmtMetric(slice.avgComments) },
+              ].map((m) => (
+                <div
+                  key={m.label}
+                  className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 text-center"
+                >
+                  <p className="text-lg font-bold tabular-nums">{m.value}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {m.label}
+                  </p>
+                </div>
+              ))}
+              {/* Avg Engagement — tooltip + sample count */}
+              <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 text-center">
+                <p className="text-lg font-bold tabular-nums">
+                  {fmtPercent(slice.avgEngagementRate)}
                 </p>
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <p className="text-xs text-muted-foreground">Avg Engagement</p>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="w-3 h-3 text-muted-foreground cursor-help shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px] text-xs">
+                      Average likes and comments per video relative to the
+                      platform&apos;s current subscriber count.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                {slice.avgEngagementRate !== null &&
+                  slice.engagementSampleSize !== null &&
+                  slice.engagementSampleSize > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Based on {slice.engagementSampleSize} video
+                      {slice.engagementSampleSize !== 1 ? "s" : ""}
+                    </p>
+                  )}
               </div>
-            ))}
-          </div>
+            </div>
+          </TooltipProvider>
         </div>
       )}
 

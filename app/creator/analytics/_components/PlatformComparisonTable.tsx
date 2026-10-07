@@ -32,7 +32,7 @@ export function PlatformComparisonTable({
                 { label: "Followers", align: "right" },
                 { label: "Avg engagement", align: "right" },
                 { label: "Avg views", align: "right" },
-                { label: "Synced posts", align: "right" },
+                { label: "Content analyzed", align: "right" },
                 { label: "Source", align: "left" },
                 { label: "Updated", align: "right" },
               ].map((col) => (
