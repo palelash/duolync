@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import { revokeTikTokAuthorization } from "@/lib/tiktok-revoke";
 
 export type DeleteAccountResult =
   | { success: true; error: null }
@@ -41,6 +42,54 @@ export async function deleteAccount(): Promise<DeleteAccountResult> {
         error:
           "Your account owns a claimed creator profile. Please contact support to transfer or remove your profile before deleting your account.",
       };
+    }
+
+    // ── TikTok revoke (OUTSIDE delete transaction) ────────────────────────────
+    // Only reached after the claimed-profile guard — a deletion that is already
+    // forbidden must not revoke the user's TikTok connection while leaving their
+    // Duolync account intact.
+    const revokeResult = await revokeTikTokAuthorization(userId);
+
+    switch (revokeResult) {
+      case "temporary_failure":
+        return {
+          success: false,
+          error:
+            "Your account was not deleted because TikTok authorization could not be revoked. Please try again.",
+        };
+
+      case "configuration_error":
+        return {
+          success: false,
+          error:
+            "Your account was not deleted because TikTok authorization could not be revoked. Please contact support.",
+        };
+
+      case "revoked": {
+        // TikTok authorization is now dead at TikTok's end, but the local
+        // PlatformToken row still exists. Remove it in its own committed
+        // operation BEFORE the user-delete transaction so that a later retry
+        // (if the subsequent user delete fails) sees not_connected and can
+        // proceed safely without attempting to re-revoke an already-dead grant.
+        try {
+          await db.platformToken.deleteMany({
+            where: { userId, platform: "tiktok" },
+          });
+        } catch (tokenErr) {
+          console.error(
+            "[deleteAccount] Failed to delete TikTok PlatformToken after revoke",
+            tokenErr,
+          );
+          return { success: false, error: "Failed to delete account" };
+        }
+        break;
+      }
+
+      // already_revoked / not_connected — authorization is already gone or
+      // never existed; safe to proceed without extra cleanup.
+      case "already_revoked":
+      case "not_connected":
+        break;
     }
 
     // ── Guard 2: Cancel any PENDING claims before deleting ────────────────────
