@@ -74,7 +74,7 @@ export function getSourceBadgeInfo(
       return { type: "imported_data", label: "Imported data" };
     case "LEGACY_UNKNOWN":
     default:
-      return { type: "unverified", label: "Unverified" };
+      return { type: "unverified", label: "Unverified data" };
   }
 }
 
@@ -172,6 +172,13 @@ export interface PlatformAnalyticsSlice {
   avgComments: number | null;
 
   syncedPostCount: number;
+  /**
+   * Number of posts/videos that were eligible for the avgEngagementRate calculation.
+   * Eligible = same selected source, followerCount > 0, likes !== null,
+   *            comments !== null, postedAt !== null.
+   * null when followerCount is unavailable (engagement also null in that case).
+   */
+  engagementSampleSize: number | null;
 
   // Freshness — NEVER from CreatorProfile.lastSyncedAt
   statsUpdatedAt: string | null;
@@ -307,6 +314,33 @@ export function calcAvgEngagementRate(
     0,
   );
   return parseFloat((total / eligible.length).toFixed(2));
+}
+
+/**
+ * Count of posts that are eligible for avgEngagementRate.
+ *
+ * Mirrors calcAvgEngagementRate eligibility exactly:
+ *   - followerCount > 0
+ *   - likes !== null
+ *   - comments !== null
+ *   - postedAt !== null
+ *
+ * Returns null when followerCount is null or ≤ 0 (same guard as engagement).
+ * Returns 0 when followerCount is valid but no posts are eligible.
+ */
+export function calcEngagementSampleSize(
+  posts: RawSocialPost[],
+  followerCount: number | null,
+): number | null {
+  if (followerCount === null || followerCount <= 0) return null;
+  return posts
+    .filter(
+      (p) =>
+        p.likes !== null &&
+        p.comments !== null &&
+        p.postedAt !== null,
+    )
+    .slice(0, 10).length;
 }
 
 // ─── Content averages ─────────────────────────────────────────────────────────

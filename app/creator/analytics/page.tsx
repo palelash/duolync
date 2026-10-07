@@ -103,7 +103,7 @@ function AnalyticsPage() {
             Analytics
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Per-platform performance data from your connected accounts.
+            Per-platform performance from your available social data.
           </p>
         </div>
 
