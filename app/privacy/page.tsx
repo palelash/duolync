@@ -169,14 +169,20 @@ export default function PrivacyPage() {
               following categories of data from that platform:</strong>
             </p>
 
-            <h4>Instagram (via Meta Graph API)</h4>
+            <h4>Instagram (via Instagram Login and the official Instagram API)</h4>
+            <p>
+              With your authorization, Duolync retrieves data from your connected Instagram
+              professional (Business or Creator) account and stores synced data needed for
+              creator analytics and profile functionality. Available data depends on your
+              permissions and the metrics supported by Instagram.
+            </p>
             <ul>
               <li>Public profile information: username, display name, profile picture, and biography</li>
               <li>Follower count and following count</li>
               <li>Media posts: thumbnails, captions, media types, and post timestamps</li>
               <li>Engagement metrics: likes, comments, shares, and saves per post</li>
-              <li>Reach and impressions data (where authorized by your Instagram account type)</li>
-              <li>Story and Reel performance metrics (Insights API, business/creator accounts only)</li>
+              <li>Supported account Insights, including reach, views, accounts engaged, and total interactions</li>
+              <li>Supported recent post and Reel Insights, including views, reach, shares, and saves where available</li>
             </ul>
 
             <h4>TikTok (via TikTok for Developers API)</h4>
@@ -229,8 +235,10 @@ export default function PrivacyPage() {
 
             <h3>Data Refresh</h3>
             <p>
-              Social account data is periodically refreshed for as long as the OAuth
-              connection remains active. Refreshing ensures your portfolio metrics stay current.
+              For Instagram, connecting your account or using manual Refresh may retrieve updated
+              data from the official Instagram API while authorization is valid. Duolync does
+              not use Apify as a fallback for an authenticated Instagram connection. We do not
+              promise automatic background refresh of Instagram data.
             </p>
 
             <h3>Disconnecting Social Accounts</h3>
@@ -254,7 +262,16 @@ export default function PrivacyPage() {
                 stored social account data.
               </li>
               <li>
-                <strong>Other platforms (Instagram, YouTube, etc.):</strong> Disconnecting stops
+                <strong>Instagram:</strong> If authorization expires or becomes invalid, Duolync
+                removes the local connection and may preserve previously synced historical data
+                while showing the account as disconnected or requiring reconnection. Using
+                <strong> Disconnect / Remove data</strong> in Duolync deletes the local Instagram
+                token, synced stats and Insights, posts, and Instagram curation choices, and
+                updates profile follower totals. It does not revoke authorization at Meta.
+                To revoke provider-side access, remove Duolync in Instagram/Meta&apos;s connected-app settings.
+              </li>
+              <li>
+                <strong>Other platforms (YouTube, etc.):</strong> Disconnecting stops
                 future collection. Cached data may be retained until you remove it or delete your
                 Duolync account.
               </li>
@@ -513,8 +530,10 @@ export default function PrivacyPage() {
                 <strong>Social Connections</strong> to disconnect your social accounts and remove locally
                 synced data. For TikTok specifically, disconnecting inside Duolync also revokes
                 Duolync&apos;s authorization at TikTok&apos;s servers and immediately deletes your locally
-                synced TikTok stats and videos from Duolync as part of the same action. For other
-                platforms (Instagram, YouTube, etc.), disconnecting stops future data collection and
+                synced TikTok stats and videos from Duolync as part of the same action. For Instagram,
+                <strong> Disconnect / Remove data</strong> deletes your locally synced Instagram dataset;
+                revoke provider-side authorization separately in Instagram/Meta&apos;s connected-app settings.
+                For other platforms (YouTube, etc.), disconnecting stops future data collection and
                 removes cached data from Duolync.
               </li>
               <li>
@@ -523,7 +542,10 @@ export default function PrivacyPage() {
                 of your profile, social connections, and portfolio data. Active campaign obligations should be
                 resolved before deletion. If TikTok is actively connected, Duolync attempts to revoke its TikTok
                 authorization before deleting the account. If that revocation cannot be completed, account deletion
-                does not proceed.
+                does not proceed. Instagram tokens, synced stats and Insights, posts, and curation
+                choices are removed with the deleted account/profile. Deletion does not require a
+                live Instagram token or a Meta revoke call; remove Duolync in Instagram/Meta&apos;s
+                connected-app settings to revoke any remaining provider-side authorization.
               </li>
               <li>
                 <strong>Data requests:</strong> For access, portability, or erasure requests that cannot be fulfilled

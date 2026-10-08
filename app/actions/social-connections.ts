@@ -140,6 +140,9 @@ export async function getOAuthConnectedPlatformsAction(): Promise<{
 export async function removePlatformAction(
   platform: string,
 ): Promise<{ error: string | null }> {
+  if (platform === "instagram") {
+    return { error: "use_instagram_disconnect" };
+  }
   // ── TikTok guard ────────────────────────────────────────────────────────────
   // TikTok requires provider-level OAuth revoke before local data deletion.
   // The generic path bypasses that step. Any caller that passes "tiktok" here

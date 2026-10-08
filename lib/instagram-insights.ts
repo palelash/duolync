@@ -19,19 +19,23 @@
  * @server-only — Do NOT import this file in client components (pages/hooks/UI).
  *                This module calls the Instagram Graph API using a secret token.
  */
+import "server-only";
+
 import { Prisma } from "@/lib/generated/prisma";
-import { INSTAGRAM_GRAPH } from "./instagram-auth";
+import { INSTAGRAM_GRAPH, classifyInstagramGraphFailure } from "./instagram-auth";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
 /**
  * Reflects the state of the instagram_business_manage_insights permission.
  *
- *   "granted"  — API responded successfully; insights data is available.
- *   "missing"  — API returned a known permission-error code (10 / 200 / 190).
- *   "unknown"  — Network error, unexpected status, or parse failure.
+ *   "granted"      — API responded successfully; insights data is available.
+ *   "missing"      — API returned a permission-denial code (10 / 200).
+ *   "auth_invalid" — API returned OAuth error 190. This is reauth-required,
+ *                    not a missing insights permission.
+ *   "unknown"      — Network error, unexpected status, or parse failure.
  */
-export type InsightsPermissionState = "granted" | "missing" | "unknown";
+export type InsightsPermissionState = "granted" | "missing" | "auth_invalid" | "unknown";
 
 /**
  * 28-day rolling account insights snapshot.
@@ -57,11 +61,7 @@ export interface AccountInsightsResult {
   /** true if the HTTP call completed without error and the API responded. */
   available: boolean;
   permissionState: InsightsPermissionState;
-  /**
-   * Populated when available === true and the API returned at least one
-   * metric in the data array.
-   * null when available === true but data was empty (not enough data).
-   */
+  /** Successful empty responses produce a dated snapshot of unavailable/null values. */
   snapshot: AccountInsightsSnapshot | null;
 }
 
@@ -73,6 +73,7 @@ export interface AccountInsightsResult {
  * (e.g., unsupported for that media type) — never a fabricated zero.
  */
 export interface MediaInsightsMetrics {
+  fetchedAt?: string;
   views: number | null;
   reach: number | null;
   shares: number | null;
@@ -85,11 +86,7 @@ export interface MediaInsightsMetrics {
 export interface MediaInsightsResult {
   available: boolean;
   permissionState: InsightsPermissionState;
-  /**
-   * Populated when available === true and the API returned at least one
-   * metric in the data array.
-   * null when available === true but data was empty (no data for this media).
-   */
+  /** Successful empty responses produce null metric values, preserving zero when supplied. */
   metrics: MediaInsightsMetrics | null;
 }
 
@@ -98,15 +95,17 @@ export interface MediaInsightsResult {
 const WINDOW_DAYS = 28 as const;
 
 /**
- * Meta API error codes that indicate the requesting app lacks the
- * instagram_business_manage_insights permission.
- * Code 10  = Application does not have permission.
- * Code 200 = Permissions error.
- * Code 190 = Invalid OAuth access token.
- *
- * We intentionally do NOT log the raw error_description string.
+ * Maps a Graph error code onto the insights permission state.
+ * Codes 10 and 200 are permission denials.
+ * Code 190 is invalid OAuth — reauth, never "insights permission missing".
+ * The raw error_description is never logged.
  */
-const INSIGHTS_PERMISSION_CODES = new Set([10, 200, 190]);
+function insightsErrorState(code: unknown): InsightsPermissionState {
+  const kind = classifyInstagramGraphFailure({ errorCode: code });
+  if (kind === "auth_invalid") return "auth_invalid";
+  if (kind === "permission_denied") return "missing";
+  return "unknown";
+}
 
 // ─── Safe parsing helpers ─────────────────────────────────────────────────────
 
@@ -137,7 +136,7 @@ export function extractTotalValue(
 
   const value = (tv as Record<string, unknown>)["value"];
   // typeof check ensures we accept 0 but not undefined/null/string
-  return typeof value === "number" ? value : null;
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 /**
@@ -169,7 +168,7 @@ export function extractLifetimeValue(
   const tv = item["total_value"];
   if (typeof tv === "object" && tv !== null) {
     const v = (tv as Record<string, unknown>)["value"];
-    if (typeof v === "number") return v;
+    if (typeof v === "number" && Number.isFinite(v)) return v;
   }
 
   // Path 2: values[0].value
@@ -178,229 +177,107 @@ export function extractLifetimeValue(
     const first = values[0] as Record<string, unknown> | undefined;
     if (first) {
       const v = first["value"];
-      if (typeof v === "number") return v;
+      if (typeof v === "number" && Number.isFinite(v)) return v;
     }
   }
 
   return null;
 }
 
-/**
- * Returns true when the error code matches a known insights permission denial.
- * Does NOT inspect error_description or error_message strings.
- */
-function isPermissionErrorCode(code: unknown): boolean {
-  return typeof code === "number" && INSIGHTS_PERMISSION_CODES.has(code);
-}
-
 // ─── Account insights ─────────────────────────────────────────────────────────
 
-/**
- * Fetches a 28-day rolling account insights snapshot.
- *
- * Endpoint: graph.instagram.com/{ig-user-id}/insights
- * Request model:
- *   period=day
- *   metric_type=total_value
- *   since=<unix epoch>   (now − 28 days)
- *   until=<unix epoch>   (now)
- *
- * This is the only supported way to get a 28-day window total.
- * period=week / days_28 / lifetime do NOT produce the same result.
- *
- * Metrics requested: reach, views, profile_views, accounts_engaged,
- *                    total_interactions.
- *
- * A single invalid metric does not fail the whole call — missing metrics
- * are returned as null on the snapshot.
- *
- * NEVER logs the access_token or any URL segment containing the token.
+/** Current Meta references verified 2026-10-09:
+ * /docs/instagram-platform/api-reference/instagram-user/insights/
+ * /docs/instagram-platform/reference/instagram-media/insights/
+ * Incompatible metric/breakdown combinations can fail the whole request.
+ * Account profile_views is absent from the current supported metrics table.
  */
-export async function fetchAccountInsights(
-  igUserId: string,
-  accessToken: string,
-): Promise<AccountInsightsResult> {
+function validInsightItem(item: unknown, format: "account" | "media"): boolean {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+  const metric = item as Record<string, unknown>;
+  if (typeof metric.name !== "string" || metric.name.length === 0) return false;
+  const validValue = (value: unknown) => typeof value === "number"
+    && Number.isFinite(value) && value >= 0;
+  const hasTotal = Object.prototype.hasOwnProperty.call(metric, "total_value");
+  const hasValues = Object.prototype.hasOwnProperty.call(metric, "values");
+  // An absent metric is unavailable. A present metric must carry the
+  // documented numeric structure, never an undefined/null placeholder.
+  if (format === "account" ? !hasTotal : !hasTotal && !hasValues) return false;
+  if (hasTotal) {
+    if (!metric.total_value || typeof metric.total_value !== "object" || Array.isArray(metric.total_value)) return false;
+    if (!validValue((metric.total_value as Record<string, unknown>).value)) return false;
+  }
+  if (hasValues) {
+    if (!Array.isArray(metric.values) || metric.values.length === 0) return false;
+    if (!metric.values.every(value => value && typeof value === "object"
+      && !Array.isArray(value) && validValue((value as Record<string, unknown>).value))) return false;
+  }
+  return true;
+}
+
+async function readInsights(url: URL, format: "account" | "media"): Promise<{ state: InsightsPermissionState; data: unknown[] | null }> {
+  try {
+    const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(20_000) });
+    const body: unknown = await res.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) return { state: "unknown", data: null };
+    const parsed = body as Record<string, unknown>;
+    if (parsed.error) {
+      const error = parsed.error as Record<string, unknown>;
+      // Auth classification precedes HTTP status, including errors in HTTP 200.
+      const state = insightsErrorState(error?.code);
+      return { state: state === "auth_invalid" ? state : res.status === 429 || res.status >= 500 ? "unknown" : state, data: null };
+    }
+    if (!res.ok || !Array.isArray(parsed.data) || !parsed.data.every(item => validInsightItem(item, format))) return { state: "unknown", data: null };
+    return { state: "granted", data: parsed.data };
+  } catch {
+    return { state: "unknown", data: null };
+  }
+}
+
+export async function fetchAccountInsights(igUserId: string, accessToken: string): Promise<AccountInsightsResult> {
   const until = Math.floor(Date.now() / 1000);
   const since = until - WINDOW_DAYS * 24 * 60 * 60;
-
-  // Build URL without logging token-bearing form
   const url = new URL(`${INSTAGRAM_GRAPH}/${igUserId}/insights`);
-  url.searchParams.set(
-    "metric",
-    "reach,views,profile_views,accounts_engaged,total_interactions",
-  );
+  url.searchParams.set("metric", "reach,views,accounts_engaged,total_interactions");
   url.searchParams.set("period", "day");
   url.searchParams.set("metric_type", "total_value");
   url.searchParams.set("since", String(since));
   url.searchParams.set("until", String(until));
   url.searchParams.set("access_token", accessToken);
-
-  let res: Response;
-  try {
-    res = await fetch(url.toString());
-  } catch {
-    console.warn("[instagram-insights] network error fetching account insights");
-    return { available: false, permissionState: "unknown", snapshot: null };
-  }
-
-  let body: unknown;
-  try {
-    body = await res.json();
-  } catch {
-    console.warn("[instagram-insights] account insights: failed to parse JSON response");
-    return { available: false, permissionState: "unknown", snapshot: null };
-  }
-
-  const parsed = body as Record<string, unknown>;
-
-  // API-level error — check before HTTP status (error may arrive with 200)
-  if (parsed["error"]) {
-    const err = parsed["error"] as Record<string, unknown>;
-    const code = err["code"];
-    if (isPermissionErrorCode(code)) {
-      console.warn(
-        "[instagram-insights] account insights: permission not granted (error code:",
-        code,
-        ")",
-      );
-      return { available: false, permissionState: "missing", snapshot: null };
-    }
-    // Other API error — do not expose raw description
-    console.warn("[instagram-insights] account insights: API error code:", code);
-    return { available: false, permissionState: "unknown", snapshot: null };
-  }
-
-  if (!res.ok) {
-    console.warn("[instagram-insights] account insights: HTTP", res.status);
-    return { available: false, permissionState: "unknown", snapshot: null };
-  }
-
-  const data = parsed["data"];
-  if (!Array.isArray(data)) {
-    console.warn("[instagram-insights] account insights: unexpected response shape");
-    return { available: false, permissionState: "unknown", snapshot: null };
-  }
-
-  // Empty data array = permission may be granted but account has insufficient data.
-  // MUST NOT become numeric zero.
-  if (data.length === 0) {
-    console.warn("[instagram-insights] account insights: empty data array (not enough data)");
-    return { available: true, permissionState: "granted", snapshot: null };
-  }
-
-  const snapshot: AccountInsightsSnapshot = {
-    windowDays: 28,
-    since,
-    until,
-    fetchedAt: new Date().toISOString(),
-    reach: extractTotalValue(data, "reach"),
-    views: extractTotalValue(data, "views"),
-    profileViews: extractTotalValue(data, "profile_views"),
-    accountsEngaged: extractTotalValue(data, "accounts_engaged"),
-    totalInteractions: extractTotalValue(data, "total_interactions"),
-  };
-
-  return { available: true, permissionState: "granted", snapshot };
+  const result = await readInsights(url, "account");
+  if (result.data === null) return { available: false, permissionState: result.state, snapshot: null };
+  return { available: true, permissionState: "granted", snapshot: {
+    windowDays: 28, since, until, fetchedAt: new Date().toISOString(),
+    reach: extractTotalValue(result.data, "reach"), views: extractTotalValue(result.data, "views"),
+    profileViews: null,
+    accountsEngaged: extractTotalValue(result.data, "accounts_engaged"),
+    totalInteractions: extractTotalValue(result.data, "total_interactions"),
+  } };
 }
 
-// ─── Media insights ───────────────────────────────────────────────────────────
+/** Product type is authoritative; unknown types are unavailable without guessing. */
+export function instagramMediaInsightMetrics(mediaType: string | null, productType: string | null): string[] {
+  if (!["IMAGE", "VIDEO", "CAROUSEL_ALBUM"].includes(mediaType ?? "")) return [];
+  if (productType === "FEED") return ["views", "reach", "shares", "saved", "profile_visits"];
+  if (productType === "REELS") return ["views", "reach", "shares", "saved"];
+  if (productType === "STORY") return ["views", "reach", "shares", "profile_visits"];
+  return [];
+}
 
-/**
- * Fetches lifetime media insights for a single Instagram media object.
- *
- * Endpoint: graph.instagram.com/{media-id}/insights
- * Metrics requested: views, reach, shares, saved, profile_visits
- *
- * IMPORTANT:
- *   • The correct metric name is `saved`, NOT `saves`.
- *   • Metrics unsupported by the media type (e.g., reels-only metrics)
- *     are returned as null, not error. The whole call may still succeed.
- *   • Reel-specific metrics (plays, video_plays) are intentionally NOT requested.
- *
- * NEVER logs the access_token or any URL segment containing the token.
- */
-export async function fetchMediaInsights(
-  mediaId: string,
-  accessToken: string,
-): Promise<MediaInsightsResult> {
+export async function fetchMediaInsights(mediaId: string, accessToken: string, mediaType: string | null = null, productType: string | null = null): Promise<MediaInsightsResult> {
+  const metrics = instagramMediaInsightMetrics(mediaType, productType);
+  // No verified strategy means no request and no newly fetched metric payload.
+  if (!metrics.length) return { available: false, permissionState: "granted", metrics: null };
   const url = new URL(`${INSTAGRAM_GRAPH}/${mediaId}/insights`);
-  // `saved` is the confirmed correct metric name for saves on feed media.
-  url.searchParams.set("metric", "views,reach,shares,saved,profile_visits");
+  url.searchParams.set("metric", metrics.join(","));
   url.searchParams.set("access_token", accessToken);
-
-  let res: Response;
-  try {
-    res = await fetch(url.toString());
-  } catch {
-    console.warn("[instagram-insights] network error fetching media insights for media:", mediaId);
-    return { available: false, permissionState: "unknown", metrics: null };
-  }
-
-  let body: unknown;
-  try {
-    body = await res.json();
-  } catch {
-    console.warn("[instagram-insights] media insights: failed to parse JSON for media:", mediaId);
-    return { available: false, permissionState: "unknown", metrics: null };
-  }
-
-  const parsed = body as Record<string, unknown>;
-
-  if (parsed["error"]) {
-    const err = parsed["error"] as Record<string, unknown>;
-    const code = err["code"];
-    if (isPermissionErrorCode(code)) {
-      console.warn(
-        "[instagram-insights] media insights: permission not granted for media:",
-        mediaId,
-        "(error code:",
-        code,
-        ")",
-      );
-      return { available: false, permissionState: "missing", metrics: null };
-    }
-    console.warn(
-      "[instagram-insights] media insights: API error code:",
-      code,
-      "for media:",
-      mediaId,
-    );
-    return { available: false, permissionState: "unknown", metrics: null };
-  }
-
-  if (!res.ok) {
-    console.warn(
-      "[instagram-insights] media insights: HTTP",
-      res.status,
-      "for media:",
-      mediaId,
-    );
-    return { available: false, permissionState: "unknown", metrics: null };
-  }
-
-  const data = parsed["data"];
-  if (!Array.isArray(data)) {
-    console.warn("[instagram-insights] media insights: unexpected response shape for media:", mediaId);
-    return { available: false, permissionState: "unknown", metrics: null };
-  }
-
-  // Empty data = permission likely granted but no data (e.g. media too recent).
-  // MUST NOT become numeric zero.
-  if (data.length === 0) {
-    console.warn("[instagram-insights] media insights: empty data for media:", mediaId);
-    return { available: true, permissionState: "granted", metrics: null };
-  }
-
-  const metrics: MediaInsightsMetrics = {
-    views: extractLifetimeValue(data, "views"),
-    reach: extractLifetimeValue(data, "reach"),
-    shares: extractLifetimeValue(data, "shares"),
-    // "saved" is correct — never request "saves"
-    saved: extractLifetimeValue(data, "saved"),
-    profileVisits: extractLifetimeValue(data, "profile_visits"),
-  };
-
-  return { available: true, permissionState: "granted", metrics };
+  const result = await readInsights(url, "media");
+  if (result.data === null) return { available: false, permissionState: result.state, metrics: null };
+  const value = (name: string) => metrics.includes(name) ? extractLifetimeValue(result.data!, name) : null;
+  return { available: true, permissionState: "granted", metrics: {
+    views: value("views"), reach: value("reach"), shares: value("shares"),
+    saved: value("saved"), profileVisits: value("profile_visits"),
+  } };
 }
 
 // ─── Raw JSON merge helper ────────────────────────────────────────────────────
@@ -412,12 +289,12 @@ export async function fetchMediaInsights(
  *   • Existing identity fields (instagram_id, username, name, …) are overwritten
  *     with fresh values passed in `identityFields`.
  *   • Existing `insights` sub-object is preserved unless a new one is provided.
- *   • Within `insights`, existing sub-keys (account, media) are preserved unless
- *     a new value is provided.
+ *   • Successful account/media snapshots replace old fields, including nulls.
+ *   • Permission-denied account snapshots retain their original fetchedAt.
+ *   • preserveMedia keeps denied/skipped snapshots while replacing successful ids.
  *
- * This guarantees that:
- *   • A profile reconnect does NOT erase raw.insights.
- *   • An insights sync does NOT erase raw identity metadata.
+ * The caller supplies existing JSON only for the same official account.
+ * Historical insights survive permission denial without acquiring new timestamps.
  */
 export function mergeInstagramRaw(
   existing: Prisma.InputJsonObject,
@@ -431,23 +308,12 @@ export function mergeInstagramRaw(
   },
   newAccountSnapshot?: AccountInsightsSnapshot | null,
   newMediaInsights?: Record<string, MediaInsightsMetrics> | null,
+  options: { preserveMedia?: boolean } = {},
 ): Prisma.InputJsonObject {
   const existingInsights: Prisma.InputJsonObject =
     typeof existing["insights"] === "object" && existing["insights"] !== null
       ? (existing["insights"] as Prisma.InputJsonObject)
       : {};
-
-  const existingMedia: Prisma.InputJsonObject =
-    typeof existingInsights["media"] === "object" && existingInsights["media"] !== null
-      ? (existingInsights["media"] as Prisma.InputJsonObject)
-      : {};
-
-  // Each MediaInsightsMetrics value contains only number | null fields, which
-  // are structurally valid Prisma.InputJsonObject values.
-  const mergedMedia: Prisma.InputJsonObject = {
-    ...existingMedia,
-    ...(newMediaInsights as Prisma.InputJsonObject | null | undefined ?? {}),
-  };
 
   // AccountInsightsSnapshot fields are all string | number | null — valid JSON.
   // Two-step cast (via unknown) is required because TypeScript cannot verify
@@ -458,7 +324,11 @@ export function mergeInstagramRaw(
     ...(newAccountSnapshot !== undefined
       ? { account: newAccountSnapshot as unknown as Prisma.InputJsonObject }
       : {}),
-    ...(Object.keys(mergedMedia).length > 0 ? { media: mergedMedia } : {}),
+    ...(newMediaInsights !== undefined ? { media: {
+      ...(options.preserveMedia && typeof existingInsights.media === "object" && existingInsights.media !== null
+        ? existingInsights.media as Prisma.InputJsonObject : {}),
+      ...newMediaInsights as unknown as Prisma.InputJsonObject,
+    } } : {}),
   };
 
   return {
