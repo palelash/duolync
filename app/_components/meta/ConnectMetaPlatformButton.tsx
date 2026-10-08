@@ -67,6 +67,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid_state:           "Invalid authorisation state. Please try again.",
   no_instagram_account:    "No Instagram Professional account was found.",
   not_professional_account:"A Creator or Business Instagram account is required.",
+  identity_mismatch:       "The Instagram account did not match the authorized user. Nothing was saved.",
+  reauth_required:         "Instagram authorization is no longer valid. Please connect again.",
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────

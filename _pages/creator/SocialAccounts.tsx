@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { Link2, Trash2, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,8 @@ import {
   removePlatformAction,
   type ConnectedAccount,
 } from "@/app/actions/social-connections";
+import { disconnectInstagramAction } from "@/app/actions/instagram-disconnect";
+import { refreshInstagramDataAction } from "@/app/actions/instagram-sync";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
@@ -78,11 +80,15 @@ function MetaPlatformCard({
   account,
   onRemove,
   onConnected,
+  onRefresh,
+  refreshing,
 }: {
   platform: MetaPlatform;
   account: ConnectedAccount | undefined;
   onRemove: (platform: string) => void;
   onConnected: () => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
 }) {
   const display = PLATFORM_DISPLAY[platform]!;
   // Connected = creator authorized via official OAuth. Public-data accounts are NOT connected.
@@ -139,16 +145,24 @@ function MetaPlatformCard({
             platform={platform}
             isConnected={isConnected}
             onConnected={onConnected}
+            label={platform === "instagram" && !isConnected && account?.dataSource === "OFFICIAL_API" ? "Reconnect Instagram" : undefined}
             className="h-8 text-xs"
           />
         </Suspense>
+        {platform === "instagram" && isConnected && onRefresh && (
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={onRefresh} disabled={refreshing}>
+            {refreshing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+            {refreshing ? "Refreshing…" : "Refresh data"}
+          </Button>
+        )}
         {account && (
           <Button
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
-            title={`Disconnect ${display.label}`}
-            onClick={() => onRemove(platform)}
+            title={platform === "instagram" && !isConnected ? "Remove Instagram data" : `Disconnect ${display.label}`}
+            aria-label={platform === "instagram" && !isConnected ? "Remove Instagram data" : `Disconnect ${display.label}`}
+            onClick={() => onRemove(platform === "instagram" && !isConnected ? "instagram_history" : platform)}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
@@ -427,6 +441,9 @@ const SocialAccounts = () => {
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   // Per-button loading state for TikTok manual refresh
+  const [instagramRefreshing, setInstagramRefreshing] = useState(false);
+  const instagramRefreshLock = useRef(false);
+  const instagramRemoveLock = useRef(false);
   const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
 
   // ── Load from DB ────────────────────────────────────────────────────────
@@ -440,6 +457,39 @@ const SocialAccounts = () => {
     }
     setLoading(false);
   }, [toast]);
+
+  const handleInstagramRefresh = async () => {
+    if (instagramRefreshLock.current) return;
+    instagramRefreshLock.current = true;
+    setInstagramRefreshing(true);
+    try {
+      const result = await refreshInstagramDataAction();
+      if (result.ok) {
+        toast({ title: "Instagram refreshed ✓", description: result.insightsUnavailable
+          ? "Your account and posts are updated. Some insights are unavailable."
+          : "Your Instagram data has been updated." });
+        await loadAccounts();
+      } else {
+        const messages: Record<string, string> = {
+          reauth_required: "Please reconnect Instagram to refresh your data.",
+          not_connected: "Please connect Instagram to refresh your data.",
+          identity_mismatch: "Instagram returned a different account. Your existing data was preserved.",
+          unauthorized: "Please sign in to refresh Instagram.",
+          configuration_failure: "Instagram refresh is not configured. Please contact support.",
+          not_professional_account: "A Creator or Business Instagram account is required.",
+          temporary_failure: "Could not update Instagram right now. Please try again later.",
+        };
+        toast({ title: result.reason === "reauth_required" || result.reason === "not_connected" ? "Reconnect Instagram" : "Refresh failed",
+          description: messages[result.reason], variant: "destructive" });
+        if (result.reason === "reauth_required" || result.reason === "not_connected") await loadAccounts();
+      }
+    } catch {
+      toast({ title: "Refresh failed", description: "Could not update Instagram right now. Please try again later.", variant: "destructive" });
+    } finally {
+      instagramRefreshLock.current = false;
+      setInstagramRefreshing(false);
+    }
+  };
 
   // ── TikTok manual data Refresh ──────────────────────────────────────────
   const handleTikTokRefresh = useCallback(async () => {
@@ -488,6 +538,32 @@ const SocialAccounts = () => {
   // ── Disconnect ──────────────────────────────────────────────────────────
   const handleRemoveConfirm = async () => {
     if (!confirmRemove) return;
+    if (confirmRemove === "instagram" || confirmRemove === "instagram_history") {
+      if (instagramRemoveLock.current) return;
+      instagramRemoveLock.current = true;
+      setRemoving(true);
+      try {
+        const result = await disconnectInstagramAction();
+        if (!result.ok) {
+          const description = result.reason === "unauthorized"
+            ? "Please sign in to remove Instagram data."
+            : result.reason === "profile_not_found"
+              ? "Your creator profile could not be found."
+              : "Could not remove Instagram data. Please try again.";
+          toast({ title: "Could not remove Instagram data", description, variant: "destructive" });
+          return;
+        }
+        setConfirmRemove(null);
+        toast({ title: "Instagram data removed", description: "Your Instagram connection and synced data have been removed from Duolync." });
+        await loadAccounts();
+      } catch {
+        toast({ title: "Could not confirm Instagram removal", description: "Please try again.", variant: "destructive" });
+      } finally {
+        instagramRemoveLock.current = false;
+        setRemoving(false);
+      }
+      return;
+    }
     setRemoving(true);
 
     // Both "tiktok" (connected) and "tiktok_history" (dead-auth, history-only) use the
@@ -589,6 +665,8 @@ const SocialAccounts = () => {
                   account={accountByPlatform.get(p)}
                   onRemove={(platform) => setConfirmRemove(platform)}
                   onConnected={loadAccounts}
+                  onRefresh={p === "instagram" ? handleInstagramRefresh : undefined}
+                  refreshing={p === "instagram" ? instagramRefreshing : undefined}
                 />
               ))}
             </div>
@@ -722,14 +800,24 @@ const SocialAccounts = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirmRemove === "tiktok"
-                ? "Disconnect TikTok?"
-                : confirmRemove === "tiktok_history"
-                  ? "Remove TikTok data?"
-                  : `Disconnect ${confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?`}
+              {confirmRemove === "instagram_history"
+                ? "Remove Instagram data?"
+                : confirmRemove === "instagram"
+                  ? "Disconnect Instagram?"
+                  : confirmRemove === "tiktok"
+                    ? "Disconnect TikTok?"
+                    : confirmRemove === "tiktok_history"
+                      ? "Remove TikTok data?"
+                      : `Disconnect ${confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmRemove === "tiktok" ? (
+              {confirmRemove === "instagram" || confirmRemove === "instagram_history" ? (
+                <>
+                  {confirmRemove === "instagram_history"
+                    ? "Remove previously synced Instagram data and Featured/Hidden selections from Duolync?"
+                    : "Disconnect Instagram and remove its synced data and Featured/Hidden selections from Duolync?"} This cannot be undone. To remove Duolync&apos;s authorization from Instagram itself, remove the app from your Instagram/Meta connected-app settings.
+                </>
+              ) : confirmRemove === "tiktok" ? (
                 <>
                   Disconnecting TikTok will revoke Duolync&apos;s access to your TikTok account
                   and delete synced TikTok stats and videos from Duolync.
@@ -758,7 +846,7 @@ const SocialAccounts = () => {
               className="bg-red-600 hover:bg-red-700 text-white gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              {confirmRemove === "tiktok_history" ? "Remove data" : "Disconnect"}
+              {confirmRemove === "tiktok_history" || confirmRemove === "instagram_history" ? "Remove data" : "Disconnect"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -22,6 +22,8 @@ import {
 } from "@/app/actions/apify-sync";
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
 import { removePlatformAction, getConnectedAccountsAction } from "@/app/actions/social-connections";
+import { disconnectInstagramAction } from "@/app/actions/instagram-disconnect";
+import { refreshInstagramDataAction } from "@/app/actions/instagram-sync";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
@@ -308,9 +310,9 @@ function PlatformCard({
   /** When true the sync/refresh button shows a loading spinner. */
   refreshing?: boolean;
   /**
-   * TikTok history-only state: called when the user wants to remove leftover
+   * Official history-only state: called when the user wants to remove leftover
    * OFFICIAL_API data after the PlatformToken has already been revoked/expired.
-   * Only pass this for TikTok when previouslyConnectedPlatformSet contains "tiktok".
+   * Pass this when historical official data remains without an active connection.
    */
   onRemoveHistory?: () => void;
 }) {
@@ -402,15 +404,15 @@ function PlatformCard({
               >
                 <Zap className="w-3.5 h-3.5" /> {reconnect ? "Reconnect" : "Connect"}
               </Button>
-              {/* History-only TikTok: secondary destructive action to remove leftover data */}
+              {/* History-only official data: secondary destructive action to remove leftover data */}
               {onRemoveHistory && (
                 <Button
                   size="icon"
                   variant="ghost"
                   onClick={onRemoveHistory}
                   className="w-8 h-8 text-zinc-600 hover:text-red-400 hover:bg-red-500/10"
-                  title="Remove TikTok data"
-                  aria-label="Remove previously synced TikTok data"
+                  title={`Remove ${platform.label} data`}
+                  aria-label={`Remove previously synced ${platform.label} data`}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
@@ -528,6 +530,9 @@ const PresencePage = () => {
   const [removing, setRemoving] = useState(false);
   const [loading, setLoading] = useState(true);
   // Per-button loading state for TikTok manual refresh (does not trigger page skeleton)
+  const [instagramRefreshing, setInstagramRefreshing] = useState(false);
+  const instagramRefreshLock = useRef(false);
+  const instagramRemoveLock = useRef(false);
   const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
   // OAuth-connected platform set — derived from PlatformToken. This is the sole
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
@@ -557,16 +562,13 @@ const PresencePage = () => {
       setOauthPlatformSet(
         new Set(accountsRes.data.filter((a) => a.connectedVia === "oauth").map((a) => a.platform)),
       );
-      // Detect TikTok with OFFICIAL_API history but no current oauth token —
-      // show "Reconnect" rather than "Connect" for TikTok only.
-      // Other providers (Instagram, YouTube, etc.) use their own pre-existing
-      // OAuth reconnect flow and must not be affected by this logic.
+      // Official Instagram/TikTok history survives lost authorization; show Reconnect.
       setPreviouslyConnectedPlatformSet(
         new Set(
           accountsRes.data
             .filter(
               (a) =>
-                a.platform === "tiktok" &&
+                (a.platform === "tiktok" || a.platform === "instagram") &&
                 a.connectedVia !== "oauth" &&
                 a.dataSource === "OFFICIAL_API",
             )
@@ -617,6 +619,8 @@ const PresencePage = () => {
       oauth_error:             "Instagram authorisation failed. Please try again.",
       no_instagram_account:    "No Instagram Professional account was found.",
       not_professional_account:"A Creator or Business Instagram account is required.",
+      identity_mismatch:       "The Instagram account did not match the authorized user. Nothing was saved.",
+      reauth_required:         "Instagram authorization is no longer valid. Please connect again.",
     };
 
     const clean = new URL(window.location.href);
@@ -720,6 +724,39 @@ const PresencePage = () => {
     window.location.href = "/api/auth/tiktok/start";
   }, []);
 
+  const handleInstagramRefresh = async () => {
+    if (instagramRefreshLock.current) return;
+    instagramRefreshLock.current = true;
+    setInstagramRefreshing(true);
+    try {
+      const result = await refreshInstagramDataAction();
+      if (result.ok) {
+        toast({ title: "Instagram refreshed ✓", description: result.insightsUnavailable
+          ? "Your account and posts are updated. Some insights are unavailable."
+          : "Your Instagram data has been updated." });
+        await reload();
+      } else {
+        const messages: Record<string, string> = {
+          reauth_required: "Please reconnect Instagram to refresh your data.",
+          not_connected: "Please connect Instagram to refresh your data.",
+          identity_mismatch: "Instagram returned a different account. Your existing data was preserved.",
+          unauthorized: "Please sign in to refresh Instagram.",
+          configuration_failure: "Instagram refresh is not configured. Please contact support.",
+          not_professional_account: "A Creator or Business Instagram account is required.",
+          temporary_failure: "Could not update Instagram right now. Please try again later.",
+        };
+        toast({ title: result.reason === "reauth_required" || result.reason === "not_connected" ? "Reconnect Instagram" : "Refresh failed",
+          description: messages[result.reason], variant: "destructive" });
+        if (result.reason === "reauth_required" || result.reason === "not_connected") await reload();
+      }
+    } catch {
+      toast({ title: "Refresh failed", description: "Could not update Instagram right now. Please try again later.", variant: "destructive" });
+    } finally {
+      instagramRefreshLock.current = false;
+      setInstagramRefreshing(false);
+    }
+  };
+
   // ── TikTok manual data Refresh (no OAuth) ────────────────────────────────
   // Called when TikTok is already OAuth-connected. Fetches fresh stats and
   // videos without starting a new OAuth flow.
@@ -810,6 +847,32 @@ const PresencePage = () => {
 
   const handleRemoveConfirm = async () => {
     if (!removeTarget) return;
+    if (removeTarget === "instagram" || removeTarget === "instagram_history") {
+      if (instagramRemoveLock.current) return;
+      instagramRemoveLock.current = true;
+      setRemoving(true);
+      try {
+        const result = await disconnectInstagramAction();
+        if (!result.ok) {
+          const description = result.reason === "unauthorized"
+            ? "Please sign in to remove Instagram data."
+            : result.reason === "profile_not_found"
+              ? "Your creator profile could not be found."
+              : "Could not remove Instagram data. Please try again.";
+          toast({ title: "Could not remove Instagram data", description, variant: "destructive" });
+          return;
+        }
+        setRemoveTarget(null);
+        toast({ title: "Instagram data removed", description: "Your Instagram connection and synced data have been removed from Duolync." });
+        await reload();
+      } catch {
+        toast({ title: "Could not confirm Instagram removal", description: "Please try again.", variant: "destructive" });
+      } finally {
+        instagramRemoveLock.current = false;
+        setRemoving(false);
+      }
+      return;
+    }
     setRemoving(true);
 
     // Both "tiktok" (connected) and "tiktok_history" (dead-auth, history-only) use the
@@ -927,6 +990,7 @@ const PresencePage = () => {
                 {PLATFORMS.map((p) => {
                   const perPlatform = getPerPlatformStats(p.id);
                   const isTikTokConnected = p.id === "tiktok" && oauthPlatformSet.has("tiktok");
+                  const isInstagramConnected = p.id === "instagram" && oauthPlatformSet.has("instagram");
                   return (
                     <PlatformCard
                       key={p.id}
@@ -941,8 +1005,8 @@ const PresencePage = () => {
                       }
                       // TikTok refresh: when connected, use the Refresh action (no OAuth).
                       // When not connected, onSync starts OAuth for reconnect/first connect.
-                      onRefresh={isTikTokConnected ? handleTikTokRefresh : undefined}
-                      refreshing={isTikTokConnected ? tiktokRefreshing : undefined}
+                      onRefresh={isInstagramConnected ? handleInstagramRefresh : isTikTokConnected ? handleTikTokRefresh : undefined}
+                      refreshing={isInstagramConnected ? instagramRefreshing : isTikTokConnected ? tiktokRefreshing : undefined}
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
@@ -954,11 +1018,12 @@ const PresencePage = () => {
                         // Other platforms: no Apify actor available — onSync is a no-op
                       }}
                       onRemove={() => setRemoveTarget(p.id)}
-                      // TikTok history-only: secondary destructive "Remove data" control.
-                      // Only shown when TikTok is NOT currently OAuth-connected but has
-                      // residual OFFICIAL_API PlatformStats/SocialPost history.
+                      // History-only official data: secondary local removal control.
                       onRemoveHistory={
-                        p.id === "tiktok" &&
+                        p.id === "instagram" && !oauthPlatformSet.has("instagram") &&
+                        (previouslyConnectedPlatformSet.has("instagram") || posts.some((post) => post.platform === "instagram"))
+                          ? () => setRemoveTarget("instagram_history")
+                          : p.id === "tiktok" &&
                         !oauthPlatformSet.has("tiktok") &&
                         previouslyConnectedPlatformSet.has("tiktok")
                           ? () => setRemoveTarget("tiktok_history")
@@ -1106,14 +1171,24 @@ const PresencePage = () => {
         <AlertDialogContent className="bg-zinc-950 border-zinc-800 text-white">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {removeTarget === "tiktok"
-                ? "Disconnect TikTok?"
-                : removeTarget === "tiktok_history"
-                  ? "Remove TikTok data?"
-                  : `Remove ${removeTarget}?`}
+              {removeTarget === "instagram_history"
+                ? "Remove Instagram data?"
+                : removeTarget === "instagram"
+                  ? "Disconnect Instagram?"
+                  : removeTarget === "tiktok"
+                    ? "Disconnect TikTok?"
+                    : removeTarget === "tiktok_history"
+                      ? "Remove TikTok data?"
+                      : `Remove ${removeTarget}?`}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              {removeTarget === "tiktok" ? (
+              {removeTarget === "instagram" || removeTarget === "instagram_history" ? (
+                <>
+                  {removeTarget === "instagram_history"
+                    ? "Remove previously synced Instagram data and Featured/Hidden selections from Duolync?"
+                    : "Disconnect Instagram and remove its synced data and Featured/Hidden selections from Duolync?"} This cannot be undone. To remove Duolync&apos;s authorization from Instagram itself, remove the app from your Instagram/Meta connected-app settings.
+                </>
+              ) : removeTarget === "tiktok" ? (
                 <>
                   Disconnecting TikTok will revoke Duolync&apos;s access to your TikTok account
                   and delete synced TikTok stats and videos from Duolync.
@@ -1150,11 +1225,15 @@ const PresencePage = () => {
               className="bg-red-600 hover:bg-red-500 text-white border-0 gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              {removeTarget === "tiktok"
+              {removeTarget === "instagram"
                 ? "Disconnect"
-                : removeTarget === "tiktok_history"
+                : removeTarget === "instagram_history"
                   ? "Remove data"
-                  : "Remove"}
+                  : removeTarget === "tiktok"
+                    ? "Disconnect"
+                    : removeTarget === "tiktok_history"
+                      ? "Remove data"
+                      : "Remove"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
