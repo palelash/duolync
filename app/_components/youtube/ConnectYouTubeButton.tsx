@@ -84,38 +84,7 @@ export default function ConnectYouTubeButton({
 
   // ── Redirect to Google OAuth consent screen ───────────────────────────────
   function handleClick() {
-    const clientId = process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID;
-    if (!clientId) {
-      toast({
-        title: "YouTube integration not configured",
-        description: "NEXT_PUBLIC_YOUTUBE_CLIENT_ID is missing.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const appBase =
-      process.env.NEXT_PUBLIC_APP_URL ??
-      `${window.location.protocol}//${window.location.host}`;
-
-    const redirectUri = `${appBase.replace(/\/$/, "")}/api/auth/callback/youtube`;
-
-    // CSRF state: stored in a short-lived cookie so the server callback can verify it
-    const state = crypto.randomUUID();
-    document.cookie = `__youtube_state=${state}; path=/; max-age=300; SameSite=Lax`;
-
-    const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-    authUrl.searchParams.set("client_id", clientId);
-    authUrl.searchParams.set("redirect_uri", redirectUri);
-    authUrl.searchParams.set("scope", "https://www.googleapis.com/auth/youtube.readonly");
-    authUrl.searchParams.set("response_type", "code");
-    authUrl.searchParams.set("state", state);
-    // Request offline access so Google issues a refresh token
-    authUrl.searchParams.set("access_type", "offline");
-    // Force consent screen so we always receive a refresh token
-    authUrl.searchParams.set("prompt", "consent");
-
-    window.location.href = authUrl.toString();
+    window.location.href = "/api/auth/youtube/start";
   }
 
   const buttonLabel =

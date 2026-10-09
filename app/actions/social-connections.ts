@@ -140,6 +140,7 @@ export async function getOAuthConnectedPlatformsAction(): Promise<{
 export async function removePlatformAction(
   platform: string,
 ): Promise<{ error: string | null }> {
+  if (platform === "youtube") return { error: "use_youtube_disconnect" };
   if (platform === "instagram") {
     return { error: "use_instagram_disconnect" };
   }

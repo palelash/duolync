@@ -72,6 +72,10 @@ function fixture({ history = false, failAt, unauthorized = false, noProfile = fa
       }
       if (query.includes('FROM "CreatorProfile"')) {
         check('profile.lock');
+        if (query.includes('WHERE "userId"')) {
+          assert.equal(target, 'owner');
+          return draft.profile ? [draft.profile] : [];
+        }
         assert.equal(target, 'creator');
         return [{ id: 'creator' }];
       }
@@ -91,6 +95,10 @@ function fixture({ history = false, failAt, unauthorized = false, noProfile = fa
     '@/lib/creator-metrics': metrics,
     '@/lib/instagram-lock': instagramLock,
   };
+  imports['@/lib/youtube-removal'] = load('lib/youtube-removal.ts', {
+    '@/lib/db': { db }, '@/lib/creator-metrics': metrics,
+    '@/lib/youtube-lock': load('lib/youtube-lock.ts', {}),
+  });
   const action = load('app/actions/instagram-disconnect.ts', imports);
   const generic = load('app/actions/social-connections.ts', imports);
   const lifecycle = load('lib/instagram-token.ts', { '@/lib/db': { db }, '@/lib/instagram-auth': instagramAuth, '@/lib/instagram-lock': instagramLock });
@@ -183,8 +191,9 @@ test('last connection removal clears freshness and repeated removal is safe', as
   assert.equal((await f.run()).ok, true);
   assert.deepEqual(f.state(), after);
 });
-test('generic YouTube/Facebook/Threads cleanup remains available', async () => {
-  for (const platform of ['youtube', 'facebook_page', 'threads']) {
+test('generic Facebook/Threads cleanup remains available; YouTube requires dedicated disconnect', async () => {
+  assert.equal((await fixture().generic('youtube')).error, 'use_youtube_disconnect');
+  for (const platform of ['facebook_page', 'threads']) {
     const f = fixture();
     assert.equal((await f.generic(platform)).error, null);
     assert.equal(f.transactions(), 1);

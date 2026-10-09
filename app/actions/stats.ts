@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import { lockYouTubeOwner } from "@/lib/youtube-lock";
 import { canOverwrite } from "@/lib/platform-stats-policy";
 import { computeFollowerCache } from "@/lib/creator-metrics";
 
@@ -43,6 +44,32 @@ export async function fetchCreatorStatsAction(
     } catch {
       // Fall through to cached data
     }
+  }
+
+  // YouTube lower-source writers share the official coordination domain. The
+  // policy gates must be rechecked after HTTP, while reconnect cannot intervene.
+  if (platform === "youtube" && liveData) {
+    const incoming = liveData;
+    const accepted = await db.$transaction(async tx => {
+      await lockYouTubeOwner(tx, session.user.id);
+      const tokens = await tx.$queryRaw<{ id: string }[]>`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${session.user.id} AND "platform" = 'youtube' FOR UPDATE`;
+      await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${session.user.id} FOR UPDATE`;
+      const current = await tx.platformStats.findFirst({ where: { userId: session.user.id, platform } });
+      if (tokens.length || (current && !canOverwrite(current.dataSource, "RAPIDAPI"))) return false;
+      const snapshot = { followerCount: incoming.followerCount, followingCount: incoming.followingCount,
+        postCount: incoming.postCount, engagementRate: incoming.engagementRate,
+        fetchedAt: new Date(), raw: { username, source: "rapidapi" }, dataSource: "RAPIDAPI" as const };
+      await tx.platformStats.upsert({ where: { userId_platform: { userId: session.user.id, platform } },
+        create: { userId: session.user.id, platform, ...snapshot }, update: snapshot });
+      const allStats = await tx.platformStats.findMany({ where: { userId: session.user.id }, select: { followerCount: true } });
+      const cachedFollowers = computeFollowerCache(allStats);
+      await tx.creatorProfile.updateMany({ where: { userId: session.user.id }, data: {
+        ...(cachedFollowers !== null ? { followerCount: cachedFollowers } : {}), lastSyncedAt: new Date(),
+      } });
+      return true;
+    }, { maxWait: 5_000, timeout: 15_000 });
+    if (accepted) return { data: incoming, error: null };
+    liveData = null;
   }
 
   // ── Persist / update cache ──────────────────────────────────────────────────

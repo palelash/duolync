@@ -34,6 +34,7 @@ function fixture({ instagramToken, authorized = true, claimed = false } = {}) {
       signOut: async () => events.push('signOut'),
     } } },
     'next/headers': { headers: async () => ({}) },
+    '@/lib/youtube-revoke': { prepareYouTubeAccountDeletion: async () => ({ error: null, credential: null }), assertYouTubeAccountDeletion: async () => {}, isYouTubeRevokeConfirmationUnavailable: () => false },
     '@/lib/tiktok-revoke': { revokeTikTokAuthorization: async userId => {
       assert.equal(userId, 'owner');
       events.push('tiktok');

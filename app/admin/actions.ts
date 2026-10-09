@@ -6,6 +6,7 @@ import { isAdmin } from "@/lib/roles";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { revokeTikTokAuthorization } from "@/lib/tiktok-revoke";
+import { prepareYouTubeAccountDeletion, assertYouTubeAccountDeletion, isYouTubeRevokeConfirmationUnavailable } from "@/lib/youtube-revoke";
 import {
   normaliseUrl,
   isValidAvatarUrl,
@@ -175,6 +176,11 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
       };
     }
 
+    // Provider HTTP stays outside DB transactions. On failure, keep the
+    // account and credential for retry. Existing cascades remove YouTube data.
+    let youtube = await prepareYouTubeAccountDeletion(userId);
+    if (youtube.error) return { success: false, data: null, error: youtube.error };
+
     // ── TikTok revoke (OUTSIDE delete transaction) ────────────────────────────
     // All existing admin/security guards and the claimed-profile guard have
     // already run. Revoke only the already-authorized target userId.
@@ -225,25 +231,38 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
     // ── Guard 2: Cancel any PENDING claims before deleting ────────────────────
     // Without this, ProfileClaim.requesterUserId would be set to NULL but
     // CreatorProfile.claimStatus would remain CLAIM_PENDING — an orphaned state.
-    await db.$transaction(async (tx) => {
-      const pendingClaims = await tx.profileClaim.findMany({
-        where: { requesterUserId: userId, status: "PENDING" },
-        select: { id: true, creatorProfileId: true },
-      });
+    // One bounded recovery retry if expiry/pruning wins receipt consumption.
+    // The failed transaction has rolled back before any provider probe runs.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        await db.$transaction(async (tx) => {
+          // Consume exact confirmation atomically with the final cascade.
+          await assertYouTubeAccountDeletion(tx, userId, youtube.credential);
+          const pendingClaims = await tx.profileClaim.findMany({
+            where: { requesterUserId: userId, status: "PENDING" },
+            select: { id: true, creatorProfileId: true },
+          });
 
-      for (const claim of pendingClaims) {
-        await tx.profileClaim.update({
-          where: { id: claim.id },
-          data: { status: "CANCELLED" },
+          for (const claim of pendingClaims) {
+            await tx.profileClaim.update({
+              where: { id: claim.id },
+              data: { status: "CANCELLED" },
+            });
+            await tx.creatorProfile.updateMany({
+              where: { id: claim.creatorProfileId, claimStatus: "CLAIM_PENDING" },
+              data: { claimStatus: "UNCLAIMED" },
+            });
+          }
+
+          await tx.user.delete({ where: { id: userId } });
         });
-        await tx.creatorProfile.updateMany({
-          where: { id: claim.creatorProfileId, claimStatus: "CLAIM_PENDING" },
-          data: { claimStatus: "UNCLAIMED" },
-        });
+        break;
+      } catch (error) {
+        if (attempt !== 0 || !isYouTubeRevokeConfirmationUnavailable(error)) throw error;
+        youtube = await prepareYouTubeAccountDeletion(userId);
+        if (youtube.error) return { success: false, data: null, error: youtube.error };
       }
-
-      await tx.user.delete({ where: { id: userId } });
-    });
+    }
 
     revalidatePath("/admin/users");
     return { success: true, data: null, error: null };

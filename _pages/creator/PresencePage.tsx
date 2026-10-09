@@ -22,8 +22,10 @@ import {
 } from "@/app/actions/apify-sync";
 import { getSocialPostsAction, deletePostAction, clearBrokenPostImagesAction, type SocialPostItem } from "@/app/actions/social-posts";
 import { removePlatformAction, getConnectedAccountsAction } from "@/app/actions/social-connections";
+import { disconnectYouTubeAction } from "@/app/actions/youtube-disconnect";
 import { disconnectInstagramAction } from "@/app/actions/instagram-disconnect";
 import { refreshInstagramDataAction } from "@/app/actions/instagram-sync";
+import { refreshYouTubeDataAction } from "@/app/actions/youtube-sync";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
@@ -533,7 +535,11 @@ const PresencePage = () => {
   const [instagramRefreshing, setInstagramRefreshing] = useState(false);
   const instagramRefreshLock = useRef(false);
   const instagramRemoveLock = useRef(false);
+  const youtubeRemoveLock = useRef(false);
   const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
+  const [youtubeRefreshing, setYouTubeRefreshing] = useState(false);
+  const youtubeRefreshLock = useRef(false);
+
   // OAuth-connected platform set — derived from PlatformToken. This is the sole
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
   const [oauthPlatformSet, setOauthPlatformSet] = useState<Set<string>>(new Set());
@@ -562,13 +568,13 @@ const PresencePage = () => {
       setOauthPlatformSet(
         new Set(accountsRes.data.filter((a) => a.connectedVia === "oauth").map((a) => a.platform)),
       );
-      // Official Instagram/TikTok history survives lost authorization; show Reconnect.
+      // Official history survives lost authorization; show Reconnect.
       setPreviouslyConnectedPlatformSet(
         new Set(
           accountsRes.data
             .filter(
               (a) =>
-                (a.platform === "tiktok" || a.platform === "instagram") &&
+                (a.platform === "tiktok" || a.platform === "instagram" || a.platform === "youtube") &&
                 a.connectedVia !== "oauth" &&
                 a.dataSource === "OFFICIAL_API",
             )
@@ -724,6 +730,36 @@ const PresencePage = () => {
     window.location.href = "/api/auth/tiktok/start";
   }, []);
 
+  const handleYouTubeRefresh = async () => {
+    if (youtubeRefreshLock.current) return;
+    youtubeRefreshLock.current = true;
+    setYouTubeRefreshing(true);
+    try {
+      const result = await refreshYouTubeDataAction();
+      if (result.ok) {
+        toast({ title: "YouTube refreshed ✓", description: "Your public YouTube data has been updated." });
+      } else {
+        const messages = {
+          unauthorized: "Please sign in to refresh YouTube.",
+          not_connected: "Please reconnect YouTube.",
+          reauth_required: "Please reconnect YouTube.",
+          identity_mismatch: "The channel does not match your connection. Please reconnect YouTube.",
+          temporary_failure: "YouTube is temporarily unavailable. Please try again later.",
+          configuration_failure: "YouTube data could not be updated. Please contact support.",
+          provider_failure: "YouTube returned data we could not verify. Please try again later.",
+        };
+        toast({ title: result.reason === "reauth_required" || result.reason === "not_connected" ? "Reconnect YouTube" : "Refresh failed",
+          description: messages[result.reason], variant: "destructive" });
+      }
+      await reload();
+    } catch {
+      toast({ title: "Refresh failed", description: "Could not update YouTube right now. Please try again later.", variant: "destructive" });
+    } finally {
+      youtubeRefreshLock.current = false;
+      setYouTubeRefreshing(false);
+    }
+  };
+
   const handleInstagramRefresh = async () => {
     if (instagramRefreshLock.current) return;
     instagramRefreshLock.current = true;
@@ -804,35 +840,8 @@ const PresencePage = () => {
 
   // ── YouTube OAuth redirect ────────────────────────────────────────────────
   const handleYouTubeOAuth = useCallback(() => {
-    const clientId = process.env.NEXT_PUBLIC_YOUTUBE_CLIENT_ID;
-    if (!clientId) {
-      toast({
-        title: "YouTube connection unavailable",
-        description: "YouTube sign-in is not available right now. Please try again later or contact support.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const appBase =
-      process.env.NEXT_PUBLIC_APP_URL ??
-      `${window.location.protocol}//${window.location.host}`;
-    const redirectUri = `${appBase.replace(/\/$/, "")}/api/auth/callback/youtube`;
-
-    const state = crypto.randomUUID();
-    document.cookie = `__youtube_state=${state}; path=/; max-age=300; SameSite=Lax`;
-
-    const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-    authUrl.searchParams.set("client_id", clientId);
-    authUrl.searchParams.set("redirect_uri", redirectUri);
-    authUrl.searchParams.set("scope", "https://www.googleapis.com/auth/youtube.readonly");
-    authUrl.searchParams.set("response_type", "code");
-    authUrl.searchParams.set("state", state);
-    authUrl.searchParams.set("access_type", "offline");
-    authUrl.searchParams.set("prompt", "consent");
-
-    window.location.href = authUrl.toString();
-  }, [toast]);
+    window.location.href = "/api/auth/youtube/start";
+  }, []);
 
   // Per-platform stats lookup
   const getPerPlatformStats = (platformId: string) => {
@@ -847,6 +856,30 @@ const PresencePage = () => {
 
   const handleRemoveConfirm = async () => {
     if (!removeTarget) return;
+    if (removeTarget === "youtube" || removeTarget === "youtube_history") {
+      if (youtubeRemoveLock.current) return;
+      youtubeRemoveLock.current = true;
+      setRemoving(true);
+      try {
+        const result = await disconnectYouTubeAction();
+        if (!result.ok) {
+          toast({ title: "Could not remove YouTube connection", description: result.error, variant: "destructive" });
+          return;
+        }
+        setRemoveTarget(null);
+        toast({ title: result.authorizationRevoked ? "YouTube disconnected" : "YouTube data removed",
+          description: result.authorizationRevoked
+            ? "Duolync's YouTube authorization was revoked and stored YouTube data was removed."
+            : "Stored YouTube data was removed from Duolync." });
+        await reload();
+      } catch {
+        toast({ title: "Could not confirm YouTube removal", description: "Please try again.", variant: "destructive" });
+      } finally {
+        youtubeRemoveLock.current = false;
+        setRemoving(false);
+      }
+      return;
+    }
     if (removeTarget === "instagram" || removeTarget === "instagram_history") {
       if (instagramRemoveLock.current) return;
       instagramRemoveLock.current = true;
@@ -991,6 +1024,7 @@ const PresencePage = () => {
                   const perPlatform = getPerPlatformStats(p.id);
                   const isTikTokConnected = p.id === "tiktok" && oauthPlatformSet.has("tiktok");
                   const isInstagramConnected = p.id === "instagram" && oauthPlatformSet.has("instagram");
+                  const isYouTubeConnected = p.id === "youtube" && oauthPlatformSet.has("youtube");
                   return (
                     <PlatformCard
                       key={p.id}
@@ -1005,8 +1039,8 @@ const PresencePage = () => {
                       }
                       // TikTok refresh: when connected, use the Refresh action (no OAuth).
                       // When not connected, onSync starts OAuth for reconnect/first connect.
-                      onRefresh={isInstagramConnected ? handleInstagramRefresh : isTikTokConnected ? handleTikTokRefresh : undefined}
-                      refreshing={isInstagramConnected ? instagramRefreshing : isTikTokConnected ? tiktokRefreshing : undefined}
+                      onRefresh={isYouTubeConnected ? handleYouTubeRefresh : isInstagramConnected ? handleInstagramRefresh : isTikTokConnected ? handleTikTokRefresh : undefined}
+                      refreshing={isYouTubeConnected ? youtubeRefreshing : isInstagramConnected ? instagramRefreshing : isTikTokConnected ? tiktokRefreshing : undefined}
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
@@ -1027,7 +1061,10 @@ const PresencePage = () => {
                         !oauthPlatformSet.has("tiktok") &&
                         previouslyConnectedPlatformSet.has("tiktok")
                           ? () => setRemoveTarget("tiktok_history")
-                          : undefined
+                          : p.id === "youtube" && !oauthPlatformSet.has("youtube") &&
+                            (previouslyConnectedPlatformSet.has("youtube") || posts.some((post) => post.platform === "youtube"))
+                            ? () => setRemoveTarget("youtube_history")
+                            : undefined
                       }
                     />
                   );
@@ -1171,7 +1208,7 @@ const PresencePage = () => {
         <AlertDialogContent className="bg-zinc-950 border-zinc-800 text-white">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {removeTarget === "instagram_history"
+              {removeTarget === "youtube" ? "Disconnect YouTube?" : removeTarget === "youtube_history" ? "Remove YouTube data?" : removeTarget === "instagram_history"
                 ? "Remove Instagram data?"
                 : removeTarget === "instagram"
                   ? "Disconnect Instagram?"
@@ -1182,7 +1219,11 @@ const PresencePage = () => {
                       : `Remove ${removeTarget}?`}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              {removeTarget === "instagram" || removeTarget === "instagram_history" ? (
+              {removeTarget === "youtube" ? (
+                "Revoke Duolync's YouTube authorization and remove synced data and Featured/Hidden selections from Duolync? Your channel and videos stay on YouTube."
+              ) : removeTarget === "youtube_history" ? (
+                "Remove stored YouTube data and Featured/Hidden selections from Duolync? Your channel and videos stay on YouTube."
+              ) : removeTarget === "instagram" || removeTarget === "instagram_history" ? (
                 <>
                   {removeTarget === "instagram_history"
                     ? "Remove previously synced Instagram data and Featured/Hidden selections from Duolync?"
@@ -1225,7 +1266,7 @@ const PresencePage = () => {
               className="bg-red-600 hover:bg-red-500 text-white border-0 gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              {removeTarget === "instagram"
+              {removeTarget === "youtube" ? "Disconnect" : removeTarget === "youtube_history" ? "Remove data" : removeTarget === "instagram"
                 ? "Disconnect"
                 : removeTarget === "instagram_history"
                   ? "Remove data"
