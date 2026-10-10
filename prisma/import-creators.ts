@@ -1,3 +1,4 @@
+import { youtubeSafeImportedProfile } from "../lib/youtube-import";
 /**
  * CSV Creator Import — Enriched
  *
@@ -469,10 +470,15 @@ async function importCreator(
     lastSyncedAt: new Date(),
   };
 
-  await db.creatorProfile.upsert({
-    where: { userId: user.id },
-    create: { userId: user.id, ...profileData },
-    update: profileData,
+  await db.$transaction(async tx => {
+    await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${user.id} FOR UPDATE`;
+    await tx.$queryRaw`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${user.id} AND "platform" = 'youtube' FOR UPDATE`;
+    await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${user.id} FOR UPDATE`;
+    const states = await tx.$queryRaw<{ status: string; blockedAt: Date | null }[]>`SELECT "status", "blockedAt" FROM "YouTubeComplianceState" WHERE "userId" = ${user.id} FOR UPDATE`;
+    const blocked = states.some(state => state.status === "PURGED" || state.blockedAt !== null);
+    const safeData = youtubeSafeImportedProfile(profileData, blocked);
+    await tx.creatorProfile.upsert({ where: { userId: user.id },
+      create: { userId: user.id, ...safeData }, update: safeData });
   });
 
   const tag = usedPlaceholder ? " [placeholder email]" : "";

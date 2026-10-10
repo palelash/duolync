@@ -14,7 +14,10 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:import": "tsx prisma/import-creators.ts"
+    "db:import": "tsx prisma/import-creators.ts",
+    "youtube:backfill:plan": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --plan",
+    "youtube:backfill:apply": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --apply",
+    "test:youtube:postgres": "node --conditions=react-server --test test/youtube-postgres.test.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

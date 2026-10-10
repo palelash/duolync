@@ -16,6 +16,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { lockYouTubeOwner as lockTikTokOwner } from "@/lib/youtube-lock";
 import { tiktokFetch } from "@/lib/tiktok-token";
 import { computeFollowerCache } from "@/lib/creator-metrics";
 import type { Prisma } from "@/lib/generated/prisma";
@@ -373,6 +374,12 @@ export async function syncTikTokOfficialData(
   // ── Step 10: Atomic DB write ──────────────────────────────────────────────
   try {
     await db.$transaction(async (tx) => {
+      // Shared claim/provider order: stable User -> token -> profile -> dataset.
+      // PlatformStats upsert takes a User FK KEY SHARE lock; acquire that owner
+      // first so it cannot wait on a claim while holding the TikTok token.
+      await lockTikTokOwner(tx, userId);
+      await tx.$queryRaw`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${userId} AND "platform" = 'tiktok' FOR UPDATE`;
+      await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
       // A. Update PlatformToken.username only when a new non-empty username exists.
       //    display_name must NEVER become PlatformToken.username.
       if (username !== null) {

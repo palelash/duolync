@@ -24,6 +24,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { lockYouTubeOwner as lockTikTokOwner } from "@/lib/youtube-lock";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -446,6 +447,9 @@ async function executeRefresh(
   try {
     return await db.$transaction(
       async (tx): Promise<TikTokTokenOutcome> => {
+        // Cleanup can update CreatorProfile after the token lock. Coordinate
+        // the stable owner first, matching shared sync and claim operations.
+        await lockTikTokOwner(tx, userId);
         // ── Step 1: Acquire row-level lock ─────────────────────────────────
         //
         // SELECT … FOR UPDATE blocks until any concurrent transaction on this

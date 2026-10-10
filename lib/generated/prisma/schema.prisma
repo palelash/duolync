@@ -8,46 +8,47 @@ datasource db {
 }
 
 model User {
-  id                     String                @id @default(cuid())
-  email                  String                @unique
-  emailVerified          Boolean               @default(false)
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  emailVerified          Boolean                 @default(false)
   name                   String?
   image                  String?
-  role                   Role                  @default(CREATOR)
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @updatedAt
-  hasCompletedOnboarding Boolean               @default(false) @map("onboardingCompleted")
-  banned                 Boolean               @default(false)
+  role                   Role                    @default(CREATOR)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  hasCompletedOnboarding Boolean                 @default(false) @map("onboardingCompleted")
+  banned                 Boolean                 @default(false)
   banReason              String?
-  twoFactorEnabled       Boolean               @default(false)
+  twoFactorEnabled       Boolean                 @default(false)
   // True for synthetic User rows created by the import script, never by real sign-up
-  isImported             Boolean               @default(false)
+  isImported             Boolean                 @default(false)
   accounts               Account[]
   twoFactor              TwoFactor?
   brandProfile           BrandProfile?
-  receivedConnections    Connection[]          @relation("ReceivedConnections")
-  sentConnections        Connection[]          @relation("SentConnections")
-  creatorProfile         CreatorProfile?       @relation("CreatorProfileOwner")
-  claimedCreatorProfiles CreatorProfile[]      @relation("ClaimedCreatorProfiles")
-  receivedMessages       Message[]             @relation("ReceivedMessages")
-  sentMessages           Message[]             @relation("SentMessages")
+  receivedConnections    Connection[]            @relation("ReceivedConnections")
+  sentConnections        Connection[]            @relation("SentConnections")
+  creatorProfile         CreatorProfile?         @relation("CreatorProfileOwner")
+  claimedCreatorProfiles CreatorProfile[]        @relation("ClaimedCreatorProfiles")
+  receivedMessages       Message[]               @relation("ReceivedMessages")
+  sentMessages           Message[]               @relation("SentMessages")
   notifications          Notification[]
   platformStats          PlatformStats[]
   platformTokens         PlatformToken[]
+  youtubeComplianceState YouTubeComplianceState?
   sessions               Session[]
   communityMemberships   CommunityListMember[]
   savedCreators          Creator[]
-  createdCampaignEvents  CampaignEvent[]       @relation("EventCreatedBy")
-  requestedEventUpdates  CampaignEventUpdate[] @relation("EventUpdateRequestedBy")
-  reviewedEventUpdates   CampaignEventUpdate[] @relation("EventUpdateReviewedBy")
-  receivedInvitations    Invitation[]          @relation("ReceivedInvitations")
-  brandDisputes          Dispute[]             @relation("BrandDisputes")
-  creatorDisputes        Dispute[]             @relation("CreatorDisputes")
-  reporterDisputes       Dispute[]             @relation("ReporterDisputes")
-  targetedDisputes       Dispute[]             @relation("TargetedDisputes")
+  createdCampaignEvents  CampaignEvent[]         @relation("EventCreatedBy")
+  requestedEventUpdates  CampaignEventUpdate[]   @relation("EventUpdateRequestedBy")
+  reviewedEventUpdates   CampaignEventUpdate[]   @relation("EventUpdateReviewedBy")
+  receivedInvitations    Invitation[]            @relation("ReceivedInvitations")
+  brandDisputes          Dispute[]               @relation("BrandDisputes")
+  creatorDisputes        Dispute[]               @relation("CreatorDisputes")
+  reporterDisputes       Dispute[]               @relation("ReporterDisputes")
+  targetedDisputes       Dispute[]               @relation("TargetedDisputes")
   // ── Claim relations ──────────────────────────────────────────────────────────
-  submittedClaims        ProfileClaim[]        @relation("SubmittedClaims")
-  reviewedClaims         ProfileClaim[]        @relation("ReviewedClaims")
+  submittedClaims        ProfileClaim[]          @relation("SubmittedClaims")
+  reviewedClaims         ProfileClaim[]          @relation("ReviewedClaims")
 
   @@index([isImported])
 }
@@ -761,4 +762,55 @@ model RateLimitEvent {
   createdAt  DateTime @default(now())
 
   @@index([identifier, createdAt])
+}
+
+enum YouTubeComplianceStatus {
+  ACTIVE
+  PURGED
+}
+
+enum YouTubeMaintenanceOutcome {
+  SUCCESS
+  NOT_CONNECTED
+  AUTHORIZATION_LOST
+  TEMPORARY_FAILURE
+  QUOTA_EXHAUSTED
+  CONFIGURATION_FAILURE
+  PROVIDER_FAILURE
+  IDENTITY_MISMATCH
+  SUPERSEDED
+  DEADLINE_PURGED
+}
+
+enum YouTubeRemovalReason {
+  AUTHORIZATION_LOST
+  DEADLINE_EXCEEDED
+  EXPLICIT_DISCONNECT
+  TOKENLESS_HISTORY
+  AMBIGUOUS_HISTORY
+}
+
+model YouTubeComplianceState {
+  userId                                  String                     @id
+  user                                    User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connectionGeneration                    Int                        @default(0)
+  revision                                Int                        @default(0)
+  status                                  YouTubeComplianceStatus
+  lastSuccessfulAuthorizationValidationAt DateTime?                  @db.Timestamptz(3)
+  lastSuccessfulDataRefreshAt             DateTime?                  @db.Timestamptz(3)
+  nextAttemptAt                           DateTime?                  @db.Timestamptz(3)
+  deleteByAt                              DateTime?                  @db.Timestamptz(3)
+  lastAttemptAt                           DateTime?                  @db.Timestamptz(3)
+  lastOutcome                             YouTubeMaintenanceOutcome?
+  attemptCount                            Int                        @default(0)
+  authorizationLostAt                     DateTime?                  @db.Timestamptz(3)
+  purgedAt                                DateTime?                  @db.Timestamptz(3)
+  removalReason                           YouTubeRemovalReason?
+  blockedAt                               DateTime?                  @db.Timestamptz(3)
+  leaseId                                 String?
+  leaseExpiresAt                          DateTime?                  @db.Timestamptz(3)
+
+  @@index([status, nextAttemptAt])
+  @@index([status, deleteByAt])
+  @@index([leaseExpiresAt])
 }

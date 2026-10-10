@@ -18,8 +18,10 @@ import {
   removePlatformAction,
   type ConnectedAccount,
 } from "@/app/actions/social-connections";
+import { disconnectYouTubeAction } from "@/app/actions/youtube-disconnect";
 import { disconnectInstagramAction } from "@/app/actions/instagram-disconnect";
 import { refreshInstagramDataAction } from "@/app/actions/instagram-sync";
+import { refreshYouTubeDataAction } from "@/app/actions/youtube-sync";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
@@ -291,10 +293,14 @@ function YouTubeCard({
   account,
   onRemove,
   onConnected,
+  onRefresh,
+  refreshing,
 }: {
   account: ConnectedAccount | undefined;
   onRemove: (platform: string) => void;
   onConnected: () => void;
+  onRefresh: () => void;
+  refreshing: boolean;
 }) {
   const display = PLATFORM_DISPLAY["youtube"]!;
   const isConnected = !!account && account.connectedVia === "oauth";
@@ -346,9 +352,16 @@ function YouTubeCard({
 
       {/* Actions */}
       <div className="flex items-center gap-1.5 shrink-0">
+        {isConnected && (
+          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5" onClick={onRefresh} disabled={refreshing}>
+            {refreshing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+            {refreshing ? "Refreshing…" : "Refresh data"}
+          </Button>
+        )}
         <Suspense fallback={null}>
           <ConnectYouTubeButton
             isConnected={isConnected}
+            label={!isConnected && account?.dataSource === "OFFICIAL_API" ? "Reconnect YouTube" : undefined}
             onConnected={onConnected}
             className="h-8 text-xs"
           />
@@ -358,8 +371,8 @@ function YouTubeCard({
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-muted-foreground/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
-            title="Disconnect YouTube"
-            onClick={() => onRemove("youtube")}
+            title={isConnected ? "Disconnect YouTube" : "Remove YouTube data"}
+            onClick={() => onRemove(isConnected ? "youtube" : "youtube_history")}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
@@ -444,7 +457,11 @@ const SocialAccounts = () => {
   const [instagramRefreshing, setInstagramRefreshing] = useState(false);
   const instagramRefreshLock = useRef(false);
   const instagramRemoveLock = useRef(false);
+  const youtubeRemoveLock = useRef(false);
   const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
+  const [youtubeRefreshing, setYouTubeRefreshing] = useState(false);
+  const youtubeRefreshLock = useRef(false);
+
 
   // ── Load from DB ────────────────────────────────────────────────────────
   const loadAccounts = useCallback(async () => {
@@ -457,6 +474,36 @@ const SocialAccounts = () => {
     }
     setLoading(false);
   }, [toast]);
+
+  const handleYouTubeRefresh = async () => {
+    if (youtubeRefreshLock.current) return;
+    youtubeRefreshLock.current = true;
+    setYouTubeRefreshing(true);
+    try {
+      const result = await refreshYouTubeDataAction();
+      if (result.ok) {
+        toast({ title: "YouTube refreshed ✓", description: "Your public YouTube data has been updated." });
+      } else {
+        const messages = {
+          unauthorized: "Please sign in to refresh YouTube.",
+          not_connected: "Please reconnect YouTube.",
+          reauth_required: "Please reconnect YouTube.",
+          identity_mismatch: "The channel does not match your connection. Please reconnect YouTube.",
+          temporary_failure: "YouTube is temporarily unavailable. Please try again later.",
+          configuration_failure: "YouTube data could not be updated. Please contact support.",
+          provider_failure: "YouTube returned data we could not verify. Please try again later.",
+        };
+        toast({ title: result.reason === "reauth_required" || result.reason === "not_connected" ? "Reconnect YouTube" : "Refresh failed",
+          description: messages[result.reason], variant: "destructive" });
+      }
+      await loadAccounts();
+    } catch {
+      toast({ title: "Refresh failed", description: "Could not update YouTube right now. Please try again later.", variant: "destructive" });
+    } finally {
+      youtubeRefreshLock.current = false;
+      setYouTubeRefreshing(false);
+    }
+  };
 
   const handleInstagramRefresh = async () => {
     if (instagramRefreshLock.current) return;
@@ -538,6 +585,30 @@ const SocialAccounts = () => {
   // ── Disconnect ──────────────────────────────────────────────────────────
   const handleRemoveConfirm = async () => {
     if (!confirmRemove) return;
+    if (confirmRemove === "youtube" || confirmRemove === "youtube_history") {
+      if (youtubeRemoveLock.current) return;
+      youtubeRemoveLock.current = true;
+      setRemoving(true);
+      try {
+        const result = await disconnectYouTubeAction();
+        if (!result.ok) {
+          toast({ title: "Could not remove YouTube connection", description: result.error, variant: "destructive" });
+          return;
+        }
+        setConfirmRemove(null);
+        toast({ title: result.authorizationRevoked ? "YouTube disconnected" : "YouTube data removed",
+          description: result.authorizationRevoked
+            ? "Duolync's YouTube authorization was revoked and stored YouTube data was removed."
+            : "Stored YouTube data was removed from Duolync." });
+        await loadAccounts();
+      } catch {
+        toast({ title: "Could not confirm YouTube removal", description: "Please try again.", variant: "destructive" });
+      } finally {
+        youtubeRemoveLock.current = false;
+        setRemoving(false);
+      }
+      return;
+    }
     if (confirmRemove === "instagram" || confirmRemove === "instagram_history") {
       if (instagramRemoveLock.current) return;
       instagramRemoveLock.current = true;
@@ -725,6 +796,8 @@ const SocialAccounts = () => {
           ) : (
             <YouTubeCard
               account={accountByPlatform.get("youtube")}
+              onRefresh={handleYouTubeRefresh}
+              refreshing={youtubeRefreshing}
               onRemove={(platform) => setConfirmRemove(platform)}
               onConnected={loadAccounts}
             />
@@ -800,7 +873,7 @@ const SocialAccounts = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirmRemove === "instagram_history"
+              {confirmRemove === "youtube" ? "Disconnect YouTube?" : confirmRemove === "youtube_history" ? "Remove YouTube data?" : confirmRemove === "instagram_history"
                 ? "Remove Instagram data?"
                 : confirmRemove === "instagram"
                   ? "Disconnect Instagram?"
@@ -811,7 +884,11 @@ const SocialAccounts = () => {
                       : `Disconnect ${confirmRemove ? (PLATFORM_DISPLAY[confirmRemove]?.label ?? confirmRemove) : "account"}?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmRemove === "instagram" || confirmRemove === "instagram_history" ? (
+              {confirmRemove === "youtube" ? (
+                "Revoke Duolync's YouTube authorization and remove synced data and Featured/Hidden selections from Duolync? Your channel and videos stay on YouTube."
+              ) : confirmRemove === "youtube_history" ? (
+                "Remove stored YouTube data and Featured/Hidden selections from Duolync? Your channel and videos stay on YouTube."
+              ) : confirmRemove === "instagram" || confirmRemove === "instagram_history" ? (
                 <>
                   {confirmRemove === "instagram_history"
                     ? "Remove previously synced Instagram data and Featured/Hidden selections from Duolync?"
@@ -846,7 +923,7 @@ const SocialAccounts = () => {
               className="bg-red-600 hover:bg-red-700 text-white gap-2"
             >
               {removing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-              {confirmRemove === "tiktok_history" || confirmRemove === "instagram_history" ? "Remove data" : "Disconnect"}
+              {confirmRemove === "youtube_history" || confirmRemove === "tiktok_history" || confirmRemove === "instagram_history" ? "Remove data" : "Disconnect"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,11 +1,14 @@
 "use server";
 
+import { lockYouTubeOwner } from "@/lib/youtube-lock";
+import { lockYouTubeCompliance, youtubeBlocked } from "@/lib/youtube-compliance";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { isAdmin } from "@/lib/roles";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { revokeTikTokAuthorization } from "@/lib/tiktok-revoke";
+import { prepareYouTubeAccountDeletion, assertYouTubeAccountDeletion, isYouTubeRevokeConfirmationUnavailable } from "@/lib/youtube-revoke";
 import {
   normaliseUrl,
   isValidAvatarUrl,
@@ -175,6 +178,11 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
       };
     }
 
+    // Provider HTTP stays outside DB transactions. On failure, keep the
+    // account and credential for retry. Existing cascades remove YouTube data.
+    let youtube = await prepareYouTubeAccountDeletion(userId);
+    if (youtube.error) return { success: false, data: null, error: youtube.error };
+
     // ── TikTok revoke (OUTSIDE delete transaction) ────────────────────────────
     // All existing admin/security guards and the claimed-profile guard have
     // already run. Revoke only the already-authorized target userId.
@@ -225,25 +233,38 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
     // ── Guard 2: Cancel any PENDING claims before deleting ────────────────────
     // Without this, ProfileClaim.requesterUserId would be set to NULL but
     // CreatorProfile.claimStatus would remain CLAIM_PENDING — an orphaned state.
-    await db.$transaction(async (tx) => {
-      const pendingClaims = await tx.profileClaim.findMany({
-        where: { requesterUserId: userId, status: "PENDING" },
-        select: { id: true, creatorProfileId: true },
-      });
+    // One bounded recovery retry if expiry/pruning wins receipt consumption.
+    // The failed transaction has rolled back before any provider probe runs.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        await db.$transaction(async (tx) => {
+          // Consume exact confirmation atomically with the final cascade.
+          await assertYouTubeAccountDeletion(tx, userId, youtube.credential);
+          const pendingClaims = await tx.profileClaim.findMany({
+            where: { requesterUserId: userId, status: "PENDING" },
+            select: { id: true, creatorProfileId: true },
+          });
 
-      for (const claim of pendingClaims) {
-        await tx.profileClaim.update({
-          where: { id: claim.id },
-          data: { status: "CANCELLED" },
+          for (const claim of pendingClaims) {
+            await tx.profileClaim.update({
+              where: { id: claim.id },
+              data: { status: "CANCELLED" },
+            });
+            await tx.creatorProfile.updateMany({
+              where: { id: claim.creatorProfileId, claimStatus: "CLAIM_PENDING" },
+              data: { claimStatus: "UNCLAIMED" },
+            });
+          }
+
+          await tx.user.delete({ where: { id: userId } });
         });
-        await tx.creatorProfile.updateMany({
-          where: { id: claim.creatorProfileId, claimStatus: "CLAIM_PENDING" },
-          data: { claimStatus: "UNCLAIMED" },
-        });
+        break;
+      } catch (error) {
+        if (attempt !== 0 || !isYouTubeRevokeConfirmationUnavailable(error)) throw error;
+        youtube = await prepareYouTubeAccountDeletion(userId);
+        if (youtube.error) return { success: false, data: null, error: youtube.error };
       }
-
-      await tx.user.delete({ where: { id: userId } });
-    });
+    }
 
     revalidatePath("/admin/users");
     return { success: true, data: null, error: null };
@@ -1261,6 +1282,16 @@ export async function updateImportedCreatorAction(
 
     if (hasUserUpdate || hasProfileUpdate) {
       await db.$transaction(async (tx) => {
+        await lockYouTubeOwner(tx, profile.userId);
+        await tx.$queryRaw`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${profile.userId} AND "platform" = 'youtube' FOR UPDATE`;
+        await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "id" = ${creatorProfileId} FOR UPDATE`;
+        const current = await tx.creatorProfile.findUnique({ where: { id: creatorProfileId }, select: { userId: true, profileOrigin: true, claimStatus: true } });
+        if (!current || current.userId !== profile.userId || current.profileOrigin !== "IMPORTED" || current.claimStatus !== claimStatus)
+          throw new Error("Creator profile changed. Reload before editing.");
+        const compliance = await lockYouTubeCompliance(tx, profile.userId);
+        const metricFields = ["totalFollowers", "followerCount", "averageEngagement", "avgEngagementRate", "lastStatsUpdate", "lastSyncedAt"];
+        if (youtubeBlocked(compliance) && metricFields.some(field => field in profileUpdate))
+          throw new Error("YouTube data is blocked after removal. Aggregate metrics cannot be changed until official YouTube reconnect; other profile fields remain editable.");
         if (hasUserUpdate) {
           await tx.user.update({
             where: { id: profile.userId },

@@ -34,6 +34,7 @@ model User {
   notifications          Notification[]
   platformStats          PlatformStats[]
   platformTokens         PlatformToken[]
+  youtubeComplianceState YouTubeComplianceState?
   sessions               Session[]
   communityMemberships   CommunityListMember[]
   savedCreators          Creator[]
@@ -761,4 +762,52 @@ model RateLimitEvent {
   createdAt  DateTime @default(now())
 
   @@index([identifier, createdAt])
+}
+
+
+enum YouTubeComplianceStatus {
+  ACTIVE
+  PURGED
+}
+enum YouTubeMaintenanceOutcome {
+  SUCCESS
+  NOT_CONNECTED
+  AUTHORIZATION_LOST
+  TEMPORARY_FAILURE
+  QUOTA_EXHAUSTED
+  CONFIGURATION_FAILURE
+  PROVIDER_FAILURE
+  IDENTITY_MISMATCH
+  SUPERSEDED
+  DEADLINE_PURGED
+}
+enum YouTubeRemovalReason {
+  AUTHORIZATION_LOST
+  DEADLINE_EXCEEDED
+  EXPLICIT_DISCONNECT
+  TOKENLESS_HISTORY
+  AMBIGUOUS_HISTORY
+}
+model YouTubeComplianceState {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connectionGeneration Int @default(0)
+  revision Int @default(0)
+  status YouTubeComplianceStatus
+  lastSuccessfulAuthorizationValidationAt DateTime? @db.Timestamptz(3)
+  lastSuccessfulDataRefreshAt DateTime? @db.Timestamptz(3)
+  nextAttemptAt DateTime? @db.Timestamptz(3)
+  deleteByAt DateTime? @db.Timestamptz(3)
+  lastAttemptAt DateTime? @db.Timestamptz(3)
+  lastOutcome YouTubeMaintenanceOutcome?
+  attemptCount Int @default(0)
+  authorizationLostAt DateTime? @db.Timestamptz(3)
+  purgedAt DateTime? @db.Timestamptz(3)
+  removalReason YouTubeRemovalReason?
+  blockedAt DateTime? @db.Timestamptz(3)
+  leaseId String?
+  leaseExpiresAt DateTime? @db.Timestamptz(3)
+  @@index([status, nextAttemptAt])
+  @@index([status, deleteByAt])
+  @@index([leaseExpiresAt])
 }

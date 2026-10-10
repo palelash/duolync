@@ -1,5 +1,6 @@
 "use server";
 
+import { guardYouTubeClaim, lockClaimOwners } from "@/lib/youtube-claim";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/generated/prisma";
@@ -154,15 +155,16 @@ export async function requestProfileClaimAction(
   // The partial unique index prevents duplicate PENDING claims for the same profile.
   try {
     await db.$transaction(async (tx) => {
-      // Re-read inside transaction to prevent race condition
-      const locked = await tx.creatorProfile.findUnique({
-        where: { id: profileId },
-        select: { claimStatus: true },
-      });
-      if (!locked || locked.claimStatus !== "UNCLAIMED") {
+      await lockClaimOwners(tx, [targetProfile.userId, currentUser.id]);
+      const locked = await tx.creatorProfile.findUnique({ where: { id: profileId },
+        select: { claimStatus: true, profileOrigin: true, userId: true } });
+      if (!locked || locked.userId !== targetProfile.userId || locked.profileOrigin !== "IMPORTED" || locked.claimStatus !== "UNCLAIMED")
         throw new Error("This profile is no longer available for claiming.");
-      }
-
+      const requester = await tx.user.findUnique({ where: { id: currentUser.id },
+        select: { isImported: true, role: true, banned: true, emailVerified: true } });
+      if (!requester || requester.isImported || requester.role !== "CREATOR" || requester.banned || !requester.emailVerified)
+        throw new Error("Claim requester is no longer eligible.");
+      const liveProfile = await tx.creatorProfile.findUnique({ where: { userId: currentUser.id }, select: { id: true } });
       await tx.creatorProfile.update({
         where: { id: profileId },
         data: { claimStatus: "CLAIM_PENDING" },
@@ -173,7 +175,7 @@ export async function requestProfileClaimAction(
           creatorProfileId: profileId,
           requesterUserId: currentUser.id,
           status: "PENDING",
-          requiresMerge,
+          requiresMerge: liveProfile !== null,
           evidenceNote: evidence?.evidenceNote?.trim() || null,
           evidenceEmail: evidence?.evidenceEmail?.trim() || null,
           evidencePlatform: evidence?.evidencePlatform?.trim() || null,
@@ -307,8 +309,7 @@ export async function approveProfileClaimAction(claimId: string): Promise<
   try {
     const result = await db.$transaction(async (tx) => {
       // ── 1. Lock and re-read the claim ─────────────────────────────────────
-      const claim = await tx.profileClaim.findUnique({
-        where: { id: claimId },
+      const observed = await tx.profileClaim.findUnique({ where: { id: claimId },
         select: {
           id: true,
           status: true,
@@ -319,24 +320,45 @@ export async function approveProfileClaimAction(claimId: string): Promise<
             select: {
               id: true,
               claimStatus: true,
+              moderationStatus: true,
               profileOrigin: true,
               userId: true,
             },
           },
         },
       });
-
+      if (!observed) throw new Error("CLAIM_NOT_FOUND");
+      if (!observed.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
+      await guardYouTubeClaim(tx, observed.creatorProfile.userId, observed.requesterUserId, adminUser.id);
+      await tx.$queryRaw`SELECT "id" FROM "ProfileClaim" WHERE "id" = ${claimId} FOR UPDATE`;
+      const claim = await tx.profileClaim.findUnique({ where: { id: claimId },
+        select: {
+          id: true,
+          status: true,
+          requesterUserId: true,
+          creatorProfileId: true,
+          requiresMerge: true,
+          creatorProfile: {
+            select: {
+              id: true,
+              claimStatus: true,
+              moderationStatus: true,
+              profileOrigin: true,
+              userId: true,
+            },
+          },
+        },
+      });
       if (!claim) throw new Error("CLAIM_NOT_FOUND");
       if (claim.status !== "PENDING") throw new Error("CLAIM_NOT_PENDING");
-      if (!claim.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
-
+      if (!claim.requesterUserId || claim.requesterUserId !== observed.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
+      if (claim.creatorProfile.userId !== observed.creatorProfile.userId || claim.creatorProfileId !== observed.creatorProfileId)
+        throw new Error("PROFILE_NOT_PENDING");
+      if (claim.creatorProfile.claimStatus !== "CLAIM_PENDING" || claim.creatorProfile.moderationStatus !== observed.creatorProfile.moderationStatus)
+        throw new Error("PROFILE_NOT_PENDING");
+      if (claim.creatorProfile.profileOrigin !== "IMPORTED") throw new Error("PROFILE_NOT_IMPORTED");
       const { requesterUserId, creatorProfileId } = claim;
       const placeholderUserId = claim.creatorProfile.userId;
-
-      // ── 2. Re-validate target profile ────────────────────────────────────
-      if (claim.creatorProfile.claimStatus !== "CLAIM_PENDING") throw new Error("PROFILE_NOT_PENDING");
-      if (claim.creatorProfile.profileOrigin !== "IMPORTED") throw new Error("PROFILE_NOT_IMPORTED");
-
       // ── 3. Re-validate requester (live DB — do NOT trust cached state) ────
       const requester = await tx.user.findUnique({
         where: { id: requesterUserId },
@@ -345,12 +367,14 @@ export async function approveProfileClaimAction(claimId: string): Promise<
           isImported: true,
           banned: true,
           emailVerified: true,
+          role: true,
           name: true,
           email: true,
         },
       });
       if (!requester) throw new Error("REQUESTER_NOT_FOUND");
       if (requester.isImported) throw new Error("REQUESTER_IS_IMPORTED");
+      if (!requester.emailVerified || requester.role !== "CREATOR") throw new Error("REQUESTER_EMAIL_UNVERIFIED");
       if (requester.banned) throw new Error("REQUESTER_BANNED");
 
       // ── 4. ALWAYS recompute requiresMerge from live DB state ──────────────
@@ -495,6 +519,7 @@ export async function approveProfileClaimAction(claimId: string): Promise<
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
     const errorMessages: Record<string, string> = {
+      YOUTUBE_COMPLIANCE_REQUIRES_MANUAL_REVIEW: "YouTube compliance state requires manual review; automatic ownership movement is blocked.",
       CLAIM_NOT_FOUND: "Claim not found.",
       CLAIM_NOT_PENDING: "This claim is no longer pending.",
       CLAIM_NO_REQUESTER: "The requester account no longer exists.",
@@ -527,18 +552,19 @@ export async function rejectProfileClaimAction(
 
   try {
     const claim = await db.$transaction(async (tx) => {
-      const c = await tx.profileClaim.findUnique({
-        where: { id: claimId },
-        select: {
-          id: true,
-          status: true,
-          requesterUserId: true,
-          creatorProfileId: true,
-        },
-      });
+      const observed = await tx.profileClaim.findUnique({ where: { id: claimId },
+        select: { requesterUserId: true, creatorProfile: { select: { userId: true } } } });
+      if (!observed) throw new Error("CLAIM_NOT_FOUND");
+      await lockClaimOwners(tx, [observed.creatorProfile.userId, adminUser.id, ...(observed.requesterUserId ? [observed.requesterUserId] : [])]);
+      await tx.$queryRaw`SELECT "id" FROM "ProfileClaim" WHERE "id" = ${claimId} FOR UPDATE`;
+      const c = await tx.profileClaim.findUnique({ where: { id: claimId }, select: {
+        id: true, status: true, requesterUserId: true, creatorProfileId: true,
+        creatorProfile: { select: { userId: true, claimStatus: true } },
+      } });
       if (!c) throw new Error("CLAIM_NOT_FOUND");
       if (c.status !== "PENDING") throw new Error("CLAIM_NOT_PENDING");
-
+      if (c.requesterUserId !== observed.requesterUserId || c.creatorProfile.userId !== observed.creatorProfile.userId || c.creatorProfile.claimStatus !== "CLAIM_PENDING")
+        throw new Error("CLAIM_NOT_PENDING");
       // Reset the target profile to UNCLAIMED
       await tx.creatorProfile.update({
         where: { id: c.creatorProfileId },
@@ -986,6 +1012,9 @@ export async function getClaimMergePreviewAction(claimId: string): Promise<{
     // ── Build hard-block list ───────────────────────────────────────────────
     const hardBlocks: MergePreviewHardBlock[] = [];
     const safeAutoMerge: string[] = [];
+    const youtubeStates = await db.youTubeComplianceState.count({ where: { userId: { in: [placeholderUserId, claim.requesterUserId] } } });
+    const youtubeConnections = await db.platformToken.count({ where: { userId: { in: [placeholderUserId, claim.requesterUserId] }, platform: "youtube" } });
+    if (youtubeStates || youtubeConnections) hardBlocks.push({ code: "YOUTUBE_COMPLIANCE_REQUIRES_MANUAL_REVIEW", message: "YouTube lifecycle or official connection requires manual review before ownership movement." });
 
     if (!rp) {
       hardBlocks.push({ code: "NO_REGISTERED_PROFILE", message: "Requester does not have a CreatorProfile. Use Scenario A approval instead." });
@@ -1132,6 +1161,12 @@ export async function mergeAndApproveClaimAction(
     await db.$transaction(
       async (tx) => {
         // ────────────────────────────────────────────────────────────────────
+        // Acquire both owner coordination domains before the claim row, matching
+        // account deletion (owner -> profile -> claim) and preventing a cycle.
+        const ownerSnapshot = await tx.profileClaim.findUnique({ where: { id: claimId },
+          select: { requesterUserId: true, creatorProfile: { select: { userId: true, moderationStatus: true } } } });
+        if (!ownerSnapshot?.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
+        await guardYouTubeClaim(tx, ownerSnapshot.creatorProfile.userId, ownerSnapshot.requesterUserId, adminUser.id);
         // STEP 1 — Acquire PostgreSQL row-level lock on the ProfileClaim.
         // This serializes concurrent admin merge attempts at the DB level.
         // SELECT FOR UPDATE blocks any other transaction from locking the same
@@ -1187,9 +1222,14 @@ export async function mergeAndApproveClaimAction(
         });
         if (!ip) throw new Error("PROFILE_NOT_FOUND");
         if (ip.profileOrigin !== "IMPORTED") throw new Error("PROFILE_NOT_IMPORTED");
+        const currentModeration = await tx.creatorProfile.findUnique({ where: { id: ip.id }, select: { moderationStatus: true } });
+        if (currentModeration?.moderationStatus !== ownerSnapshot.creatorProfile.moderationStatus) throw new Error("PROFILE_NOT_PENDING");
         if (ip.claimStatus !== "CLAIM_PENDING") throw new Error("PROFILE_NOT_PENDING");
 
         const placeholderUserId = ip.userId;
+        if (placeholderUserId !== ownerSnapshot.creatorProfile.userId || requesterUserId !== ownerSnapshot.requesterUserId) throw new Error("PROFILE_NOT_PENDING");
+        const liveOwner = await tx.creatorProfile.findUnique({ where: { id: ip.id }, select: { userId: true } });
+        if (liveOwner?.userId !== placeholderUserId) throw new Error("PROFILE_NOT_PENDING");
 
         // ────────────────────────────────────────────────────────────────────
         // STEP 4 — Validate UserP (placeholder)
@@ -1213,12 +1253,14 @@ export async function mergeAndApproveClaimAction(
             isImported: true,
             banned: true,
             emailVerified: true,
+            role: true,
             hasCompletedOnboarding: true,
           },
         });
         if (!userR) throw new Error("REQUESTER_NOT_FOUND");
         if (userR.isImported) throw new Error("REQUESTER_IS_IMPORTED");
         if (userR.banned) throw new Error("REQUESTER_BANNED");
+        if (userR.role !== "CREATOR") throw new Error("REQUESTER_IS_IMPORTED");
         if (!userR.emailVerified) throw new Error("REQUESTER_EMAIL_UNVERIFIED");
 
         // ────────────────────────────────────────────────────────────────────
@@ -1909,6 +1951,7 @@ export async function mergeAndApproveClaimAction(
       : msg;
 
     const errorMessages: Record<string, string> = {
+      YOUTUBE_COMPLIANCE_REQUIRES_MANUAL_REVIEW: "YouTube compliance state requires manual review; automatic ownership movement is blocked.",
       CLAIM_NOT_FOUND:                          "Claim not found.",
       CLAIM_NOT_PENDING:                        "This claim is no longer pending.",
       CLAIM_NO_REQUESTER:                       "The requester account no longer exists.",
