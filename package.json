@@ -17,7 +17,10 @@
     "db:import": "tsx prisma/import-creators.ts",
     "youtube:backfill:plan": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --plan",
     "youtube:backfill:apply": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --apply",
-    "test:youtube:postgres": "node --conditions=react-server --test test/youtube-postgres.test.cjs"
+    "test:youtube:postgres": "node --conditions=react-server --test test/youtube-postgres.test.cjs",
+    "youtube:inventory": "node --import tsx scripts/youtube-inventory.ts",
+    "test:youtube:operations": "node --test test/youtube-operations.test.cjs",
+    "youtube:maintenance": "node --conditions=react-server --import tsx scripts/youtube-maintenance.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -57,6 +60,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.4.2",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.29.2",
     "input-otp": "^1.4.2",
@@ -77,6 +81,7 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.23.13",
     "uploadthing": "^7.7.4",
     "vaul": "^0.9.9",
     "zod": "^3.25.76"
@@ -102,12 +107,10 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.21",
-    "dotenv": "^17.4.2",
     "eslint": "^9.32.0",
     "eslint-config-next": "^15.3.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.23.13",
     "typescript": "^5.8.3"
   }
 }

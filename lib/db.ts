@@ -15,21 +15,30 @@ function createPrismaClient() {
   });
 
   // Log and swallow idle-client errors so they don't crash the process
-  pool.on("error", (err) => {
-    console.error("[pg pool] unexpected error on idle client:", err.message);
+  pool.on("error", () => {
+    console.error("[pg pool] unexpected idle connection error");
   });
 
   const adapter = new PrismaPg(pool);
-  return new PrismaClient({ adapter });
+  return { client: new PrismaClient({ adapter }), pool };
 }
 
 // Prevent multiple PrismaClient instances across Next.js hot reloads in development.
 const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof createPrismaClient> | undefined;
+  prisma: PrismaClient | undefined;
+  prismaPool: Pool | undefined;
 };
 
 if (!globalForPrisma.prisma) {
-  globalForPrisma.prisma = createPrismaClient();
+  const created = createPrismaClient();
+  globalForPrisma.prisma = created.client;
+  globalForPrisma.prismaPool = created.pool;
 }
 
 export const db = globalForPrisma.prisma;
+
+/** Prisma uses an externally owned pool: standalone runners must close both. */
+export async function closeDatabase(): Promise<void> {
+  try { await db.$disconnect(); }
+  finally { if (globalForPrisma.prismaPool) await globalForPrisma.prismaPool.end(); }
+}

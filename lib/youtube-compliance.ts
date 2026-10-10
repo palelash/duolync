@@ -32,3 +32,8 @@ export function compatibleYouTubeOperation(current: YouTubeComplianceState | nul
     current.connectionGeneration === expected.connectionGeneration && current.revision === expected.revision &&
     (!expected.lease || (current.leaseId === expected.lease.id && !!current.leaseExpiresAt && current.leaseExpiresAt > now));
 }
+
+/** Missing trustworthy retention evidence is due immediately, never a new window. */
+export function youtubeDeadlineReached(state: Pick<YouTubeComplianceState, "deleteByAt">, now: Date): boolean {
+  return !state.deleteByAt || state.deleteByAt <= now;
+}

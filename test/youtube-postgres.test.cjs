@@ -17,7 +17,7 @@ function load(file, imports = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText,
     { exports, require: name => name === 'server-only' ? {} : imports[name] ?? (() => { throw Error(`Missing ${name}`); })(),
-      Date, URL, URLSearchParams, Set, Map, BigInt, Buffer, process: { env: { YOUTUBE_CLIENT_ID: '123-test.apps.googleusercontent.com', YOUTUBE_CLIENT_SECRET: 'fake-test-secret', GOOGLE_CLIENT_ID: '456-login.apps.googleusercontent.com' } }, console, AbortSignal, crypto: require("node:crypto"), ...globals });
+      Date, Error, URL, URLSearchParams, Set, Map, BigInt, Buffer, process: { env: { YOUTUBE_CLIENT_ID: '123-test.apps.googleusercontent.com', YOUTUBE_CLIENT_SECRET: 'fake-test-secret', GOOGLE_CLIENT_ID: '456-login.apps.googleusercontent.com' } }, console, AbortSignal, crypto: require("node:crypto"), ...globals });
   return exports;
 }
 const compliance = load('lib/youtube-compliance.ts');
@@ -26,13 +26,15 @@ const metrics = load('lib/creator-metrics.ts');
 const aggregates = load('lib/youtube-aggregates.ts', { '@/lib/creator-metrics': metrics });
 const claimLocks = load('lib/youtube-claim.ts', { '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance });
 function logic(db, fetch = async () => { throw Error('No provider allowed'); }) {
-  const imports = { 'node:crypto': require('node:crypto'), '@/lib/db': { db }, '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance, '@/lib/creator-metrics': metrics, '@/lib/youtube-aggregates': aggregates, '@/lib/youtube-claim': claimLocks,
+  const imports = { '@/lib/youtube-maintenance-config': load('lib/youtube-maintenance-config.ts'), 'node:crypto': require('node:crypto'), '@/lib/db': { db }, '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance, '@/lib/creator-metrics': metrics, '@/lib/youtube-aggregates': aggregates, '@/lib/youtube-claim': claimLocks,
     '@/lib/youtube-auth': { youtubeFetch: fetch } };
   const auth = load('lib/youtube-auth.ts', { '@/lib/db': { db }, 'node:crypto': require('node:crypto') });
   imports['@/lib/youtube-auth'] = { ...auth, youtubeFetch: fetch };
   const removal = load('lib/youtube-removal.ts', imports);
   const token = load('lib/youtube-token.ts', { ...imports, '@/lib/youtube-removal': removal });
-  return { removal, token, sync: load('lib/youtube-sync.ts', { ...imports, '@/lib/youtube-token': token }),
+  const sync = load('lib/youtube-sync.ts', { ...imports, '@/lib/youtube-token': token });
+  const maintenance = load('lib/youtube-maintenance.ts', { ...imports, '@/lib/youtube-token': token, '@/lib/youtube-sync': sync, '@/lib/youtube-removal': removal });
+  return { removal, token, sync, maintenance,
     claim: load('lib/youtube-claim.ts', imports), revoke: load('lib/youtube-revoke.ts', { ...imports, '@/lib/youtube-token': token }) };
 }
 const ids = [];
@@ -552,4 +554,434 @@ test('V exact TikTok sync stats-FK/claim reproduction waits on User before token
   assert.equal(posts.length, 1); assert.equal(posts[0].providerPostId, 'fresh-video'); assert.equal(posts[0].likes, 0); assert.equal(posts[0].comments, 0); assert.equal(posts[0].views, 12);
   assert.equal(await clients[0].platformToken.count({ where: { userId: destination.id } }), 0);
   assert.equal(await clients[0].platformStats.count({ where: { userId: destination.id } }), 0);
+});
+
+// Pass 3B-2: real production maintenance, independent clients/pools, fake HTTP only.
+async function maintenanceFixture(extra = {}, reset = true) {
+  if (reset) await clients[0].user.deleteMany({ where: { id: { in: ids } } });
+  const id = await fixture();
+  const [clock] = await clients[0].$queryRaw`SELECT clock_timestamp() AS now`;
+  const evidence = new Date(clock.now.getTime() - 27 * 86400000);
+  await clients[0].youTubeComplianceState.update({ where: { userId: id }, data: {
+    lastSuccessfulAuthorizationValidationAt: evidence, lastSuccessfulDataRefreshAt: evidence,
+    nextAttemptAt: new Date(clock.now.getTime() - 1000), deleteByAt: new Date(clock.now.getTime() + 3 * 86400000), ...extra,
+  } });
+  await clients[0].platformToken.update({ where: { userId_platform: { userId: id, platform: 'youtube' } }, data: { expiresAt: new Date(Date.now() + 3600000) } });
+  return id;
+}
+function maintenanceProvider(settings = {}) {
+  const calls = [];
+  return { calls, fetch: async url => {
+    calls.push(String(url));
+    if (settings.gate && String(url).includes(settings.gateAt ?? '/channels')) { settings.gate.enter(); await settings.gate.wait(); }
+    if (String(url).includes('oauth2.googleapis.com/token')) return response(settings.refreshBody ?? { access_token: 'validated', expires_in: 3600, token_type: 'Bearer' }, settings.refreshStatus ?? 200);
+    const resource = new URL(url).pathname.split('/').pop();
+    if (settings.errorAt === resource) return response({ error: { errors: [{ reason: settings.reason ?? 'backendError' }] } }, settings.status ?? 503);
+    if (resource === 'channels') return response({ items: [{ id: settings.channel ?? 'CHANNEL', snippet: { title: 'Updated title', customUrl: '@updated' }, statistics: { subscriberCount: '9', videoCount: '1' }, contentDetails: { relatedPlaylists: { uploads: 'UPLOADS' } } }] });
+    if (resource === 'playlistItems') return response({ items: [{ contentDetails: { videoId: 'public' } }] });
+    return response({ items: [{ id: 'public', snippet: { title: 'Public video', channelId: 'CHANNEL', publishedAt: '2020-01-02T03:04:05Z' }, status: { privacyStatus: 'public' }, statistics: { viewCount: '7' } }] });
+  } };
+}
+async function maintenancePending(settings = {}) {
+  const id = await maintenanceFixture(), g = gate(), provider = maintenanceProvider({ ...settings, gate: g });
+  const engine = logic(clients[0], provider.fetch).maintenance;
+  const claim = await engine.claimYouTubeMaintenance();
+  const pending = engine.processYouTubeMaintenanceClaim(claim, () => true);
+  await bounded(g.ready);
+  return { id, claim, pending, gate: g, provider };
+}
+const stateFor = id => clients[0].youTubeComplianceState.findUnique({ where: { userId: id } });
+
+test('3B2 A due ACTIVE is claimed; B future/PURGED skipped', opts, async () => {
+  const id = await maintenanceFixture({ nextAttemptAt: new Date(Date.now() + 86400000) });
+  const engine = logic(clients[0]).maintenance;
+  assert.equal(await engine.claimYouTubeMaintenance(), null);
+  await clients[0].youTubeComplianceState.update({ where: { userId: id }, data: { nextAttemptAt: new Date(0) } });
+  const claim = await engine.claimYouTubeMaintenance();
+  assert.equal(claim.userId, id); assert.ok(claim.state.leaseId); assert.ok(claim.state.leaseExpiresAt > claim.observedAt);
+  assert.equal(await logic(clients[1]).maintenance.claimYouTubeMaintenance(), null);
+  await logic(clients[1]).removal.removeYouTubeLocalData(id);
+  assert.equal(await engine.claimYouTubeMaintenance(), null);
+});
+test('3B2 C expired lease takeover; D old holder cannot commit', opts, async () => {
+  const id = await maintenanceFixture(), provider = maintenanceProvider();
+  const engine = logic(clients[0], provider.fetch).maintenance;
+  const old = await engine.claimYouTubeMaintenance();
+  await clients[1].youTubeComplianceState.update({ where: { userId: id }, data: { leaseExpiresAt: new Date(0) } });
+  const current = await logic(clients[1]).maintenance.claimYouTubeMaintenance();
+  assert.notEqual(current.state.leaseId, old.state.leaseId);
+  assert.equal(await engine.processYouTubeMaintenanceClaim(old, () => true), 'SUPERSEDED');
+  assert.equal(provider.calls.length, 0);
+  assert.equal((await stateFor(id)).leaseId, current.state.leaseId);
+});
+test('3B2 E maintenance sync vs reconnect', opts, async () => {
+  const p = await maintenancePending();
+  try {
+    await logic(clients[1]).token.saveYouTubeAccessToken(p.id, { ...p.claim.credential, accessToken: 'reconnected', username: null, scopes: null, expiresAt: null });
+  } finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED');
+  assert.equal(await clients[0].platformStats.count({ where: { userId: p.id } }), 0);
+});
+test('3B2 F maintenance invalid_grant vs reconnect', opts, async () => {
+  const p = await maintenancePending({ gateAt: 'oauth2.googleapis.com/token', refreshBody: { error: 'invalid_grant' }, refreshStatus: 400 });
+  try {
+    await logic(clients[1]).token.saveYouTubeAccessToken(p.id, { ...p.claim.credential, accessToken: 'reconnected', username: null, scopes: null, expiresAt: null });
+  } finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED'); assert.equal((await stateFor(p.id)).status, 'ACTIVE');
+});
+test('3B2 G maintenance vs explicit disconnect', opts, async () => {
+  const p = await maintenancePending();
+  try { assert.equal((await logic(clients[1]).removal.removeYouTubeLocalData(p.id)).error, null); }
+  finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED'); assert.equal((await stateFor(p.id)).removalReason, 'EXPLICIT_DISCONNECT');
+});
+test('3B2 H maintenance vs account deletion', opts, async () => {
+  const p = await maintenancePending();
+  try {
+    const other = logic(clients[1], async () => response({}));
+    assert.equal((await actions(clients[1], { id: p.id, role: 'CREATOR' }, other).account.deleteAccount()).success, true);
+  } finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED'); assert.equal(await stateFor(p.id), null);
+});
+test('3B2 I independent workers cannot claim same owner concurrently', opts, async () => {
+  await maintenanceFixture();
+  const claimed = await Promise.all(clients.map(client => logic(client).maintenance.claimYouTubeMaintenance()));
+  assert.equal(claimed.filter(Boolean).length, 1);
+});
+test('3B2 J same-generation stale revision response is superseded', opts, async () => {
+  const p = await maintenancePending();
+  const previous = await stateFor(p.id);
+  try { await clients[1].$transaction(async tx => { await locks.lockYouTubeOwner(tx, p.id); await tx.youTubeComplianceState.update({ where: { userId: p.id }, data: { revision: { increment: 1 } } }); }); }
+  finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED'); assert.equal((await stateFor(p.id)).connectionGeneration, previous.connectionGeneration);
+});
+async function youtubeDataset(id) {
+  const profile = await clients[0].creatorProfile.findUnique({ where: { userId: id } });
+  await clients[0].platformStats.create({ data: { userId: id, platform: 'youtube', followerCount: 9, dataSource: 'OFFICIAL_API' } });
+  await clients[0].socialPost.create({ data: { creatorProfileId: profile.id, platform: 'youtube', providerPostId: 'private', postUrl: 'https://youtube.com/watch?v=private', dataSource: 'OFFICIAL_API' } });
+  for (const providerPostId of ['public', 'private']) await clients[0].creatorContentCuration.create({ data: { creatorProfileId: profile.id, platform: 'youtube', providerPostId, isFeatured: true } });
+  return profile;
+}
+async function assertPurged(id, profile, reason, outcome) {
+  const state = await stateFor(id);
+  assert.equal(state.status, 'PURGED'); assert.equal(state.removalReason, reason); assert.equal(state.lastOutcome, outcome);
+  assert.ok(state.blockedAt); assert.ok(state.lastAttemptAt); assert.equal(state.leaseId, null);
+  assert.equal(await clients[0].platformToken.count({ where: { userId: id, platform: 'youtube' } }), 0);
+  assert.equal(await clients[0].platformStats.count({ where: { userId: id, platform: 'youtube' } }), 0);
+  assert.equal(await clients[0].socialPost.count({ where: { creatorProfileId: profile.id, platform: 'youtube' } }), 0);
+  assert.equal(await clients[0].creatorContentCuration.count({ where: { creatorProfileId: profile.id, platform: 'youtube' } }), 0);
+  const updated = await clients[0].creatorProfile.findUnique({ where: { userId: id } });
+  assert.equal(updated.connectedPlatforms.includes('youtube'), false); assert.equal(updated.followerCount, null);
+}
+test('3B2 K exact deadline atomic purge; L zero quota still purges overdue', opts, async () => {
+  const id = await maintenanceFixture({ deleteByAt: new Date(0), nextAttemptAt: new Date(Date.now() + 86400000) });
+  const profile = await youtubeDataset(id);
+  const result = await logic(clients[0]).maintenance.runYouTubeMaintenance({ quotaBudget: 0 });
+  assert.equal(result.outcomes.DEADLINE_PURGED, 1); assert.equal(result.quotaUsed, 0);
+  await assertPurged(id, profile, 'DEADLINE_EXCEEDED', 'DEADLINE_PURGED');
+});
+test('3B2 M one owner failure does not abort next owner', opts, async () => {
+  const first = await maintenanceFixture(), second = await maintenanceFixture({}, false);
+  await clients[0].youTubeComplianceState.update({ where: { userId: first }, data: { deleteByAt: new Date(Date.now() + 86400000) } });
+  const provider = maintenanceProvider(); let refreshes = 0;
+  const fetch = async url => String(url).includes('oauth2.googleapis.com/token') && ++refreshes === 1 ? response({}, 503) : provider.fetch(url);
+  const result = await logic(clients[0], fetch).maintenance.runYouTubeMaintenance({ concurrency: 1 });
+  assert.equal(result.processed, 2); assert.equal(result.outcomes.TEMPORARY_FAILURE, 1); assert.equal(result.outcomes.SUCCESS, 1);
+  assert.equal((await stateFor(first)).lastOutcome, 'TEMPORARY_FAILURE'); assert.equal((await stateFor(second)).lastOutcome, 'SUCCESS');
+});
+test('3B2 forced refresh despite usable access; accepted evidence, username and curation', opts, async () => {
+  const id = await maintenanceFixture(), profile = await youtubeDataset(id), provider = maintenanceProvider();
+  const engine = logic(clients[0], provider.fetch).maintenance, claim = await engine.claimYouTubeMaintenance();
+  assert.ok(claim.credential.expiresAt > new Date());
+  assert.equal(await engine.processYouTubeMaintenanceClaim(claim, () => true), 'SUCCESS');
+  assert.match(provider.calls[0], /oauth2.googleapis.com\/token/);
+  const state = await stateFor(id);
+  assert.equal(state.lastOutcome, 'SUCCESS'); assert.equal(state.attemptCount, 0); assert.equal(state.revision, claim.state.revision + 1);
+  assert.equal(state.lastSuccessfulDataRefreshAt.getTime(), claim.observedAt.getTime());
+  assert.equal(state.lastSuccessfulAuthorizationValidationAt.getTime(), claim.observedAt.getTime());
+  assert.equal(state.deleteByAt.getTime(), claim.observedAt.getTime() + 30 * 86400000);
+  assert.equal(state.nextAttemptAt.getTime(), claim.observedAt.getTime() + 27 * 86400000); assert.equal(state.leaseId, null);
+  assert.equal((await clients[0].platformToken.findUnique({ where: { userId_platform: { userId: id, platform: 'youtube' } } })).username, '@updated');
+  const curated = await clients[0].creatorContentCuration.findMany({ where: { creatorProfileId: profile.id } });
+  assert.deepEqual(curated.map(row => row.providerPostId), ['public']);
+});
+test('3B2 current invalid_grant reuses atomic authorization purge', opts, async () => {
+  const id = await maintenanceFixture(), profile = await youtubeDataset(id), provider = maintenanceProvider({ refreshBody: { error: 'invalid_grant' }, refreshStatus: 400 });
+  const result = await logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance();
+  assert.equal(result.outcomes.AUTHORIZATION_LOST, 1);
+  await assertPurged(id, profile, 'AUTHORIZATION_LOST', 'AUTHORIZATION_LOST');
+});
+for (const [name, settings, expected] of [
+  ['temporary refresh', { refreshBody: { error: 'invalid_grant' }, refreshStatus: 503 }, 'TEMPORARY_FAILURE'],
+  ['malformed refresh', { refreshBody: {} }, 'TEMPORARY_FAILURE'],
+  ['refresh client config', { refreshBody: { error: 'invalid_client' }, refreshStatus: 400 }, 'CONFIGURATION_FAILURE'],
+  ['quota', { errorAt: 'channels', reason: 'quotaExceeded', status: 403 }, 'QUOTA_EXHAUSTED'],
+  ['API config', { errorAt: 'channels', reason: 'accessNotConfigured', status: 403 }, 'CONFIGURATION_FAILURE'],
+  ['identity', { channel: 'OTHER_CHANNEL' }, 'IDENTITY_MISMATCH'],
+  ['required data failure', { errorAt: 'playlistItems' }, 'TEMPORARY_FAILURE'],
+  ['provider error', { errorAt: 'channels', reason: 'invalidParameter', status: 400 }, 'PROVIDER_FAILURE'],
+]) test(`3B2 ${name}: truthful outcome, no freshness/deadline extension`, opts, async () => {
+  const id = await maintenanceFixture(), before = await stateFor(id), provider = maintenanceProvider(settings);
+  const result = await logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance();
+  assert.equal(result.outcomes[expected], 1);
+  const state = await stateFor(id);
+  assert.equal(state.lastOutcome, expected); assert.equal(state.attemptCount, 1); assert.ok(state.lastAttemptAt); assert.equal(state.leaseId, null);
+  for (const field of ['deleteByAt', 'lastSuccessfulDataRefreshAt', 'lastSuccessfulAuthorizationValidationAt']) assert.equal(state[field].getTime(), before[field].getTime());
+  assert.ok(state.nextAttemptAt > state.lastAttemptAt); assert.ok(state.nextAttemptAt <= state.deleteByAt);
+});
+test('3B2 budget exhausted prevents new HTTP and preserves deadline', opts, async () => {
+  const id = await maintenanceFixture(), provider = maintenanceProvider(), before = await stateFor(id);
+  const result = await logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance({ quotaBudget: 6 });
+  assert.equal(result.outcomes.QUOTA_EXHAUSTED, 1); assert.equal(result.quotaUsed, 0); assert.equal(provider.calls.length, 0);
+  assert.equal((await stateFor(id)).deleteByAt.getTime(), before.deleteByAt.getTime());
+});
+test('3B2 access-only minimal authenticated validation; 401 preserves authorization', opts, async () => {
+  for (const rejected of [false, true]) {
+    const id = await maintenanceFixture(), provider = maintenanceProvider(rejected ? { errorAt: 'channels', reason: 'authError', status: 401 } : {});
+    await clients[0].platformToken.update({ where: { userId_platform: { userId: id, platform: 'youtube' } }, data: { refreshToken: null } });
+    const result = await logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance();
+    assert.equal(result.outcomes[rejected ? 'PROVIDER_FAILURE' : 'SUCCESS'], 1);
+    assert.equal(new URL(provider.calls[0]).searchParams.get('part'), 'id');
+    assert.equal((await stateFor(id)).status, 'ACTIVE');
+  }
+});
+test('3B2 deadline reached during provider work purges instead of accepting evidence', opts, async () => {
+  const p = await maintenancePending();
+  try { await clients[1].youTubeComplianceState.update({ where: { userId: p.id }, data: { deleteByAt: new Date(0) } }); }
+  finally { p.gate.release(); }
+  assert.equal(await p.pending, 'DEADLINE_PURGED'); assert.equal((await stateFor(p.id)).removalReason, 'DEADLINE_EXCEEDED');
+});
+test('3B2 lease taken over during HTTP blocks accepted write', opts, async () => {
+  const p = await maintenancePending();
+  try {
+    await clients[1].youTubeComplianceState.update({ where: { userId: p.id }, data: { leaseExpiresAt: new Date(0) } });
+    const replacement = await logic(clients[1]).maintenance.claimYouTubeMaintenance();
+    assert.ok(replacement); assert.notEqual(replacement.state.leaseId, p.claim.state.leaseId);
+  } finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED'); assert.equal(await clients[0].platformStats.count({ where: { userId: p.id } }), 0);
+});
+test('3B2 tokenless ACTIVE is reported and cannot silently reconnect', opts, async () => {
+  const id = await maintenanceFixture(); await clients[0].platformToken.deleteMany({ where: { userId: id } });
+  const result = await logic(clients[0]).maintenance.runYouTubeMaintenance();
+  assert.equal(result.outcomes.NOT_CONNECTED, 1); assert.equal((await stateFor(id)).lastOutcome, 'NOT_CONNECTED');
+});
+test('3B2 standalone runner terminates and prints aggregate only', opts, async () => {
+  await clients[0].user.deleteMany({ where: { id: { in: ids } } });
+  const { execFile } = require('node:child_process');
+  const run = env => new Promise((resolve, reject) => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', 'scripts/youtube-maintenance.ts'], {
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable', YOUTUBE_CLIENT_ID: 'test-client', YOUTUBE_CLIENT_SECRET: 'test-secret', YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '0', ...env }, timeout: 15000,
+  }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+  const good = await run({}); assert.equal(good.error, null, good.stderr);
+  const summary = JSON.parse(good.stdout); assert.equal(summary.processed, 0); assert.equal(summary.quotaUsed, 0);
+  const bad = await run({ YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '-1' }); assert.equal(bad.error.code, 1); assert.equal(bad.stderr.trim(), 'YouTube maintenance run failed.');
+});
+test('3B2 overdue owner without profile still purges credentials and stats', opts, async () => {
+  const id = await maintenanceFixture({ deleteByAt: null });
+  await clients[0].creatorProfile.delete({ where: { userId: id } });
+  await clients[0].platformStats.create({ data: { userId: id, platform: 'youtube', followerCount: 9 } });
+  const result = await logic(clients[0]).maintenance.runYouTubeMaintenance({ quotaBudget: 0 });
+  assert.equal(result.outcomes.DEADLINE_PURGED, 1); assert.equal((await stateFor(id)).status, 'PURGED');
+  assert.equal(await clients[0].platformToken.count({ where: { userId: id } }), 0);
+  assert.equal(await clients[0].platformStats.count({ where: { userId: id } }), 0);
+});
+test('3B2 provider quota exhaustion prevents following owner HTTP; overdue work still first', opts, async () => {
+  const overdue = await maintenanceFixture({ deleteByAt: new Date(0) });
+  const first = await maintenanceFixture({ deleteByAt: new Date(Date.now() + 86400000) }, false);
+  const second = await maintenanceFixture({}, false);
+  const provider = maintenanceProvider({ errorAt: 'channels', reason: 'quotaExceeded', status: 403 });
+  const result = await logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance({ concurrency: 1, quotaBudget: 100 });
+  assert.equal(result.processed, 3); assert.equal(result.outcomes.DEADLINE_PURGED, 1); assert.equal(result.outcomes.QUOTA_EXHAUSTED, 2);
+  assert.equal(provider.calls.length, 2); assert.equal(result.quotaUsed, 1);
+  assert.equal((await stateFor(overdue)).status, 'PURGED'); assert.equal((await stateFor(first)).lastOutcome, 'QUOTA_EXHAUSTED'); assert.equal((await stateFor(second)).lastOutcome, 'QUOTA_EXHAUSTED');
+});
+test('3B2 maximum bounded dataset uses seven quota units and item limit', opts, async () => {
+  const id = await maintenanceFixture(), profile = await clients[0].creatorProfile.findUnique({ where: { userId: id } });
+  const curated = Array.from({ length: 200 }, (_, i) => `curated${i}`), recent = Array.from({ length: 50 }, (_, i) => `recent${i}`);
+  await clients[0].creatorContentCuration.createMany({ data: curated.map(providerPostId => ({ creatorProfileId: profile.id, platform: 'youtube', providerPostId, isFeatured: true })) });
+  const provider = maintenanceProvider();
+  const fetch = async url => {
+    const parsed = new URL(url), resource = parsed.pathname.split('/').pop();
+    if (resource === 'playlistItems') return response({ items: recent.map(videoId => ({ contentDetails: { videoId } })) });
+    if (resource === 'videos') return response({ items: parsed.searchParams.get('id').split(',').map(id => ({ id,
+      snippet: { title: id, channelId: 'CHANNEL', publishedAt: '2020-01-02T03:04:05Z' }, status: { privacyStatus: 'public' }, statistics: { viewCount: '1' } })) });
+    return provider.fetch(url);
+  };
+  const result = await logic(clients[0], fetch).maintenance.runYouTubeMaintenance({ quotaBudget: 7, itemLimit: 1 });
+  assert.equal(result.processed, 1); assert.equal(result.outcomes.SUCCESS, 1); assert.equal(result.quotaUsed, 7);
+  assert.equal(await clients[0].socialPost.count({ where: { creatorProfileId: profile.id } }), 250);
+  assert.equal(await clients[0].creatorContentCuration.count({ where: { creatorProfileId: profile.id } }), 200);
+});
+
+// Final blocker fixes: deadline ownership and authoritative video visibility.
+test('3B2 deadline A ordinary lease is capped; second worker purges as boundary arrives', opts, async () => {
+  const id = await maintenanceFixture();
+  const profile = await youtubeDataset(id);
+  await clients[0].$executeRaw`UPDATE "YouTubeComplianceState" SET "deleteByAt" = clock_timestamp() + interval '2 seconds' WHERE "userId" = ${id}`;
+  const first = logic(clients[0]).maintenance, old = await first.claimYouTubeMaintenance(300000);
+  assert.ok(old); assert.equal(old.state.leaseExpiresAt.getTime(), old.state.deleteByAt.getTime());
+  assert.equal(await logic(clients[1]).maintenance.claimYouTubeMaintenance(), null);
+  await new Promise(resolve => setTimeout(resolve, 2200));
+  const [clock] = await clients[1].$queryRaw`SELECT clock_timestamp() AS now`;
+  assert.ok(clock.now >= old.state.deleteByAt);
+  const result = await logic(clients[1]).maintenance.runYouTubeMaintenance({ quotaBudget: 0 });
+  assert.equal(result.outcomes.DEADLINE_PURGED, 1); assert.equal(result.quotaUsed, 0);
+  await assertPurged(id, profile, 'DEADLINE_EXCEEDED', 'DEADLINE_PURGED');
+  assert.equal(await first.processYouTubeMaintenanceClaim(old, () => { throw Error('no provider after purge'); }), 'SUPERSEDED');
+});
+test('3B2 deadline B crashed ordinary worker with unexpired legacy lease is superseded; C zero quota purges', opts, async () => {
+  const id = await maintenanceFixture(), profile = await youtubeDataset(id), provider = maintenanceProvider();
+  const original = logic(clients[0], provider.fetch).maintenance, old = await original.claimYouTubeMaintenance();
+  // Simulate a lease created before the cap fix and a deadline reached while
+  // its holder is absent. DB time, not host time, establishes both conditions.
+  await clients[1].$executeRaw`UPDATE "YouTubeComplianceState" SET "deleteByAt" = clock_timestamp(), "leaseExpiresAt" = clock_timestamp() + interval '1 hour' WHERE "userId" = ${id}`;
+  const before = await stateFor(id);
+  const second = logic(clients[1]).maintenance, takeover = await second.claimYouTubeMaintenance();
+  assert.ok(takeover); assert.notEqual(takeover.state.leaseId, old.state.leaseId);
+  assert.match(takeover.state.leaseId, /^deadline:/);
+  assert.equal(takeover.state.connectionGeneration, before.connectionGeneration);
+  assert.equal(takeover.state.revision, before.revision + 1);
+  assert.equal(await second.processYouTubeMaintenanceClaim(takeover, () => false, false), 'DEADLINE_PURGED');
+  assert.equal(await original.processYouTubeMaintenanceClaim(old, () => true), 'SUPERSEDED');
+  assert.equal(provider.calls.length, 0);
+  await assertPurged(id, profile, 'DEADLINE_EXCEEDED', 'DEADLINE_PURGED');
+});
+test('3B2 deadline takeover while provider response is pending blocks stale sync/freshness', opts, async () => {
+  const p = await maintenancePending();
+  try {
+    await clients[1].$executeRaw`UPDATE "YouTubeComplianceState" SET "deleteByAt" = clock_timestamp() WHERE "userId" = ${p.id}`;
+    const result = await logic(clients[1]).maintenance.runYouTubeMaintenance({ quotaBudget: 0 });
+    assert.equal(result.outcomes.DEADLINE_PURGED, 1);
+  } finally { p.gate.release(); }
+  assert.equal(await p.pending, 'SUPERSEDED');
+  const state = await stateFor(p.id);
+  assert.equal(state.status, 'PURGED'); assert.equal(state.lastOutcome, 'DEADLINE_PURGED');
+  assert.equal(state.lastSuccessfulDataRefreshAt.getTime(), p.claim.state.lastSuccessfulDataRefreshAt.getTime());
+  assert.equal(await clients[0].platformStats.count({ where: { userId: p.id } }), 0);
+  assert.equal(await clients[0].platformToken.count({ where: { userId: p.id } }), 0);
+});
+test('3B2 independent deadline workers cannot steal cleanup claims or both purge', opts, async () => {
+  const id = await maintenanceFixture();
+  await clients[0].$executeRaw`UPDATE "YouTubeComplianceState" SET "deleteByAt" = clock_timestamp(), "leaseId" = 'legacy-worker', "leaseExpiresAt" = clock_timestamp() + interval '1 hour' WHERE "userId" = ${id}`;
+  const engines = clients.map(client => logic(client).maintenance);
+  const claims = await Promise.all(engines.map(engine => engine.claimYouTubeMaintenance()));
+  assert.equal(claims.filter(Boolean).length, 1);
+  assert.equal(await engines[0].claimYouTubeMaintenance(), null);
+  assert.equal(await engines[1].claimYouTubeMaintenance(), null);
+  const winner = claims.findIndex(Boolean);
+  assert.equal(await engines[winner].processYouTubeMaintenanceClaim(claims[winner], () => false, false), 'DEADLINE_PURGED');
+  assert.equal(await engines[1 - winner].claimYouTubeMaintenance(), null);
+});
+test('3B2 expired deadline cleanup claim can be recovered without provider calls', opts, async () => {
+  const id = await maintenanceFixture();
+  await clients[0].$executeRaw`UPDATE "YouTubeComplianceState" SET "deleteByAt" = clock_timestamp(), "leaseId" = 'deadline:crashed-cleanup', "leaseExpiresAt" = clock_timestamp() WHERE "userId" = ${id}`;
+  const result = await logic(clients[1]).maintenance.runYouTubeMaintenance({ quotaBudget: 0 });
+  assert.equal(result.outcomes.DEADLINE_PURGED, 1); assert.equal(result.quotaUsed, 0);
+});
+
+for (const [name, status] of [
+  ['missing privacyStatus', {}], ['missing status object', undefined], ['null status object', null],
+  ['array status object', []], ['string status object', 'public'], ['unknown privacyStatus', { privacyStatus: 'unknown' }],
+  ['null privacyStatus', { privacyStatus: null }], ['nonstring privacyStatus', { privacyStatus: 1 }],
+]) test(`3B2 malformed returned video ${name} preserves dataset, curation and both evidence clocks`, opts, async () => {
+  const id = await maintenanceFixture(), profile = await youtubeDataset(id), provider = maintenanceProvider();
+  const before = await stateFor(id), stats = await clients[0].platformStats.findMany({ where: { userId: id } });
+  const posts = await clients[0].socialPost.findMany({ where: { creatorProfileId: profile.id } });
+  const curation = await clients[0].creatorContentCuration.findMany({ where: { creatorProfileId: profile.id }, orderBy: { providerPostId: 'asc' } });
+  const fetch = async url => new URL(url).pathname.endsWith('/videos') ? response({ items: [{ id: 'public', status,
+    snippet: { title: 'Public video', channelId: 'CHANNEL', publishedAt: '2020-01-02T03:04:05Z' }, statistics: { viewCount: '7' } }] }) : provider.fetch(url);
+  const result = await logic(clients[0], fetch).maintenance.runYouTubeMaintenance();
+  assert.equal(result.outcomes.PROVIDER_FAILURE, 1); assert.equal(result.outcomes.SUCCESS, undefined);
+  const current = await stateFor(id);
+  assert.equal(current.lastOutcome, 'PROVIDER_FAILURE'); assert.equal(current.leaseId, null); assert.equal(current.attemptCount, 1);
+  for (const field of ['lastSuccessfulAuthorizationValidationAt', 'lastSuccessfulDataRefreshAt', 'deleteByAt']) assert.equal(current[field].getTime(), before[field].getTime());
+  assert.deepEqual(await clients[0].platformStats.findMany({ where: { userId: id } }), stats);
+  assert.deepEqual(await clients[0].socialPost.findMany({ where: { creatorProfileId: profile.id } }), posts);
+  assert.deepEqual(await clients[0].creatorContentCuration.findMany({ where: { creatorProfileId: profile.id }, orderBy: { providerPostId: 'asc' } }), curation);
+  assert.equal((await clients[0].platformToken.findUnique({ where: { userId_platform: { userId: id, platform: 'youtube' } } })).accessToken, 'validated');
+});
+for (const visibility of ['public', 'private', 'unlisted', 'deleted', 'unavailable', 'wrong-channel'])
+  test(`3B2 authoritative ${visibility} keeps intended replacement and curation semantics`, opts, async () => {
+    const id = await maintenanceFixture(), profile = await youtubeDataset(id), provider = maintenanceProvider();
+    const item = { id: 'public', status: { privacyStatus: ['private', 'unlisted'].includes(visibility) ? visibility : 'public',
+      ...(visibility === 'deleted' ? { uploadStatus: 'deleted' } : {}) },
+      snippet: { title: 'Video', channelId: visibility === 'wrong-channel' ? 'OTHER' : 'CHANNEL', publishedAt: '2020-01-02T03:04:05Z' }, statistics: { viewCount: '7' } };
+    const fetch = async url => new URL(url).pathname.endsWith('/videos') ? response({ items: visibility === 'unavailable' ? [] : [item] }) : provider.fetch(url);
+    const result = await logic(clients[0], fetch).maintenance.runYouTubeMaintenance();
+    assert.equal(result.outcomes.SUCCESS, 1);
+    const expected = visibility === 'public' ? 1 : 0;
+    assert.equal(await clients[0].socialPost.count({ where: { creatorProfileId: profile.id, platform: 'youtube' } }), expected);
+    assert.equal(await clients[0].creatorContentCuration.count({ where: { creatorProfileId: profile.id, providerPostId: 'public' } }), expected);
+  });
+
+// Pass 3B-3: independent full invocations, bounded execution and safe tooling.
+test('3B3 two full maintenance runners coexist with one provider sync per owner', opts, async () => {
+  const id = await maintenanceFixture(), g = gate(), provider = maintenanceProvider({ gate: g });
+  const first = logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance();
+  await bounded(g.ready);
+  const second = await logic(clients[1], provider.fetch).maintenance.runYouTubeMaintenance();
+  assert.equal(second.processed, 0);
+  g.release();
+  const done = await first; assert.equal(done.outcomes.SUCCESS, 1); assert.equal(done.itemErrors, 0);
+  assert.equal(provider.calls.filter(url => url.includes('/channels')).length, 1);
+  assert.equal((await stateFor(id)).leaseId, null);
+});
+test('3B3 owner cap stops a full invocation while additional due owners remain', opts, async () => {
+  await maintenanceFixture(); await maintenanceFixture({}, false); await maintenanceFixture({}, false);
+  const result = await logic(clients[0]).maintenance.runYouTubeMaintenance({ itemLimit: 2, batchSize: 1, concurrency: 1, quotaBudget: 0 });
+  assert.equal(result.processed, 2); assert.equal(result.outcomes.QUOTA_EXHAUSTED, 2); assert.equal(result.itemErrors, 0);
+  const claim = await logic(clients[1]).maintenance.claimYouTubeMaintenance(); assert.ok(claim);
+});
+test('3B3 soft time limit stops selection after in-flight batch completes', opts, async () => {
+  await maintenanceFixture(); await maintenanceFixture({}, false);
+  const g = gate(), provider = maintenanceProvider({ gate: g });
+  const pending = logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance({ concurrency: 1, runLimitMs: 200 });
+  await bounded(g.ready); await new Promise(resolve => setTimeout(resolve, 250)); g.release();
+  const result = await pending; assert.equal(result.processed, 1); assert.equal(result.outcomes.SUCCESS, 1);
+  assert.ok(await logic(clients[1]).maintenance.claimYouTubeMaintenance());
+});
+test('3B3 inventory reads aggregates under database-enforced read-only mode', opts, async () => {
+  const id = await maintenanceFixture();
+  const before = await stateFor(id), client = await pools[0].connect();
+  try {
+    const read = load('lib/youtube-inventory.ts');
+    let readOnly;
+    const result = await read.readYouTubeInventory({ query: async sql => {
+      const result = await client.query(sql);
+      if (sql.startsWith('BEGIN')) readOnly = (await client.query('SHOW transaction_read_only')).rows[0].transaction_read_only;
+      return result;
+    } });
+    assert.equal(readOnly, 'on'); assert.equal(result.complianceTablePresent, true);
+    assert.ok(Number(result.counts.tokens) >= 1); assert.ok(Number(result.compliance.active) >= 1);
+    assert.ok(!JSON.stringify(result).includes(id)); assert.ok(!JSON.stringify(result).includes('fake-refresh'));
+    assert.deepEqual(await stateFor(id), before);
+  } finally { client.release(); }
+});
+test('3B3 standalone inventory and default backfill terminate without mutations', opts, async () => {
+  const id = await maintenanceFixture(), before = await stateFor(id);
+  const { execFile } = require('node:child_process');
+  const invoke = script => new Promise(resolve => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', script], {
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable' }, timeout: 15000,
+  }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+  const inventory = await invoke('scripts/youtube-inventory.ts'); assert.equal(inventory.error, null, inventory.stderr);
+  assert.equal(JSON.parse(inventory.stdout).complianceTablePresent, true);
+  for (let i = 0; i < 2; i++) {
+    const plan = await invoke('scripts/youtube-compliance-backfill.ts'); assert.equal(plan.error, null, plan.stderr);
+    assert.equal(JSON.parse(plan.stdout).mode, '--plan');
+    assert.deepEqual(await stateFor(id), before); assert.ok(!plan.stdout.includes(id));
+  }
+});
+
+test('3B3 simultaneous standalone processes purge once and exit normally', opts, async () => {
+  const id = await maintenanceFixture({ deleteByAt: new Date(0) }), before = await stateFor(id);
+  const { execFile } = require('node:child_process');
+  const invoke = () => new Promise(resolve => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', 'scripts/youtube-maintenance.ts'], {
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable', YOUTUBE_CLIENT_ID: 'fake-client', YOUTUBE_CLIENT_SECRET: 'fake-secret', YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '0' }, timeout: 15000,
+  }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+  const runs = await Promise.all([invoke(), invoke()]);
+  for (const run of runs) { assert.equal(run.error, null, run.stderr); assert.ok(!run.stdout.includes(id)); }
+  const summaries = runs.map(run => JSON.parse(run.stdout));
+  assert.equal(summaries.reduce((sum, run) => sum + run.outcomes.DEADLINE_PURGED, 0), 1);
+  const after = await stateFor(id); assert.equal(after.status, 'PURGED');
+  assert.equal(after.connectionGeneration, before.connectionGeneration + 1);
+  assert.equal(await clients[0].platformToken.count({ where: { userId: id, platform: 'youtube' } }), 0);
 });

@@ -7,8 +7,8 @@ import { lockYouTubeOwner } from "@/lib/youtube-lock";
 import { GOOGLE_TOKEN_URL, parseYouTubeTokenResponse, youtubeFetch, type YouTubeParsedToken } from "@/lib/youtube-auth";
 
 export type YouTubeTokenOutcome =
-  | { ok: true; accessToken: string }
-  | { ok: false; reason: "not_connected" | "reauth_required" | "temporary_failure" | "configuration_error" | "superseded" };
+  | { ok: true; accessToken: string; credential?: YouTubeCredentialVersion }
+  | { ok: false; reason: "not_connected" | "reauth_required" | "temporary_failure" | "configuration_error" | "superseded" | "quota_exhausted" | "provider_failure" };
 export type YouTubeTokenSaveData = YouTubeParsedToken & { platformUserId: string; username: string | null };
 export type YouTubeCredentialVersion = Pick<PlatformToken, "id" | "accessToken" | "refreshToken" | "updatedAt" | "platformUserId">;
 const inflight = new Map<string, Promise<YouTubeTokenOutcome>>();
@@ -142,7 +142,9 @@ export async function clearYouTubeDeadAuth(userId: string, failed: YouTubeCreden
       return true;
     }, fence?.lease ? async tx => {
       // Lease expiry during cleanup must roll back every deletion and marker.
-      if (!leaseExpiresAt || leaseExpiresAt <= await youtubeDatabaseNow(tx)) throw new Error("youtube_stale_operation");
+      const now = await youtubeDatabaseNow(tx);
+      if (!leaseExpiresAt || leaseExpiresAt <= now) throw new Error("youtube_stale_operation");
+      await tx.youTubeComplianceState.update({ where: { userId }, data: { lastAttemptAt: now, attemptCount: { increment: 1 } } });
     } : undefined, "AUTHORIZATION_LOST");
     if (staleOperation) return { ok: false, reason: "superseded" };
     if (result.error === "connection_changed") return replacement
@@ -198,8 +200,14 @@ export async function recoverYouTubeRejectedAccess(userId: string, failed: YouTu
   } catch { return { ok: false, reason: "temporary_failure" }; }
 }
 
+/** Maintenance always contacts Google, independent of local access-token expiry. */
+export function forceYouTubeAuthorizationValidation(userId: string, current: PlatformToken,
+  fence: YouTubeOperationFence): Promise<YouTubeTokenOutcome> {
+  return refreshYouTubeCredential(userId, current, fence, true);
+}
+
 async function refreshYouTubeCredential(userId: string, current: PlatformToken,
-  fence?: YouTubeOperationFence): Promise<YouTubeTokenOutcome> {
+  fence?: YouTubeOperationFence, periodic = false): Promise<YouTubeTokenOutcome> {
     const refreshToken = current.refreshToken;
     if (!refreshToken?.trim()) return { ok: false, reason: "reauth_required" };
     const clientId = process.env.YOUTUBE_CLIENT_ID;
@@ -216,22 +224,28 @@ async function refreshYouTubeCredential(userId: string, current: PlatformToken,
     // Only a documented refresh invalid_grant on a client-error response proves
     // permanent auth failure. Throttling/server errors always preserve auth.
     if (isYouTubeRefreshDeadAuth(response.status, body)) return clearYouTubeDeadAuth(userId, current, fence);
-    if (!response.ok) return { ok: false, reason: "temporary_failure" };
+    if (!response.ok) {
+      if (periodic && response.status < 500 && response.status !== 429) {
+        const error = (body as { error?: string })?.error;
+        return { ok: false, reason: ["invalid_client", "unauthorized_client"].includes(error ?? "") ? "configuration_error" : "provider_failure" };
+      }
+      return { ok: false, reason: "temporary_failure" };
+    }
     const parsed = parseYouTubeTokenResponse(body);
     if (!parsed || !parsed.expiresAt) return { ok: false, reason: "temporary_failure" };
     return await coordinated(userId, async (tx, latest): Promise<YouTubeTokenOutcome> => {
       if (!latest) return { ok: false, reason: "not_connected" };
-      if (!sameYouTubeCredentialVersion(latest, current)) return { ok: true, accessToken: latest.accessToken };
+      if (!sameYouTubeCredentialVersion(latest, current)) return periodic ? { ok: false, reason: "superseded" } : { ok: true, accessToken: latest.accessToken };
       if (fence) {
         await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
         const state = await lockYouTubeCompliance(tx, userId);
         if (!compatibleYouTubeOperation(state, fence, await youtubeDatabaseNow(tx))) return { ok: false, reason: "superseded" };
       }
-      await tx.platformToken.update({ where: { userId_platform: { userId, platform: "youtube" } }, data: {
+      const saved = await tx.platformToken.update({ where: { userId_platform: { userId, platform: "youtube" } }, data: {
         accessToken: parsed.accessToken, refreshToken: parsed.refreshToken ?? latest.refreshToken,
         expiresAt: parsed.expiresAt, ...(parsed.scopes !== null ? { scopes: parsed.scopes } : {}),
         updatedAt: nextVersion(latest),
       } });
-      return { ok: true, accessToken: parsed.accessToken };
+      return { ok: true, accessToken: parsed.accessToken, ...(periodic ? { credential: saved } : {}) };
     });
 }
