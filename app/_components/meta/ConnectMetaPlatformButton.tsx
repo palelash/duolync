@@ -122,7 +122,7 @@ export default function ConnectMetaPlatformButton({
     } else if (error) {
       toast({
         title: `Could not connect ${cfg.displayName}`,
-        description: ERROR_MESSAGES[error] ?? decodeURIComponent(error).replace(/_/g, " "),
+        description: ERROR_MESSAGES[error] ?? (platform === "threads" ? "Threads connection could not be completed. Please try again." : decodeURIComponent(error).replace(/_/g, " ")),
         variant: "destructive",
       });
 
@@ -151,21 +151,7 @@ export default function ConnectMetaPlatformButton({
     // Threads has its own OAuth dialog and its own App ID — do NOT use the
     // Facebook login dialog or NEXT_PUBLIC_META_APP_ID for Threads.
     if (platform === "threads") {
-      const threadsAppId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
-      if (!threadsAppId) {
-        toast({
-          title: "Threads integration not configured",
-          description: "NEXT_PUBLIC_THREADS_APP_ID is missing.",
-          variant: "destructive",
-        });
-        return;
-      }
-      window.location.href =
-        `https://threads.net/oauth/authorize` +
-        `?client_id=${threadsAppId}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&scope=threads_basic` +
-        `&response_type=code`;
+      window.location.href = "/api/auth/threads/start";
       return;
     }
 

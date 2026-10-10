@@ -199,6 +199,7 @@ function actions(db, session, modules = logic(db), options = {}) {
   const roles = load('lib/roles.ts', { '@/lib/generated/prisma': require('../lib/generated/prisma') });
   const imports = { '@/lib/db': { db }, '@/lib/generated/prisma': require('../lib/generated/prisma'),
     '@/lib/auth': { auth: { api: { getSession: async () => ({ user: session }), signOut: async () => {} } } },
+    '@/lib/threads-connection': require('./threads-harness.cjs').logic(db).connection,
     '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance, '@/lib/youtube-claim': claimLocks,
     '@/lib/youtube-revoke': modules.revoke, '@/lib/youtube-removal': modules.removal,
     '@/lib/tiktok-revoke': { revokeTikTokAuthorization: async () => { if (options.afterPreparation) await options.afterPreparation(); return 'not_connected'; } },

@@ -26,6 +26,7 @@ import { disconnectYouTubeAction } from "@/app/actions/youtube-disconnect";
 import { disconnectInstagramAction } from "@/app/actions/instagram-disconnect";
 import { refreshInstagramDataAction } from "@/app/actions/instagram-sync";
 import { refreshYouTubeDataAction } from "@/app/actions/youtube-sync";
+import { renewThreadsAuthorizationAction } from "@/app/actions/threads-renew";
 import { refreshTikTokDataAction } from "@/app/actions/tiktok-sync";
 import { disconnectTikTokAction } from "@/app/actions/tiktok-disconnect";
 
@@ -539,6 +540,8 @@ const PresencePage = () => {
   const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
   const [youtubeRefreshing, setYouTubeRefreshing] = useState(false);
   const youtubeRefreshLock = useRef(false);
+  const [threadsRefreshing, setThreadsRefreshing] = useState(false);
+  const threadsRefreshLock = useRef(false);
 
   // OAuth-connected platform set — derived from PlatformToken. This is the sole
   // source of truth for "Connected" state. Apify/public data is NOT "connected".
@@ -574,9 +577,9 @@ const PresencePage = () => {
           accountsRes.data
             .filter(
               (a) =>
-                (a.platform === "tiktok" || a.platform === "instagram" || a.platform === "youtube") &&
+                (a.reconnectRequired || a.platform === "tiktok" || a.platform === "instagram" || a.platform === "youtube" || a.platform === "threads") &&
                 a.connectedVia !== "oauth" &&
-                a.dataSource === "OFFICIAL_API",
+                (a.reconnectRequired || a.dataSource === "OFFICIAL_API"),
             )
             .map((a) => a.platform),
         ),
@@ -642,7 +645,7 @@ const PresencePage = () => {
       } else if (error) {
         toast({
           title: `Could not connect ${displayName}`,
-          description: errorMessages[error] ?? decodeURIComponent(error).replace(/_/g, " "),
+          description: errorMessages[error] ?? (displayName === "Threads" ? "Threads connection could not be completed. Please try again." : decodeURIComponent(error).replace(/_/g, " ")),
           variant: "destructive",
         });
         clean.searchParams.delete(errorParam);
@@ -694,17 +697,7 @@ const PresencePage = () => {
 
     // Threads requires its own App ID — never use the Facebook/Meta App ID here.
     if (platform === "threads") {
-      const threadsAppId = process.env.NEXT_PUBLIC_THREADS_APP_ID;
-      if (!threadsAppId) {
-        toast({ title: "Threads connection unavailable", description: "Threads sign-in is not available right now. Please try again later or contact support.", variant: "destructive" });
-        return;
-      }
-      window.location.href =
-        `https://threads.net/oauth/authorize` +
-        `?client_id=${threadsAppId}` +
-        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-        `&scope=threads_basic` +
-        `&response_type=code`;
+      window.location.href = "/api/auth/threads/start";
       return;
     }
 
@@ -757,6 +750,36 @@ const PresencePage = () => {
     } finally {
       youtubeRefreshLock.current = false;
       setYouTubeRefreshing(false);
+    }
+  };
+
+  const handleThreadsRenewal = async () => {
+    if (threadsRefreshLock.current) return;
+    threadsRefreshLock.current = true;
+    setThreadsRefreshing(true);
+    try {
+      const result = await renewThreadsAuthorizationAction();
+      if (result.ok) {
+        toast({ title: result.reason === "renewed" ? "Threads authorization renewed" : "Threads authorization is current" });
+        await reload();
+      } else if (result.reason === "reconnect_required") {
+        await reload();
+        window.location.href = "/api/auth/threads/start";
+      } else if (result.reason === "superseded") {
+        await reload();
+      } else {
+        const messages = {
+          unauthorized: "Please sign in to renew Threads authorization.",
+          invalid_response: "Threads authorization could not be verified. Please try again.",
+          temporary_failure: "Could not renew Threads right now. Please try again later.",
+        };
+        toast({ title: "Renewal failed", description: messages[result.reason], variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Renewal failed", description: "Could not renew Threads right now. Please try again later.", variant: "destructive" });
+    } finally {
+      threadsRefreshLock.current = false;
+      setThreadsRefreshing(false);
     }
   };
 
@@ -1022,6 +1045,7 @@ const PresencePage = () => {
               <div className="space-y-3">
                 {PLATFORMS.map((p) => {
                   const perPlatform = getPerPlatformStats(p.id);
+                  const isThreadsConnected = p.id === "threads" && oauthPlatformSet.has("threads");
                   const isTikTokConnected = p.id === "tiktok" && oauthPlatformSet.has("tiktok");
                   const isInstagramConnected = p.id === "instagram" && oauthPlatformSet.has("instagram");
                   const isYouTubeConnected = p.id === "youtube" && oauthPlatformSet.has("youtube");
@@ -1039,8 +1063,8 @@ const PresencePage = () => {
                       }
                       // TikTok refresh: when connected, use the Refresh action (no OAuth).
                       // When not connected, onSync starts OAuth for reconnect/first connect.
-                      onRefresh={isYouTubeConnected ? handleYouTubeRefresh : isInstagramConnected ? handleInstagramRefresh : isTikTokConnected ? handleTikTokRefresh : undefined}
-                      refreshing={isYouTubeConnected ? youtubeRefreshing : isInstagramConnected ? instagramRefreshing : isTikTokConnected ? tiktokRefreshing : undefined}
+                      onRefresh={isYouTubeConnected ? handleYouTubeRefresh : isInstagramConnected ? handleInstagramRefresh : isTikTokConnected ? handleTikTokRefresh : isThreadsConnected ? handleThreadsRenewal : undefined}
+                      refreshing={isYouTubeConnected ? youtubeRefreshing : isInstagramConnected ? instagramRefreshing : isTikTokConnected ? tiktokRefreshing : isThreadsConnected ? threadsRefreshing : undefined}
                       onSync={() => {
                         if (p.id === "instagram" || p.id === "facebook_page" || p.id === "threads") {
                           handleMetaOAuth(p.id as "instagram" | "facebook_page" | "threads");
