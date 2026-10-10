@@ -14,26 +14,26 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // Validate the signed initiating session before success OR provider errors.
   let session: Awaited<ReturnType<typeof auth.api.getSession>>;
   try { session = await auth.api.getSession({ headers: req.headers }); }
-  catch { return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" }); }
+  catch { return redir(req, "/creator/presence", { youtube_error: "temporary_failure" }); }
   try {
     if (!await consumeYouTubeState(req.cookies.get(YOUTUBE_STATE_COOKIE)?.value,
       searchParams.get("state"), session?.user?.id, session?.session?.id)) {
-      return redir(req, "/creator/accounts", { youtube_error: "invalid_state" });
+      return redir(req, "/creator/presence", { youtube_error: "invalid_state" });
     }
-  } catch { return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" }); }
+  } catch { return redir(req, "/creator/presence", { youtube_error: "temporary_failure" }); }
   const userId = session!.user.id;
   const oauthError = searchParams.get("error");
-  if (oauthError) return redir(req, "/creator/accounts", {
+  if (oauthError) return redir(req, "/creator/presence", {
     youtube_error: oauthError === "access_denied" ? "access_denied" : "temporary_failure",
   });
   const code = searchParams.get("code");
-  if (!code) return redir(req, "/creator/accounts", { youtube_error: "missing_code" });
+  if (!code) return redir(req, "/creator/presence", { youtube_error: "missing_code" });
 
   // ── Env vars ───────────────────────────────────────────────────────────────
   const clientId = process.env.YOUTUBE_CLIENT_ID;
   const clientSecret = process.env.YOUTUBE_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
-    return redir(req, "/creator/accounts", {
+    return redir(req, "/creator/presence", {
       youtube_error: "server_misconfiguration",
     });
   }
@@ -48,16 +48,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         redirect_uri: youtubeCallbackUri(), grant_type: "authorization_code" }).toString(),
     });
     parsedToken = parseYouTubeTokenResponse(await res.json());
-    if (!res.ok || !parsedToken) return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" });
+    if (!res.ok || !parsedToken) return redir(req, "/creator/presence", { youtube_error: "temporary_failure" });
   } catch {
-    return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" });
+    return redir(req, "/creator/presence", { youtube_error: "temporary_failure" });
   }
   const { accessToken } = parsedToken;
 
   let channel;
   try { channel = await resolveYouTubeChannelIdentity(accessToken); }
-  catch { return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" }); }
-  if (!channel) return redir(req, "/creator/accounts", { youtube_error: "no_youtube_channel" });
+  catch { return redir(req, "/creator/presence", { youtube_error: "temporary_failure" }); }
+  if (!channel) return redir(req, "/creator/presence", { youtube_error: "no_youtube_channel" });
 
   try {
     // OAuth reconnect explicitly selects the authoritative channel. Shared sync
@@ -66,16 +66,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       ...parsedToken, platformUserId: channel.id, username: channel.username,
     });
     const result = await syncYouTubeOfficialData(userId, { credential });
-    if (!result.ok) return redir(req, "/creator/accounts", {
+    if (!result.ok) return redir(req, "/creator/presence", {
       youtube_error: result.reason === "superseded" ? "temporary_failure" : result.reason,
     });
     for (const path of ["/creator/accounts", "/creator/presence", "/creator/dashboard", "/creator/analytics"]) revalidatePath(path);
   } catch {
-    return redir(req, "/creator/accounts", { youtube_error: "temporary_failure" });
+    return redir(req, "/creator/presence", { youtube_error: "temporary_failure" });
   }
 
   // Clear the state cookie on success
-  const successRes = redir(req, "/creator/accounts", {
+  const successRes = redir(req, "/creator/presence", {
     youtube_connected: channel.title ?? "1",
   });
   return successRes;
