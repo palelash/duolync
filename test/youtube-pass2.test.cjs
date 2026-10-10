@@ -9,22 +9,28 @@ function load(file, imports = {}, globals = {}) {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, require: name => {
     if (name === 'server-only') return {};
+    if (name === '@/lib/youtube-aggregates') return load('lib/youtube-aggregates.ts', { '@/lib/creator-metrics': metrics });
+    if (name === '@/lib/youtube-claim') return load('lib/youtube-claim.ts', { '@/lib/youtube-lock': locks });
+    if (name === '@/lib/youtube-lock' && !(name in imports)) return load('lib/youtube-lock.ts');
+    if (name === '@/lib/youtube-compliance' && !(name in imports)) return load('lib/youtube-compliance.ts');
+    if (name === '@/lib/youtube-removal' && !(name in imports)) return load('lib/youtube-removal.ts', { ...imports, '@/lib/creator-metrics': metrics });
     assert.ok(name in imports, `Unexpected dependency ${name}`); return imports[name];
   }, URL, URLSearchParams, Date, BigInt, Set, Map, process: { env: {} }, console, ...globals });
   return exports;
 }
 const locks = load('lib/youtube-lock.ts');
 const metrics = load('lib/creator-metrics.ts');
-const tokenHelpers = load('lib/youtube-token.ts', { '@/lib/db': { db: {} }, '@/lib/youtube-lock': locks, '@/lib/youtube-auth': {} });
+const tokenHelpers = load('lib/youtube-token.ts', { '@/lib/db': { db: {} }, '@/lib/youtube-lock': locks, '@/lib/youtube-auth': {}, '@/lib/youtube-removal': {} });
 const video = (id = 'recent', privacyStatus = 'public', statistics = { viewCount: '0', likeCount: '0', commentCount: '0' }) => ({
   id, status: { privacyStatus }, snippet: { title: id, channelId: 'CHANNEL', publishedAt: '2020-01-02T03:04:05Z' }, statistics,
 });
 function fixture(options = {}) {
-  const state = { token: { id: 'token', accessToken: 'ACCESS', refreshToken: 'REFRESH', platformUserId: 'CHANNEL', updatedAt: new Date(0) },
+  const state = { compliance: { status: 'ACTIVE', connectionGeneration: 1, revision: 1, blockedAt: null, leaseId: null }, token: { id: 'token', accessToken: 'ACCESS', refreshToken: 'REFRESH', platformUserId: 'CHANNEL', updatedAt: new Date(0) },
     stats: [{ old: true }], posts: [{ old: true }], curation: (options.curated ?? []).map(providerPostId => ({ providerPostId })), markers: ['youtube'], profile: {} };
   const before = structuredClone(state), requests = [], events = [];
   let writes = 0, lifecycleCalls = 0, deadAuthCalls = 0;
   const db = {
+    youTubeComplianceState: { findUnique: async () => structuredClone(state.compliance) },
     platformToken: { findUnique: async () => structuredClone(state.token) },
     creatorProfile: { findUnique: async () => ({ id: 'profile' }) },
     creatorContentCuration: { findMany: async () => structuredClone(state.curation) },
@@ -32,16 +38,24 @@ function fixture(options = {}) {
       const snapshot = structuredClone(state);
       let owner = false, token = false, profile = false;
       const tx = {
+        youTubeComplianceState: {
+          findUnique: async () => structuredClone(state.compliance),
+          upsert: async ({ create, update }) => { state.compliance = state.compliance ? { ...state.compliance, ...update,
+            connectionGeneration: state.compliance.connectionGeneration + 1, revision: state.compliance.revision + 1 } : create; },
+          update: async ({ data }) => { state.compliance = { ...state.compliance, ...data, revision: state.compliance.revision + 1 }; },
+        },
         $queryRaw: async sql => {
           const query = sql.join('');
+          if (query.includes('clock_timestamp() AS')) return [{ now: new Date() }];
+          if (query.includes('FROM "YouTubeComplianceState"')) return state.compliance ? [structuredClone(state.compliance)] : [];
           if (query.includes('FROM "User"')) { owner = true; events.push('owner'); return [{ id: 'owner' }]; }
           assert.ok(owner);
           if (query.includes('FROM "PlatformToken"')) { token = true; events.push('token'); return state.token ? [structuredClone(state.token)] : []; }
-          assert.ok(token); profile = true; events.push('profile'); return [{ id: 'profile', connectedPlatforms: state.markers }];
+          assert.ok(token); profile = true; events.push('profile'); return [{ id: 'profile', connectedPlatforms: state.markers, profileOrigin: 'REGISTERED' }];
         },
         creatorContentCuration: db.creatorContentCuration,
         platformStats: { upsert: async ({ create }) => { assert.ok(profile); writes++; state.stats = [create]; }, findMany: async () => state.stats },
-        socialPost: { deleteMany: async ({ where }) => { assert.ok(profile); assert.equal(where.platform, 'youtube'); assert.equal(where.dataSource, undefined); writes++; state.posts = []; },
+        socialPost: { count: async () => state.posts.length, deleteMany: async ({ where }) => { assert.ok(profile); assert.equal(where.platform, 'youtube'); assert.equal(where.dataSource, undefined); writes++; state.posts = []; },
           createMany: async ({ data }) => { if (options.failTransaction) throw Error('db failure'); state.posts = data; } },
         creatorProfile: { update: async ({ data }) => { state.profile = data; } },
       };
@@ -50,17 +64,17 @@ function fixture(options = {}) {
   };
   const lifecycle = { ...tokenHelpers,
     getYouTubeAccessToken: async userId => { assert.equal(userId, 'owner'); lifecycleCalls++; return options.tokenOutcome ?? { ok: true, accessToken: 'ACCESS' }; },
-    clearYouTubeDeadAuth: async (userId, failed) => {
+    recoverYouTubeRejectedAccess: async (userId, failed) => {
       deadAuthCalls++;
-      if (tokenHelpers.sameYouTubeCredentialVersion(state.token, failed)) { state.token = null; state.markers = []; return { ok: false, reason: 'reauth_required' }; }
-      return { ok: true, accessToken: state.token.accessToken };
+      if (state.token && tokenHelpers.sameYouTubeCredentialVersion(state.token, failed)) { state.token = null; state.markers = []; return { ok: false, reason: 'reauth_required' }; }
+      return { ok: false, reason: 'superseded' };
     },
   };
   const auth = { youtubeFetch: async url => {
     // Provider reads must not occur inside a dataset transaction.
-    assert.equal(events.length, 0); requests.push(new URL(url));
+    assert.ok(!events.includes("transaction-active")); requests.push(new URL(url));
     const resource = new URL(url).pathname.split('/').pop();
-    if (options.onRead) options.onRead(resource, state);
+    if (options.onRead) await options.onRead(resource, state);
     let body;
     if (options.errorResource === resource) return { ok: false, status: options.status ?? 503, json: async () => ({ error: { errors: [{ reason: options.reason ?? 'backendError' }] } }) };
     if (resource === 'channels') body = { items: [{ id: options.channelId ?? 'CHANNEL', snippet: { title: 'Channel' }, contentDetails: { relatedPlaylists: { uploads: 'UPLOADS' } }, statistics: options.channelStats ?? { subscriberCount: '0', viewCount: '0', videoCount: '0' } }] };
@@ -202,9 +216,11 @@ test('YouTube RapidAPI writer rechecks both existing provenance gates under coor
   for (const [connected, source, accepted] of [[true, 'LEGACY_UNKNOWN', false], [false, 'OFFICIAL_API', false], [false, 'APIFY', true]]) {
     const events = []; let writes = 0;
     const cached = { platform: 'youtube', dataSource: source, followerCount: 10, followingCount: null, postCount: 1, engagementRate: null, fetchedAt: new Date(0) };
-    const db = { platformStats: { findFirst: async () => cached }, $transaction: async run => run({
+    const db = { youTubeComplianceState: { findUnique: async () => null }, platformStats: { findFirst: async () => cached }, $transaction: async run => run({
       $queryRaw: async sql => {
         const query = sql.join('');
+          if (query.includes('clock_timestamp() AS')) return [{ now: new Date() }];
+          if (query.includes('FROM "YouTubeComplianceState"')) return [];
         if (query.includes('FROM "User"')) { events.push('owner'); return [{ id: 'owner' }]; }
         if (query.includes('FROM "PlatformToken"')) { assert.deepEqual(events, ['owner']); events.push('token'); return connected ? [{ id: 'token' }] : []; }
         assert.deepEqual(events, ['owner', 'token']); events.push('profile'); return [{ id: 'profile' }];
@@ -216,4 +232,46 @@ test('YouTube RapidAPI writer rechecks both existing provenance gates under coor
     }, { process: { env: { RAPIDAPI_KEY: 'test' } }, fetch: async () => ({ ok: true, json: async () => ({}) }) });
     await action.fetchCreatorStatsAction('youtube', 'channel'); assert.equal(writes, accepted ? 1 : 0);
   }
+});
+
+module.exports = { fixture, load };
+
+test('3B same-token reverse completion fences older dataset and freshness', async () => {
+  const arrived = deferred(), gate = deferred(); let channelReads = 0;
+  const f = fixture({ onRead: async resource => { if (resource === 'channels' && ++channelReads === 1) { arrived.release(); await gate.promise; } } });
+  const first = f.sync.syncYouTubeOfficialData('owner'); await arrived.promise;
+  assert.equal((await f.sync.syncYouTubeOfficialData('owner')).ok, true);
+  const revision = f.state.compliance.revision;
+  gate.release(); assert.equal((await first).reason, 'superseded');
+  assert.equal(f.state.compliance.revision, revision);
+  assert.ok(f.state.compliance.lastSuccessfulDataRefreshAt);
+});
+
+test('3B missing lifecycle fails closed without provider HTTP', async () => {
+  const f = fixture(); f.state.compliance = null;
+  assert.equal((await f.sync.syncYouTubeOfficialData('owner')).reason, 'superseded'); assert.equal(f.requests.length, 0);
+});
+
+test('3B failed dataset does not advance freshness or revision', async () => {
+  const f = fixture({ errorResource: 'videos' });
+  await f.sync.syncYouTubeOfficialData('owner'); assert.equal(f.state.compliance.revision, 1);
+  assert.equal(f.state.compliance.lastSuccessfulDataRefreshAt, undefined);
+});
+function deferred() { let release; const promise = new Promise(r => release = r); return { promise, release }; }
+test('3B RapidAPI final transaction rejects a purge committed during HTTP', async () => {
+  let purged = false, writes = 0;
+  const db = { youTubeComplianceState: { findUnique: async () => purged ? { status: 'PURGED', blockedAt: new Date() } : null },
+    platformStats: { findFirst: async () => null }, $transaction: async run => run({
+      $queryRaw: async sql => {
+        const q = sql.join('');
+        if (q.includes('FROM "User"')) return [{ id: 'owner' }];
+        if (q.includes('FROM "YouTubeComplianceState"')) return [{ status: 'PURGED', blockedAt: new Date() }];
+        return [];
+      }, platformStats: { upsert: async () => writes++ },
+    }) };
+  const action = load('app/actions/stats.ts', { '@/lib/db': { db }, '@/lib/youtube-lock': locks,
+    '@/lib/creator-metrics': metrics, '@/lib/platform-stats-policy': load('lib/platform-stats-policy.ts'),
+    '@/lib/auth': { auth: { api: { getSession: async () => ({ user: { id: 'owner' } }) } } }, 'next/headers': { headers: async () => ({}) } },
+    { process: { env: { RAPIDAPI_KEY: 'fake' } }, fetch: async () => { purged = true; return { ok: true, json: async () => ({ stats: { subscribers: 9 } }) }; } });
+  assert.equal((await action.fetchCreatorStatsAction('youtube', 'channel')).data, null); assert.equal(writes, 0);
 });

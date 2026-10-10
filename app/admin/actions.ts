@@ -1,5 +1,7 @@
 "use server";
 
+import { lockYouTubeOwner } from "@/lib/youtube-lock";
+import { lockYouTubeCompliance, youtubeBlocked } from "@/lib/youtube-compliance";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { isAdmin } from "@/lib/roles";
@@ -1280,6 +1282,16 @@ export async function updateImportedCreatorAction(
 
     if (hasUserUpdate || hasProfileUpdate) {
       await db.$transaction(async (tx) => {
+        await lockYouTubeOwner(tx, profile.userId);
+        await tx.$queryRaw`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${profile.userId} AND "platform" = 'youtube' FOR UPDATE`;
+        await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "id" = ${creatorProfileId} FOR UPDATE`;
+        const current = await tx.creatorProfile.findUnique({ where: { id: creatorProfileId }, select: { userId: true, profileOrigin: true, claimStatus: true } });
+        if (!current || current.userId !== profile.userId || current.profileOrigin !== "IMPORTED" || current.claimStatus !== claimStatus)
+          throw new Error("Creator profile changed. Reload before editing.");
+        const compliance = await lockYouTubeCompliance(tx, profile.userId);
+        const metricFields = ["totalFollowers", "followerCount", "averageEngagement", "avgEngagementRate", "lastStatsUpdate", "lastSyncedAt"];
+        if (youtubeBlocked(compliance) && metricFields.some(field => field in profileUpdate))
+          throw new Error("YouTube data is blocked after removal. Aggregate metrics cannot be changed until official YouTube reconnect; other profile fields remain editable.");
         if (hasUserUpdate) {
           await tx.user.update({
             where: { id: profile.userId },

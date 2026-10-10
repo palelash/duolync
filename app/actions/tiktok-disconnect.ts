@@ -41,6 +41,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { lockYouTubeOwner as lockTikTokOwner } from "@/lib/youtube-lock";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { revokeTikTokAuthorization } from "@/lib/tiktok-revoke";
@@ -120,6 +121,10 @@ export async function disconnectTikTokAction(): Promise<TikTokDisconnectResult> 
   // the database state is either fully cleaned up or entirely intact.
   try {
     await db.$transaction(async (tx) => {
+      // Match sync/refresh and claims: User -> token -> profile -> datasets.
+      await lockTikTokOwner(tx, userId);
+      await tx.$queryRaw`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${userId} AND "platform" = 'tiktok' FOR UPDATE`;
+      await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
       // A. Delete TikTok PlatformToken (deleteMany is no-op safe when absent).
       await tx.platformToken.deleteMany({
         where: { userId, platform: "tiktok" },

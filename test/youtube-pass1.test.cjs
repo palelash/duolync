@@ -11,6 +11,11 @@ function load(file, imports = {}, fetch = async () => { throw Error('unexpected 
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, require: name => {
     if (name === 'server-only') return {};
+    if (name === '@/lib/youtube-aggregates') return load('lib/youtube-aggregates.ts', { '@/lib/creator-metrics': metrics });
+    if (name === '@/lib/youtube-claim') return load('lib/youtube-claim.ts', { '@/lib/youtube-lock': locks });
+    if (name === '@/lib/youtube-lock' && !(name in imports)) return load('lib/youtube-lock.ts');
+    if (name === '@/lib/youtube-compliance') return load('lib/youtube-compliance.ts');
+    if (name === '@/lib/youtube-removal' && !(name in imports)) return load('lib/youtube-removal.ts', { ...imports, '@/lib/creator-metrics': metrics });
     if (name === 'node:crypto') return require(name);
     assert.ok(name in imports, `Unexpected dependency ${name}`); return imports[name];
   }, fetch, URL, URLSearchParams, Buffer, Date, AbortSignal, process: { env: { ...env, ...overrides } }, console }, { filename: file });
@@ -25,12 +30,13 @@ const data = (accessToken = 'NEW', platformUserId = 'CHANNEL_A', refreshToken = 
 });
 const token = () => ({ id: 'token1', userId: 'owner', platform: 'youtube', ...data('OLD', 'CHANNEL_A', 'OLD_REFRESH'), updatedAt: new Date(0) });
 function fixture({ initial = token(), provider, missingOwner = false } = {}) {
-  const state = { token: initial, markers: ['youtube', 'instagram'], stats: [{ history: true }], posts: [{ history: true }], curation: [{ history: true }] };
+  const state = { compliance: { status: 'ACTIVE', connectionGeneration: 1, revision: 1, blockedAt: null, leaseId: null }, token: initial, markers: ['youtube', 'instagram'], stats: [{ history: true }], posts: [{ history: true }], curation: [{ history: true }] };
   let tail = Promise.resolve(), txCount = 0, fetchCount = 0;
   const events = [];
   const pauses = new Map();
   const verifications = new Map();
   const db = {
+    youTubeComplianceState: { findUnique: async () => structuredClone(state.compliance) },
     verification: {
       create: async ({ data }) => { assert.ok(!verifications.has(data.id)); verifications.set(data.id, structuredClone(data)); return data; },
       deleteMany: async ({ where }) => {
@@ -47,8 +53,16 @@ function fixture({ initial = token(), provider, missingOwner = false } = {}) {
       const index = txCount++, release = deferred();
       let owner = false, tokenLock = false, profileLock = false, snapshot;
       const tx = {
+        youTubeComplianceState: {
+          findUnique: async () => structuredClone(state.compliance),
+          upsert: async ({ create, update }) => { state.compliance = state.compliance ? { ...state.compliance, ...update,
+            connectionGeneration: state.compliance.connectionGeneration + 1, revision: state.compliance.revision + 1 } : create; },
+          update: async ({ data }) => { state.compliance = { ...state.compliance, ...data, revision: state.compliance.revision + 1 }; },
+        },
         $queryRaw: async (sql) => {
           const query = sql.join('');
+          if (query.includes('clock_timestamp() AS')) return [{ now: new Date() }];
+          if (query.includes('FROM "YouTubeComplianceState"')) return state.compliance ? [structuredClone(state.compliance)] : [];
           assert.match(query, /FOR UPDATE/);
           if (query.includes('FROM "User"')) {
             if (missingOwner) return [];
@@ -64,7 +78,7 @@ function fixture({ initial = token(), provider, missingOwner = false } = {}) {
           assert.ok(owner, 'stable owner lock precedes token/profile');
           if (query.includes('FROM "CreatorProfile"')) {
             assert.ok(tokenLock); profileLock = true; events.push(`profile:${index}`);
-            return [{ id: 'creator', connectedPlatforms: [...state.markers] }];
+            return [{ id: 'creator', connectedPlatforms: [...state.markers], profileOrigin: 'REGISTERED' }];
           }
           assert.ok(query.includes('FROM "PlatformToken"')); tokenLock = true;
           events.push(`token:${index}`);
@@ -93,7 +107,7 @@ function fixture({ initial = token(), provider, missingOwner = false } = {}) {
         } },
         platformStats: { upsert: async ({ create }) => { assert.ok(profileLock); state.stats = [create]; }, findMany: async () => [],
           deleteMany: async () => { assert.ok(profileLock); events.push(`delete-stats:${index}`); state.stats = []; } },
-        socialPost: { deleteMany: async () => { assert.ok(profileLock); state.posts = []; }, createMany: async ({ data }) => { state.posts.push(...data); } },
+        socialPost: { count: async () => state.posts.length, deleteMany: async () => { assert.ok(profileLock); state.posts = []; }, createMany: async ({ data }) => { state.posts.push(...data); } },
         creatorContentCuration: { findMany: async () => [], deleteMany: async () => { assert.ok(profileLock); state.curation = []; } },
       };
       try { return await run(tx); }
@@ -363,12 +377,13 @@ test('refresh can legitimately replace refresh token and actual scopes', async (
   assert.equal((await f.lifecycle.getYouTubeAccessToken('owner')).accessToken, 'R');
   assert.equal(f.state.token.refreshToken, 'ROTATED'); assert.equal(f.state.token.scopes, 'new_scope');
 });
-test('current invalid_grant removes only auth truth and preserves history', async () => {
+test('current invalid_grant atomically purges history and blocks repopulation', async () => {
   const f = fixture({ initial: { ...token(), expiresAt: new Date(0) }, provider: async () => response({ error: 'invalid_grant' }, 400) });
   const before = structuredClone(f.state);
   assert.equal((await f.lifecycle.getYouTubeAccessToken('owner')).reason, 'reauth_required'); assert.equal(f.state.token, null);
   assert.deepEqual(f.state.markers, ['instagram']);
-  for (const k of ['stats', 'posts', 'curation']) assert.deepEqual(f.state[k], before[k]);
+  for (const k of ['stats', 'posts', 'curation']) assert.equal(f.state[k].length, 0);
+  assert.equal(f.state.compliance.status, 'PURGED');
 });
 test('expired token with no refresh token requires reauth and preserves history', async () => {
   const f = fixture({ initial: { ...token(), expiresAt: new Date(0), refreshToken: null } });
@@ -462,4 +477,64 @@ test('same credential values saved by reconnect still get a new version and reje
   assert.ok(f.state.token.updatedAt > before.updatedAt);
   assert.equal((await f.lifecycle.clearYouTubeDeadAuth('owner', before)).accessToken, 'OLD');
   assert.ok(f.state.markers.includes('youtube'));
+});
+function syncWithLifecycle(f) {
+  return load('lib/youtube-sync.ts', { '@/lib/db': { db: f.db }, '@/lib/youtube-lock': locks,
+    '@/lib/youtube-token': f.lifecycle, '@/lib/youtube-auth': f.auth, '@/lib/creator-metrics': metrics });
+}
+function emptyOfficialChannel() {
+  return response({ items: [{ id: 'CHANNEL_A', snippet: {}, statistics: { subscriberCount: '5', videoCount: '0' }, contentDetails: { relatedPlaylists: { uploads: 'UPLOADS' } } }] });
+}
+const accessRejected = () => response({ error: { errors: [{ reason: 'authError' }] } }, 401);
+test('blocker 401 with live refresh grant updates current credential and retries once without purge', async () => {
+  let channelReads = 0, refreshes = 0;
+  const f = fixture({ provider: async (url, init) => {
+    if (url.endsWith('/token')) { refreshes++; return response({ access_token: 'RECOVERED', expires_in: 3600, token_type: 'Bearer' }); }
+    if (new URL(url).pathname.endsWith('/channels')) {
+      if (++channelReads === 1) return accessRejected();
+      assert.equal(init.headers.Authorization, 'Bearer RECOVERED'); return emptyOfficialChannel();
+    }
+    return response({ items: [] });
+  } });
+  assert.equal((await syncWithLifecycle(f).syncYouTubeOfficialData('owner', { credential: structuredClone(f.state.token) })).ok, true);
+  assert.equal(refreshes, 1); assert.equal(channelReads, 2);
+  assert.equal(f.state.token.accessToken, 'RECOVERED'); assert.equal(f.state.compliance.status, 'ACTIVE');
+  assert.equal(f.state.compliance.removalReason, undefined);
+});
+test('blocker 401 only purges after exact-current refresh invalid_grant', async () => {
+  const f = fixture({ provider: async url => url.endsWith('/token') ? response({ error: 'invalid_grant' }, 400) : accessRejected() });
+  assert.equal((await syncWithLifecycle(f).syncYouTubeOfficialData('owner', { credential: structuredClone(f.state.token) })).reason, 'reauth_required');
+  assert.equal(f.state.compliance.status, 'PURGED'); assert.equal(f.state.compliance.removalReason, 'AUTHORIZATION_LOST');
+  assert.equal(f.state.token, null); for (const key of ['stats', 'posts', 'curation']) assert.equal(f.state[key].length, 0);
+});
+for (const failure of ['network', '429', '503', 'malformed']) test(`blocker 401 with ${failure} refresh preserves every local row`, async () => {
+  const f = fixture({ provider: async url => {
+    if (!url.endsWith('/token')) return accessRejected();
+    if (failure === 'network') throw Error('network');
+    return failure === 'malformed' ? response({}) : response({ error: 'invalid_grant' }, Number(failure));
+  } });
+  const before = structuredClone(f.state);
+  assert.equal((await syncWithLifecycle(f).syncYouTubeOfficialData('owner', { credential: structuredClone(f.state.token) })).reason, 'temporary_failure');
+  assert.deepEqual(f.state, before);
+});
+test('blocker stale access 401 does not refresh or purge the newer official connection', async () => {
+  let f;
+  f = fixture({ provider: async () => { await f.lifecycle.saveYouTubeAccessToken('owner', data('RECONNECTED', 'CHANNEL_B', 'NEW_REFRESH')); return accessRejected(); } });
+  const failed = structuredClone(f.state.token);
+  assert.equal((await syncWithLifecycle(f).syncYouTubeOfficialData('owner', { credential: failed })).reason, 'superseded');
+  assert.equal(f.state.token.accessToken, 'RECONNECTED'); assert.equal(f.state.compliance.status, 'ACTIVE'); assert.equal(f.fetchCount, 1);
+});
+test('blocker access-only 401 preserves dataset and asks for authorization without grant-loss inference', async () => {
+  const f = fixture({ initial: { ...token(), refreshToken: null }, provider: async () => accessRejected() });
+  const before = structuredClone(f.state);
+  assert.equal((await syncWithLifecycle(f).syncYouTubeOfficialData('owner', { credential: structuredClone(f.state.token) })).reason, 'reauth_required');
+  assert.deepEqual(f.state, before);
+});
+for (const expired of [false, true]) test(`blocker lease ${expired ? 'expired' : 'stolen only'} cannot authorize destructive auth-loss cleanup`, async () => {
+  const f = fixture(); const failed = structuredClone(f.state.token);
+  f.state.compliance.leaseId = expired ? 'old-worker' : 'new-worker';
+  f.state.compliance.leaseExpiresAt = new Date(Date.now() + (expired ? -1000 : 60000));
+  const before = structuredClone(f.state);
+  const result = await f.lifecycle.clearYouTubeDeadAuth('owner', failed, { connectionGeneration: 1, revision: 1, lease: { id: 'old-worker' } });
+  assert.equal(result.reason, 'superseded'); assert.deepEqual(f.state, before);
 });

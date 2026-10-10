@@ -1,5 +1,6 @@
 "use server";
 
+import { lockYouTubeCompliance, youtubeBlocked } from "@/lib/youtube-compliance";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
@@ -33,6 +34,8 @@ export async function fetchCreatorStatsAction(
   const session = await getSession();
   if (!session) return { data: null, error: "Unauthorized" };
 
+  if (platform === "youtube" && youtubeBlocked(await db.youTubeComplianceState.findUnique({ where: { userId: session.user.id } })))
+    return { data: null, error: "YouTube data was removed. Reconnect YouTube to restore access." };
   const apiKey = process.env.RAPIDAPI_KEY;
 
   // ── Try to fetch live data ──────────────────────────────────────────────────
@@ -54,6 +57,7 @@ export async function fetchCreatorStatsAction(
       await lockYouTubeOwner(tx, session.user.id);
       const tokens = await tx.$queryRaw<{ id: string }[]>`SELECT "id" FROM "PlatformToken" WHERE "userId" = ${session.user.id} AND "platform" = 'youtube' FOR UPDATE`;
       await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${session.user.id} FOR UPDATE`;
+      if (youtubeBlocked(await lockYouTubeCompliance(tx, session.user.id))) return false;
       const current = await tx.platformStats.findFirst({ where: { userId: session.user.id, platform } });
       if (tokens.length || (current && !canOverwrite(current.dataSource, "RAPIDAPI"))) return false;
       const snapshot = { followerCount: incoming.followerCount, followingCount: incoming.followingCount,
@@ -151,6 +155,8 @@ export async function fetchCreatorStatsAction(
   }
 
   // ── Return cached data if available ─────────────────────────────────────────
+  if (platform === "youtube" && youtubeBlocked(await db.youTubeComplianceState.findUnique({ where: { userId: session.user.id } })))
+    return { data: null, error: "YouTube data was removed." };
   const cached = await db.platformStats.findFirst({
     where: { userId: session.user.id, platform },
     orderBy: { fetchedAt: "desc" },

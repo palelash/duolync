@@ -6,7 +6,11 @@ const ts = require('typescript');
 function load(file, imports, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {
-    exports, require: name => { if (name === 'server-only') return {}; assert.ok(name in imports, name); return imports[name]; }, URLSearchParams, console: { error() {} }, ...globals,
+    exports, require: name => { if (name === 'server-only') return {};
+    if (name === '@/lib/youtube-lock') return {};
+    if (name === '@/lib/youtube-compliance' && !(name in imports)) return {};
+    if (name === '@/lib/youtube-aggregates') return {};
+    if (name === '@/lib/youtube-claim') return {}; assert.ok(name in imports, name); return imports[name]; }, URLSearchParams, console: { error() {} }, ...globals,
   }); return exports;
 }
 for (const mode of ['account', 'admin']) for (const status of ['revoked', 'already_revoked', 'not_connected', 'temporary_failure', 'configuration_error']) {

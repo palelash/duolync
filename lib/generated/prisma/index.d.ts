@@ -168,6 +168,11 @@ export type ProfileAlias = $Result.DefaultSelection<Prisma.$ProfileAliasPayload>
  * 
  */
 export type RateLimitEvent = $Result.DefaultSelection<Prisma.$RateLimitEventPayload>
+/**
+ * Model YouTubeComplianceState
+ * 
+ */
+export type YouTubeComplianceState = $Result.DefaultSelection<Prisma.$YouTubeComplianceStatePayload>
 
 /**
  * Enums
@@ -386,6 +391,41 @@ export const ProfileClaimStatus: {
 
 export type ProfileClaimStatus = (typeof ProfileClaimStatus)[keyof typeof ProfileClaimStatus]
 
+
+export const YouTubeComplianceStatus: {
+  ACTIVE: 'ACTIVE',
+  PURGED: 'PURGED'
+};
+
+export type YouTubeComplianceStatus = (typeof YouTubeComplianceStatus)[keyof typeof YouTubeComplianceStatus]
+
+
+export const YouTubeMaintenanceOutcome: {
+  SUCCESS: 'SUCCESS',
+  NOT_CONNECTED: 'NOT_CONNECTED',
+  AUTHORIZATION_LOST: 'AUTHORIZATION_LOST',
+  TEMPORARY_FAILURE: 'TEMPORARY_FAILURE',
+  QUOTA_EXHAUSTED: 'QUOTA_EXHAUSTED',
+  CONFIGURATION_FAILURE: 'CONFIGURATION_FAILURE',
+  PROVIDER_FAILURE: 'PROVIDER_FAILURE',
+  IDENTITY_MISMATCH: 'IDENTITY_MISMATCH',
+  SUPERSEDED: 'SUPERSEDED',
+  DEADLINE_PURGED: 'DEADLINE_PURGED'
+};
+
+export type YouTubeMaintenanceOutcome = (typeof YouTubeMaintenanceOutcome)[keyof typeof YouTubeMaintenanceOutcome]
+
+
+export const YouTubeRemovalReason: {
+  AUTHORIZATION_LOST: 'AUTHORIZATION_LOST',
+  DEADLINE_EXCEEDED: 'DEADLINE_EXCEEDED',
+  EXPLICIT_DISCONNECT: 'EXPLICIT_DISCONNECT',
+  TOKENLESS_HISTORY: 'TOKENLESS_HISTORY',
+  AMBIGUOUS_HISTORY: 'AMBIGUOUS_HISTORY'
+};
+
+export type YouTubeRemovalReason = (typeof YouTubeRemovalReason)[keyof typeof YouTubeRemovalReason]
+
 }
 
 export type DataSource = $Enums.DataSource
@@ -471,6 +511,18 @@ export const ReportReason: typeof $Enums.ReportReason
 export type ProfileClaimStatus = $Enums.ProfileClaimStatus
 
 export const ProfileClaimStatus: typeof $Enums.ProfileClaimStatus
+
+export type YouTubeComplianceStatus = $Enums.YouTubeComplianceStatus
+
+export const YouTubeComplianceStatus: typeof $Enums.YouTubeComplianceStatus
+
+export type YouTubeMaintenanceOutcome = $Enums.YouTubeMaintenanceOutcome
+
+export const YouTubeMaintenanceOutcome: typeof $Enums.YouTubeMaintenanceOutcome
+
+export type YouTubeRemovalReason = $Enums.YouTubeRemovalReason
+
+export const YouTubeRemovalReason: typeof $Enums.YouTubeRemovalReason
 
 /**
  * ##  Prisma Client ʲˢ
@@ -902,6 +954,16 @@ export class PrismaClient<
     * ```
     */
   get rateLimitEvent(): Prisma.RateLimitEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.youTubeComplianceState`: Exposes CRUD operations for the **YouTubeComplianceState** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more YouTubeComplianceStates
+    * const youTubeComplianceStates = await prisma.youTubeComplianceState.findMany()
+    * ```
+    */
+  get youTubeComplianceState(): Prisma.YouTubeComplianceStateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1366,7 +1428,8 @@ export namespace Prisma {
     Dispute: 'Dispute',
     ProfileClaim: 'ProfileClaim',
     ProfileAlias: 'ProfileAlias',
-    RateLimitEvent: 'RateLimitEvent'
+    RateLimitEvent: 'RateLimitEvent',
+    YouTubeComplianceState: 'YouTubeComplianceState'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1382,7 +1445,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "creatorContentCuration" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "profileClaim" | "profileAlias" | "rateLimitEvent"
+      modelProps: "user" | "brandProfile" | "creatorProfile" | "socialPost" | "creatorContentCuration" | "account" | "session" | "verification" | "twoFactor" | "platformToken" | "platformStats" | "waitlist" | "message" | "campaign" | "campaignEvent" | "campaignEventUpdate" | "contract" | "milestone" | "cRMLead" | "creator" | "task" | "connection" | "communityList" | "communityListMember" | "notification" | "application" | "invitation" | "dispute" | "profileClaim" | "profileAlias" | "rateLimitEvent" | "youTubeComplianceState"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3680,6 +3743,80 @@ export namespace Prisma {
           }
         }
       }
+      YouTubeComplianceState: {
+        payload: Prisma.$YouTubeComplianceStatePayload<ExtArgs>
+        fields: Prisma.YouTubeComplianceStateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.YouTubeComplianceStateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.YouTubeComplianceStateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          findFirst: {
+            args: Prisma.YouTubeComplianceStateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.YouTubeComplianceStateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          findMany: {
+            args: Prisma.YouTubeComplianceStateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>[]
+          }
+          create: {
+            args: Prisma.YouTubeComplianceStateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          createMany: {
+            args: Prisma.YouTubeComplianceStateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.YouTubeComplianceStateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>[]
+          }
+          delete: {
+            args: Prisma.YouTubeComplianceStateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          update: {
+            args: Prisma.YouTubeComplianceStateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          deleteMany: {
+            args: Prisma.YouTubeComplianceStateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.YouTubeComplianceStateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.YouTubeComplianceStateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>[]
+          }
+          upsert: {
+            args: Prisma.YouTubeComplianceStateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$YouTubeComplianceStatePayload>
+          }
+          aggregate: {
+            args: Prisma.YouTubeComplianceStateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateYouTubeComplianceState>
+          }
+          groupBy: {
+            args: Prisma.YouTubeComplianceStateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<YouTubeComplianceStateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.YouTubeComplianceStateCountArgs<ExtArgs>
+            result: $Utils.Optional<YouTubeComplianceStateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3819,6 +3956,7 @@ export namespace Prisma {
     profileClaim?: ProfileClaimOmit
     profileAlias?: ProfileAliasOmit
     rateLimitEvent?: RateLimitEventOmit
+    youTubeComplianceState?: YouTubeComplianceStateOmit
   }
 
   /* Types for Logging */
@@ -4679,6 +4817,7 @@ export namespace Prisma {
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     platformStats?: boolean | User$platformStatsArgs<ExtArgs>
     platformTokens?: boolean | User$platformTokensArgs<ExtArgs>
+    youtubeComplianceState?: boolean | User$youtubeComplianceStateArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     communityMemberships?: boolean | User$communityMembershipsArgs<ExtArgs>
     savedCreators?: boolean | User$savedCreatorsArgs<ExtArgs>
@@ -4757,6 +4896,7 @@ export namespace Prisma {
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     platformStats?: boolean | User$platformStatsArgs<ExtArgs>
     platformTokens?: boolean | User$platformTokensArgs<ExtArgs>
+    youtubeComplianceState?: boolean | User$youtubeComplianceStateArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     communityMemberships?: boolean | User$communityMembershipsArgs<ExtArgs>
     savedCreators?: boolean | User$savedCreatorsArgs<ExtArgs>
@@ -4790,6 +4930,7 @@ export namespace Prisma {
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       platformStats: Prisma.$PlatformStatsPayload<ExtArgs>[]
       platformTokens: Prisma.$PlatformTokenPayload<ExtArgs>[]
+      youtubeComplianceState: Prisma.$YouTubeComplianceStatePayload<ExtArgs> | null
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       communityMemberships: Prisma.$CommunityListMemberPayload<ExtArgs>[]
       savedCreators: Prisma.$CreatorPayload<ExtArgs>[]
@@ -5224,6 +5365,7 @@ export namespace Prisma {
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     platformStats<T extends User$platformStatsArgs<ExtArgs> = {}>(args?: Subset<T, User$platformStatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     platformTokens<T extends User$platformTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$platformTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlatformTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    youtubeComplianceState<T extends User$youtubeComplianceStateArgs<ExtArgs> = {}>(args?: Subset<T, User$youtubeComplianceStateArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     communityMemberships<T extends User$communityMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$communityMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommunityListMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     savedCreators<T extends User$savedCreatorsArgs<ExtArgs> = {}>(args?: Subset<T, User$savedCreatorsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreatorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5942,6 +6084,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PlatformTokenScalarFieldEnum | PlatformTokenScalarFieldEnum[]
+  }
+
+  /**
+   * User.youtubeComplianceState
+   */
+  export type User$youtubeComplianceStateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    where?: YouTubeComplianceStateWhereInput
   }
 
   /**
@@ -41035,6 +41196,1267 @@ export namespace Prisma {
 
 
   /**
+   * Model YouTubeComplianceState
+   */
+
+  export type AggregateYouTubeComplianceState = {
+    _count: YouTubeComplianceStateCountAggregateOutputType | null
+    _avg: YouTubeComplianceStateAvgAggregateOutputType | null
+    _sum: YouTubeComplianceStateSumAggregateOutputType | null
+    _min: YouTubeComplianceStateMinAggregateOutputType | null
+    _max: YouTubeComplianceStateMaxAggregateOutputType | null
+  }
+
+  export type YouTubeComplianceStateAvgAggregateOutputType = {
+    connectionGeneration: number | null
+    revision: number | null
+    attemptCount: number | null
+  }
+
+  export type YouTubeComplianceStateSumAggregateOutputType = {
+    connectionGeneration: number | null
+    revision: number | null
+    attemptCount: number | null
+  }
+
+  export type YouTubeComplianceStateMinAggregateOutputType = {
+    userId: string | null
+    connectionGeneration: number | null
+    revision: number | null
+    status: $Enums.YouTubeComplianceStatus | null
+    lastSuccessfulAuthorizationValidationAt: Date | null
+    lastSuccessfulDataRefreshAt: Date | null
+    nextAttemptAt: Date | null
+    deleteByAt: Date | null
+    lastAttemptAt: Date | null
+    lastOutcome: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount: number | null
+    authorizationLostAt: Date | null
+    purgedAt: Date | null
+    removalReason: $Enums.YouTubeRemovalReason | null
+    blockedAt: Date | null
+    leaseId: string | null
+    leaseExpiresAt: Date | null
+  }
+
+  export type YouTubeComplianceStateMaxAggregateOutputType = {
+    userId: string | null
+    connectionGeneration: number | null
+    revision: number | null
+    status: $Enums.YouTubeComplianceStatus | null
+    lastSuccessfulAuthorizationValidationAt: Date | null
+    lastSuccessfulDataRefreshAt: Date | null
+    nextAttemptAt: Date | null
+    deleteByAt: Date | null
+    lastAttemptAt: Date | null
+    lastOutcome: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount: number | null
+    authorizationLostAt: Date | null
+    purgedAt: Date | null
+    removalReason: $Enums.YouTubeRemovalReason | null
+    blockedAt: Date | null
+    leaseId: string | null
+    leaseExpiresAt: Date | null
+  }
+
+  export type YouTubeComplianceStateCountAggregateOutputType = {
+    userId: number
+    connectionGeneration: number
+    revision: number
+    status: number
+    lastSuccessfulAuthorizationValidationAt: number
+    lastSuccessfulDataRefreshAt: number
+    nextAttemptAt: number
+    deleteByAt: number
+    lastAttemptAt: number
+    lastOutcome: number
+    attemptCount: number
+    authorizationLostAt: number
+    purgedAt: number
+    removalReason: number
+    blockedAt: number
+    leaseId: number
+    leaseExpiresAt: number
+    _all: number
+  }
+
+
+  export type YouTubeComplianceStateAvgAggregateInputType = {
+    connectionGeneration?: true
+    revision?: true
+    attemptCount?: true
+  }
+
+  export type YouTubeComplianceStateSumAggregateInputType = {
+    connectionGeneration?: true
+    revision?: true
+    attemptCount?: true
+  }
+
+  export type YouTubeComplianceStateMinAggregateInputType = {
+    userId?: true
+    connectionGeneration?: true
+    revision?: true
+    status?: true
+    lastSuccessfulAuthorizationValidationAt?: true
+    lastSuccessfulDataRefreshAt?: true
+    nextAttemptAt?: true
+    deleteByAt?: true
+    lastAttemptAt?: true
+    lastOutcome?: true
+    attemptCount?: true
+    authorizationLostAt?: true
+    purgedAt?: true
+    removalReason?: true
+    blockedAt?: true
+    leaseId?: true
+    leaseExpiresAt?: true
+  }
+
+  export type YouTubeComplianceStateMaxAggregateInputType = {
+    userId?: true
+    connectionGeneration?: true
+    revision?: true
+    status?: true
+    lastSuccessfulAuthorizationValidationAt?: true
+    lastSuccessfulDataRefreshAt?: true
+    nextAttemptAt?: true
+    deleteByAt?: true
+    lastAttemptAt?: true
+    lastOutcome?: true
+    attemptCount?: true
+    authorizationLostAt?: true
+    purgedAt?: true
+    removalReason?: true
+    blockedAt?: true
+    leaseId?: true
+    leaseExpiresAt?: true
+  }
+
+  export type YouTubeComplianceStateCountAggregateInputType = {
+    userId?: true
+    connectionGeneration?: true
+    revision?: true
+    status?: true
+    lastSuccessfulAuthorizationValidationAt?: true
+    lastSuccessfulDataRefreshAt?: true
+    nextAttemptAt?: true
+    deleteByAt?: true
+    lastAttemptAt?: true
+    lastOutcome?: true
+    attemptCount?: true
+    authorizationLostAt?: true
+    purgedAt?: true
+    removalReason?: true
+    blockedAt?: true
+    leaseId?: true
+    leaseExpiresAt?: true
+    _all?: true
+  }
+
+  export type YouTubeComplianceStateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which YouTubeComplianceState to aggregate.
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of YouTubeComplianceStates to fetch.
+     */
+    orderBy?: YouTubeComplianceStateOrderByWithRelationInput | YouTubeComplianceStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: YouTubeComplianceStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` YouTubeComplianceStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` YouTubeComplianceStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned YouTubeComplianceStates
+    **/
+    _count?: true | YouTubeComplianceStateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: YouTubeComplianceStateAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: YouTubeComplianceStateSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: YouTubeComplianceStateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: YouTubeComplianceStateMaxAggregateInputType
+  }
+
+  export type GetYouTubeComplianceStateAggregateType<T extends YouTubeComplianceStateAggregateArgs> = {
+        [P in keyof T & keyof AggregateYouTubeComplianceState]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateYouTubeComplianceState[P]>
+      : GetScalarType<T[P], AggregateYouTubeComplianceState[P]>
+  }
+
+
+
+
+  export type YouTubeComplianceStateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: YouTubeComplianceStateWhereInput
+    orderBy?: YouTubeComplianceStateOrderByWithAggregationInput | YouTubeComplianceStateOrderByWithAggregationInput[]
+    by: YouTubeComplianceStateScalarFieldEnum[] | YouTubeComplianceStateScalarFieldEnum
+    having?: YouTubeComplianceStateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: YouTubeComplianceStateCountAggregateInputType | true
+    _avg?: YouTubeComplianceStateAvgAggregateInputType
+    _sum?: YouTubeComplianceStateSumAggregateInputType
+    _min?: YouTubeComplianceStateMinAggregateInputType
+    _max?: YouTubeComplianceStateMaxAggregateInputType
+  }
+
+  export type YouTubeComplianceStateGroupByOutputType = {
+    userId: string
+    connectionGeneration: number
+    revision: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt: Date | null
+    lastSuccessfulDataRefreshAt: Date | null
+    nextAttemptAt: Date | null
+    deleteByAt: Date | null
+    lastAttemptAt: Date | null
+    lastOutcome: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount: number
+    authorizationLostAt: Date | null
+    purgedAt: Date | null
+    removalReason: $Enums.YouTubeRemovalReason | null
+    blockedAt: Date | null
+    leaseId: string | null
+    leaseExpiresAt: Date | null
+    _count: YouTubeComplianceStateCountAggregateOutputType | null
+    _avg: YouTubeComplianceStateAvgAggregateOutputType | null
+    _sum: YouTubeComplianceStateSumAggregateOutputType | null
+    _min: YouTubeComplianceStateMinAggregateOutputType | null
+    _max: YouTubeComplianceStateMaxAggregateOutputType | null
+  }
+
+  type GetYouTubeComplianceStateGroupByPayload<T extends YouTubeComplianceStateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<YouTubeComplianceStateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof YouTubeComplianceStateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], YouTubeComplianceStateGroupByOutputType[P]>
+            : GetScalarType<T[P], YouTubeComplianceStateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type YouTubeComplianceStateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    connectionGeneration?: boolean
+    revision?: boolean
+    status?: boolean
+    lastSuccessfulAuthorizationValidationAt?: boolean
+    lastSuccessfulDataRefreshAt?: boolean
+    nextAttemptAt?: boolean
+    deleteByAt?: boolean
+    lastAttemptAt?: boolean
+    lastOutcome?: boolean
+    attemptCount?: boolean
+    authorizationLostAt?: boolean
+    purgedAt?: boolean
+    removalReason?: boolean
+    blockedAt?: boolean
+    leaseId?: boolean
+    leaseExpiresAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["youTubeComplianceState"]>
+
+  export type YouTubeComplianceStateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    connectionGeneration?: boolean
+    revision?: boolean
+    status?: boolean
+    lastSuccessfulAuthorizationValidationAt?: boolean
+    lastSuccessfulDataRefreshAt?: boolean
+    nextAttemptAt?: boolean
+    deleteByAt?: boolean
+    lastAttemptAt?: boolean
+    lastOutcome?: boolean
+    attemptCount?: boolean
+    authorizationLostAt?: boolean
+    purgedAt?: boolean
+    removalReason?: boolean
+    blockedAt?: boolean
+    leaseId?: boolean
+    leaseExpiresAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["youTubeComplianceState"]>
+
+  export type YouTubeComplianceStateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    connectionGeneration?: boolean
+    revision?: boolean
+    status?: boolean
+    lastSuccessfulAuthorizationValidationAt?: boolean
+    lastSuccessfulDataRefreshAt?: boolean
+    nextAttemptAt?: boolean
+    deleteByAt?: boolean
+    lastAttemptAt?: boolean
+    lastOutcome?: boolean
+    attemptCount?: boolean
+    authorizationLostAt?: boolean
+    purgedAt?: boolean
+    removalReason?: boolean
+    blockedAt?: boolean
+    leaseId?: boolean
+    leaseExpiresAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["youTubeComplianceState"]>
+
+  export type YouTubeComplianceStateSelectScalar = {
+    userId?: boolean
+    connectionGeneration?: boolean
+    revision?: boolean
+    status?: boolean
+    lastSuccessfulAuthorizationValidationAt?: boolean
+    lastSuccessfulDataRefreshAt?: boolean
+    nextAttemptAt?: boolean
+    deleteByAt?: boolean
+    lastAttemptAt?: boolean
+    lastOutcome?: boolean
+    attemptCount?: boolean
+    authorizationLostAt?: boolean
+    purgedAt?: boolean
+    removalReason?: boolean
+    blockedAt?: boolean
+    leaseId?: boolean
+    leaseExpiresAt?: boolean
+  }
+
+  export type YouTubeComplianceStateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "connectionGeneration" | "revision" | "status" | "lastSuccessfulAuthorizationValidationAt" | "lastSuccessfulDataRefreshAt" | "nextAttemptAt" | "deleteByAt" | "lastAttemptAt" | "lastOutcome" | "attemptCount" | "authorizationLostAt" | "purgedAt" | "removalReason" | "blockedAt" | "leaseId" | "leaseExpiresAt", ExtArgs["result"]["youTubeComplianceState"]>
+  export type YouTubeComplianceStateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type YouTubeComplianceStateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type YouTubeComplianceStateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $YouTubeComplianceStatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "YouTubeComplianceState"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      userId: string
+      connectionGeneration: number
+      revision: number
+      status: $Enums.YouTubeComplianceStatus
+      lastSuccessfulAuthorizationValidationAt: Date | null
+      lastSuccessfulDataRefreshAt: Date | null
+      nextAttemptAt: Date | null
+      deleteByAt: Date | null
+      lastAttemptAt: Date | null
+      lastOutcome: $Enums.YouTubeMaintenanceOutcome | null
+      attemptCount: number
+      authorizationLostAt: Date | null
+      purgedAt: Date | null
+      removalReason: $Enums.YouTubeRemovalReason | null
+      blockedAt: Date | null
+      leaseId: string | null
+      leaseExpiresAt: Date | null
+    }, ExtArgs["result"]["youTubeComplianceState"]>
+    composites: {}
+  }
+
+  type YouTubeComplianceStateGetPayload<S extends boolean | null | undefined | YouTubeComplianceStateDefaultArgs> = $Result.GetResult<Prisma.$YouTubeComplianceStatePayload, S>
+
+  type YouTubeComplianceStateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<YouTubeComplianceStateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: YouTubeComplianceStateCountAggregateInputType | true
+    }
+
+  export interface YouTubeComplianceStateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['YouTubeComplianceState'], meta: { name: 'YouTubeComplianceState' } }
+    /**
+     * Find zero or one YouTubeComplianceState that matches the filter.
+     * @param {YouTubeComplianceStateFindUniqueArgs} args - Arguments to find a YouTubeComplianceState
+     * @example
+     * // Get one YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends YouTubeComplianceStateFindUniqueArgs>(args: SelectSubset<T, YouTubeComplianceStateFindUniqueArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one YouTubeComplianceState that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {YouTubeComplianceStateFindUniqueOrThrowArgs} args - Arguments to find a YouTubeComplianceState
+     * @example
+     * // Get one YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends YouTubeComplianceStateFindUniqueOrThrowArgs>(args: SelectSubset<T, YouTubeComplianceStateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first YouTubeComplianceState that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateFindFirstArgs} args - Arguments to find a YouTubeComplianceState
+     * @example
+     * // Get one YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends YouTubeComplianceStateFindFirstArgs>(args?: SelectSubset<T, YouTubeComplianceStateFindFirstArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first YouTubeComplianceState that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateFindFirstOrThrowArgs} args - Arguments to find a YouTubeComplianceState
+     * @example
+     * // Get one YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends YouTubeComplianceStateFindFirstOrThrowArgs>(args?: SelectSubset<T, YouTubeComplianceStateFindFirstOrThrowArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more YouTubeComplianceStates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all YouTubeComplianceStates
+     * const youTubeComplianceStates = await prisma.youTubeComplianceState.findMany()
+     * 
+     * // Get first 10 YouTubeComplianceStates
+     * const youTubeComplianceStates = await prisma.youTubeComplianceState.findMany({ take: 10 })
+     * 
+     * // Only select the `userId`
+     * const youTubeComplianceStateWithUserIdOnly = await prisma.youTubeComplianceState.findMany({ select: { userId: true } })
+     * 
+     */
+    findMany<T extends YouTubeComplianceStateFindManyArgs>(args?: SelectSubset<T, YouTubeComplianceStateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a YouTubeComplianceState.
+     * @param {YouTubeComplianceStateCreateArgs} args - Arguments to create a YouTubeComplianceState.
+     * @example
+     * // Create one YouTubeComplianceState
+     * const YouTubeComplianceState = await prisma.youTubeComplianceState.create({
+     *   data: {
+     *     // ... data to create a YouTubeComplianceState
+     *   }
+     * })
+     * 
+     */
+    create<T extends YouTubeComplianceStateCreateArgs>(args: SelectSubset<T, YouTubeComplianceStateCreateArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many YouTubeComplianceStates.
+     * @param {YouTubeComplianceStateCreateManyArgs} args - Arguments to create many YouTubeComplianceStates.
+     * @example
+     * // Create many YouTubeComplianceStates
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends YouTubeComplianceStateCreateManyArgs>(args?: SelectSubset<T, YouTubeComplianceStateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many YouTubeComplianceStates and returns the data saved in the database.
+     * @param {YouTubeComplianceStateCreateManyAndReturnArgs} args - Arguments to create many YouTubeComplianceStates.
+     * @example
+     * // Create many YouTubeComplianceStates
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many YouTubeComplianceStates and only return the `userId`
+     * const youTubeComplianceStateWithUserIdOnly = await prisma.youTubeComplianceState.createManyAndReturn({
+     *   select: { userId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends YouTubeComplianceStateCreateManyAndReturnArgs>(args?: SelectSubset<T, YouTubeComplianceStateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a YouTubeComplianceState.
+     * @param {YouTubeComplianceStateDeleteArgs} args - Arguments to delete one YouTubeComplianceState.
+     * @example
+     * // Delete one YouTubeComplianceState
+     * const YouTubeComplianceState = await prisma.youTubeComplianceState.delete({
+     *   where: {
+     *     // ... filter to delete one YouTubeComplianceState
+     *   }
+     * })
+     * 
+     */
+    delete<T extends YouTubeComplianceStateDeleteArgs>(args: SelectSubset<T, YouTubeComplianceStateDeleteArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one YouTubeComplianceState.
+     * @param {YouTubeComplianceStateUpdateArgs} args - Arguments to update one YouTubeComplianceState.
+     * @example
+     * // Update one YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends YouTubeComplianceStateUpdateArgs>(args: SelectSubset<T, YouTubeComplianceStateUpdateArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more YouTubeComplianceStates.
+     * @param {YouTubeComplianceStateDeleteManyArgs} args - Arguments to filter YouTubeComplianceStates to delete.
+     * @example
+     * // Delete a few YouTubeComplianceStates
+     * const { count } = await prisma.youTubeComplianceState.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends YouTubeComplianceStateDeleteManyArgs>(args?: SelectSubset<T, YouTubeComplianceStateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more YouTubeComplianceStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many YouTubeComplianceStates
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends YouTubeComplianceStateUpdateManyArgs>(args: SelectSubset<T, YouTubeComplianceStateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more YouTubeComplianceStates and returns the data updated in the database.
+     * @param {YouTubeComplianceStateUpdateManyAndReturnArgs} args - Arguments to update many YouTubeComplianceStates.
+     * @example
+     * // Update many YouTubeComplianceStates
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more YouTubeComplianceStates and only return the `userId`
+     * const youTubeComplianceStateWithUserIdOnly = await prisma.youTubeComplianceState.updateManyAndReturn({
+     *   select: { userId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends YouTubeComplianceStateUpdateManyAndReturnArgs>(args: SelectSubset<T, YouTubeComplianceStateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one YouTubeComplianceState.
+     * @param {YouTubeComplianceStateUpsertArgs} args - Arguments to update or create a YouTubeComplianceState.
+     * @example
+     * // Update or create a YouTubeComplianceState
+     * const youTubeComplianceState = await prisma.youTubeComplianceState.upsert({
+     *   create: {
+     *     // ... data to create a YouTubeComplianceState
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the YouTubeComplianceState we want to update
+     *   }
+     * })
+     */
+    upsert<T extends YouTubeComplianceStateUpsertArgs>(args: SelectSubset<T, YouTubeComplianceStateUpsertArgs<ExtArgs>>): Prisma__YouTubeComplianceStateClient<$Result.GetResult<Prisma.$YouTubeComplianceStatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of YouTubeComplianceStates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateCountArgs} args - Arguments to filter YouTubeComplianceStates to count.
+     * @example
+     * // Count the number of YouTubeComplianceStates
+     * const count = await prisma.youTubeComplianceState.count({
+     *   where: {
+     *     // ... the filter for the YouTubeComplianceStates we want to count
+     *   }
+     * })
+    **/
+    count<T extends YouTubeComplianceStateCountArgs>(
+      args?: Subset<T, YouTubeComplianceStateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], YouTubeComplianceStateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a YouTubeComplianceState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends YouTubeComplianceStateAggregateArgs>(args: Subset<T, YouTubeComplianceStateAggregateArgs>): Prisma.PrismaPromise<GetYouTubeComplianceStateAggregateType<T>>
+
+    /**
+     * Group by YouTubeComplianceState.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {YouTubeComplianceStateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends YouTubeComplianceStateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: YouTubeComplianceStateGroupByArgs['orderBy'] }
+        : { orderBy?: YouTubeComplianceStateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, YouTubeComplianceStateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetYouTubeComplianceStateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the YouTubeComplianceState model
+   */
+  readonly fields: YouTubeComplianceStateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for YouTubeComplianceState.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__YouTubeComplianceStateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the YouTubeComplianceState model
+   */
+  interface YouTubeComplianceStateFieldRefs {
+    readonly userId: FieldRef<"YouTubeComplianceState", 'String'>
+    readonly connectionGeneration: FieldRef<"YouTubeComplianceState", 'Int'>
+    readonly revision: FieldRef<"YouTubeComplianceState", 'Int'>
+    readonly status: FieldRef<"YouTubeComplianceState", 'YouTubeComplianceStatus'>
+    readonly lastSuccessfulAuthorizationValidationAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly lastSuccessfulDataRefreshAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly nextAttemptAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly deleteByAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly lastAttemptAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly lastOutcome: FieldRef<"YouTubeComplianceState", 'YouTubeMaintenanceOutcome'>
+    readonly attemptCount: FieldRef<"YouTubeComplianceState", 'Int'>
+    readonly authorizationLostAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly purgedAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly removalReason: FieldRef<"YouTubeComplianceState", 'YouTubeRemovalReason'>
+    readonly blockedAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+    readonly leaseId: FieldRef<"YouTubeComplianceState", 'String'>
+    readonly leaseExpiresAt: FieldRef<"YouTubeComplianceState", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * YouTubeComplianceState findUnique
+   */
+  export type YouTubeComplianceStateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter, which YouTubeComplianceState to fetch.
+     */
+    where: YouTubeComplianceStateWhereUniqueInput
+  }
+
+  /**
+   * YouTubeComplianceState findUniqueOrThrow
+   */
+  export type YouTubeComplianceStateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter, which YouTubeComplianceState to fetch.
+     */
+    where: YouTubeComplianceStateWhereUniqueInput
+  }
+
+  /**
+   * YouTubeComplianceState findFirst
+   */
+  export type YouTubeComplianceStateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter, which YouTubeComplianceState to fetch.
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of YouTubeComplianceStates to fetch.
+     */
+    orderBy?: YouTubeComplianceStateOrderByWithRelationInput | YouTubeComplianceStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for YouTubeComplianceStates.
+     */
+    cursor?: YouTubeComplianceStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` YouTubeComplianceStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` YouTubeComplianceStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of YouTubeComplianceStates.
+     */
+    distinct?: YouTubeComplianceStateScalarFieldEnum | YouTubeComplianceStateScalarFieldEnum[]
+  }
+
+  /**
+   * YouTubeComplianceState findFirstOrThrow
+   */
+  export type YouTubeComplianceStateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter, which YouTubeComplianceState to fetch.
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of YouTubeComplianceStates to fetch.
+     */
+    orderBy?: YouTubeComplianceStateOrderByWithRelationInput | YouTubeComplianceStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for YouTubeComplianceStates.
+     */
+    cursor?: YouTubeComplianceStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` YouTubeComplianceStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` YouTubeComplianceStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of YouTubeComplianceStates.
+     */
+    distinct?: YouTubeComplianceStateScalarFieldEnum | YouTubeComplianceStateScalarFieldEnum[]
+  }
+
+  /**
+   * YouTubeComplianceState findMany
+   */
+  export type YouTubeComplianceStateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter, which YouTubeComplianceStates to fetch.
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of YouTubeComplianceStates to fetch.
+     */
+    orderBy?: YouTubeComplianceStateOrderByWithRelationInput | YouTubeComplianceStateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing YouTubeComplianceStates.
+     */
+    cursor?: YouTubeComplianceStateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` YouTubeComplianceStates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` YouTubeComplianceStates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of YouTubeComplianceStates.
+     */
+    distinct?: YouTubeComplianceStateScalarFieldEnum | YouTubeComplianceStateScalarFieldEnum[]
+  }
+
+  /**
+   * YouTubeComplianceState create
+   */
+  export type YouTubeComplianceStateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a YouTubeComplianceState.
+     */
+    data: XOR<YouTubeComplianceStateCreateInput, YouTubeComplianceStateUncheckedCreateInput>
+  }
+
+  /**
+   * YouTubeComplianceState createMany
+   */
+  export type YouTubeComplianceStateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many YouTubeComplianceStates.
+     */
+    data: YouTubeComplianceStateCreateManyInput | YouTubeComplianceStateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * YouTubeComplianceState createManyAndReturn
+   */
+  export type YouTubeComplianceStateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * The data used to create many YouTubeComplianceStates.
+     */
+    data: YouTubeComplianceStateCreateManyInput | YouTubeComplianceStateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * YouTubeComplianceState update
+   */
+  export type YouTubeComplianceStateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a YouTubeComplianceState.
+     */
+    data: XOR<YouTubeComplianceStateUpdateInput, YouTubeComplianceStateUncheckedUpdateInput>
+    /**
+     * Choose, which YouTubeComplianceState to update.
+     */
+    where: YouTubeComplianceStateWhereUniqueInput
+  }
+
+  /**
+   * YouTubeComplianceState updateMany
+   */
+  export type YouTubeComplianceStateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update YouTubeComplianceStates.
+     */
+    data: XOR<YouTubeComplianceStateUpdateManyMutationInput, YouTubeComplianceStateUncheckedUpdateManyInput>
+    /**
+     * Filter which YouTubeComplianceStates to update
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * Limit how many YouTubeComplianceStates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * YouTubeComplianceState updateManyAndReturn
+   */
+  export type YouTubeComplianceStateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * The data used to update YouTubeComplianceStates.
+     */
+    data: XOR<YouTubeComplianceStateUpdateManyMutationInput, YouTubeComplianceStateUncheckedUpdateManyInput>
+    /**
+     * Filter which YouTubeComplianceStates to update
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * Limit how many YouTubeComplianceStates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * YouTubeComplianceState upsert
+   */
+  export type YouTubeComplianceStateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the YouTubeComplianceState to update in case it exists.
+     */
+    where: YouTubeComplianceStateWhereUniqueInput
+    /**
+     * In case the YouTubeComplianceState found by the `where` argument doesn't exist, create a new YouTubeComplianceState with this data.
+     */
+    create: XOR<YouTubeComplianceStateCreateInput, YouTubeComplianceStateUncheckedCreateInput>
+    /**
+     * In case the YouTubeComplianceState was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<YouTubeComplianceStateUpdateInput, YouTubeComplianceStateUncheckedUpdateInput>
+  }
+
+  /**
+   * YouTubeComplianceState delete
+   */
+  export type YouTubeComplianceStateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+    /**
+     * Filter which YouTubeComplianceState to delete.
+     */
+    where: YouTubeComplianceStateWhereUniqueInput
+  }
+
+  /**
+   * YouTubeComplianceState deleteMany
+   */
+  export type YouTubeComplianceStateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which YouTubeComplianceStates to delete
+     */
+    where?: YouTubeComplianceStateWhereInput
+    /**
+     * Limit how many YouTubeComplianceStates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * YouTubeComplianceState without action
+   */
+  export type YouTubeComplianceStateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the YouTubeComplianceState
+     */
+    select?: YouTubeComplianceStateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the YouTubeComplianceState
+     */
+    omit?: YouTubeComplianceStateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: YouTubeComplianceStateInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -41528,6 +42950,29 @@ export namespace Prisma {
   export type RateLimitEventScalarFieldEnum = (typeof RateLimitEventScalarFieldEnum)[keyof typeof RateLimitEventScalarFieldEnum]
 
 
+  export const YouTubeComplianceStateScalarFieldEnum: {
+    userId: 'userId',
+    connectionGeneration: 'connectionGeneration',
+    revision: 'revision',
+    status: 'status',
+    lastSuccessfulAuthorizationValidationAt: 'lastSuccessfulAuthorizationValidationAt',
+    lastSuccessfulDataRefreshAt: 'lastSuccessfulDataRefreshAt',
+    nextAttemptAt: 'nextAttemptAt',
+    deleteByAt: 'deleteByAt',
+    lastAttemptAt: 'lastAttemptAt',
+    lastOutcome: 'lastOutcome',
+    attemptCount: 'attemptCount',
+    authorizationLostAt: 'authorizationLostAt',
+    purgedAt: 'purgedAt',
+    removalReason: 'removalReason',
+    blockedAt: 'blockedAt',
+    leaseId: 'leaseId',
+    leaseExpiresAt: 'leaseExpiresAt'
+  };
+
+  export type YouTubeComplianceStateScalarFieldEnum = (typeof YouTubeComplianceStateScalarFieldEnum)[keyof typeof YouTubeComplianceStateScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -41929,6 +43374,48 @@ export namespace Prisma {
    */
   export type ListEnumProfileClaimStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProfileClaimStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'YouTubeComplianceStatus'
+   */
+  export type EnumYouTubeComplianceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeComplianceStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'YouTubeComplianceStatus[]'
+   */
+  export type ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeComplianceStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'YouTubeMaintenanceOutcome'
+   */
+  export type EnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeMaintenanceOutcome'>
+    
+
+
+  /**
+   * Reference to a field of type 'YouTubeMaintenanceOutcome[]'
+   */
+  export type ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeMaintenanceOutcome[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'YouTubeRemovalReason'
+   */
+  export type EnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeRemovalReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'YouTubeRemovalReason[]'
+   */
+  export type ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'YouTubeRemovalReason[]'>
+    
   /**
    * Deep Input Types
    */
@@ -41963,6 +43450,7 @@ export namespace Prisma {
     notifications?: NotificationListRelationFilter
     platformStats?: PlatformStatsListRelationFilter
     platformTokens?: PlatformTokenListRelationFilter
+    youtubeComplianceState?: XOR<YouTubeComplianceStateNullableScalarRelationFilter, YouTubeComplianceStateWhereInput> | null
     sessions?: SessionListRelationFilter
     communityMemberships?: CommunityListMemberListRelationFilter
     savedCreators?: CreatorListRelationFilter
@@ -42004,6 +43492,7 @@ export namespace Prisma {
     notifications?: NotificationOrderByRelationAggregateInput
     platformStats?: PlatformStatsOrderByRelationAggregateInput
     platformTokens?: PlatformTokenOrderByRelationAggregateInput
+    youtubeComplianceState?: YouTubeComplianceStateOrderByWithRelationInput
     sessions?: SessionOrderByRelationAggregateInput
     communityMemberships?: CommunityListMemberOrderByRelationAggregateInput
     savedCreators?: CreatorOrderByRelationAggregateInput
@@ -42048,6 +43537,7 @@ export namespace Prisma {
     notifications?: NotificationListRelationFilter
     platformStats?: PlatformStatsListRelationFilter
     platformTokens?: PlatformTokenListRelationFilter
+    youtubeComplianceState?: XOR<YouTubeComplianceStateNullableScalarRelationFilter, YouTubeComplianceStateWhereInput> | null
     sessions?: SessionListRelationFilter
     communityMemberships?: CommunityListMemberListRelationFilter
     savedCreators?: CreatorListRelationFilter
@@ -44548,6 +46038,123 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"RateLimitEvent"> | Date | string
   }
 
+  export type YouTubeComplianceStateWhereInput = {
+    AND?: YouTubeComplianceStateWhereInput | YouTubeComplianceStateWhereInput[]
+    OR?: YouTubeComplianceStateWhereInput[]
+    NOT?: YouTubeComplianceStateWhereInput | YouTubeComplianceStateWhereInput[]
+    userId?: StringFilter<"YouTubeComplianceState"> | string
+    connectionGeneration?: IntFilter<"YouTubeComplianceState"> | number
+    revision?: IntFilter<"YouTubeComplianceState"> | number
+    status?: EnumYouTubeComplianceStatusFilter<"YouTubeComplianceState"> | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastSuccessfulDataRefreshAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    deleteByAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastAttemptAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastOutcome?: EnumYouTubeMaintenanceOutcomeNullableFilter<"YouTubeComplianceState"> | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFilter<"YouTubeComplianceState"> | number
+    authorizationLostAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    purgedAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    removalReason?: EnumYouTubeRemovalReasonNullableFilter<"YouTubeComplianceState"> | $Enums.YouTubeRemovalReason | null
+    blockedAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    leaseId?: StringNullableFilter<"YouTubeComplianceState"> | string | null
+    leaseExpiresAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type YouTubeComplianceStateOrderByWithRelationInput = {
+    userId?: SortOrder
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    status?: SortOrder
+    lastSuccessfulAuthorizationValidationAt?: SortOrderInput | SortOrder
+    lastSuccessfulDataRefreshAt?: SortOrderInput | SortOrder
+    nextAttemptAt?: SortOrderInput | SortOrder
+    deleteByAt?: SortOrderInput | SortOrder
+    lastAttemptAt?: SortOrderInput | SortOrder
+    lastOutcome?: SortOrderInput | SortOrder
+    attemptCount?: SortOrder
+    authorizationLostAt?: SortOrderInput | SortOrder
+    purgedAt?: SortOrderInput | SortOrder
+    removalReason?: SortOrderInput | SortOrder
+    blockedAt?: SortOrderInput | SortOrder
+    leaseId?: SortOrderInput | SortOrder
+    leaseExpiresAt?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type YouTubeComplianceStateWhereUniqueInput = Prisma.AtLeast<{
+    userId?: string
+    AND?: YouTubeComplianceStateWhereInput | YouTubeComplianceStateWhereInput[]
+    OR?: YouTubeComplianceStateWhereInput[]
+    NOT?: YouTubeComplianceStateWhereInput | YouTubeComplianceStateWhereInput[]
+    connectionGeneration?: IntFilter<"YouTubeComplianceState"> | number
+    revision?: IntFilter<"YouTubeComplianceState"> | number
+    status?: EnumYouTubeComplianceStatusFilter<"YouTubeComplianceState"> | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastSuccessfulDataRefreshAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    deleteByAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastAttemptAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    lastOutcome?: EnumYouTubeMaintenanceOutcomeNullableFilter<"YouTubeComplianceState"> | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFilter<"YouTubeComplianceState"> | number
+    authorizationLostAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    purgedAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    removalReason?: EnumYouTubeRemovalReasonNullableFilter<"YouTubeComplianceState"> | $Enums.YouTubeRemovalReason | null
+    blockedAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    leaseId?: StringNullableFilter<"YouTubeComplianceState"> | string | null
+    leaseExpiresAt?: DateTimeNullableFilter<"YouTubeComplianceState"> | Date | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "userId">
+
+  export type YouTubeComplianceStateOrderByWithAggregationInput = {
+    userId?: SortOrder
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    status?: SortOrder
+    lastSuccessfulAuthorizationValidationAt?: SortOrderInput | SortOrder
+    lastSuccessfulDataRefreshAt?: SortOrderInput | SortOrder
+    nextAttemptAt?: SortOrderInput | SortOrder
+    deleteByAt?: SortOrderInput | SortOrder
+    lastAttemptAt?: SortOrderInput | SortOrder
+    lastOutcome?: SortOrderInput | SortOrder
+    attemptCount?: SortOrder
+    authorizationLostAt?: SortOrderInput | SortOrder
+    purgedAt?: SortOrderInput | SortOrder
+    removalReason?: SortOrderInput | SortOrder
+    blockedAt?: SortOrderInput | SortOrder
+    leaseId?: SortOrderInput | SortOrder
+    leaseExpiresAt?: SortOrderInput | SortOrder
+    _count?: YouTubeComplianceStateCountOrderByAggregateInput
+    _avg?: YouTubeComplianceStateAvgOrderByAggregateInput
+    _max?: YouTubeComplianceStateMaxOrderByAggregateInput
+    _min?: YouTubeComplianceStateMinOrderByAggregateInput
+    _sum?: YouTubeComplianceStateSumOrderByAggregateInput
+  }
+
+  export type YouTubeComplianceStateScalarWhereWithAggregatesInput = {
+    AND?: YouTubeComplianceStateScalarWhereWithAggregatesInput | YouTubeComplianceStateScalarWhereWithAggregatesInput[]
+    OR?: YouTubeComplianceStateScalarWhereWithAggregatesInput[]
+    NOT?: YouTubeComplianceStateScalarWhereWithAggregatesInput | YouTubeComplianceStateScalarWhereWithAggregatesInput[]
+    userId?: StringWithAggregatesFilter<"YouTubeComplianceState"> | string
+    connectionGeneration?: IntWithAggregatesFilter<"YouTubeComplianceState"> | number
+    revision?: IntWithAggregatesFilter<"YouTubeComplianceState"> | number
+    status?: EnumYouTubeComplianceStatusWithAggregatesFilter<"YouTubeComplianceState"> | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    lastSuccessfulDataRefreshAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    nextAttemptAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    deleteByAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    lastAttemptAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    lastOutcome?: EnumYouTubeMaintenanceOutcomeNullableWithAggregatesFilter<"YouTubeComplianceState"> | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntWithAggregatesFilter<"YouTubeComplianceState"> | number
+    authorizationLostAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    purgedAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    removalReason?: EnumYouTubeRemovalReasonNullableWithAggregatesFilter<"YouTubeComplianceState"> | $Enums.YouTubeRemovalReason | null
+    blockedAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+    leaseId?: StringNullableWithAggregatesFilter<"YouTubeComplianceState"> | string | null
+    leaseExpiresAt?: DateTimeNullableWithAggregatesFilter<"YouTubeComplianceState"> | Date | string | null
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -44574,6 +46181,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -44615,6 +46223,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -44656,6 +46265,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -44697,6 +46307,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -47395,6 +49006,145 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type YouTubeComplianceStateCreateInput = {
+    connectionGeneration?: number
+    revision?: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: Date | string | null
+    lastSuccessfulDataRefreshAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    deleteByAt?: Date | string | null
+    lastAttemptAt?: Date | string | null
+    lastOutcome?: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: number
+    authorizationLostAt?: Date | string | null
+    purgedAt?: Date | string | null
+    removalReason?: $Enums.YouTubeRemovalReason | null
+    blockedAt?: Date | string | null
+    leaseId?: string | null
+    leaseExpiresAt?: Date | string | null
+    user: UserCreateNestedOneWithoutYoutubeComplianceStateInput
+  }
+
+  export type YouTubeComplianceStateUncheckedCreateInput = {
+    userId: string
+    connectionGeneration?: number
+    revision?: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: Date | string | null
+    lastSuccessfulDataRefreshAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    deleteByAt?: Date | string | null
+    lastAttemptAt?: Date | string | null
+    lastOutcome?: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: number
+    authorizationLostAt?: Date | string | null
+    purgedAt?: Date | string | null
+    removalReason?: $Enums.YouTubeRemovalReason | null
+    blockedAt?: Date | string | null
+    leaseId?: string | null
+    leaseExpiresAt?: Date | string | null
+  }
+
+  export type YouTubeComplianceStateUpdateInput = {
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneRequiredWithoutYoutubeComplianceStateNestedInput
+  }
+
+  export type YouTubeComplianceStateUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type YouTubeComplianceStateCreateManyInput = {
+    userId: string
+    connectionGeneration?: number
+    revision?: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: Date | string | null
+    lastSuccessfulDataRefreshAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    deleteByAt?: Date | string | null
+    lastAttemptAt?: Date | string | null
+    lastOutcome?: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: number
+    authorizationLostAt?: Date | string | null
+    purgedAt?: Date | string | null
+    removalReason?: $Enums.YouTubeRemovalReason | null
+    blockedAt?: Date | string | null
+    leaseId?: string | null
+    leaseExpiresAt?: Date | string | null
+  }
+
+  export type YouTubeComplianceStateUpdateManyMutationInput = {
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type YouTubeComplianceStateUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -47503,6 +49253,11 @@ export namespace Prisma {
     every?: PlatformTokenWhereInput
     some?: PlatformTokenWhereInput
     none?: PlatformTokenWhereInput
+  }
+
+  export type YouTubeComplianceStateNullableScalarRelationFilter = {
+    is?: YouTubeComplianceStateWhereInput | null
+    isNot?: YouTubeComplianceStateWhereInput | null
   }
 
   export type SessionListRelationFilter = {
@@ -49655,6 +51410,129 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumYouTubeComplianceStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeComplianceStatus | EnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel> | $Enums.YouTubeComplianceStatus
+  }
+
+  export type EnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeMaintenanceOutcome | EnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel> | $Enums.YouTubeMaintenanceOutcome | null
+  }
+
+  export type EnumYouTubeRemovalReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeRemovalReason | EnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel> | $Enums.YouTubeRemovalReason | null
+  }
+
+  export type YouTubeComplianceStateCountOrderByAggregateInput = {
+    userId?: SortOrder
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    status?: SortOrder
+    lastSuccessfulAuthorizationValidationAt?: SortOrder
+    lastSuccessfulDataRefreshAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    deleteByAt?: SortOrder
+    lastAttemptAt?: SortOrder
+    lastOutcome?: SortOrder
+    attemptCount?: SortOrder
+    authorizationLostAt?: SortOrder
+    purgedAt?: SortOrder
+    removalReason?: SortOrder
+    blockedAt?: SortOrder
+    leaseId?: SortOrder
+    leaseExpiresAt?: SortOrder
+  }
+
+  export type YouTubeComplianceStateAvgOrderByAggregateInput = {
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    attemptCount?: SortOrder
+  }
+
+  export type YouTubeComplianceStateMaxOrderByAggregateInput = {
+    userId?: SortOrder
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    status?: SortOrder
+    lastSuccessfulAuthorizationValidationAt?: SortOrder
+    lastSuccessfulDataRefreshAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    deleteByAt?: SortOrder
+    lastAttemptAt?: SortOrder
+    lastOutcome?: SortOrder
+    attemptCount?: SortOrder
+    authorizationLostAt?: SortOrder
+    purgedAt?: SortOrder
+    removalReason?: SortOrder
+    blockedAt?: SortOrder
+    leaseId?: SortOrder
+    leaseExpiresAt?: SortOrder
+  }
+
+  export type YouTubeComplianceStateMinOrderByAggregateInput = {
+    userId?: SortOrder
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    status?: SortOrder
+    lastSuccessfulAuthorizationValidationAt?: SortOrder
+    lastSuccessfulDataRefreshAt?: SortOrder
+    nextAttemptAt?: SortOrder
+    deleteByAt?: SortOrder
+    lastAttemptAt?: SortOrder
+    lastOutcome?: SortOrder
+    attemptCount?: SortOrder
+    authorizationLostAt?: SortOrder
+    purgedAt?: SortOrder
+    removalReason?: SortOrder
+    blockedAt?: SortOrder
+    leaseId?: SortOrder
+    leaseExpiresAt?: SortOrder
+  }
+
+  export type YouTubeComplianceStateSumOrderByAggregateInput = {
+    connectionGeneration?: SortOrder
+    revision?: SortOrder
+    attemptCount?: SortOrder
+  }
+
+  export type EnumYouTubeComplianceStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeComplianceStatus | EnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumYouTubeComplianceStatusWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeComplianceStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel>
+  }
+
+  export type EnumYouTubeMaintenanceOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeMaintenanceOutcome | EnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeMaintenanceOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeMaintenanceOutcome | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumYouTubeRemovalReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeRemovalReason | EnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeRemovalReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeRemovalReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel>
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -49734,6 +51612,12 @@ export namespace Prisma {
     connectOrCreate?: PlatformTokenCreateOrConnectWithoutUserInput | PlatformTokenCreateOrConnectWithoutUserInput[]
     createMany?: PlatformTokenCreateManyUserInputEnvelope
     connect?: PlatformTokenWhereUniqueInput | PlatformTokenWhereUniqueInput[]
+  }
+
+  export type YouTubeComplianceStateCreateNestedOneWithoutUserInput = {
+    create?: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
+    connectOrCreate?: YouTubeComplianceStateCreateOrConnectWithoutUserInput
+    connect?: YouTubeComplianceStateWhereUniqueInput
   }
 
   export type SessionCreateNestedManyWithoutUserInput = {
@@ -49906,6 +51790,12 @@ export namespace Prisma {
     connectOrCreate?: PlatformTokenCreateOrConnectWithoutUserInput | PlatformTokenCreateOrConnectWithoutUserInput[]
     createMany?: PlatformTokenCreateManyUserInputEnvelope
     connect?: PlatformTokenWhereUniqueInput | PlatformTokenWhereUniqueInput[]
+  }
+
+  export type YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
+    connectOrCreate?: YouTubeComplianceStateCreateOrConnectWithoutUserInput
+    connect?: YouTubeComplianceStateWhereUniqueInput
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -50173,6 +52063,16 @@ export namespace Prisma {
     update?: PlatformTokenUpdateWithWhereUniqueWithoutUserInput | PlatformTokenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PlatformTokenUpdateManyWithWhereWithoutUserInput | PlatformTokenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PlatformTokenScalarWhereInput | PlatformTokenScalarWhereInput[]
+  }
+
+  export type YouTubeComplianceStateUpdateOneWithoutUserNestedInput = {
+    create?: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
+    connectOrCreate?: YouTubeComplianceStateCreateOrConnectWithoutUserInput
+    upsert?: YouTubeComplianceStateUpsertWithoutUserInput
+    disconnect?: YouTubeComplianceStateWhereInput | boolean
+    delete?: YouTubeComplianceStateWhereInput | boolean
+    connect?: YouTubeComplianceStateWhereUniqueInput
+    update?: XOR<XOR<YouTubeComplianceStateUpdateToOneWithWhereWithoutUserInput, YouTubeComplianceStateUpdateWithoutUserInput>, YouTubeComplianceStateUncheckedUpdateWithoutUserInput>
   }
 
   export type SessionUpdateManyWithoutUserNestedInput = {
@@ -50511,6 +52411,16 @@ export namespace Prisma {
     update?: PlatformTokenUpdateWithWhereUniqueWithoutUserInput | PlatformTokenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PlatformTokenUpdateManyWithWhereWithoutUserInput | PlatformTokenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PlatformTokenScalarWhereInput | PlatformTokenScalarWhereInput[]
+  }
+
+  export type YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
+    connectOrCreate?: YouTubeComplianceStateCreateOrConnectWithoutUserInput
+    upsert?: YouTubeComplianceStateUpsertWithoutUserInput
+    disconnect?: YouTubeComplianceStateWhereInput | boolean
+    delete?: YouTubeComplianceStateWhereInput | boolean
+    connect?: YouTubeComplianceStateWhereUniqueInput
+    update?: XOR<XOR<YouTubeComplianceStateUpdateToOneWithWhereWithoutUserInput, YouTubeComplianceStateUpdateWithoutUserInput>, YouTubeComplianceStateUncheckedUpdateWithoutUserInput>
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -52400,6 +54310,32 @@ export namespace Prisma {
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutProfileAliasesInput, CreatorProfileUpdateWithoutProfileAliasesInput>, CreatorProfileUncheckedUpdateWithoutProfileAliasesInput>
   }
 
+  export type UserCreateNestedOneWithoutYoutubeComplianceStateInput = {
+    create?: XOR<UserCreateWithoutYoutubeComplianceStateInput, UserUncheckedCreateWithoutYoutubeComplianceStateInput>
+    connectOrCreate?: UserCreateOrConnectWithoutYoutubeComplianceStateInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumYouTubeComplianceStatusFieldUpdateOperationsInput = {
+    set?: $Enums.YouTubeComplianceStatus
+  }
+
+  export type NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput = {
+    set?: $Enums.YouTubeMaintenanceOutcome | null
+  }
+
+  export type NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput = {
+    set?: $Enums.YouTubeRemovalReason | null
+  }
+
+  export type UserUpdateOneRequiredWithoutYoutubeComplianceStateNestedInput = {
+    create?: XOR<UserCreateWithoutYoutubeComplianceStateInput, UserUncheckedCreateWithoutYoutubeComplianceStateInput>
+    connectOrCreate?: UserCreateOrConnectWithoutYoutubeComplianceStateInput
+    upsert?: UserUpsertWithoutYoutubeComplianceStateInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutYoutubeComplianceStateInput, UserUpdateWithoutYoutubeComplianceStateInput>, UserUncheckedUpdateWithoutYoutubeComplianceStateInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -52996,6 +54932,57 @@ export namespace Prisma {
     _max?: NestedEnumProfileClaimStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumYouTubeComplianceStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeComplianceStatus | EnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel> | $Enums.YouTubeComplianceStatus
+  }
+
+  export type NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeMaintenanceOutcome | EnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel> | $Enums.YouTubeMaintenanceOutcome | null
+  }
+
+  export type NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeRemovalReason | EnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel> | $Enums.YouTubeRemovalReason | null
+  }
+
+  export type NestedEnumYouTubeComplianceStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeComplianceStatus | EnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.YouTubeComplianceStatus[] | ListEnumYouTubeComplianceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumYouTubeComplianceStatusWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeComplianceStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeComplianceStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumYouTubeMaintenanceOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeMaintenanceOutcome | EnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeMaintenanceOutcome[] | ListEnumYouTubeMaintenanceOutcomeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeMaintenanceOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeMaintenanceOutcome | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeMaintenanceOutcomeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumYouTubeRemovalReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.YouTubeRemovalReason | EnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    in?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.YouTubeRemovalReason[] | ListEnumYouTubeRemovalReasonFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumYouTubeRemovalReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.YouTubeRemovalReason | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel>
+    _max?: NestedEnumYouTubeRemovalReasonNullableFilter<$PrismaModel>
+  }
+
   export type AccountCreateWithoutUserInput = {
     id?: string
     accountId: string
@@ -53443,6 +55430,49 @@ export namespace Prisma {
   export type PlatformTokenCreateManyUserInputEnvelope = {
     data: PlatformTokenCreateManyUserInput | PlatformTokenCreateManyUserInput[]
     skipDuplicates?: boolean
+  }
+
+  export type YouTubeComplianceStateCreateWithoutUserInput = {
+    connectionGeneration?: number
+    revision?: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: Date | string | null
+    lastSuccessfulDataRefreshAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    deleteByAt?: Date | string | null
+    lastAttemptAt?: Date | string | null
+    lastOutcome?: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: number
+    authorizationLostAt?: Date | string | null
+    purgedAt?: Date | string | null
+    removalReason?: $Enums.YouTubeRemovalReason | null
+    blockedAt?: Date | string | null
+    leaseId?: string | null
+    leaseExpiresAt?: Date | string | null
+  }
+
+  export type YouTubeComplianceStateUncheckedCreateWithoutUserInput = {
+    connectionGeneration?: number
+    revision?: number
+    status: $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: Date | string | null
+    lastSuccessfulDataRefreshAt?: Date | string | null
+    nextAttemptAt?: Date | string | null
+    deleteByAt?: Date | string | null
+    lastAttemptAt?: Date | string | null
+    lastOutcome?: $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: number
+    authorizationLostAt?: Date | string | null
+    purgedAt?: Date | string | null
+    removalReason?: $Enums.YouTubeRemovalReason | null
+    blockedAt?: Date | string | null
+    leaseId?: string | null
+    leaseExpiresAt?: Date | string | null
+  }
+
+  export type YouTubeComplianceStateCreateOrConnectWithoutUserInput = {
+    where: YouTubeComplianceStateWhereUniqueInput
+    create: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
   }
 
   export type SessionCreateWithoutUserInput = {
@@ -54337,6 +56367,55 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PlatformToken"> | Date | string
   }
 
+  export type YouTubeComplianceStateUpsertWithoutUserInput = {
+    update: XOR<YouTubeComplianceStateUpdateWithoutUserInput, YouTubeComplianceStateUncheckedUpdateWithoutUserInput>
+    create: XOR<YouTubeComplianceStateCreateWithoutUserInput, YouTubeComplianceStateUncheckedCreateWithoutUserInput>
+    where?: YouTubeComplianceStateWhereInput
+  }
+
+  export type YouTubeComplianceStateUpdateToOneWithWhereWithoutUserInput = {
+    where?: YouTubeComplianceStateWhereInput
+    data: XOR<YouTubeComplianceStateUpdateWithoutUserInput, YouTubeComplianceStateUncheckedUpdateWithoutUserInput>
+  }
+
+  export type YouTubeComplianceStateUpdateWithoutUserInput = {
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type YouTubeComplianceStateUncheckedUpdateWithoutUserInput = {
+    connectionGeneration?: IntFieldUpdateOperationsInput | number
+    revision?: IntFieldUpdateOperationsInput | number
+    status?: EnumYouTubeComplianceStatusFieldUpdateOperationsInput | $Enums.YouTubeComplianceStatus
+    lastSuccessfulAuthorizationValidationAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastSuccessfulDataRefreshAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nextAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleteByAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAttemptAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastOutcome?: NullableEnumYouTubeMaintenanceOutcomeFieldUpdateOperationsInput | $Enums.YouTubeMaintenanceOutcome | null
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    authorizationLostAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purgedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    removalReason?: NullableEnumYouTubeRemovalReasonFieldUpdateOperationsInput | $Enums.YouTubeRemovalReason | null
+    blockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leaseId?: NullableStringFieldUpdateOperationsInput | string | null
+    leaseExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -54703,6 +56782,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -54743,6 +56823,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -54983,6 +57064,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -55023,6 +57105,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -55453,6 +57536,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -55493,6 +57577,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -55538,6 +57623,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -55578,6 +57664,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -55807,6 +57894,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -55847,6 +57935,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -55898,6 +57987,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -55938,6 +58028,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -56282,6 +58373,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -56322,6 +58414,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -56378,6 +58471,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -56418,6 +58512,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -56459,6 +58554,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
@@ -56499,6 +58595,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
@@ -56555,6 +58652,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
@@ -56595,6 +58693,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -56634,6 +58733,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -56674,6 +58774,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -56730,6 +58831,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -56770,6 +58872,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -56810,6 +58913,7 @@ export namespace Prisma {
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -56850,6 +58954,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -56906,6 +59011,7 @@ export namespace Prisma {
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -56946,6 +59052,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -56986,6 +59093,7 @@ export namespace Prisma {
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -57026,6 +59134,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -57082,6 +59191,7 @@ export namespace Prisma {
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -57122,6 +59232,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -57162,6 +59273,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -57202,6 +59314,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -57247,6 +59360,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -57287,6 +59401,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -57343,6 +59458,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -57383,6 +59499,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -57434,6 +59551,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -57474,6 +59592,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -57985,6 +60104,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -58025,6 +60145,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -58261,6 +60382,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -58301,6 +60423,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -58390,6 +60513,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -58430,6 +60554,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -58475,6 +60600,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -58515,6 +60641,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -58610,6 +60737,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -58650,6 +60778,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -58701,6 +60830,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -58741,6 +60871,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -59388,6 +61519,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
@@ -59428,6 +61560,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
@@ -59484,6 +61617,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
@@ -59524,6 +61658,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -59623,6 +61758,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -59663,6 +61799,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -59708,6 +61845,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -59748,6 +61886,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -59804,6 +61943,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -59844,6 +61984,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -59895,6 +62036,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -59935,6 +62077,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -60113,6 +62256,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
@@ -60153,6 +62297,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
     createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
@@ -60234,6 +62379,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
@@ -60274,6 +62420,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
     createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -60313,6 +62460,7 @@ export namespace Prisma {
     sentMessages?: MessageCreateNestedManyWithoutSenderInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -60353,6 +62501,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -60409,6 +62558,7 @@ export namespace Prisma {
     sentMessages?: MessageUpdateManyWithoutSenderNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -60449,6 +62599,7 @@ export namespace Prisma {
     sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -60862,6 +63013,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -60902,6 +63054,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -61066,6 +63219,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -61106,6 +63260,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -61146,6 +63301,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -61186,6 +63342,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -61231,6 +63388,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -61271,6 +63429,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -61316,6 +63475,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -61356,6 +63516,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -61401,6 +63562,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -61441,6 +63603,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -61556,6 +63719,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -61596,6 +63760,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -61647,6 +63812,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -61687,6 +63853,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -61738,6 +63905,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -61778,6 +63946,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -61829,6 +63998,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -61869,6 +64039,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -62047,6 +64218,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -62087,6 +64259,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -62132,6 +64305,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorCreateNestedManyWithoutUserInput
@@ -62172,6 +64346,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
     platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
     savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
@@ -62307,6 +64482,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -62347,6 +64523,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -62398,6 +64575,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUpdateManyWithoutUserNestedInput
@@ -62438,6 +64616,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
     platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    youtubeComplianceState?: YouTubeComplianceStateUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
     savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
@@ -62602,6 +64781,186 @@ export namespace Prisma {
     socialPosts?: SocialPostUncheckedUpdateManyWithoutCreatorProfileNestedInput
     contentCurations?: CreatorContentCurationUncheckedUpdateManyWithoutCreatorProfileNestedInput
     profileClaims?: ProfileClaimUncheckedUpdateManyWithoutCreatorProfileNestedInput
+  }
+
+  export type UserCreateWithoutYoutubeComplianceStateInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserUncheckedCreateWithoutYoutubeComplianceStateInput = {
+    id?: string
+    email: string
+    emailVerified?: boolean
+    name?: string | null
+    image?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    hasCompletedOnboarding?: boolean
+    banned?: boolean
+    banReason?: string | null
+    twoFactorEnabled?: boolean
+    isImported?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    twoFactor?: TwoFactorUncheckedCreateNestedOneWithoutUserInput
+    brandProfile?: BrandProfileUncheckedCreateNestedOneWithoutUserInput
+    receivedConnections?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    sentConnections?: ConnectionUncheckedCreateNestedManyWithoutSenderInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedCreateNestedManyWithoutClaimedByInput
+    receivedMessages?: MessageUncheckedCreateNestedManyWithoutReceiverInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    platformStats?: PlatformStatsUncheckedCreateNestedManyWithoutUserInput
+    platformTokens?: PlatformTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    communityMemberships?: CommunityListMemberUncheckedCreateNestedManyWithoutCreatorInput
+    savedCreators?: CreatorUncheckedCreateNestedManyWithoutUserInput
+    createdCampaignEvents?: CampaignEventUncheckedCreateNestedManyWithoutCreatedByInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutRequestedByInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedCreateNestedManyWithoutReviewedByInput
+    receivedInvitations?: InvitationUncheckedCreateNestedManyWithoutCreatorInput
+    brandDisputes?: DisputeUncheckedCreateNestedManyWithoutBrandInput
+    creatorDisputes?: DisputeUncheckedCreateNestedManyWithoutCreatorInput
+    reporterDisputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    targetedDisputes?: DisputeUncheckedCreateNestedManyWithoutTargetUserInput
+    submittedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutRequesterInput
+    reviewedClaims?: ProfileClaimUncheckedCreateNestedManyWithoutReviewedByInput
+  }
+
+  export type UserCreateOrConnectWithoutYoutubeComplianceStateInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutYoutubeComplianceStateInput, UserUncheckedCreateWithoutYoutubeComplianceStateInput>
+  }
+
+  export type UserUpsertWithoutYoutubeComplianceStateInput = {
+    update: XOR<UserUpdateWithoutYoutubeComplianceStateInput, UserUncheckedUpdateWithoutYoutubeComplianceStateInput>
+    create: XOR<UserCreateWithoutYoutubeComplianceStateInput, UserUncheckedCreateWithoutYoutubeComplianceStateInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutYoutubeComplianceStateInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutYoutubeComplianceStateInput, UserUncheckedUpdateWithoutYoutubeComplianceStateInput>
+  }
+
+  export type UserUpdateWithoutYoutubeComplianceStateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUpdateManyWithoutReviewedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutYoutubeComplianceStateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    hasCompletedOnboarding?: BoolFieldUpdateOperationsInput | boolean
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    twoFactorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    isImported?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    twoFactor?: TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+    brandProfile?: BrandProfileUncheckedUpdateOneWithoutUserNestedInput
+    receivedConnections?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    sentConnections?: ConnectionUncheckedUpdateManyWithoutSenderNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    claimedCreatorProfiles?: CreatorProfileUncheckedUpdateManyWithoutClaimedByNestedInput
+    receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    platformStats?: PlatformStatsUncheckedUpdateManyWithoutUserNestedInput
+    platformTokens?: PlatformTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    communityMemberships?: CommunityListMemberUncheckedUpdateManyWithoutCreatorNestedInput
+    savedCreators?: CreatorUncheckedUpdateManyWithoutUserNestedInput
+    createdCampaignEvents?: CampaignEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    requestedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutRequestedByNestedInput
+    reviewedEventUpdates?: CampaignEventUpdateUncheckedUpdateManyWithoutReviewedByNestedInput
+    receivedInvitations?: InvitationUncheckedUpdateManyWithoutCreatorNestedInput
+    brandDisputes?: DisputeUncheckedUpdateManyWithoutBrandNestedInput
+    creatorDisputes?: DisputeUncheckedUpdateManyWithoutCreatorNestedInput
+    reporterDisputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    targetedDisputes?: DisputeUncheckedUpdateManyWithoutTargetUserNestedInput
+    submittedClaims?: ProfileClaimUncheckedUpdateManyWithoutRequesterNestedInput
+    reviewedClaims?: ProfileClaimUncheckedUpdateManyWithoutReviewedByNestedInput
   }
 
   export type AccountCreateManyUserInput = {

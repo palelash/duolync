@@ -12,6 +12,11 @@ function load(file, imports) {
   vm.runInNewContext(source, {
     exports, require: name => {
       if (name === 'server-only') return {};
+    if (name === '@/lib/youtube-lock') return {};
+    if (name === '@/lib/youtube-compliance' && !(name in imports)) return {};
+    if (name === '@/lib/youtube-aggregates') return {};
+    if (name === '@/lib/youtube-claim') return {};
+      if (name === '@/lib/youtube-compliance') return load('lib/youtube-compliance.ts', {});
       if (!(name in imports)) throw Error(`Unexpected dependency ${name}`);
       return imports[name];
     }, console: { warn() {}, error() {} }, Date, Map, Set,

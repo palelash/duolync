@@ -1,8 +1,10 @@
 import "server-only";
+import { lockYouTubeCompliance, sameYouTubeFence, youtubeDatabaseNow, compatibleYouTubeOperation, type YouTubeOperationFence } from "@/lib/youtube-compliance";
+import type { YouTubeComplianceState } from "@/lib/generated/prisma";
 import { db } from "@/lib/db";
 import type { PlatformToken, Prisma } from "@/lib/generated/prisma";
 import { lockYouTubeOwner } from "@/lib/youtube-lock";
-import { getYouTubeAccessToken, clearYouTubeDeadAuth, sameYouTubeCredentialVersion, isYouTubeAccessDeadAuth, type YouTubeCredentialVersion } from "@/lib/youtube-token";
+import { getYouTubeAccessToken, recoverYouTubeRejectedAccess, sameYouTubeCredentialVersion, isYouTubeAccessDeadAuth, type YouTubeCredentialVersion } from "@/lib/youtube-token";
 import { youtubeFetch } from "@/lib/youtube-auth";
 import { computeFollowerCache } from "@/lib/creator-metrics";
 
@@ -13,7 +15,7 @@ const RECENT_LIMIT = 50;
 const CURATED_LIMIT = 200;
 type ObjectData = Record<string, any>;
 class SyncFailure extends Error {
-  constructor(readonly reason: Exclude<YouTubeSyncResult, { ok: true }>["reason"] | "dead_auth") { super(reason); }
+  constructor(readonly reason: Exclude<YouTubeSyncResult, { ok: true }>["reason"] | "access_rejected") { super(reason); }
 }
 function object(value: unknown): ObjectData {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new SyncFailure("provider_failure");
@@ -44,8 +46,8 @@ async function read(resource: string, params: Record<string, string>, accessToke
   }
   if (!response.ok) {
     const reasons = Array.isArray(body.error?.errors) ? body.error.errors.map((e: ObjectData) => e?.reason) : [];
-    // Documented core authError proves invalid credentials; generic 401/403 does not.
-    if (isYouTubeAccessDeadAuth(response.status, body)) throw new SyncFailure("dead_auth");
+    // authError rejects this access credential; refresh must establish grant status.
+    if (isYouTubeAccessDeadAuth(response.status, body)) throw new SyncFailure("access_rejected");
     if (response.status >= 500 || response.status === 429 || reasons.some((r: string) =>
       ["quotaExceeded", "dailyLimitExceeded", "rateLimitExceeded", "userRateLimitExceeded", "backendError"].includes(r)))
       throw new SyncFailure("temporary_failure");
@@ -71,7 +73,10 @@ export async function resolveYouTubeChannelIdentity(accessToken: string): Promis
 /** All HTTP precedes the short User -> token -> profile coordinated transaction.
  * Callback supplies the exact saved version, so a late callback cannot sync a reconnect.
  */
-export async function syncYouTubeOfficialData(userId: string, options?: { credential: YouTubeCredentialVersion }): Promise<YouTubeSyncResult> {
+export async function syncYouTubeOfficialData(userId: string, options?: { credential: YouTubeCredentialVersion; lease?: { id: string }; recoveryAttempted?: boolean; expectedFence?: YouTubeOperationFence }): Promise<YouTubeSyncResult> {
+  let profileId: string | undefined;
+  let fence: YouTubeComplianceState | null = null;
+  let operation: YouTubeOperationFence | undefined;
   let credential: YouTubeCredentialVersion | undefined;
   try {
     if (options) credential = options.credential;
@@ -83,15 +88,20 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
       if (current.accessToken !== token.accessToken) return { ok: false, reason: "superseded" };
       credential = current;
     }
+    fence = await db.youTubeComplianceState.findUnique({ where: { userId } });
+    if (!fence || fence.status !== "ACTIVE" || fence.blockedAt) return { ok: false, reason: "superseded" };
     const profile = await db.creatorProfile.findUnique({ where: { userId }, select: { id: true } });
     if (!profile) return { ok: false, reason: "configuration_failure" };
+    profileId = profile.id;
+    operation = options?.expectedFence ?? { connectionGeneration: fence.connectionGeneration, revision: fence.revision, profileId, ...(options?.lease ? { lease: options.lease } : {}) };
+    if (!compatibleYouTubeOperation(fence, operation, new Date()) || (operation.profileId && operation.profileId !== profile.id)) return { ok: false, reason: "superseded" };
     const curated = await db.creatorContentCuration.findMany({ where: { creatorProfileId: profile.id, platform: "youtube" },
       select: { providerPostId: true }, orderBy: { providerPostId: "asc" }, take: CURATED_LIMIT + 1 });
     if (curated.length > CURATED_LIMIT) return { ok: false, reason: "configuration_failure" };
     const channels = await read("channels", { part: "snippet,contentDetails,statistics", mine: "true" }, credential.accessToken);
     if (channels.length !== 1 || !text(channels[0].id)) throw new SyncFailure("provider_failure");
     const channel = channels[0];
-    if (channel.id !== credential.platformUserId) return { ok: false, reason: "identity_mismatch" };
+    if (channel.id !== credential.platformUserId) throw new SyncFailure("identity_mismatch");
     const snippet = object(channel.snippet), statistics = object(channel.statistics);
     const subscriberCount = counter(statistics.subscriberCount);
     const videoCount = counter(statistics.videoCount);
@@ -135,6 +145,8 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
       const profiles = await tx.$queryRaw<{ id: string; connectedPlatforms: string[] }[]>`SELECT "id", "connectedPlatforms" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
       if (!tokens[0] || !sameYouTubeCredentialVersion(tokens[0], credential!)) return { ok: false, reason: "superseded" };
       if (!profiles[0] || profiles[0].id !== profile.id) return { ok: false, reason: "superseded" };
+      const latestFence = await lockYouTubeCompliance(tx, userId);
+      if (!sameYouTubeFence(latestFence, fence) || !compatibleYouTubeOperation(latestFence, operation!, await youtubeDatabaseNow(tx))) return { ok: false, reason: "superseded" };
       // Curation added during HTTP must not be silently dropped by replacement.
       const latestCuration = await tx.creatorContentCuration.findMany({ where: { creatorProfileId: profile.id, platform: "youtube" }, select: { providerPostId: true } });
       if (latestCuration.some(item => !ids.has(item.providerPostId))) return { ok: false, reason: "superseded" };
@@ -153,13 +165,41 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
       if (followers !== null && followers > 2147483647) throw new SyncFailure("counter_range");
       await tx.creatorProfile.update({ where: { userId }, data: { followerCount: followers, lastSyncedAt: fetchedAt,
         connectedPlatforms: [...new Set([...profiles[0].connectedPlatforms, "youtube"])] } });
+      const acceptedAt = await youtubeDatabaseNow(tx);
+      await tx.youTubeComplianceState.update({ where: { userId }, data: {
+        revision: { increment: 1 }, lastSuccessfulAuthorizationValidationAt: acceptedAt,
+        lastSuccessfulDataRefreshAt: acceptedAt, lastAttemptAt: acceptedAt, lastOutcome: "SUCCESS",
+        attemptCount: 0, nextAttemptAt: new Date(acceptedAt.getTime() + 27 * 86400000),
+        deleteByAt: new Date(acceptedAt.getTime() + 30 * 86400000), leaseId: null, leaseExpiresAt: null,
+      } });
       return { ok: true };
     }, { maxWait: 5_000, timeout: 15_000 });
   } catch (error) {
-    if (error instanceof SyncFailure && error.reason === "dead_auth" && credential) {
-      const cleared = await clearYouTubeDeadAuth(userId, credential);
-      return cleared.ok ? { ok: false, reason: "superseded" } : { ok: false, reason: cleared.reason === "configuration_error" ? "configuration_failure" : cleared.reason };
+    if (error instanceof SyncFailure && error.reason === "access_rejected" && credential && operation) {
+      if (options?.recoveryAttempted) return { ok: false, reason: "reauth_required" };
+      const recovered = await recoverYouTubeRejectedAccess(userId, credential, operation);
+      if (!recovered.ok) return { ok: false, reason: recovered.reason === "configuration_error" ? "configuration_failure" : recovered.reason };
+      const current = await db.platformToken.findUnique({ where: { userId_platform: { userId, platform: "youtube" } } });
+      if (!current || current.accessToken !== recovered.accessToken || current.platformUserId !== credential.platformUserId) return { ok: false, reason: "superseded" };
+      // Carry the original operation fence across the one bounded retry.
+      return syncYouTubeOfficialData(userId, { credential: current, recoveryAttempted: true, expectedFence: operation, ...(options?.lease ? { lease: options.lease } : {}) });
     }
-    return { ok: false, reason: error instanceof SyncFailure && error.reason !== "dead_auth" ? error.reason : "temporary_failure" };
+    // Failure responses are observations too: a late failure must surface as
+    // superseded rather than diagnosing the newer accepted connection.
+    if (fence && credential && profileId) {
+      try {
+        const compatible = await db.$transaction(async tx => {
+          await lockYouTubeOwner(tx, userId);
+          const tokens = await tx.$queryRaw<PlatformToken[]>`SELECT * FROM "PlatformToken" WHERE "userId" = ${userId} AND "platform" = 'youtube' FOR UPDATE`;
+          const profiles = await tx.$queryRaw<{ id: string }[]>`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
+          const state = await lockYouTubeCompliance(tx, userId);
+          return !!tokens[0] && sameYouTubeCredentialVersion(tokens[0], credential!) && profiles[0]?.id === profileId && sameYouTubeFence(state, fence);
+        }, { maxWait: 5_000, timeout: 15_000 });
+        if (!compatible) return { ok: false, reason: "superseded" };
+      } catch (coordinationError) {
+        return { ok: false, reason: coordinationError instanceof Error && coordinationError.message === "youtube_owner_missing" ? "superseded" : "temporary_failure" };
+      }
+    }
+    return { ok: false, reason: error instanceof SyncFailure && error.reason !== "access_rejected" ? error.reason : "temporary_failure" };
   }
 }

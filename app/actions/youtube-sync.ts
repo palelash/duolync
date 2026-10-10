@@ -15,7 +15,7 @@ export async function refreshYouTubeDataAction(): Promise<YouTubeSyncActionResul
     if (!session?.user?.id) return { ok: false, reason: "unauthorized" };
     const result = await syncYouTubeOfficialData(session.user.id);
     if (result.ok || result.reason === "reauth_required") {
-      for (const path of ["/creator/accounts", "/creator/presence", "/creator/dashboard", "/creator/analytics"]) revalidatePath(path);
+      for (const path of ["/creator/accounts", "/creator/presence", "/creator/dashboard", "/creator/analytics", "/creator/settings", "/creator/content", "/creator/discover", "/brand/discover", "/profile"]) revalidatePath(path);
     }
     if (result.ok) return { ok: true };
     const reason = result.reason;

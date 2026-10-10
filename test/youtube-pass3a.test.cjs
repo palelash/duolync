@@ -10,9 +10,14 @@ function load(file, imports = {}, extra = {}) {
     module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022,
   } }).outputText, { exports, require: name => {
     if (name === 'server-only') return {};
+    if (name === '@/lib/youtube-aggregates') return load('lib/youtube-aggregates.ts', { '@/lib/creator-metrics': metrics });
+    if (name === '@/lib/youtube-claim') return load('lib/youtube-claim.ts', { '@/lib/youtube-lock': locks });
+    if (name === '@/lib/youtube-lock' && !(name in imports)) return load('lib/youtube-lock.ts');
+    if (name === '@/lib/youtube-compliance') return load('lib/youtube-compliance.ts');
+    if (name === '@/lib/youtube-removal' && !(name in imports)) return load('lib/youtube-removal.ts', { ...imports, '@/lib/creator-metrics': metrics });
     if (name === 'node:crypto') return require(name);
     assert.ok(name in imports, `Unexpected dependency ${name}`); return imports[name];
-  }, Date, URLSearchParams, AbortSignal, process: { env }, console: { error(...args) {
+  }, Date, URL, URLSearchParams, AbortSignal, process: { env }, console: { error(...args) {
     assert.doesNotMatch(args.map(String).join(' '), /private-access|private-refresh|new-access|new-refresh/);
   } }, ...extra });
   return exports;
@@ -25,13 +30,14 @@ const credential = () => ({ id: 'token', userId: 'owner', platform: 'youtube', a
   updatedAt: new Date(1000), platformUserId: 'channel', expiresAt: new Date(0), scopes: 'youtube.readonly', username: 'channel' });
 function fixture({ initial = credential(), status = 200, provider, configured = env, authorized = true, claimed = false,
   adminRole = 'ADMIN', targetRole = 'CREATOR', deleteFails = false, cleanupFails = false } = {}) {
-  const state = { token: initial, markers: ['youtube', 'instagram'], stats: [{ platform: 'youtube', followerCount: 100 }, { platform: 'instagram', followerCount: 10 }],
+  const state = { compliance: { status: 'ACTIVE', connectionGeneration: 1, revision: 1, blockedAt: null, leaseId: null }, token: initial, markers: ['youtube', 'instagram'], stats: [{ platform: 'youtube', followerCount: 100 }, { platform: 'instagram', followerCount: 10 }],
     posts: [{ platform: 'youtube', providerPostId: 'video' }, { platform: 'instagram' }], curation: [{ platform: 'youtube', providerPostId: 'video', status: 'HIDDEN' }], followers: 110, deleted: false };
   const storage = { rows: [] };
   const failures = { cleanup: cleanupFails ? Infinity : 0, deletion: deleteFails ? Infinity : 0, tokenDelete: 0, confirmation: 0, receiptDelete: 0 };
   const hooks = {};
   let tail = Promise.resolve(), active = 0; const calls = [], invalidated = [], events = [];
-  const db = { verification: { deleteMany: async ({ where }) => {
+  const db = {
+    youTubeComplianceState: { findUnique: async () => structuredClone(state.compliance) }, verification: { deleteMany: async ({ where }) => {
     assert.equal(active, 0, 'cross-owner expiry pruning must run outside coordinated transactions');
     assert.equal(where.identifier.startsWith, 'youtube-revoke:');
     const expired = row => row.identifier.startsWith(where.identifier.startsWith) && row.expiresAt <= where.expiresAt.lte;
@@ -43,6 +49,13 @@ function fixture({ initial = credential(), status = 200, provider, configured = 
       const previous = tail, release = deferred(); tail = release.promise; await previous;
       active++; const before = structuredClone(state), beforeStorage = structuredClone(storage); let owner = false, tokenLock = false, profileLock = false; const externallyPruned = new Set();
       const tx = {
+        youTubeComplianceState: {
+          findUnique: async () => structuredClone(state.compliance),
+          update: async ({ data }) => Object.assign(state.token, data),
+          upsert: async ({ create, update }) => { state.compliance = state.compliance ? { ...state.compliance, ...update,
+            connectionGeneration: state.compliance.connectionGeneration + 1, revision: state.compliance.revision + 1 } : create; },
+          update: async ({ data }) => { state.compliance = { ...state.compliance, ...data, revision: state.compliance.revision + 1 }; },
+        },
         verification: {
           findUnique: async ({ where }) => { assert.ok(owner && tokenLock); return structuredClone(storage.rows.find(r => r.id === where.id) ?? null); },
           upsert: async ({ where, create, update }) => {
@@ -84,6 +97,8 @@ function fixture({ initial = credential(), status = 200, provider, configured = 
         },
         $queryRaw: async (sql, ...params) => {
           const query = sql.join('');
+          if (query.includes('clock_timestamp() AS')) return [{ now: new Date() }];
+          if (query.includes('FROM "YouTubeComplianceState"')) return state.compliance ? [structuredClone(state.compliance)] : [];
           if (query.includes('DELETE FROM "Verification"')) {
             assert.match(query, /"expiresAt" > clock_timestamp\(\)/);
             assert.match(query, /RETURNING "id"/);
@@ -96,20 +111,21 @@ function fixture({ initial = credential(), status = 200, provider, configured = 
           if (query.includes('FROM "User"')) { owner = true; events.push('owner'); return [{ id: 'owner' }]; }
           assert.ok(owner);
           if (query.includes('FROM "PlatformToken"')) { tokenLock = true; events.push('token'); return state.token ? [structuredClone(state.token)] : []; }
-          assert.ok(tokenLock); profileLock = true; events.push('profile'); return [{ id: 'profile', connectedPlatforms: [...state.markers] }];
+          assert.ok(tokenLock); profileLock = true; events.push('profile'); return [{ id: 'profile', connectedPlatforms: [...state.markers], profileOrigin: 'REGISTERED' }];
         },
         $executeRaw: async sql => { assert.ok(owner && tokenLock); profileLock = true;
           if (sql.join('').includes('array_remove')) state.markers = state.markers.filter(p => p !== 'youtube');
           else if (!state.markers.includes('youtube')) state.markers.push('youtube'); },
         platformToken: {
           deleteMany: async () => { assert.ok(owner && tokenLock); if (failures.tokenDelete > 0) { failures.tokenDelete--; throw Error('token-delete-failed'); } state.token = null; return { count: 1 }; },
+          update: async ({ data }) => Object.assign(state.token, data),
           upsert: async ({ create, update }) => { assert.ok(owner && tokenLock); state.token = state.token ? { ...state.token, ...update } : { id: 'new-token', ...create }; return structuredClone(state.token); },
         },
         platformStats: { deleteMany: async () => { assert.ok(profileLock); state.stats = state.stats.filter(p => p.platform !== 'youtube'); },
-          findMany: async () => state.stats, upsert: async () => { state.stats = [{ platform: 'youtube', followerCount: 200 }, { platform: 'instagram', followerCount: 10 }]; } },
-        socialPost: { deleteMany: async () => { state.posts = state.posts.filter(p => p.platform !== 'youtube'); }, createMany: async () => { state.posts.push({ platform: 'youtube', providerPostId: 'new-video' }); } },
+          findMany: async ({ where }) => where?.platform ? state.stats.filter(stat => stat.platform === where.platform) : state.stats, upsert: async () => { state.stats = [{ platform: 'youtube', followerCount: 200 }, { platform: 'instagram', followerCount: 10 }]; } },
+        socialPost: { count: async () => state.posts.length, deleteMany: async () => { state.posts = state.posts.filter(p => p.platform !== 'youtube'); }, createMany: async () => { state.posts.push({ platform: 'youtube', providerPostId: 'new-video' }); } },
         creatorContentCuration: { deleteMany: async () => { if (failures.cleanup > 0) { failures.cleanup--; throw Error('rollback'); } state.curation = []; } },
-        creatorProfile: { update: async ({ data }) => { state.markers = [...data.connectedPlatforms]; state.followers = data.followerCount; } },
+        creatorProfile: { findUnique: async () => ({ id: 'profile', claimStatus: 'NOT_APPLICABLE' }), update: async ({ data }) => { state.markers = [...data.connectedPlatforms]; state.followers = data.followerCount; state.profileData = data; } },
         profileClaim: { findMany: async () => [] },
         user: { delete: async () => { assert.ok(owner && tokenLock && profileLock); assert.ok(!storage.rows.some(row => row.identifier.startsWith('youtube-revoke:'))); if (failures.deletion > 0) { failures.deletion--; throw Error('delete-failed'); }
           events.push('cascade'); state.deleted = true; state.token = null; state.markers = []; state.stats = []; state.posts = []; state.curation = []; state.followers = null; } },
@@ -196,12 +212,15 @@ for (const configured of [{ ...env, GOOGLE_CLIENT_ID: env.YOUTUBE_CLIENT_ID }, {
 test('missing credential is not falsely claimed as provider revocation; history removed', async () => {
   const f = fixture({ initial: null }); assert.equal((await f.disconnect()).authorizationRevoked, false); assert.equal(f.calls.length, 0); cleaned(f);
 });
-test('Pass-1 definitively invalid auth keeps history until explicit removal', async () => {
-  const f = fixture(); const failed = structuredClone(f.state.token); const before = structuredClone(f.state);
-  assert.equal((await f.lifecycle.clearYouTubeDeadAuth('owner', failed)).reason, 'reauth_required');
-  assert.deepEqual(f.state.curation, before.curation); assert.deepEqual(f.state.posts, before.posts); assert.deepEqual(f.state.stats, before.stats);
-  assert.equal((await f.disconnect()).authorizationRevoked, false); assert.equal(f.calls.length, 0); cleaned(f);
+test('confirmed current dead auth atomically purges history before explicit removal', async () => {
+  const f = fixture({ provider: async () => ({ ok: false, status: 400, json: async () => ({ error: 'invalid_grant' }) }) });
+  assert.equal((await f.lifecycle.getYouTubeAccessToken('owner')).reason, 'reauth_required');
+  assert.equal(f.state.compliance.status, 'PURGED');
+  assert.equal(f.state.compliance.removalReason, 'AUTHORIZATION_LOST');
+  assert.equal(f.state.curation.length, 0);
+  assert.equal(f.state.posts.some(p => p.platform === 'youtube'), false);
 });
+
 test('stale revoke response cannot remove newer same-channel reconnect', async () => {
   const started = deferred(), response = deferred(); const f = fixture({ provider: async () => { started.resolve(); return response.promise; } });
   const pending = f.disconnect(); await started.promise; await f.reconnect(); const fresh = structuredClone(f.state);
@@ -414,12 +433,12 @@ for (const mode of ['disconnect', 'account', 'admin']) {
   });
 }
 
-test('PENDING access-only recovery uses documented current authError and truthful local-removal copy', async () => {
+test('PENDING access-only 401 preserves data without permanent grant-loss proof', async () => {
   const initial = credential(); initial.refreshToken = null;
   const f = fixture({ initial, provider: async url => url.endsWith('/revoke') ? { status: 200 } : providerResponse(401, { error: { errors: [{ reason: 'authError' }] } }) });
   f.failures.confirmation = 1; await f.disconnect();
-  const result = await f.newWorker().disconnect(); assert.equal(result.ok, true); assert.equal(result.authorizationRevoked, false);
-  cleaned(f); assert.equal(revokeCalls(f).length, 1); assert.match(f.calls[1].url, /youtube\/v3\/channels/);
+  const result = await f.newWorker().disconnect(); assert.equal(result.ok, false); assert.equal(result.reason, 'provider_failure');
+  assert.ok(f.state.token); assert.equal(f.state.curation.length, 1); assert.equal(revokeCalls(f).length, 1); assert.match(f.calls[1].url, /youtube\/v3\/channels/);
 });
 
 for (const [status, body, expected] of [[503, { error: 'invalid_grant' }, 'temporary_failure'],
@@ -545,7 +564,13 @@ for (const mode of ['disconnect', 'account', 'admin']) {
         assert.equal(receipt(f).state, 'CONFIRMED'); assert.equal(receipt(f).proof, 'dead_auth');
         assert.ok(f.storage.rows[0].expiresAt > new Date());
       };
-      const retry = await f.newWorker()[mode]('target'); assert.equal(mode === 'disconnect' ? retry.ok : retry.success, true);
+      const retry = await f.newWorker()[mode]('target');
+      if (accessOnly) {
+        assert.equal(mode === 'disconnect' ? retry.ok : retry.success, false);
+        assert.deepEqual(f.state, before); assert.equal(receipt(f).state, 'PENDING');
+        assert.equal(revokes, 2); return;
+      }
+      assert.equal(mode === 'disconnect' ? retry.ok : retry.success, true);
       if (mode === 'disconnect') { assert.equal(retry.authorizationRevoked, false); cleaned(f); }
       else { assert.equal(f.state.deleted, true); assert.equal(f.state.token, null); assert.deepEqual(f.state.stats, []); }
       assert.equal(revokes, 2); assert.equal(f.calls.length, 3); assert.deepEqual(f.storage.rows, []);
@@ -631,3 +656,63 @@ for (const mode of ['account', 'admin']) {
     assert.ok(!f.events.includes('receipt-consumed'));
   });
 }
+
+module.exports = { fixture, load };
+
+test('3B reconnect rotates generation, clears PURGED, records validation only', async () => {
+  const f = fixture({ initial: null });
+  await f.removal.removeYouTubeLocalData('owner');
+  const generation = f.state.compliance.connectionGeneration;
+  await f.lifecycle.saveYouTubeAccessToken('owner', { accessToken: 'accepted', refreshToken: null, expiresAt: null, scopes: null, platformUserId: 'official-channel', username: null });
+  assert.equal(f.state.compliance.status, 'ACTIVE');
+  assert.equal(f.state.compliance.connectionGeneration, generation + 1);
+  assert.equal(f.state.compliance.blockedAt, null);
+  assert.equal(f.state.compliance.lastSuccessfulDataRefreshAt, null);
+  assert.ok(f.state.compliance.lastSuccessfulAuthorizationValidationAt);
+  assert.equal(f.state.curation.length, 0);
+});
+
+test('3B history purge persists markers, clears curation and legacy fallbacks', async () => {
+  const f = fixture({ initial: null }); await f.removal.removeYouTubeLocalData('owner');
+  assert.equal(f.state.compliance.removalReason, 'TOKENLESS_HISTORY');
+  assert.ok(f.state.compliance.blockedAt); assert.ok(f.state.compliance.purgedAt);
+  assert.equal(f.state.profileData.totalFollowers, 10); assert.equal(f.state.profileData.averageEngagement, null);
+  assert.equal(f.state.profileData.avgEngagementRate, 0); assert.equal(f.state.profileData.lastStatsUpdate, null);
+  assert.equal(f.state.curation.length, 0);
+});
+
+test('3B purge failure rolls back token, curation and compliance together', async () => {
+  const f = fixture({ cleanupFails: true }); const before = structuredClone(f.state);
+  await assert.rejects(f.removal.removeYouTubeLocalData('owner'));
+  assert.deepEqual(f.state, before);
+});
+
+test('3B stale same-credential auth failure cannot purge accepted dataset revision', async () => {
+  const f = fixture(); const old = structuredClone(f.state.token);
+  f.state.compliance.revision++;
+  assert.equal((await f.lifecycle.clearYouTubeDeadAuth('owner', old, { connectionGeneration: 1, revision: 1 })).reason, 'superseded');
+  assert.equal(f.state.compliance.status, 'ACTIVE'); assert.ok(f.state.token);
+});
+
+test('3B authenticated authError reaches real atomic purge production path', async () => {
+  const f = fixture({ provider: async () => ({ ok: false, status: 400, json: async () => ({ error: 'invalid_grant' }) }) });
+  f.db.creatorProfile = { findUnique: async () => ({ id: 'profile' }) };
+  f.db.creatorContentCuration = { findMany: async () => [] };
+  const sync = load('lib/youtube-sync.ts', { '@/lib/db': { db: f.db }, '@/lib/youtube-lock': locks,
+    '@/lib/youtube-token': f.lifecycle, '@/lib/creator-metrics': metrics,
+    '@/lib/youtube-auth': { youtubeFetch: async () => ({ ok: false, status: 401, json: async () => ({ error: { errors: [{ reason: 'authError' }] } }) }) } });
+  assert.equal((await sync.syncYouTubeOfficialData('owner', { credential: structuredClone(f.state.token) })).reason, 'reauth_required');
+  assert.equal(f.state.compliance.status, 'PURGED'); assert.equal(f.state.compliance.removalReason, 'AUTHORIZATION_LOST');
+  assert.equal(f.state.token, null); assert.equal(f.state.curation.length, 0);
+});
+test('3B canonical profile/discovery metrics cannot fall back to purged YouTube aggregates', async () => {
+  const f = fixture({ initial: null });
+  f.state.stats = [{ platform: 'youtube', followerCount: 100 }];
+  f.state.posts = [{ platform: 'youtube', views: 2000, likes: 100, comments: 3 }];
+  await f.removal.removeYouTubeLocalData('owner');
+  const result = metrics.getNormalizedCreatorMetrics({ platformStats: f.state.stats, socialPosts: f.state.posts,
+    creatorProfile: { ...f.state.profileData, profileOrigin: 'IMPORTED' }, oauthPlatforms: [] });
+  assert.equal(result.totalFollowers, null); assert.equal(result.avgViewsPerPost, null);
+  assert.equal(result.averageEngagementRate, null); assert.equal(result.platforms.length, 0);
+  assert.equal(f.state.profileData.totalFollowers, 0);
+});

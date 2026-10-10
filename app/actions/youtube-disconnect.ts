@@ -31,7 +31,7 @@ export async function disconnectYouTubeAction(): Promise<YouTubeDisconnectResult
           });
         if (removed.error) return { ok: false, reason: removed.error === "connection_changed" ? "connection_changed" : "temporary_failure",
           error: removed.error === "connection_changed" ? "YouTube connection changed. Please reload and try again." : "Could not remove stored YouTube data. Please try again." };
-        for (const path of ["/creator/accounts", "/creator/presence", "/creator/dashboard", "/creator/analytics"]) revalidatePath(path);
+        for (const path of ["/creator/accounts", "/creator/presence", "/creator/dashboard", "/creator/analytics", "/creator/settings", "/creator/content", "/creator/discover", "/brand/discover", "/profile"]) revalidatePath(path);
         return { ok: true, authorizationRevoked: result.state === "success" && result.authorizationRevoked };
       } catch (error) {
         if (attempt !== 0 || !isYouTubeRevokeConfirmationUnavailable(error)) throw error;

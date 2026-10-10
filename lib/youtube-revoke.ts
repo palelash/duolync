@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { PlatformToken, Prisma } from "@/lib/generated/prisma";
 import { db } from "@/lib/db";
+import { lockClaimOwners } from "@/lib/youtube-claim";
 import { lockYouTubeOwner } from "@/lib/youtube-lock";
 import { sameYouTubeCredentialVersion, probeYouTubeAuthorization } from "@/lib/youtube-token";
 import { youtubeFetch } from "@/lib/youtube-auth";
@@ -207,10 +208,25 @@ export async function prepareYouTubeAccountDeletion(userId: string): Promise<{
 
 export async function assertYouTubeAccountDeletion(tx: Prisma.TransactionClient, userId: string,
   expected: PlatformToken | null): Promise<void> {
+  // Claim cancellation/cascade shares the same multi-owner protocol as claim
+  // submission/approval/rejection. Discover targets without row locks first.
+  const observedClaims = await tx.profileClaim.findMany({ where: { requesterUserId: userId, status: "PENDING" },
+    select: { id: true, creatorProfile: { select: { userId: true } } } });
+  if (observedClaims.length) {
+    const owners = [userId, ...observedClaims.map(claim => claim.creatorProfile.userId)];
+    await lockClaimOwners(tx, owners);
+    for (const claim of [...observedClaims].sort((a, b) => a.id.localeCompare(b.id)))
+      await tx.$queryRaw`SELECT "id" FROM "ProfileClaim" WHERE "id" = ${claim.id} FOR UPDATE`;
+    const currentClaims = await tx.profileClaim.findMany({ where: { requesterUserId: userId, status: "PENDING" },
+      select: { creatorProfile: { select: { userId: true } } } });
+    if (currentClaims.some(claim => !owners.includes(claim.creatorProfile.userId))) throw new Error("Claim ownership changed during deletion. Please retry.");
+  }
   const current = await lockCredential(tx, userId);
   if (!matchesRevokedYouTubeCredential(current, expected))
     throw new Error("YouTube reconnected during deletion. Please retry account deletion.");
   await tx.$queryRaw`SELECT "id" FROM "CreatorProfile" WHERE "userId" = ${userId} FOR UPDATE`;
+  const profile = await tx.creatorProfile.findUnique({ where: { userId }, select: { claimStatus: true } });
+  if (profile?.claimStatus === "CLAIMED") throw new Error("Claimed profile ownership changed during deletion. Please contact support.");
   if (current) requireYouTubeRevokeConfirmation(await consumeConfirmedYouTubeRevoke(tx, userId, current));
   else await deleteYouTubeRevokeReceipt(tx, userId, null);
 }
