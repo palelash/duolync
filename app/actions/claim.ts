@@ -1,5 +1,6 @@
 "use server";
 
+import { guardThreadsClaim } from "@/lib/threads-connection";
 import { guardYouTubeClaim, lockClaimOwners } from "@/lib/youtube-claim";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -330,6 +331,7 @@ export async function approveProfileClaimAction(claimId: string): Promise<
       if (!observed) throw new Error("CLAIM_NOT_FOUND");
       if (!observed.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
       await guardYouTubeClaim(tx, observed.creatorProfile.userId, observed.requesterUserId, adminUser.id);
+      await guardThreadsClaim(tx, observed.creatorProfile.userId, observed.requesterUserId);
       await tx.$queryRaw`SELECT "id" FROM "ProfileClaim" WHERE "id" = ${claimId} FOR UPDATE`;
       const claim = await tx.profileClaim.findUnique({ where: { id: claimId },
         select: {
@@ -519,7 +521,9 @@ export async function approveProfileClaimAction(claimId: string): Promise<
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
     const errorMessages: Record<string, string> = {
+      THREADS_IDENTITY_REQUIRES_MANUAL_REVIEW: "Threads identity requires manual review before ownership movement.",
       YOUTUBE_COMPLIANCE_REQUIRES_MANUAL_REVIEW: "YouTube compliance state requires manual review; automatic ownership movement is blocked.",
+      PLACEHOLDER_HAS_TOKEN: "Imported profiles cannot transfer Threads OAuth credentials. Manual review is required.",
       CLAIM_NOT_FOUND: "Claim not found.",
       CLAIM_NOT_PENDING: "This claim is no longer pending.",
       CLAIM_NO_REQUESTER: "The requester account no longer exists.",
@@ -1167,6 +1171,7 @@ export async function mergeAndApproveClaimAction(
           select: { requesterUserId: true, creatorProfile: { select: { userId: true, moderationStatus: true } } } });
         if (!ownerSnapshot?.requesterUserId) throw new Error("CLAIM_NO_REQUESTER");
         await guardYouTubeClaim(tx, ownerSnapshot.creatorProfile.userId, ownerSnapshot.requesterUserId, adminUser.id);
+        await guardThreadsClaim(tx, ownerSnapshot.creatorProfile.userId, ownerSnapshot.requesterUserId);
         // STEP 1 — Acquire PostgreSQL row-level lock on the ProfileClaim.
         // This serializes concurrent admin merge attempts at the DB level.
         // SELECT FOR UPDATE blocks any other transaction from locking the same
@@ -1951,6 +1956,7 @@ export async function mergeAndApproveClaimAction(
       : msg;
 
     const errorMessages: Record<string, string> = {
+      THREADS_IDENTITY_REQUIRES_MANUAL_REVIEW: "Threads identity requires manual review before ownership movement.",
       YOUTUBE_COMPLIANCE_REQUIRES_MANUAL_REVIEW: "YouTube compliance state requires manual review; automatic ownership movement is blocked.",
       CLAIM_NOT_FOUND:                          "Claim not found.",
       CLAIM_NOT_PENDING:                        "This claim is no longer pending.",

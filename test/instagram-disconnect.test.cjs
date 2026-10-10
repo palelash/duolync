@@ -48,6 +48,7 @@ function fixture({ history = false, failAt, unauthorized = false, noProfile = fa
     transactions++;
     const draft = structuredClone(state);
     const tx = {};
+    tx.verification = { deleteMany: async () => { check("threads.authority.invalidate"); return { count: 0 }; } };
     for (const [model, key] of [['platformToken', 'tokens'], ['platformStats', 'stats'], ['socialPost', 'posts'], ['creatorContentCuration', 'curation']]) {
       tx[model] = { deleteMany: async ({ where }) => {
         check(`${model}.deleteMany`);
@@ -103,6 +104,11 @@ function fixture({ history = false, failAt, unauthorized = false, noProfile = fa
   imports['@/lib/youtube-removal'] = load('lib/youtube-removal.ts', {
     '@/lib/db': { db }, '@/lib/creator-metrics': metrics,
     '@/lib/youtube-lock': load('lib/youtube-lock.ts', {}),
+  });
+  imports['@/lib/threads-connection'] = load('lib/threads-connection.ts', {
+    ...imports, '@/lib/threads-lock': load('lib/threads-lock.ts', {}),
+    '@/lib/threads-auth': { threadsAuthorityId: id => `threads-test:${id}` },
+    '@/lib/threads-token': {},
   });
   const action = load('app/actions/instagram-disconnect.ts', imports);
   const generic = load('app/actions/social-connections.ts', imports);
@@ -196,12 +202,15 @@ test('last connection removal clears freshness and repeated removal is safe', as
   assert.equal((await f.run()).ok, true);
   assert.deepEqual(f.state(), after);
 });
-test('generic Facebook/Threads cleanup remains available; YouTube requires dedicated disconnect', async () => {
+test('Facebook cleanup and coordinated Threads cleanup remain available; YouTube requires dedicated disconnect', async () => {
   assert.equal((await fixture().generic('youtube')).error, 'use_youtube_disconnect');
   for (const platform of ['facebook_page', 'threads']) {
     const f = fixture();
     assert.equal((await f.generic(platform)).error, null);
     assert.equal(f.transactions(), 1);
+    if (platform === 'threads') {
+      assert.deepEqual(f.events.slice(0, 4), ['owner.lock', 'token.lock', 'profile.lock', 'threads.authority.invalidate']);
+    }
     assert.ok(f.state().tokens.some(row => row.userId === 'owner' && row.platform === 'instagram'));
     assert.ok(f.state().curation.some(row => row.creatorProfileId === 'creator' && row.platform === 'instagram'));
   }

@@ -6,6 +6,11 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { computeFollowerCache } from "@/lib/creator-metrics";
 
+// Threads credentials are usable only while their server-recorded expiry is valid.
+function hasCurrentThreadsExpiry(expiresAt: Date | null, now: number): boolean {
+  return expiresAt instanceof Date && Number.isFinite(expiresAt.getTime()) && expiresAt.getTime() > now;
+}
+
 // ─── Connected account shape returned to the UI ───────────────────────────────
 
 export interface ConnectedAccount {
@@ -19,12 +24,14 @@ export interface ConnectedAccount {
   engagementRate: number | null;
   /**
    * How this row should be presented.
-   * "oauth"       = PlatformToken exists. This is the only Connected state.
+   * "oauth"       = PlatformToken exists; Threads additionally requires a valid future expiry.
    * "public_data" = APIFY or RAPIDAPI stats and no PlatformToken.
    * "unknown"     = stats exist (for example LEGACY_UNKNOWN) but the source is
    *                 neither an official connection nor confirmed public data.
    */
   connectedVia: "oauth" | "public_data" | "unknown";
+  /** Stored Threads authorization exists but needs a full OAuth reconnect. */
+  reconnectRequired?: boolean;
   /** ISO timestamp of last data refresh */
   lastSyncedAt: string | null;
   /**
@@ -66,19 +73,22 @@ export async function getConnectedAccountsAction(): Promise<{
     const seenPlatforms = new Set<string>();
     const accounts: ConnectedAccount[] = [];
 
-    // OAuth-connected first (PlatformToken)
+    const now = Date.now();
+    // Stored authorizations first; expired Threads rows remain reconnectable history.
     for (const token of tokens) {
       seenPlatforms.add(token.platform);
       const stat = statsByPlatform.get(token.platform);
+      const reconnectRequired = token.platform === "threads" && !hasCurrentThreadsExpiry(token.expiresAt, now);
       accounts.push({
         id: token.id,
         platform: token.platform,
         username: token.username ?? null,
         followers: stat?.followerCount ?? null,
         engagementRate: stat?.engagementRate ?? null,
-        connectedVia: "oauth",
+        connectedVia: reconnectRequired ? "unknown" : "oauth",
         lastSyncedAt: (stat?.fetchedAt ?? token.updatedAt).toISOString(),
         dataSource: stat?.dataSource ?? null,
+        ...(token.platform === "threads" ? { reconnectRequired } : {}),
       });
     }
 
@@ -109,8 +119,8 @@ export async function getConnectedAccountsAction(): Promise<{
 
 /**
  * Returns the platform identifiers for which the current user has an active
- * PlatformToken (official OAuth connection). This is the canonical source of
- * truth for "Connected" state — Apify/RapidAPI stats do NOT constitute a connection.
+ * PlatformToken. Threads additionally requires a valid future expiry.
+ * This is the canonical source of truth for "Connected" state — Apify/RapidAPI stats do NOT constitute a connection.
  */
 export async function getOAuthConnectedPlatformsAction(): Promise<{
   platforms: string[];
@@ -122,10 +132,11 @@ export async function getOAuthConnectedPlatformsAction(): Promise<{
 
     const tokens = await db.platformToken.findMany({
       where: { userId: session.user.id },
-      select: { platform: true },
+      select: { platform: true, expiresAt: true },
     });
 
-    return { platforms: tokens.map((t) => t.platform), error: null };
+    const now = Date.now();
+    return { platforms: tokens.filter(t => t.platform !== "threads" || hasCurrentThreadsExpiry(t.expiresAt, now)).map(t => t.platform), error: null };
   } catch (err) {
     console.error("[getOAuthConnectedPlatformsAction]:", err);
     return { platforms: [], error: "Failed to load OAuth status" };
@@ -159,6 +170,14 @@ export async function removePlatformAction(
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) return { error: "Unauthorized" };
+
+    if (platform === "threads") {
+      const { disconnectThreads } = await import("@/lib/threads-connection");
+      await disconnectThreads(session.user.id);
+      revalidatePath("/creator/presence");
+      revalidatePath("/creator/dashboard");
+      return { error: null };
+    }
 
     const creatorProfile = await db.creatorProfile.findUnique({
       where: { userId: session.user.id },
@@ -224,7 +243,7 @@ export async function removePlatformAction(
 
     return { error: null };
   } catch (err) {
-    console.error("[removePlatformAction]:", err);
+    if (platform !== "threads") console.error("[removePlatformAction]:", err);
     return { error: "Failed to remove platform" };
   }
 }
