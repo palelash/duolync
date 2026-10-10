@@ -1,5 +1,5 @@
 import "server-only";
-import { lockYouTubeCompliance, sameYouTubeFence, youtubeDatabaseNow, compatibleYouTubeOperation, type YouTubeOperationFence } from "@/lib/youtube-compliance";
+import { lockYouTubeCompliance, sameYouTubeFence, youtubeDatabaseNow, youtubeDeadlineReached, compatibleYouTubeOperation, type YouTubeOperationFence } from "@/lib/youtube-compliance";
 import type { YouTubeComplianceState } from "@/lib/generated/prisma";
 import { db } from "@/lib/db";
 import type { PlatformToken, Prisma } from "@/lib/generated/prisma";
@@ -10,7 +10,7 @@ import { computeFollowerCache } from "@/lib/creator-metrics";
 
 export type YouTubeSyncResult = { ok: true } | { ok: false; reason:
   "not_connected" | "reauth_required" | "identity_mismatch" | "temporary_failure" |
-  "configuration_failure" | "provider_failure" | "superseded" | "counter_range" };
+  "configuration_failure" | "provider_failure" | "superseded" | "counter_range" | "quota_exhausted" | "deadline_exceeded" };
 const RECENT_LIMIT = 50;
 const CURATED_LIMIT = 200;
 type ObjectData = Record<string, any>;
@@ -33,7 +33,8 @@ function thumbnail(snippet: ObjectData): string | null {
   return text(snippet.thumbnails?.maxres?.url) ?? text(snippet.thumbnails?.high?.url) ??
     text(snippet.thumbnails?.medium?.url) ?? text(snippet.thumbnails?.default?.url);
 }
-async function read(resource: string, params: Record<string, string>, accessToken: string): Promise<ObjectData[]> {
+async function read(resource: string, params: Record<string, string>, accessToken: string, consumeQuota?: () => boolean): Promise<ObjectData[]> {
+  if (consumeQuota && !consumeQuota()) throw new SyncFailure("quota_exhausted");
   const url = new URL(`https://www.googleapis.com/youtube/v3/${resource}`);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
   let response: Response, body: ObjectData;
@@ -48,8 +49,10 @@ async function read(resource: string, params: Record<string, string>, accessToke
     const reasons = Array.isArray(body.error?.errors) ? body.error.errors.map((e: ObjectData) => e?.reason) : [];
     // authError rejects this access credential; refresh must establish grant status.
     if (isYouTubeAccessDeadAuth(response.status, body)) throw new SyncFailure("access_rejected");
+    if (response.status >= 500 || response.status === 429) throw new SyncFailure("temporary_failure");
+    if (reasons.some((r: string) => ["quotaExceeded", "dailyLimitExceeded"].includes(r))) throw new SyncFailure("quota_exhausted");
     if (response.status >= 500 || response.status === 429 || reasons.some((r: string) =>
-      ["quotaExceeded", "dailyLimitExceeded", "rateLimitExceeded", "userRateLimitExceeded", "backendError"].includes(r)))
+      ["rateLimitExceeded", "userRateLimitExceeded", "backendError"].includes(r)))
       throw new SyncFailure("temporary_failure");
     if (response.status === 403 || reasons.some((r: string) =>
       ["insufficientPermissions", "accessNotConfigured", "youtubeSignupRequired"].includes(r))) throw new SyncFailure("configuration_failure");
@@ -70,10 +73,30 @@ export async function resolveYouTubeChannelIdentity(accessToken: string): Promis
   return { id: channels[0].id, title: text(snippet.title), username: text(snippet.customUrl) ?? text(snippet.title) };
 }
 
+/** Access-only validation cannot establish permanent grant loss from a 401. */
+export async function validateYouTubeAccessAuthorization(credential: YouTubeCredentialVersion,
+  consumeQuota: () => boolean): Promise<YouTubeSyncResult> {
+  try {
+    const items = await read("channels", { part: "id", mine: "true" }, credential.accessToken, consumeQuota);
+    if (items.length !== 1 || !text(items[0].id)) return { ok: false, reason: "provider_failure" };
+    return items[0].id === credential.platformUserId ? { ok: true } : { ok: false, reason: "identity_mismatch" };
+  } catch (error) {
+    return { ok: false, reason: error instanceof SyncFailure && error.reason !== "access_rejected" ? error.reason : "provider_failure" };
+  }
+}
+
+export type YouTubeSyncOptions = {
+  credential: YouTubeCredentialVersion;
+  lease?: { id: string };
+  recoveryAttempted?: boolean;
+  expectedFence?: YouTubeOperationFence;
+  maintenance?: { observedAt: Date; consumeQuota: () => boolean };
+};
+
 /** All HTTP precedes the short User -> token -> profile coordinated transaction.
  * Callback supplies the exact saved version, so a late callback cannot sync a reconnect.
  */
-export async function syncYouTubeOfficialData(userId: string, options?: { credential: YouTubeCredentialVersion; lease?: { id: string }; recoveryAttempted?: boolean; expectedFence?: YouTubeOperationFence }): Promise<YouTubeSyncResult> {
+export async function syncYouTubeOfficialData(userId: string, options?: YouTubeSyncOptions): Promise<YouTubeSyncResult> {
   let profileId: string | undefined;
   let fence: YouTubeComplianceState | null = null;
   let operation: YouTubeOperationFence | undefined;
@@ -98,7 +121,7 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
     const curated = await db.creatorContentCuration.findMany({ where: { creatorProfileId: profile.id, platform: "youtube" },
       select: { providerPostId: true }, orderBy: { providerPostId: "asc" }, take: CURATED_LIMIT + 1 });
     if (curated.length > CURATED_LIMIT) return { ok: false, reason: "configuration_failure" };
-    const channels = await read("channels", { part: "snippet,contentDetails,statistics", mine: "true" }, credential.accessToken);
+    const channels = await read("channels", { part: "snippet,contentDetails,statistics", mine: "true" }, credential.accessToken, options?.maintenance?.consumeQuota);
     if (channels.length !== 1 || !text(channels[0].id)) throw new SyncFailure("provider_failure");
     const channel = channels[0];
     if (channel.id !== credential.platformUserId) throw new SyncFailure("identity_mismatch");
@@ -108,7 +131,7 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
     const totalViews = counter(statistics.viewCount, Number.MAX_SAFE_INTEGER);
     const uploads = text(channel.contentDetails?.relatedPlaylists?.uploads);
     if (!uploads) throw new SyncFailure("provider_failure");
-    const recent = await read("playlistItems", { part: "contentDetails", playlistId: uploads, maxResults: String(RECENT_LIMIT) }, credential.accessToken);
+    const recent = await read("playlistItems", { part: "contentDetails", playlistId: uploads, maxResults: String(RECENT_LIMIT) }, credential.accessToken, options?.maintenance?.consumeQuota);
     if (recent.length > RECENT_LIMIT) throw new SyncFailure("provider_failure");
     const ids = new Set<string>();
     for (const item of recent) {
@@ -123,12 +146,17 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
     const candidates = [...ids], posts: Omit<Prisma.SocialPostCreateManyInput, "creatorProfileId">[] = [], seen = new Set<string>();
     for (let start = 0; start < candidates.length; start += 50) {
       const batch = candidates.slice(start, start + 50);
-      const videos = await read("videos", { part: "snippet,status,statistics", id: batch.join(",") }, credential.accessToken);
+      const videos = await read("videos", { part: "snippet,status,statistics", id: batch.join(",") }, credential.accessToken, options?.maintenance?.consumeQuota);
       for (const video of videos) {
         if (!text(video.id) || !batch.includes(video.id) || seen.has(video.id)) throw new SyncFailure("provider_failure");
         seen.add(video.id);
-        if (video.status?.privacyStatus !== "public" || ["deleted", "failed", "rejected"].includes(video.status?.uploadStatus)) continue;
+        // An omitted requested ID can be unavailable. A returned resource needs
+        // explicit visibility evidence before any dataset/curation replacement.
+        const status = object(video.status);
+        if (!["public", "private", "unlisted"].includes(status.privacyStatus)) throw new SyncFailure("provider_failure");
+        if (status.privacyStatus !== "public" || ["deleted", "failed", "rejected"].includes(status.uploadStatus)) continue;
         const vs = object(video.snippet);
+        if (!text(vs.channelId)) throw new SyncFailure("provider_failure");
         if (vs.channelId !== channel.id) continue;
         if (typeof vs.publishedAt !== "string" || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(vs.publishedAt) ||
           !Number.isFinite(Date.parse(vs.publishedAt)) || new Date(vs.publishedAt).toISOString().slice(0, 19) !== vs.publishedAt.slice(0, 19) || !text(vs.title)) throw new SyncFailure("provider_failure");
@@ -138,7 +166,7 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
           postedAt: new Date(vs.publishedAt), views: counter(counts.viewCount), likes: counter(counts.likeCount), comments: counter(counts.commentCount) });
       }
     }
-    const fetchedAt = new Date();
+    const fetchedAt = options?.maintenance?.observedAt ?? new Date();
     return await db.$transaction(async tx => {
       await lockYouTubeOwner(tx, userId);
       const tokens = await tx.$queryRaw<PlatformToken[]>`SELECT * FROM "PlatformToken" WHERE "userId" = ${userId} AND "platform" = 'youtube' FOR UPDATE`;
@@ -147,6 +175,8 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
       if (!profiles[0] || profiles[0].id !== profile.id) return { ok: false, reason: "superseded" };
       const latestFence = await lockYouTubeCompliance(tx, userId);
       if (!sameYouTubeFence(latestFence, fence) || !compatibleYouTubeOperation(latestFence, operation!, await youtubeDatabaseNow(tx))) return { ok: false, reason: "superseded" };
+      const commitNow = await youtubeDatabaseNow(tx);
+      if (options?.maintenance && youtubeDeadlineReached(latestFence!, commitNow)) return { ok: false, reason: "deadline_exceeded" };
       // Curation added during HTTP must not be silently dropped by replacement.
       const latestCuration = await tx.creatorContentCuration.findMany({ where: { creatorProfileId: profile.id, platform: "youtube" }, select: { providerPostId: true } });
       if (latestCuration.some(item => !ids.has(item.providerPostId))) return { ok: false, reason: "superseded" };
@@ -165,24 +195,35 @@ export async function syncYouTubeOfficialData(userId: string, options?: { creden
       if (followers !== null && followers > 2147483647) throw new SyncFailure("counter_range");
       await tx.creatorProfile.update({ where: { userId }, data: { followerCount: followers, lastSyncedAt: fetchedAt,
         connectedPlatforms: [...new Set([...profiles[0].connectedPlatforms, "youtube"])] } });
-      const acceptedAt = await youtubeDatabaseNow(tx);
+      if (options?.maintenance) {
+        // Reconcile only the bounded candidates definitively inspected by Google.
+        await tx.creatorContentCuration.deleteMany({ where: { creatorProfileId: profile.id, platform: "youtube",
+          providerPostId: { in: candidates.filter(id => !posts.some(post => post.providerPostId === id)) } } });
+        await tx.platformToken.update({ where: { userId_platform: { userId, platform: "youtube" } },
+          data: { username: text(snippet.customUrl) ?? text(snippet.title),
+            updatedAt: new Date(Math.max(commitNow.getTime(), tokens[0].updatedAt.getTime() + 1)) } });
+      }
+      // Evidence precedes the first provider request, not a delayed commit.
+      const acceptedAt = options?.maintenance?.observedAt ?? await youtubeDatabaseNow(tx);
       await tx.youTubeComplianceState.update({ where: { userId }, data: {
         revision: { increment: 1 }, lastSuccessfulAuthorizationValidationAt: acceptedAt,
-        lastSuccessfulDataRefreshAt: acceptedAt, lastAttemptAt: acceptedAt, lastOutcome: "SUCCESS",
+        lastSuccessfulDataRefreshAt: acceptedAt, lastAttemptAt: commitNow, lastOutcome: "SUCCESS",
         attemptCount: 0, nextAttemptAt: new Date(acceptedAt.getTime() + 27 * 86400000),
         deleteByAt: new Date(acceptedAt.getTime() + 30 * 86400000), leaseId: null, leaseExpiresAt: null,
       } });
+      if (options?.maintenance && (!compatibleYouTubeOperation(latestFence, operation!, await youtubeDatabaseNow(tx)) ||
+        youtubeDeadlineReached(latestFence!, await youtubeDatabaseNow(tx)))) throw new SyncFailure("deadline_exceeded");
       return { ok: true };
     }, { maxWait: 5_000, timeout: 15_000 });
   } catch (error) {
     if (error instanceof SyncFailure && error.reason === "access_rejected" && credential && operation) {
-      if (options?.recoveryAttempted) return { ok: false, reason: "reauth_required" };
+      if (options?.recoveryAttempted) return { ok: false, reason: options.maintenance ? "provider_failure" : "reauth_required" };
       const recovered = await recoverYouTubeRejectedAccess(userId, credential, operation);
       if (!recovered.ok) return { ok: false, reason: recovered.reason === "configuration_error" ? "configuration_failure" : recovered.reason };
       const current = await db.platformToken.findUnique({ where: { userId_platform: { userId, platform: "youtube" } } });
       if (!current || current.accessToken !== recovered.accessToken || current.platformUserId !== credential.platformUserId) return { ok: false, reason: "superseded" };
       // Carry the original operation fence across the one bounded retry.
-      return syncYouTubeOfficialData(userId, { credential: current, recoveryAttempted: true, expectedFence: operation, ...(options?.lease ? { lease: options.lease } : {}) });
+      return syncYouTubeOfficialData(userId, { ...options, credential: current, recoveryAttempted: true, expectedFence: operation, ...(options?.lease ? { lease: options.lease } : {}) });
     }
     // Failure responses are observations too: a late failure must surface as
     // superseded rather than diagnosing the newer accepted connection.

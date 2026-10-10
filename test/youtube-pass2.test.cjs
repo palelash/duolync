@@ -118,10 +118,25 @@ for (const bad of ['12garbage', '-1', '1.2', '', null, 0, '2147483648', '1844674
   const f = fixture({ videos: [video('recent', 'public', { viewCount: bad })] });
   assert.equal((await f.sync.syncYouTubeOfficialData('owner')).ok, false); assert.equal(f.writes, 0); preserved(f);
 });
-for (const privacy of ['private', 'unlisted', undefined]) test(`excludes ${privacy} and clears stale posts without curation deletion`, async () => {
-  const v = video('recent', privacy); if (privacy === undefined) delete v.status.privacyStatus;
+for (const privacy of ['private', 'unlisted']) test(`excludes ${privacy} and clears stale posts without curation deletion`, async () => {
+  const v = video('recent', privacy);
   const f = fixture({ videos: [v], curated: ['recent'] }); assert.equal((await f.sync.syncYouTubeOfficialData('owner')).ok, true);
   assert.equal(f.state.posts.length, 0); assert.deepEqual(f.state.curation, f.before.curation);
+});
+for (const [name, status] of [
+  ['missing privacyStatus', {}], ['missing status', undefined], ['null status', null],
+  ['array status', []], ['string status', 'public'], ['unknown privacyStatus', { privacyStatus: 'unknown' }],
+  ['null privacyStatus', { privacyStatus: null }], ['nonstring privacyStatus', { privacyStatus: 1 }],
+]) test(`returned video with ${name} rejects sync and preserves posts/curation/evidence`, async () => {
+  const v = { ...video(), status }, f = fixture({ videos: [v], curated: ['recent'] });
+  const result = await f.sync.syncYouTubeOfficialData('owner');
+  assert.equal(result.reason, 'provider_failure'); assert.equal(f.writes, 0); preserved(f);
+  assert.deepEqual(f.state.compliance, f.before.compliance);
+});
+test('public returned item without channel identity is ambiguous, not wrong-channel evidence', async () => {
+  const v = video(); delete v.snippet.channelId;
+  const f = fixture({ videos: [v], curated: ['recent'] });
+  assert.equal((await f.sync.syncYouTubeOfficialData('owner')).reason, 'provider_failure'); preserved(f);
 });
 test('successful empty discovery clears all stale sources', async () => {
   const f = fixture({ recent: [], videos: [] }); assert.equal((await f.sync.syncYouTubeOfficialData('owner')).ok, true); assert.equal(f.state.posts.length, 0);
@@ -160,7 +175,7 @@ test('malformed successful response does not stamp freshness', async () => {
 test('transaction failure rolls back stats, deletion, and cache', async () => {
   const f = fixture({ failTransaction: true }); assert.equal((await f.sync.syncYouTubeOfficialData('owner')).reason, 'temporary_failure'); preserved(f);
 });
-for (const [status, reason, expected] of [[401, 'authError', 'reauth_required'], [401, 'youtubeSignupRequired', 'configuration_failure'], [403, 'insufficientPermissions', 'configuration_failure'], [403, 'quotaExceeded', 'temporary_failure'], [401, 'unknown', 'provider_failure']]) test(`classification ${status}/${reason}`, async () => {
+for (const [status, reason, expected] of [[401, 'authError', 'reauth_required'], [401, 'youtubeSignupRequired', 'configuration_failure'], [403, 'insufficientPermissions', 'configuration_failure'], [403, 'quotaExceeded', 'quota_exhausted'], [401, 'unknown', 'provider_failure']]) test(`classification ${status}/${reason}`, async () => {
   const f = fixture({ errorResource: 'videos', status, reason }); assert.equal((await f.sync.syncYouTubeOfficialData('owner')).reason, expected); preserved(f);
   assert.equal(f.deadAuthCalls, expected === 'reauth_required' ? 1 : 0); assert.equal(!!f.state.token, expected !== 'reauth_required');
 });

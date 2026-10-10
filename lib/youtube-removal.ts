@@ -24,7 +24,7 @@ export async function removeYouTubeLocalData(userId: string,
       WHERE "userId" = ${userId} FOR UPDATE
     `;
     const profile = profiles[0];
-    if (!profile) return { error: "Profile not found" };
+    if (!profile && reason !== "DEADLINE_EXCEEDED" && reason !== "AUTHORIZATION_LOST") return { error: "Profile not found" };
     // Phase C: validate the version and consume proof after profile coordination,
     // before any destructive writes. A failed transaction restores the receipt.
     if (credentialGuard && !await credentialGuard(tokens[0] ?? null, tx)) return { error: "connection_changed" };
@@ -32,16 +32,20 @@ export async function removeYouTubeLocalData(userId: string,
     await lockYouTubeCompliance(tx, userId);
     const now = await youtubeDatabaseNow(tx);
     const beforeStats = await tx.platformStats.findMany({ where: { userId, platform: "youtube" }, select: { followerCount: true } });
-    const hadPosts = await tx.socialPost.count({ where: { creatorProfileId: profile.id, platform: "youtube" } }) > 0;
+    const hadPosts = !!profile && await tx.socialPost.count({ where: { creatorProfileId: profile.id, platform: "youtube" } }) > 0;
     await tx.platformToken.deleteMany({ where: { userId, platform: "youtube" } });
     await tx.platformStats.deleteMany({ where: { userId, platform: "youtube" } });
-    await tx.socialPost.deleteMany({ where: { creatorProfileId: profile.id, platform: "youtube" } });
-    await tx.creatorContentCuration.deleteMany({ where: { creatorProfileId: profile.id, platform: "youtube" } });
+    if (profile) {
+      await tx.socialPost.deleteMany({ where: { creatorProfileId: profile.id, platform: "youtube" } });
+      await tx.creatorContentCuration.deleteMany({ where: { creatorProfileId: profile.id, platform: "youtube" } });
+    }
 
-    const connectedPlatforms = profile.connectedPlatforms.filter(p => p !== "youtube");
-    const remaining = await tx.platformStats.findMany({ where: { userId }, select: { followerCount: true, fetchedAt: true } });
-    const aggregatePatch = youtubeAggregateRemovalPatch(profile.profileOrigin, beforeStats.length > 0, hadPosts, remaining);
-    await tx.creatorProfile.update({ where: { userId }, data: { connectedPlatforms, ...aggregatePatch } });
+    if (profile) {
+      const connectedPlatforms = profile.connectedPlatforms.filter(p => p !== "youtube");
+      const remaining = await tx.platformStats.findMany({ where: { userId }, select: { followerCount: true, fetchedAt: true } });
+      const aggregatePatch = youtubeAggregateRemovalPatch(profile.profileOrigin, beforeStats.length > 0, hadPosts, remaining);
+      await tx.creatorProfile.update({ where: { userId }, data: { connectedPlatforms, ...aggregatePatch } });
+    }
     const removalReason = reason ?? (tokens[0] ? "EXPLICIT_DISCONNECT" : "TOKENLESS_HISTORY");
     const marker = { status: "PURGED" as const, purgedAt: now, blockedAt: now, removalReason,
       authorizationLostAt: removalReason === "AUTHORIZATION_LOST" ? now : null,

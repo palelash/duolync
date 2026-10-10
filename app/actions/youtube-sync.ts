@@ -19,7 +19,7 @@ export async function refreshYouTubeDataAction(): Promise<YouTubeSyncActionResul
     }
     if (result.ok) return { ok: true };
     const reason = result.reason;
-    if (reason === "superseded") return { ok: false, reason: "temporary_failure" };
+    if (reason === "superseded" || reason === "quota_exhausted" || reason === "deadline_exceeded") return { ok: false, reason: "temporary_failure" };
     if (reason === "counter_range") return { ok: false, reason: "configuration_failure" };
     return { ok: false, reason };
   } catch { return { ok: false, reason: "temporary_failure" }; }

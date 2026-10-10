@@ -17,7 +17,8 @@
     "db:import": "tsx prisma/import-creators.ts",
     "youtube:backfill:plan": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --plan",
     "youtube:backfill:apply": "node --conditions=react-server --import tsx scripts/youtube-compliance-backfill.ts --apply",
-    "test:youtube:postgres": "node --conditions=react-server --test test/youtube-postgres.test.cjs"
+    "test:youtube:postgres": "node --conditions=react-server --test test/youtube-postgres.test.cjs",
+    "youtube:maintenance": "node --conditions=react-server --import tsx scripts/youtube-maintenance.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
