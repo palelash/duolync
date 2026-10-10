@@ -1,13 +1,17 @@
-import "dotenv/config";
-import { db } from "../lib/db";
-import { lockYouTubeOwner } from "../lib/youtube-lock";
-import { lockYouTubeCompliance, youtubeDatabaseNow } from "../lib/youtube-compliance";
-import { planYouTubeBootstrap } from "../lib/youtube-bootstrap";
-import { removeYouTubeLocalData } from "../lib/youtube-removal";
+import { config } from "dotenv";
+import { validateYouTubeDatabaseConfig, youtubeBackfillMode } from "../lib/youtube-maintenance-config";
+config({ quiet: true });
 
+let closeDatabase: (() => Promise<void>) | undefined;
 async function main() {
-  const mode = process.argv[2];
-  if (mode !== "--plan" && mode !== "--apply") throw new Error("Specify --plan or --apply");
+  const mode = youtubeBackfillMode(process.argv.slice(2));
+  validateYouTubeDatabaseConfig();
+  const database = await import("../lib/db");
+  const db = database.db; closeDatabase = database.closeDatabase;
+  const { removeYouTubeLocalData } = await import("../lib/youtube-removal");
+  const { planYouTubeBootstrap } = await import("../lib/youtube-bootstrap");
+  const { lockYouTubeCompliance, youtubeDatabaseNow } = await import("../lib/youtube-compliance");
+  const { lockYouTubeOwner } = await import("../lib/youtube-lock");
   const counts: Record<string, number> = {};
   let cursor: string | undefined;
   for (;;) {
@@ -43,4 +47,7 @@ async function main() {
   }
   console.log(JSON.stringify({ mode, counts }));
 }
-main().catch(() => { console.error("YouTube backfill failed; no identifying data logged."); process.exitCode = 1; }).finally(() => db.$disconnect());
+main().catch(() => { console.error("YouTube backfill failed; no identifying data logged."); process.exitCode = 1; }).finally(async () => {
+  try { await closeDatabase?.(); }
+  catch { console.error("YouTube backfill shutdown failed."); process.exitCode = 1; }
+});

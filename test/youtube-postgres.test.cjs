@@ -26,7 +26,7 @@ const metrics = load('lib/creator-metrics.ts');
 const aggregates = load('lib/youtube-aggregates.ts', { '@/lib/creator-metrics': metrics });
 const claimLocks = load('lib/youtube-claim.ts', { '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance });
 function logic(db, fetch = async () => { throw Error('No provider allowed'); }) {
-  const imports = { 'node:crypto': require('node:crypto'), '@/lib/db': { db }, '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance, '@/lib/creator-metrics': metrics, '@/lib/youtube-aggregates': aggregates, '@/lib/youtube-claim': claimLocks,
+  const imports = { '@/lib/youtube-maintenance-config': load('lib/youtube-maintenance-config.ts'), 'node:crypto': require('node:crypto'), '@/lib/db': { db }, '@/lib/youtube-lock': locks, '@/lib/youtube-compliance': compliance, '@/lib/creator-metrics': metrics, '@/lib/youtube-aggregates': aggregates, '@/lib/youtube-claim': claimLocks,
     '@/lib/youtube-auth': { youtubeFetch: fetch } };
   const auth = load('lib/youtube-auth.ts', { '@/lib/db': { db }, 'node:crypto': require('node:crypto') });
   imports['@/lib/youtube-auth'] = { ...auth, youtubeFetch: fetch };
@@ -769,7 +769,7 @@ test('3B2 standalone runner terminates and prints aggregate only', opts, async (
   await clients[0].user.deleteMany({ where: { id: { in: ids } } });
   const { execFile } = require('node:child_process');
   const run = env => new Promise((resolve, reject) => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', 'scripts/youtube-maintenance.ts'], {
-    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable', YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '0', ...env }, timeout: 15000,
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable', YOUTUBE_CLIENT_ID: 'test-client', YOUTUBE_CLIENT_SECRET: 'test-secret', YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '0', ...env }, timeout: 15000,
   }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
   const good = await run({}); assert.equal(good.error, null, good.stderr);
   const summary = JSON.parse(good.stdout); assert.equal(summary.processed, 0); assert.equal(summary.quotaUsed, 0);
@@ -912,3 +912,76 @@ for (const visibility of ['public', 'private', 'unlisted', 'deleted', 'unavailab
     assert.equal(await clients[0].socialPost.count({ where: { creatorProfileId: profile.id, platform: 'youtube' } }), expected);
     assert.equal(await clients[0].creatorContentCuration.count({ where: { creatorProfileId: profile.id, providerPostId: 'public' } }), expected);
   });
+
+// Pass 3B-3: independent full invocations, bounded execution and safe tooling.
+test('3B3 two full maintenance runners coexist with one provider sync per owner', opts, async () => {
+  const id = await maintenanceFixture(), g = gate(), provider = maintenanceProvider({ gate: g });
+  const first = logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance();
+  await bounded(g.ready);
+  const second = await logic(clients[1], provider.fetch).maintenance.runYouTubeMaintenance();
+  assert.equal(second.processed, 0);
+  g.release();
+  const done = await first; assert.equal(done.outcomes.SUCCESS, 1); assert.equal(done.itemErrors, 0);
+  assert.equal(provider.calls.filter(url => url.includes('/channels')).length, 1);
+  assert.equal((await stateFor(id)).leaseId, null);
+});
+test('3B3 owner cap stops a full invocation while additional due owners remain', opts, async () => {
+  await maintenanceFixture(); await maintenanceFixture({}, false); await maintenanceFixture({}, false);
+  const result = await logic(clients[0]).maintenance.runYouTubeMaintenance({ itemLimit: 2, batchSize: 1, concurrency: 1, quotaBudget: 0 });
+  assert.equal(result.processed, 2); assert.equal(result.outcomes.QUOTA_EXHAUSTED, 2); assert.equal(result.itemErrors, 0);
+  const claim = await logic(clients[1]).maintenance.claimYouTubeMaintenance(); assert.ok(claim);
+});
+test('3B3 soft time limit stops selection after in-flight batch completes', opts, async () => {
+  await maintenanceFixture(); await maintenanceFixture({}, false);
+  const g = gate(), provider = maintenanceProvider({ gate: g });
+  const pending = logic(clients[0], provider.fetch).maintenance.runYouTubeMaintenance({ concurrency: 1, runLimitMs: 200 });
+  await bounded(g.ready); await new Promise(resolve => setTimeout(resolve, 250)); g.release();
+  const result = await pending; assert.equal(result.processed, 1); assert.equal(result.outcomes.SUCCESS, 1);
+  assert.ok(await logic(clients[1]).maintenance.claimYouTubeMaintenance());
+});
+test('3B3 inventory reads aggregates under database-enforced read-only mode', opts, async () => {
+  const id = await maintenanceFixture();
+  const before = await stateFor(id), client = await pools[0].connect();
+  try {
+    const read = load('lib/youtube-inventory.ts');
+    let readOnly;
+    const result = await read.readYouTubeInventory({ query: async sql => {
+      const result = await client.query(sql);
+      if (sql.startsWith('BEGIN')) readOnly = (await client.query('SHOW transaction_read_only')).rows[0].transaction_read_only;
+      return result;
+    } });
+    assert.equal(readOnly, 'on'); assert.equal(result.complianceTablePresent, true);
+    assert.ok(Number(result.counts.tokens) >= 1); assert.ok(Number(result.compliance.active) >= 1);
+    assert.ok(!JSON.stringify(result).includes(id)); assert.ok(!JSON.stringify(result).includes('fake-refresh'));
+    assert.deepEqual(await stateFor(id), before);
+  } finally { client.release(); }
+});
+test('3B3 standalone inventory and default backfill terminate without mutations', opts, async () => {
+  const id = await maintenanceFixture(), before = await stateFor(id);
+  const { execFile } = require('node:child_process');
+  const invoke = script => new Promise(resolve => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', script], {
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable' }, timeout: 15000,
+  }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+  const inventory = await invoke('scripts/youtube-inventory.ts'); assert.equal(inventory.error, null, inventory.stderr);
+  assert.equal(JSON.parse(inventory.stdout).complianceTablePresent, true);
+  for (let i = 0; i < 2; i++) {
+    const plan = await invoke('scripts/youtube-compliance-backfill.ts'); assert.equal(plan.error, null, plan.stderr);
+    assert.equal(JSON.parse(plan.stdout).mode, '--plan');
+    assert.deepEqual(await stateFor(id), before); assert.ok(!plan.stdout.includes(id));
+  }
+});
+
+test('3B3 simultaneous standalone processes purge once and exit normally', opts, async () => {
+  const id = await maintenanceFixture({ deleteByAt: new Date(0) }), before = await stateFor(id);
+  const { execFile } = require('node:child_process');
+  const invoke = () => new Promise(resolve => execFile(process.execPath, ['--conditions=react-server', '--import', 'tsx', 'scripts/youtube-maintenance.ts'], {
+    env: { ...process.env, DATABASE_URL: target + '?sslmode=disable', YOUTUBE_CLIENT_ID: 'fake-client', YOUTUBE_CLIENT_SECRET: 'fake-secret', YOUTUBE_MAINTENANCE_QUOTA_BUDGET: '0' }, timeout: 15000,
+  }, (error, stdout, stderr) => resolve({ error, stdout, stderr })));
+  const runs = await Promise.all([invoke(), invoke()]);
+  for (const run of runs) { assert.equal(run.error, null, run.stderr); assert.ok(!run.stdout.includes(id)); }
+  const summaries = runs.map(run => JSON.parse(run.stdout));
+  assert.equal(summaries.reduce((sum, run) => sum + run.outcomes.DEADLINE_PURGED, 0), 1);
+  const after = await stateFor(id); assert.equal(after.status, 'PURGED');
+  assert.equal(after.connectionGeneration, before.connectionGeneration + 1);
+  assert.equal(await clients[0].platformToken.count({ where: { userId: id, platform: 'youtube' } }), 0);
+});

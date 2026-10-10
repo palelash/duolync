@@ -8,6 +8,10 @@ import { syncYouTubeOfficialData, validateYouTubeAccessAuthorization } from "@/l
 import { removeYouTubeLocalData } from "@/lib/youtube-removal";
 import { lockYouTubeOwner } from "@/lib/youtube-lock";
 
+import { maintenanceConfig, maintenanceInteger as integer, type YouTubeMaintenanceConfig } from "@/lib/youtube-maintenance-config";
+export { maintenanceConfig } from "@/lib/youtube-maintenance-config";
+export type { YouTubeMaintenanceConfig } from "@/lib/youtube-maintenance-config";
+
 const DAY = 86_400_000;
 const TX = { maxWait: 5_000, timeout: 15_000 };
 // A short, local-only claim distinguishes cleanup from ordinary HTTP work using
@@ -18,22 +22,6 @@ export type YouTubeMaintenanceClaim = {
   userId: string; state: YouTubeComplianceState; credential: PlatformToken | null;
   profileId?: string; observedAt: Date; fence: YouTubeOperationFence;
 };
-export type YouTubeMaintenanceConfig = {
-  batchSize?: number; concurrency?: number; itemLimit?: number; runLimitMs?: number;
-  leaseMs?: number; quotaBudget?: number;
-};
-function integer(value: number, min: number, max: number): number {
-  if (!Number.isSafeInteger(value) || value < min || value > max) throw new Error("youtube_maintenance_invalid_config");
-  return value;
-}
-export function maintenanceConfig(config: YouTubeMaintenanceConfig = {}) {
-  return {
-    batchSize: integer(config.batchSize ?? 50, 1, 100), concurrency: integer(config.concurrency ?? 3, 1, 10),
-    itemLimit: integer(config.itemLimit ?? 200, 1, 10000), runLimitMs: integer(config.runLimitMs ?? 300000, 1, 3600000),
-    leaseMs: integer(config.leaseMs ?? 300000, 1000, 3600000),
-    quotaBudget: integer(config.quotaBudget ?? Number(process.env.YOUTUBE_MAINTENANCE_QUOTA_BUDGET ?? 100), 0, 1000000),
-  };
-}
 /** channels.list + playlistItems.list + ceil((50 recent + <=200 curated)/50)
  * videos.list. Each list costs one unit. An access-only probe adds one unit.
  * https://developers.google.com/youtube/v3/docs/{channels,playlistItems,videos}/list

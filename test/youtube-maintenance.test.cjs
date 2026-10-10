@@ -6,7 +6,7 @@ const ts = require('typescript');
 function load(file, imports = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText,
-    { exports, require: name => name === 'server-only' ? {} : imports[name] ?? {}, Date, Error, process: { env: {} }, ...globals });
+    { exports, require: name => name === 'server-only' ? {} : imports[name] ?? (name === '@/lib/youtube-maintenance-config' ? load('lib/youtube-maintenance-config.ts') : {}), Date, Error, process: { env: {} }, ...globals });
   return exports;
 }
 const engine = load('lib/youtube-maintenance.ts');
